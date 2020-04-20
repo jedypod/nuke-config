@@ -1,0 +1,180 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name EdgeMask
+ tile_color 0xcc804eff
+ addUserKnob {20 EdgeMask}
+ addUserKnob {7 outside_edge t "Set the size of the external edge." R 0 30}
+ outside_edge 10
+ addUserKnob {7 inside_edge t "Set the size of the internal edge" R 0 30}
+ addUserKnob {7 outside_blur R 0 60}
+ addUserKnob {4 inside_erode_type l "" -STARTLINE M {erode filter ""}}
+ inside_erode_type filter
+ addUserKnob {7 inside_blur R 0 60}
+ addUserKnob {26 ""}
+ addUserKnob {26 pregrade l "@b; pre-grade" T ""}
+ addUserKnob {41 blackpoint T PRE_GRADE.blackpoint}
+ addUserKnob {41 whitepoint T PRE_GRADE.whitepoint}
+ addUserKnob {7 center_offset l erode R -20 20}
+}
+ Input {
+  inputs 0
+  name InputFilter
+  xpos 280
+  ypos -9
+  number 1
+ }
+ Input {
+  inputs 0
+  name Input
+  xpos 120
+  ypos -801
+ }
+ Add {
+  channels rgba
+  name Add1
+  xpos 120
+  ypos -729
+ }
+ Dot {
+  name Dot1
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos 154
+  ypos -618
+ }
+set N3bf98c80 [stack 0]
+ Shuffle {
+  red white
+  green white
+  blue white
+  alpha white
+  name WHITE
+  tile_color 0xfefefeff
+  xpos 120
+  ypos -117
+ }
+ Switch {
+  inputs 2
+  which {{"\[exists parent.input1]"}}
+  name MaskSwitch
+  xpos 120
+  ypos -9
+ }
+push $N3bf98c80
+ Dot {
+  name Dot2
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos -166
+  ypos -618
+ }
+ Grade {
+  channels rgba
+  white_clamp true
+  name PRE_GRADE
+  xpos -200
+  ypos -549
+ }
+ Dilate {
+  channels rgba
+  size {{parent.center_offset}}
+  name PRE_ERODE
+  xpos -200
+  ypos -520
+ }
+ Dot {
+  name Dot8
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos -166
+  ypos -474
+ }
+set N3c4f0260 [stack 0]
+ FilterErode {
+  channels alpha
+  size {{parent.inside_edge}}
+  name FilterErode1
+  xpos -360
+  ypos -483
+ }
+ Blur {
+  channels alpha
+  size {{parent.inside_blur}}
+  name Blur1
+  xpos -360
+  ypos -447
+ }
+ Invert {
+  channels alpha
+  clamp true
+  name Invert1
+  xpos -360
+  ypos -399
+ }
+ Dot {
+  name Dot5
+  label " "
+  note_font "Helvetica Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos -326
+  ypos -330
+ }
+push $N3c4f0260
+ FilterErode {
+  channels alpha
+  size {{-parent.outside_edge}}
+  name FilterErode2
+  xpos -40
+  ypos -483
+ }
+ Blur {
+  channels alpha
+  size {{parent.outside_blur}}
+  name Blur2
+  xpos -40
+  ypos -446
+ }
+ Dot {
+  name Dot4
+  label " "
+  note_font "Helvetica Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos -6
+  ypos -330
+ }
+ Merge2 {
+  inputs 2
+  operation mask
+  name Merge1
+  xpos -200
+  ypos -297
+ }
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name Shuffle1
+  tile_color 0x222222ff
+  xpos -200
+  ypos -225
+ }
+ Merge2 {
+  inputs 2
+  operation mask
+  name Merge2
+  xpos -200
+  ypos -9
+ }
+ Output {
+  name Output
+  xpos -200
+  ypos 99
+ }
+end_group

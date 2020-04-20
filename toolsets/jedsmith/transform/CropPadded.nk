@@ -1,0 +1,13 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Crop {
+ box {{0-pad_size.w} {0-pad_size.h} {input.width+pad_size.w} {input.height+pad_size.h}}
+ crop false
+ name CropPadded
+ selected true
+ xpos -770
+ ypos -169
+ addUserKnob {20 Pad}
+ addUserKnob {14 pad_size R 0 100}
+ pad_size 100
+}

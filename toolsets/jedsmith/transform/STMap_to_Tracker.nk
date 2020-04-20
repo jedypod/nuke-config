@@ -1,0 +1,67 @@
+set cut_paste_input [stack 0]
+Group {
+name STMAP_to_tracker
+addUserKnob {20 User}
+addUserKnob {18 sample t "select stmap color"}
+sample {0.5 0.5 0}
+addUserKnob {6 sample_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+addUserKnob {7 blur t "blur the sample pixel"}
+blur 3
+addUserKnob {7 size t "range of the sampled values"}
+size 0.001
+}
+Input {
+inputs 0
+name Input
+xpos 228
+ypos -370
+}
+Expression {
+expr0 "r >= (sample.r-size)  && r <= (sample.r+size) ? 1 : 0"
+expr1 "g >= (sample.g-size)  && g <= (sample.g+size) ? 1 : 0"
+name Expression4
+xpos 228
+ypos -288
+addUserKnob {20 User}
+addUserKnob {7 size}
+size {{parent.size}}
+addUserKnob {18 sample}
+sample {{parent.sample.r} {parent.sample.g} {parent.sample.b}}
+addUserKnob {6 sample_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+}
+Expression {
+expr0 "r == 1 && g ==1 ? 1:0"
+name Expression5
+xpos 228
+ypos -250
+}
+Blur {
+channels rgb
+size {{parent.blur}}
+name Blur2
+xpos 228
+ypos -210
+}
+Shuffle {
+green red
+blue red
+alpha red
+name Shuffle2
+xpos 228
+ypos -170
+}
+Output {
+name Output1
+xpos 228
+ypos -128
+}
+end_group
+CurveTool {
+operation "Max Luma Pixel"
+ROI {0 0 1920 1012}
+autocropdata {480 253 1440 759}
+name CurveTool2
+selected true
+xpos 630
+ypos -850
+}

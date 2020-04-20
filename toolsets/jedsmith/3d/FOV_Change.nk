@@ -1,0 +1,294 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name FOV_Change
+ help "Given a camera and layout resolution, this tool will change the field of view of a camera, and modify the rotation curves of the camera to compensate. \n\nIf the fov is changed without adjusting the rotation curves of the camera, the matchmove will break. \n\nThis tool attempts to solve this problem by reconciling 2 points 1000 units from camera on the camera frustrum into 2d tracking data. The 2d tracking data is then used instead of the original camera's rotation curves, since it can be scaled directly. \n\nMake sure to set the reference frame somewhere in the center of your camera movement, otherwise it might break if there is a large camera movement."
+ addUserKnob {20 FOV_Change}
+ addUserKnob {41 rotate_cam t "This is a parent to the camera's rotation - use it to reframe the background." T FRAMER.rotate}
+ addUserKnob {41 fov_mult l expand_fov t "Adjust the FOV of the camera without breaking the animation curves.\n" T expand_fov_setup.expand_fov}
+ addUserKnob {7 fov_prev l INVISIBLE +INVISIBLE}
+ fov_prev 1
+ addUserKnob {3 ref_frame t "Refererence frame for the nodal track that is used if the fov expansion is not 1. This is the frame at which there will be no translation compared to the original camera position."}
+ ref_frame 1001
+ addUserKnob {26 warning_label l INVISIBLE +INVISIBLE T "switch this to match-move and make sure the translate is tracking if you have an expanded FOV"}
+ addUserKnob {22 setup_fov l "<font color=white><b>Setup Animation Curves</b>" T "## Setup overscan tracking code\nimport nuke\nfrom nukescripts import snap3d as sn\nimport math\n\ndef cameraProjectionMatrix(cameraNode, frame, imageformat):\n    wm = nuke.math.Matrix4()\n    for i in xrange(16):\n        wm\[i] = cameraNode\['matrix'].getValueAt(frame,i)\n    wm.transpose()\n    camTransform = wm.inverse()\n    roll = float(cameraNode\['winroll'].getValueAt(frame,0))\n    scale_x = float(cameraNode\['win_scale'].getValueAt(frame,0))\n    scale_y = float(cameraNode\['win_scale'].getValueAt(frame,1))\n    translate_x = float(cameraNode\['win_translate'].getValueAt(frame,0))\n    translate_y = float(cameraNode\['win_translate'].getValueAt(frame,1))\n    m = nuke.math.Matrix4()\n    m.makeIdentity()\n    m.rotateZ(math.radians(roll))\n    m.scale(1.0 / scale_x, 1.0 / scale_y, 1.0)\n    m.translate(-translate_x, -translate_y, 0.0)\n    focal_length = float(cameraNode\['focal'].getValueAt(frame))\n    h_aperture = float(cameraNode\['haperture'].getValueAt(frame))\n    near = float(cameraNode\['near'].getValueAt(frame))\n    far = float(cameraNode\['far'].getValueAt(frame))\n    projection_mode = int(cameraNode\['projection_mode'].getValueAt(frame))\n    p = nuke.math.Matrix4()\n    p.projection(focal_length / h_aperture, near, far, projection_mode == 0)\n    imageAspect = float(imageformat.height()) / float(imageformat.width())\n    t = nuke.math.Matrix4()\n    t.makeIdentity()\n    t.translate( 1.0, 1.0 - (1.0 - imageAspect / float(imageformat.pixelAspect())), 0.0 )\n    x_scale = float(imageformat.width()) / 2.0\n    y_scale = x_scale * imageformat.pixelAspect()\n    s = nuke.math.Matrix4()\n    s.makeIdentity()\n    s.scale(x_scale, y_scale, 1.0)\n    return s * t * p * m * camTransform\n\n\ndef projectPoints(frame, camera=None, point=None, imageformat=None):\n    if not imageformat:\n        imageformat = nuke.root()\['format'].value()\n    camMatrix = cameraProjectionMatrix(camera, frame, imageformat)\n    if camMatrix == None:\n        raise RuntimeError, \"snap3d.cameraProjectionMatrix() returned None for camera.\"\n    if not ( isinstance(point, list) or isinstance(point, tuple) ):\n        raise ValueError, \"Argument point must be a list or tuple.\"\n    for point in point:\n        if isinstance(point, nuke.math.Vector3):\n            pt = point\n        elif isinstance(point, list) or isinstance(point, tuple):\n            pt = nuke.math.Vector3(point\[0], point\[1], point\[2])\n        else:\n            raise ValueError, \"All items in point must be nuke.math.Vector3 or list/tuple of 3 floats.\"\n        tPos = camMatrix * nuke.math.Vector4(pt.x, pt.y, pt.z, 1.0)\n        try:\n            yield nuke.math.Vector2(tPos.x / tPos.w, tPos.y / tPos.w)\n        except ZeroDivisionError:\n            print \"Zero Division Error on frame \{0\} with point data \{1\}\".format(frame, point)\n            yield nuke.math.Vector2()\n\n\ndef get_world_pos(node):\n    if 'world_matrix' not in node.knobs():\n        raise NameError\n    mResult = nuke.math.Matrix4()\n    for i in range(0,16):\n        mResult\[i] = node\['world_matrix'].getValue()\[i]\n    mResult.transpose()\n    mTranslate = nuke.math.Matrix4(mResult)\n    mTranslate.translationOnly()\n    translate = \[mTranslate\[12], mTranslate\[13], mTranslate\[14]]\n\n    return translate\n\n\ndef calc():\n    thisnode = nuke.thisNode()\n    #thisnode = nuke.toNode('.'.join(thisnode.fullName().split('.')\[:-1]))\n    thisnode.begin()\n\n    node = nuke.toNode('InputLayout_Res')\n\n    cam_input = thisnode.input(0)\n    if not (cam_input and isinstance(cam_input, nuke.Node)):\n        print \"A Camera node must be connected.\"\n        return\n    if 'Camera' in cam_input.Class():\n        cam = cam_input\n    else:\n        cam = nuke.toNode(nuke.tcl(\"full_name \[topnode %s]\" % cam_input.name()))\n    \n    # Get world translate for each of our Axes position\n    axis_points = \[get_world_pos(nuke.toNode('SL_FRUSTRUM_EDGE')), get_world_pos(nuke.toNode('SR_FRUSTRUM_EDGE'))]\n\n    # Get Camera animation range\n    first = None\n    last = None\n    if cam\['translate'].isAnimated():        \n        for curve in cam\['translate'].animations():\n            if first == None:\n                first = int(curve.keys()\[0].x)\n            else:\n                first = min(first, int(curve.keys()\[0].x))\n        for curve in cam\['translate'].animations():\n            if last == None:\n                last = int(curve.keys()\[-1].x)\n            else:\n                last = max(last, int(curve.keys()\[-1].x))\n    else:\n        nuke.tprint(\"Input Camera is not animated.\")\n        first = nuke.root().firstFrame()\n        last = nuke.root().lastFrame()\n        \n    framerange = nuke.FrameRange('\{0\}-\{1\}'.format(first, last))\n\n    tracker = nuke.toNode('TRACK')\n\n    #nuke.root().begin()\n    #tracker = nuke.createNode('Tracker3')\n    #tracker.setXYpos(old_tracker.xpos(), old_tracker.ypos())\n    #nuke.delete(old_tracker)\n    #tracker.setName('TRACK')\n    #\[n.setSelected(False) for n in nuke.allNodes(recurseGroups=True)]\n    #tracker.setSelected(True)\n    #tracker\['reference_frame'].setExpression('parent.ref_frame')\n\n    for opnum in xrange(2):\n        opknob = tracker\['track\{0\}'.format(opnum+1)]\n        opknob.clearAnimated()\n        opknob.setAnimated()\n        tracker\['enable\{0\}'.format(opnum+1)].setValue(True)\n        tracker\['use_for\{0\}'.format(opnum+1)].setValue(3)\n\n        point_animcurve = \[\[], \[]]\n        for frame in framerange:\n            #print \"PROJECTING:\", axis_points\[opnum]\n            #print nuke.math.Vector3(axis_points\[opnum]\[0], axis_points\[opnum]\[1], axis_points\[opnum]\[2])\n            point = projectPoints(frame, cam, \[axis_points\[opnum]], node.format()).next()\n            for index in xrange(2):\n                point_animcurve\[index].append(nuke.AnimationKey(frame, point\[index]))\n\n        for index, curve in enumerate(opknob.animations()):\n            curve.addKey(point_animcurve\[index])\n\n    \n    tracker.setTab(2)\n    tracker.showControlPanel()\n    tracker\['use_for1'].setValue(1)\n    tracker\['use_for1'].setValue(3)\n    tracker\['transform'].setValue('none')\n    tracker\['transform'].setValue('match-move')\n    tracker.hideControlPanel()\n\n    # Return setup button to default\n    thisnode\['setup_fov'].setLabel('<font color=white><b>Setup Animation Curves</b>')\n    thisnode\['tile_color'].setValue(0)\n    thisnode\['label'].setValue('')\n\n    # Set fov_prev knob as to fov_mult knob, so knobchanged will not fire if there is no difference \n    thisnode\['fov_prev'].setValue(thisnode\['fov_mult'].getValue())\n\nif __name__ == '__main__':\n    calc()" +STARTLINE}
+ addUserKnob {20 fov_tracking n 1}
+ addUserKnob {41 use_for1 l "Use to calculate:" T TRACK.use_for1}
+ addUserKnob {41 track1 T TRACK.track1}
+ addUserKnob {41 use_for2 l "Use to calculate:" T TRACK.use_for2}
+ addUserKnob {41 track2 T TRACK.track2}
+ addUserKnob {26 ""}
+ addUserKnob {41 transform T TRACK.transform}
+ addUserKnob {41 translate T TRACK.translate}
+ addUserKnob {41 rotate T TRACK.rotate}
+ addUserKnob {41 center T TRACK.center}
+ addUserKnob {6 enable_cheat_cam l INVISIBLE t "For shots with lots of camera movement, sometimes the expand FOV method will break and cause lots of distortion.\n\nThis is an alternate method which pulls the camera back from its original position but keeps the same camera animation.\n\nIf this is on, the Expand FOV knob does nothing and the original camera animation is used. You can then adjust the Translate Z to pull back the camera.\n" +INVISIBLE +STARTLINE}
+ addUserKnob {41 translate_1 l INVISIBLE +INVISIBLE T CHEAT_OFFSET.translate}
+ addUserKnob {20 endGroup n -1}
+ addUserKnob {20 Info}
+ addUserKnob {26 information l " @b;" T "Purpose: \nGiven a camera and layout resolution, \nthis tool will change the field of view of a camera, \nand modify the rotation curves of the camera to compensate. \n\nIf the fov is changed without adjusting the rotation \ncurves of the camera, the matchmove will break. \n\nHow it works: \nThis tool attempts to solve this problem by \nreconciling 2 points 1000 units from camera on the \ncamera frustrum into 2d tracking data. The 2d tracking data\nis then used instead of the original camera's rotation curves, \nsince it can be scaled directly. \n\nMake sure to set the reference frame somewhere \nin the center of your camera movement,\notherwise it might break if there is a large camera movement.\n\nMAKE SURE TO CLICK THE SETUP ANIMATION CURVES BUTTON!\nIf the node is purple or the setup animation curves button is red, it needs to be re-calculated!"}
+}
+ Camera2 {
+  inputs 0
+  display off
+  xform_order {{"\[topnode input1].knob.xform_order"}}
+  rot_order {{"\[topnode input1].knob.rot_order"}}
+  translate {{"\[exists parent.input0] ? \[topnode this.parent.input0].translate : 0"} {"\[exists parent.input0] ? \[topnode this.parent.input0].translate : 0"} {"\[exists parent.input0] ? \[topnode this.parent.input0].translate : 0"}}
+  rotate {{"\[exists parent.input0] ? \[topnode this.parent.input0].rotate : 0"} {"\[exists parent.input0] ? \[topnode this.parent.input0].rotate : 0"} {"\[exists parent.input0] ? \[topnode this.parent.input0].rotate : 0"}}
+  scaling {{"\[exists parent.input0] ? \[topnode this.parent.input0].scaling : 0"} {"\[exists parent.input0] ? \[topnode this.parent.input0].scaling : 0"} {"\[exists parent.input0] ? \[topnode this.parent.input0].scaling : 0"}}
+  uniform_scale {{"\[exists parent.input0] ? \[topnode this.parent.input0].uniform_scale : 0"}}
+  skew {{"\[exists parent.input0] ? \[topnode this.parent.input0].skew : 0"} {"\[exists parent.input0] ? \[topnode this.parent.input0].skew : 0"} {"\[exists parent.input0] ? \[topnode this.parent.input0].skew : 0"}}
+  pivot {{"\[exists parent.input0] ? \[topnode this.parent.input0].pivot : 0"} {"\[exists parent.input0] ? \[topnode this.parent.input0].pivot : 0"} {"\[exists parent.input0] ? \[topnode this.parent.input0].pivot : 0"}}
+  projection_mode {{"\[topnode input1].knob.projection_mode"}}
+  focal {{"\[exists parent.input0] ? \[topnode this.parent.input0].focal : 0"}}
+  haperture {{"\[exists parent.input0] ? \[topnode this.parent.input0].haperture : 0"}}
+  vaperture {{"\[exists parent.input0] ? \[topnode this.parent.input0].vaperture : 0"}}
+  far 900000
+  name CAM_ORIG
+  xpos -690
+  ypos -270
+ }
+ Dot {
+  name Dot5
+  label " "
+  note_font "Helvetica Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos -666
+  ypos -54
+ }
+set N8c28db0 [stack 0]
+ Dot {
+  name Dot11
+  label " "
+  note_font "Helvetica Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos -776
+  ypos -54
+ }
+ FrameHold {
+  first_frame {{parent.ref_frame}}
+  name REF_FRAME
+  xpos -810
+  ypos 224
+  addUserKnob {20 Set}
+  addUserKnob {22 Set_BTN l "Set To Current Frame" -STARTLINE T "fh = nuke.thisNode()\nfh.knob('first_frame').setValue(nuke.frame())"}
+ }
+ Dot {
+  name Dot6
+  label " "
+  note_font "Helvetica Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos -776
+  ypos 498
+ }
+set Nb9fae60 [stack 0]
+ Dot {
+  name Dot10
+  label " "
+  note_font "Helvetica Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos -556
+  ypos 498
+ }
+set Nb9ef5c0 [stack 0]
+ Dot {
+  name Dot7
+  label " "
+  note_font "Helvetica Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos -336
+  ypos 498
+ }
+ Axis2 {
+  translate {{-parent.SL_FRUSTRUM_EDGE.translate.x} 0 {-parent.CAM_WIN_SCALE.distance}}
+  name SR_FRUSTRUM_EDGE
+  xpos -360
+  ypos 546
+ }
+push $Nb9fae60
+ Axis2 {
+  translate {{parent.CAM_WIN_SCALE.width_at_distance} 0 {-parent.CAM_WIN_SCALE.distance}}
+  name SL_FRUSTRUM_EDGE
+  xpos -800
+  ypos 546
+ }
+ Input {
+  inputs 0
+  name InputCG_Res
+  label "\[value number]"
+  xpos 290
+  ypos -208
+  number 1
+ }
+ Tracker3 {
+  use_for1 {T R}
+  track1 {{curve x1001 2186.443115 2184.870361 2183.294678 2182.08374 2180.840332 2179.684082 2178.552979 2177.173096 2175.898193 2174.711426 2173.809326 2172.916016 2171.83374 2170.643555 2169.283691 2168.083008 2166.803467 2165.642578 2164.830566 2163.960693 2162.52002 2160.680908 2158.860107 2157.221924 2155.553955 2153.359375 2151.110352 2149.235352 2147.628906 2145.892334 2143.86792 2142.168945 2140.751953 2139.47168 2138.353271 2137.58252 2137.221924 2136.983887 2136.72168 2136.641357 2136.717529 2136.579102 2136.448975 2136.293213 2136.571777 2136.921387 2136.570312 2136.524658 2136.795898 2137.056152 2136.949951 2136.771729 2136.748291 2137.007568 2137.049072 2136.999268 2137.029297 2137.214355 2137.289307 2137.159668 2137.232422 2137.490234 2137.607178 2137.550293 2137.234863 2136.819336 2136.428223 2136.029053 2135.440674 2134.782227 2134.457275 2134.000244} {curve x1001 628.2095947 627.2410889 626.0523071 624.8387451 623.8912354 623.1595459 621.8613281 620.6724243 619.5738525 618.6989746 618.2186279 618.0400391 617.758667 617.289917 616.8809814 616.5164185 616.0309448 615.4456177 614.5981445 613.7235718 613.0220947 612.1744385 611.4272461 610.7287598 610.1710815 609.78302 609.1845093 608.1928711 607.0001221 605.5810547 604.3986816 603.0656738 602.2183838 601.5036011 600.6951904 599.5546265 598.555542 597.7489014 596.8927002 596.477356 596.0790405 595.4796143 594.6881714 594.100769 593.9902344 593.9651489 593.1109619 591.9805298 590.8842163 590.0875854 589.4381104 588.6603394 587.6867676 586.5234375 585.5515137 584.9418335 583.9624023 583.0388794 582.2632446 581.975708 581.9291992 581.7359009 581.4937134 581.3775635 580.9077759 580.4784546 579.9224243 579.2513428 578.531311 577.913147 577.526062 577}}
+  offset1 {0 0}
+  pattern1 {-44 -88 44 88}
+  search1 {-31 -62 31 62}
+  enable2 true
+  use_for2 {T R}
+  track2 {{curve x1001 76.6228714 74.8152771 73.00311279 71.53940582 70.03324127 68.60381317 67.19953918 65.54607391 63.98672867 62.50368881 61.28846741 60.0748024 58.6760025 57.17313766 55.50126648 53.98336029 52.38670349 50.90504456 49.76696014 48.57093811 46.81159973 44.66078949 42.52451324 40.56415939 38.56931686 36.05039215 33.47740555 31.27470207 29.3360405 27.26610565 24.90377617 22.86105537 21.09072304 19.45243263 17.97395325 16.84174347 16.11392212 15.50539398 14.87314034 14.41915989 14.12145615 13.61365414 13.11567211 12.5935297 12.5037508 12.48593712 11.77633858 11.37440395 11.28943157 11.19225502 10.72990894 10.19536972 9.814771652 9.715236664 9.394827843 8.977000237 8.637976646 8.453645706 8.159815788 7.661166668 7.362010002 7.245123386 6.986646175 6.553393364 5.861200333 5.069308281 4.302094936 3.527387142 2.564395428 1.53068924 0.8308374882 6.250000297e-05} {curve x1001 636.6571655 635.7880249 634.6647949 633.3059692 632.5379028 631.6964722 630.7349854 629.4016113 628.2261963 627.3961182 627.0402222 626.875061 626.4799805 625.7902222 625.3776245 624.9002686 624.4354248 623.8036499 623.0131226 621.9648438 620.9834595 619.824585 618.8381348 617.9492188 617.190918 616.4396362 615.5177612 614.4235229 613.2064819 611.6318359 610.1208496 608.510437 607.4702148 606.5869751 605.3613892 604.0969849 603.0691528 602.2084351 601.2046509 600.6520996 600.1494141 599.4302979 598.4501953 597.7301025 597.5166016 597.4436646 596.5765381 595.1382446 593.9300537 593.2205811 592.5066528 591.5473633 590.5350952 589.2538452 588.2605591 587.4008789 586.2457886 585.1210938 584.1925049 583.666687 583.2710571 582.9501953 582.6616211 582.3000488 581.9067993 581.1433716 580.2589111 579.4415894 578.5497437 577.8040771 577.4242554 577}}
+  offset2 {0 0}
+  pattern2 {-44 -88 44 88}
+  search2 {-31 -62 31 62}
+  track3 {1568 1369}
+  offset3 {0 0}
+  pattern3 {-44 -88 44 88}
+  search3 {-31 -62 31 62}
+  track4 {1284 1369}
+  offset4 {0 0}
+  pattern4 {-44 -88 44 88}
+  search4 {-31 -62 31 62}
+  transform match-move
+  reference_frame {{parent.ref_frame}}
+  translate {{curve x1001 0 -1.690185547 -3.384033203 -4.721435547 -6.096191406 -7.389038086 -8.656738281 -10.17333984 -11.5904541 -12.92541504 -13.98400879 -15.03759766 -16.27807617 -17.62463379 -19.14050293 -20.49975586 -21.93786621 -23.25915527 -24.23425293 -25.26708984 -26.8671875 -28.86206055 -30.84069824 -32.63989258 -34.47131348 -36.828125 -39.23913574 -41.2779541 -43.05053711 -44.95373535 -47.14709473 -49.01794434 -50.61157227 -52.07092285 -53.36938477 -54.32080078 -54.86499023 -55.28833008 -55.7355957 -56.00268555 -56.11352539 -56.43652344 -56.75061035 -57.08959961 -56.99523926 -56.8293457 -57.35961914 -57.58337402 -57.49023438 -57.40881348 -57.69299316 -58.04943848 -58.25146484 -58.17150879 -58.31103516 -58.5447998 -58.69934082 -58.69897461 -58.80834961 -59.12255859 -59.23571777 -59.1652832 -59.23608398 -59.4810791 -59.98498535 -60.58862305 -61.16784668 -61.75476074 -62.53039551 -63.37646484 -63.88891602 -64.53283691} {curve x1001 0 -0.9188232422 -2.074829102 -3.360961914 -4.21875 -5.005371094 -6.135192871 -7.396362305 -8.533325195 -9.385803223 -9.803955078 -9.975830078 -10.31402588 -10.89331055 -11.30407715 -11.72497559 -12.20019531 -12.80871582 -13.62768555 -14.58911133 -15.43054199 -16.43383789 -17.30065918 -18.09436035 -18.75231934 -19.32202148 -20.08221436 -21.12512207 -22.33007812 -23.8269043 -25.17358398 -26.64526367 -27.58905029 -28.38806152 -29.4050293 -30.60754395 -31.62097168 -32.45471191 -33.38464355 -33.86865234 -34.3190918 -34.97839355 -35.86413574 -36.51794434 -36.67993164 -36.72894287 -37.58959961 -38.8739624 -40.02624512 -40.77929688 -41.4609375 -42.32946777 -43.3223877 -44.54467773 -45.52734375 -46.26196289 -47.32922363 -48.35339355 -49.20544434 -49.61218262 -49.83325195 -50.09033203 -50.35571289 -50.59454346 -51.02606201 -51.62243652 -52.34265137 -53.08691406 -53.89282227 -54.57470703 -54.95819092 -55.43334961}}
+  rotate {{curve x1001 0 -0.002672560296 -0.004426295734 -0.0004548417893 -0.005296917289 -0.002288190921 -0.0113959193 -0.007444786368 -0.005328190167 -0.006510482369 -0.009850825606 -0.01017866371 -0.007059774042 -0.001033389391 -0.0009001098883 0.002191267987 0.001666354619 0.00295931334 0.001451611551 0.006191555251 0.01380527107 0.0222638098 0.02877205978 0.03395726356 0.0394171939 0.04927518658 0.05805177608 0.06085383738 0.06153730445 0.06577113682 0.07468270383 0.08220741808 0.08744700318 0.09202367942 0.1033196383 0.1066868954 0.1074846803 0.1089664567 0.1129725796 0.1166973807 0.1195345145 0.1227838728 0.1278931063 0.1314904951 0.1342849382 0.1355919321 0.1359566661 0.1442725306 0.1473026011 0.1449673268 0.1467183041 0.1516227598 0.152678242 0.1558671766 0.1564549548 0.1631986465 0.1679388311 0.1733640645 0.1774898132 0.183909936 0.1933096274 0.1967469463 0.1980001264 0.2046042954 0.2025511894 0.2115358119 0.2203647457 0.2242954923 0.228911888 0.2323364532 0.232140907 0.2294070254}}
+  center {{curve x1001 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959 1131.532959} {curve x1001 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496 632.4333496}}
+  shutteroffset centred
+  name TRACK
+  xpos 70
+  ypos -202
+ }
+ Input {
+  inputs 0
+  name InputCamera
+  label "\[value number]"
+  xpos 510
+  ypos -208
+ }
+push $Nb9ef5c0
+ Dot {
+  name expand_fov_setup
+  knobChanged "\nn = nuke.thisNode()\nk = nuke.thisKnob()\n\nif k.name() == 'expand_fov':\n    thisnode = nuke.toNode('.'.join(n.fullName().split('.')\[:-1]))\n    if thisnode\['fov_prev'].getValue() != thisnode\['fov_mult'].getValue():\n        thisnode\['setup_fov'].setLabel('<font color=red><b>Setup Animation Curves - CLICK ME NOW!</b>')\n        thisnode\['tile_color'].setValue(4278250495)\n        thisnode\['label'].setValue('<font color=red size=12><b>SETUP ANIMATION CURVES!')\n"
+  tile_color 0xff0000ff
+  label "KNOBCHANGED FOR EXPAND_FOV "
+  note_font "Helvetica Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos -556
+  ypos 666
+  addUserKnob {20 User}
+  addUserKnob {7 expand_fov R 0 4}
+  expand_fov 1
+ }
+ Axis2 {
+  inputs 0
+  rot_order XYZ
+  rotate {{"-1*TRACK.translate.y/CAM_WIN_SCALE.inheight * CAM_WIN_SCALE.os_vfov"} {(TRACK.translate.x/CAM_WIN_SCALE.inwidth*CAM_WIN_SCALE.os_fov)} {-parent.CAM_WIN_SCALE.rot}}
+  name CHEAT_OFFSET
+  xpos 190
+  ypos -102
+ }
+ Camera2 {
+  inputs 0
+  xform_order {{"\[topnode input1].knob.xform_order"}}
+  rot_order {{"\[topnode input1].knob.rot_order"}}
+  projection_mode {{"\[topnode input1].knob.projection_mode"}}
+  focal {{parent.CAM_ORIG.focal}}
+  haperture {{parent.CAM_ORIG.haperture}}
+  vaperture {{"\[topnode this.parent.input0].vaperture"}}
+  near {{"\[topnode this.parent.input0].near"}}
+  far 900000
+  win_translate {{"-1 * xform.x / inwidth * inpar * win_scale.u"} {"-1 * xform.y / inwidth *  win_scale.u"}}
+  win_scale {{parent.fov_mult} {win_scale.u}}
+  name CAM_WIN_SCALE
+  xpos 80
+  ypos -102
+  addUserKnob {20 FOV}
+  addUserKnob {7 fov t "camera field of view in degrees" R 1 180}
+  fov {{"(atan2(haperture/2, focal)*2)*180/3.14159265359"}}
+  addUserKnob {7 vfov R 0 180}
+  vfov {{fov/(inwidth*inpar/inheight)}}
+  addUserKnob {26 ""}
+  addUserKnob {7 os_fov R 0 180}
+  os_fov {{"(atan2(((haperture*parent.fov_mult)/2), focal)*2)*180/3.14159265359"}}
+  addUserKnob {7 os_vfov R 0 180}
+  os_vfov {{"(atan2(((vaperture*parent.fov_mult / inpar )/2), focal)*2)*180/3.14159265359"}}
+  addUserKnob {7 fov_rad t "camera field of view in radians" R 0 10}
+  fov_rad {{"(atan2(haperture/2, focal)*2)"}}
+  addUserKnob {7 distance R 0 10000}
+  distance 1000
+  addUserKnob {7 width_at_distance t "width of the camera frustrum at a specified distance" R 0 10000}
+  width_at_distance {{"distance * tan(fov_rad/2)"}}
+  addUserKnob {7 os_width_at_distance R 0 9000}
+  os_width_at_distance {{"distance * tan(fov_rad*parent.expand_fov/2)"}}
+  addUserKnob {26 ""}
+  addUserKnob {3 inwidth}
+  inwidth {{"\[exists parent.input1] ? \[topnode this.parent.input1].width : 0"}}
+  addUserKnob {3 inheight}
+  inheight {{"\[exists parent.input1] ? \[topnode this.parent.input1].height : 0"}}
+  addUserKnob {7 inpar R 0 2}
+  inpar {{"\[exists parent.input1] ? \[topnode this.parent.input1].pixel_aspect : 0"}}
+  addUserKnob {7 unitpx_x}
+  unitpx_x {{"-1*haperture / inwidth"}}
+  addUserKnob {7 unitpx_y}
+  unitpx_y {{"-1 * vaperture / inwidth"}}
+  addUserKnob {12 xform}
+  xform {{parent.TRACK.translate} {parent.TRACK.translate}}
+  addUserKnob {7 rot R -180 180}
+  rot {{parent.TRACK.rotate}}
+ }
+push $N8c28db0
+ Camera2 {
+  inputs 0
+  xform_order {{"\[topnode input1].knob.xform_order"}}
+  rot_order {{"\[topnode input1].knob.rot_order"}}
+  translate {{parent.CAM_ORIG.translate} {parent.CAM_ORIG.translate} {parent.CAM_ORIG.translate}}
+  rotate {{parent.CAM_ORIG.rotate(parent.ref_frame)} {parent.CAM_ORIG.rotate(parent.ref_frame)} {parent.CAM_ORIG.rotate(parent.ref_frame)}}
+  scaling {{parent.CAM_ORIG.scaling} {parent.CAM_ORIG.scaling} {parent.CAM_ORIG.scaling}}
+  uniform_scale {{"\[topnode this.parent.input0].uniform_scale"}}
+  skew {{parent.CAM_ORIG.skew} {parent.CAM_ORIG.skew} {parent.CAM_ORIG.skew}}
+  pivot {{parent.CAM_ORIG.pivot} {parent.CAM_ORIG.pivot} {parent.CAM_ORIG.pivot}}
+  projection_mode {{"\[topnode input1].knob.projection_mode"}}
+  focal {{parent.CAM_ORIG.focal}}
+  haperture {{parent.CAM_ORIG.haperture}}
+  vaperture {{parent.CAM_ORIG.vaperture}}
+  far 900000
+  name CAM_FOV_CHEAT
+  xpos -250
+  ypos -486
+ }
+ Axis2 {
+  rot_order XYZ
+  rotate {{"-1*TRACK.translate.y/CAM_WIN_SCALE.inheight * CAM_WIN_SCALE.os_vfov"} {(TRACK.translate.x/CAM_WIN_SCALE.inwidth*CAM_WIN_SCALE.os_fov)} {-parent.CAM_WIN_SCALE.rot}}
+  name CHEAT_ROT
+  xpos -250
+  ypos -414
+ }
+ Axis2 {
+  name FRAMER
+  xpos -250
+  ypos -318
+ }
+ Camera2 {
+  xform_order {{"\[topnode input1].knob.xform_order"}}
+  rot_order {{"\[topnode input1].knob.rot_order"}}
+  projection_mode {{"\[topnode input1].knob.projection_mode"}}
+  focal {{"\[exists parent.input0] ? \[topnode this.parent.input0].focal : 0"}}
+  haperture {{"\[exists parent.input0] ? \[topnode this.parent.input0].haperture : 0"}}
+  vaperture {{"\[exists parent.input0] ? \[topnode this.parent.input0].vaperture : 0"}}
+  far 900000
+  win_scale {{parent.fov_mult} {parent.fov_mult}}
+  name CAM_CHEAT
+  xpos -250
+  ypos -222
+ }
+ Switch {
+  inputs 2
+  which {{"parent.fov_mult == 1"}}
+  name FOVSCALE_SWITCH
+  xpos -260
+  ypos -58
+ }
+ Output {
+  name Output1
+  xpos -260
+  ypos 1046
+ }
+end_group

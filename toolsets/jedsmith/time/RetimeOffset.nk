@@ -1,0 +1,31 @@
+Group {
+ name RetimeOffset
+ tile_color 0xa2935eff
+ label "\[value input] to \[value output]"
+ addUserKnob {20 RetimeOffset}
+ addUserKnob {3 input}
+ input 1001
+ addUserKnob {3 output}
+ output 1001
+ addUserKnob {41 reverse_input l "reverse input" T TimeOffset.reverse_input}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos 400
+  ypos 590
+ }
+ TimeOffset {
+  time_offset {{"parent.output - parent.input"}}
+  time ""
+  name TimeOffset
+  label "\[value time_offset]"
+  xpos 400
+  ypos 656
+ }
+ Output {
+  name Output
+  xpos 400
+  ypos 758
+ }
+end_group

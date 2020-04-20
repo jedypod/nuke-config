@@ -1,0 +1,322 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+add_layer {other other.dataAlpha}
+Group {
+ name PremultLayers
+ addUserKnob {20 PremultLayers}
+ addUserKnob {4 mode M {Premultiply Unpremultiply}}
+ addUserKnob {26 ""}
+ addUserKnob {41 channels l multiply T Premult1.channels}
+ addUserKnob {41 channels_1 l multiply T Premult0.channels}
+ addUserKnob {41 channels_2 l multiply T Premult2.channels}
+ addUserKnob {41 channels_3 l multiply T Premult3.channels}
+ addUserKnob {41 channels_4 l multiply T Premult4.channels}
+ addUserKnob {41 channels_5 l multiply T Premult5.channels}
+ addUserKnob {41 channels_6 l multiply T Premult6.channels}
+ addUserKnob {41 channels_7 l multiply T Premult7.channels}
+ addUserKnob {41 channels_8 l multiply T Premult8.channels}
+ addUserKnob {41 channels_9 l multiply T Premult9.channels}
+ addUserKnob {41 channels_10 l multiply T Premult10.channels}
+ addUserKnob {41 channels_11 l multiply T Premult11.channels}
+ addUserKnob {41 channels_12 l multiply T Premult12.channels}
+ addUserKnob {41 channels_13 l multiply T Premult13.channels}
+ addUserKnob {41 channels_14 l multiply T Premult14.channels}
+ addUserKnob {41 channels_15 l multiply T Premult15.channels}
+ addUserKnob {41 channels_16 l multiply T Premult16.channels}
+ addUserKnob {41 channels_17 l multiply T Premult17.channels}
+ addUserKnob {26 ""}
+ addUserKnob {41 alpha l by T Premult0.alpha}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos 228
+  ypos 230
+ }
+ Dot {
+  name Dot1
+  label " "
+  note_font "Helvetica Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos 262
+  ypos 314
+ }
+set N19c11080 [stack 0]
+ Dot {
+  name Dot2
+  label " "
+  note_font "Helvetica Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos 396
+  ypos 314
+ }
+ Unpremult {
+  channels {{{parent.Premult0.channels}}}
+  alpha {{{parent.Premult0.alpha}}}
+  name Unpremult1
+  xpos 362
+  ypos 344
+ }
+ Unpremult {
+  channels {{{parent.Premult1.channels}}}
+  alpha {{{parent.Premult1.alpha}}}
+  name Unpremult2
+  xpos 362
+  ypos 384
+ }
+ Unpremult {
+  channels {{{parent.Premult2.channels}}}
+  alpha {{{parent.Premult2.alpha}}}
+  name Unpremult3
+  xpos 362
+  ypos 424
+ }
+ Unpremult {
+  channels {{{parent.Premult3.channels}}}
+  alpha {{{parent.Premult3.alpha}}}
+  name Unpremult4
+  xpos 362
+  ypos 464
+ }
+ Unpremult {
+  channels {{{parent.Premult4.channels}}}
+  alpha {{{parent.Premult4.alpha}}}
+  name Unpremult5
+  xpos 362
+  ypos 504
+ }
+ Unpremult {
+  channels {{{parent.Premult5.channels}}}
+  alpha {{{parent.Premult5.alpha}}}
+  name Unpremult6
+  xpos 362
+  ypos 544
+ }
+ Unpremult {
+  channels {{{parent.Premult6.channels}}}
+  alpha {{{parent.Premult6.alpha}}}
+  name Unpremult7
+  xpos 362
+  ypos 584
+ }
+ Unpremult {
+  channels {{{parent.Premult7.channels}}}
+  alpha {{{parent.Premult7.alpha}}}
+  name Unpremult8
+  xpos 362
+  ypos 624
+ }
+ Unpremult {
+  channels {{{parent.Premult8.channels}}}
+  alpha {{{parent.Premult8.alpha}}}
+  name Unpremult9
+  xpos 362
+  ypos 664
+ }
+ Unpremult {
+  channels {{{parent.Premult9.channels}}}
+  alpha {{{parent.Premult9.alpha}}}
+  name Unpremult10
+  xpos 362
+  ypos 704
+ }
+ Unpremult {
+  channels {{{parent.Premult11.channels}}}
+  alpha {{{parent.Premult11.alpha}}}
+  name Unpremult11
+  xpos 362
+  ypos 744
+ }
+ Unpremult {
+  channels {{{parent.Premult12.channels}}}
+  alpha {{{parent.Premult12.alpha}}}
+  name Unpremult12
+  xpos 362
+  ypos 784
+ }
+ Unpremult {
+  channels {{{parent.Premult13.channels}}}
+  alpha {{{parent.Premult13.alpha}}}
+  name Unpremult13
+  xpos 362
+  ypos 824
+ }
+ Unpremult {
+  channels {{{parent.Premult14.channels}}}
+  alpha {{{parent.Premult14.alpha}}}
+  name Unpremult14
+  xpos 362
+  ypos 864
+ }
+ Unpremult {
+  channels {{{parent.Premult15.channels}}}
+  alpha {{{parent.Premult15.alpha}}}
+  name Unpremult15
+  xpos 362
+  ypos 904
+ }
+ Unpremult {
+  channels {{{parent.Premult16.channels}}}
+  alpha {{{parent.Premult16.alpha}}}
+  name Unpremult16
+  xpos 362
+  ypos 944
+ }
+ Unpremult {
+  channels {{{parent.Premult17.channels}}}
+  alpha {{{parent.Premult17.alpha}}}
+  name Unpremult17
+  xpos 362
+  ypos 984
+ }
+ Dot {
+  name Dot3
+  label " "
+  note_font "Helvetica Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos 396
+  ypos 1074
+ }
+push $N19c11080
+ Premult {
+  channels none
+  alpha other.dataAlpha
+  name Premult0
+  xpos 228
+  ypos 344
+ }
+ Premult {
+  channels none
+  alpha {{{parent.Premult0.alpha}}}
+  name Premult1
+  xpos 228
+  ypos 384
+ }
+ Premult {
+  channels none
+  alpha {{{parent.Premult0.alpha}}}
+  name Premult2
+  xpos 228
+  ypos 424
+ }
+ Premult {
+  channels none
+  alpha {{{parent.Premult0.alpha}}}
+  name Premult3
+  xpos 228
+  ypos 464
+ }
+ Premult {
+  channels none
+  alpha {{{parent.Premult0.alpha}}}
+  name Premult4
+  xpos 228
+  ypos 504
+ }
+ Premult {
+  channels none
+  alpha {{{parent.Premult0.alpha}}}
+  name Premult5
+  xpos 228
+  ypos 544
+ }
+ Premult {
+  channels none
+  alpha {{{parent.Premult0.alpha}}}
+  name Premult6
+  xpos 228
+  ypos 584
+ }
+ Premult {
+  channels none
+  alpha {{{parent.Premult0.alpha}}}
+  name Premult7
+  xpos 228
+  ypos 624
+ }
+ Premult {
+  channels none
+  alpha {{{parent.Premult0.alpha}}}
+  name Premult8
+  xpos 228
+  ypos 664
+ }
+ Premult {
+  channels none
+  alpha {{{parent.Premult0.alpha}}}
+  name Premult9
+  xpos 228
+  ypos 704
+ }
+ Premult {
+  channels none
+  alpha {{{parent.Premult0.alpha}}}
+  name Premult10
+  xpos 228
+  ypos 744
+ }
+ Premult {
+  channels none
+  alpha {{{parent.Premult0.alpha}}}
+  name Premult11
+  xpos 228
+  ypos 744
+ }
+ Premult {
+  channels none
+  alpha {{{parent.Premult0.alpha}}}
+  name Premult12
+  xpos 228
+  ypos 784
+ }
+ Premult {
+  channels none
+  alpha {{{parent.Premult0.alpha}}}
+  name Premult13
+  xpos 228
+  ypos 824
+ }
+ Premult {
+  channels none
+  alpha {{{parent.Premult0.alpha}}}
+  name Premult14
+  xpos 228
+  ypos 864
+ }
+ Premult {
+  channels none
+  alpha {{{parent.Premult0.alpha}}}
+  name Premult15
+  xpos 228
+  ypos 904
+ }
+ Premult {
+  channels none
+  alpha {{{parent.Premult0.alpha}}}
+  name Premult16
+  xpos 228
+  ypos 944
+ }
+ Premult {
+  channels none
+  alpha {{{parent.Premult0.alpha}}}
+  name Premult17
+  xpos 228
+  ypos 984
+ }
+ Switch {
+  inputs 2
+  which {{parent.mode}}
+  name _MODE_
+  xpos 228
+  ypos 1070
+ }
+ Output {
+  name Output1
+  xpos 228
+  ypos 1190
+ }
+end_group

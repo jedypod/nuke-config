@@ -1,0 +1,751 @@
+Group {
+ name Flow
+ inputs 3
+ addUserKnob {20 User}
+ addUserKnob {3 start l Start}
+ start 1
+ addUserKnob {3 end l End -STARTLINE}
+ end 100
+ addUserKnob {6 extend_existing l "Extend Existing" t "If enabled, simulation will continue from the end of any existing renders." -STARTLINE}
+ addUserKnob {2 cache l "Cache Files" t "Location to save simulation -- must be exr format"}
+ addUserKnob {41 reload -STARTLINE T CACHE.reload}
+ addUserKnob {22 simulate l Simulate! t "Runs the simulation for the given frame range." T flow.simulate() +STARTLINE}
+ addUserKnob {26 ""}
+ addUserKnob {6 colour_flow l "Use Colour" t "If checked, simulation will blend colours (Note: This will assume an instant blend for the entire column!)\nOtherwise, only the alpha (height) will be used." +STARTLINE}
+ addUserKnob {7 flow_rate l "Flow Rate" t "Adjusts the speed of the water transfer between pixels."}
+ flow_rate 0.8
+ addUserKnob {7 flow_rate_div l INVISIBLE t "The flow rate is the amount of the height difference in pixels to allow out per direction - in a single frame, the water cannot reduce more than the height difference as long as this is below 1 / 8. When combined with the previous flow rate, it can greatly increase." +INVISIBLE}
+ flow_rate_div {{"flow_rate / 8"}}
+}
+ BackdropNode {
+  inputs 0
+  name BackdropNode1
+  tile_color 0x789eb5ff
+  label Colour
+  note_font_size 42
+  xpos -250
+  ypos 916
+  bdwidth 468
+  bdheight 704
+ }
+ Read {
+  inputs 0
+  file "\[value parent.cache]"
+  format "1440 810 0 0 1440 810 1 \"3/4 HD\""
+  first {{start}}
+  last {{end}}
+  origset true
+  on_error "nearest frame"
+  version 40192
+  name CACHE
+  label "DO NOT RENAME"
+  xpos 1030
+  ypos -1118
+ }
+set N3a51800 [stack 0]
+ Dot {
+  name Dot69
+  xpos 1064
+  ypos -975
+ }
+set N3a51400 [stack 0]
+ Dot {
+  name Dot2
+  note_font_size 20
+  xpos 1225
+  ypos -975
+ }
+ Output {
+  name Output1
+  xpos 1191
+  ypos 2666
+ }
+ StickyNote {
+  inputs 0
+  name StickyNote1
+  label "    Add water to existing water,\nie, source + drain,\n         make sure no negative water       "
+  xpos 861
+  ypos -450
+ }
+ StickyNote {
+  inputs 0
+  name Formula
+  label "                max(0, Flux(t) + timestep * pipe_cross_section * gravity * height_difference / pipe_length)                "
+  note_font_size 20
+  xpos -1126
+  ypos 260
+ }
+ StickyNote {
+  inputs 0
+  name StickyNote2
+  label "                min(1, height * column_cross_section / (sum(outflow) * timestep))                "
+  note_font_size 20
+  xpos -402
+  ypos 662
+ }
+ Input {
+  inputs 0
+  name InputTerrain
+  xpos -732
+  ypos -1197
+ }
+push $N3a51400
+ FrameHold {
+  first_frame {{frame-1}}
+  name FrameHold4
+  xpos 1030
+  ypos -806
+ }
+set N3a6e480 [stack 0]
+ Dot {
+  name Dot15
+  note_font_size 20
+  xpos 1064
+  ypos -583
+ }
+ Input {
+  inputs 0
+  name InputWater
+  xpos 750
+  ypos -1197
+  number 1
+ }
+ Dot {
+  name Dot73
+  note_font_size 20
+  xpos 784
+  ypos -973
+ }
+set N3ab1c00 [stack 0]
+ Switch {
+  inputs 2
+  which {{"start != frame"}}
+  name Switch_Sim
+  xpos 750
+  ypos -587
+ }
+set N3ab1800 [stack 0]
+ Input {
+  inputs 0
+  name InputSource
+  xpos 452
+  ypos -1197
+  number 2
+ }
+ Dot {
+  name Dot17
+  xpos 486
+  ypos -710
+ }
+set N3ab1000 [stack 0]
+ Dot {
+  name Dot30
+  xpos 602
+  ypos -710
+ }
+ MergeExpression {
+  inputs 2
+  temp_name0 total_alpha
+  temp_expr0 "Aa + Ba"
+  temp_name1 col_r
+  temp_expr1 "(Br * Ba + Ar * Aa) / total_alpha"
+  temp_name2 col_g
+  temp_expr2 "(Bg * Ba + Ag * Aa) / total_alpha"
+  temp_name3 col_b
+  temp_expr3 "(Bb * Ba + Ab * Aa) / total_alpha"
+  expr0 "isnan(col_r) ? 0 : col_r"
+  expr1 "isnan(col_g) ? 0 : col_g"
+  expr2 "isnan(col_b) ? 0 : col_b"
+  expr3 total_alpha
+  name BLEND_COL
+  xpos 568
+  ypos -587
+ }
+ Dot {
+  name Dot1
+  xpos 602
+  ypos -476
+ }
+push $N3ab1000
+ Shuffle {
+  in alpha
+  name STRIP_COL
+  xpos 452
+  ypos -587
+ }
+ Dot {
+  name Dot3
+  xpos 486
+  ypos -530
+ }
+push $N3ab1800
+ Merge2 {
+  inputs 2
+  operation plus
+  bbox B
+  name Merge2
+  xpos 750
+  ypos -534
+ }
+ Switch {
+  inputs 2
+  which {{parent.colour_flow}}
+  name Switch_Colour
+  xpos 750
+  ypos -480
+ }
+ Clamp {
+  channels rgba
+  maximum 1.#INF
+  name Clamp1
+  label "No negative water column"
+  xpos 750
+  ypos -437
+ }
+ Dot {
+  name Dot16
+  xpos 784
+  ypos -363
+ }
+set N31152800 [stack 0]
+ Dot {
+  name Dot13
+  xpos 374
+  ypos -363
+ }
+ Shuffle {
+  in alpha
+  name Water_Height
+  label "Water height only"
+  xpos 340
+  ypos -318
+ }
+ Dot {
+  name Dot11
+  xpos 374
+  ypos -248
+ }
+set N31183c00 [stack 0]
+ Merge2 {
+  inputs 2
+  operation plus
+  bbox B
+  name TOTAL_HEIGHT
+  xpos -732
+  ypos -252
+ }
+ Dot {
+  name Dot59
+  xpos -698
+  ypos -128
+ }
+set N31183400 [stack 0]
+ Dot {
+  name Dot63
+  xpos -922
+  ypos -128
+ }
+ Expression {
+  expr0 "(r - r(x-1, y)) * flow_rate_div"
+  expr1 "(g - g(x, y+1)) * flow_rate_div"
+  expr2 "(b - b(x+1, y)) * flow_rate_div"
+  expr3 "(a - a(x, y-1)) * flow_rate_div"
+  name CROSS
+  label "Height difference / pipe length"
+  xpos -956
+  ypos -61
+ }
+push $N3a6e480
+ Dot {
+  name Dot65
+  note_font_size 20
+  xpos -236
+  ypos -796
+ }
+set N31182400 [stack 0]
+ Dot {
+  name Dot66
+  note_font_size 20
+  xpos -1280
+  ypos -796
+ }
+add_layer {FlowC FlowC.red FlowC.green FlowC.blue FlowC.alpha}
+ Shuffle {
+  in FlowC
+  name Shuffle4
+  label "<center><font size = \"5\"> \[value in]\nSimulation</center>"
+  xpos -1314
+  ypos -758
+  postage_stamp true
+ }
+ Dot {
+  name Dot5
+  note_font_size 20
+  xpos -1280
+  ypos -583
+ }
+push $N3ab1c00
+ Dot {
+  name Dot72
+  note_font_size 20
+  xpos -92
+  ypos -973
+ }
+set N311ad400 [stack 0]
+ Dot {
+  name Dot70
+  note_font_size 20
+  xpos -1136
+  ypos -973
+ }
+ Shuffle {
+  in FlowC
+  name Shuffle8
+  label "<center><font size = \"5\"> \[value in]\nSTART</center>"
+  xpos -1170
+  ypos -758
+  postage_stamp true
+ }
+ Switch {
+  inputs 2
+  which {{"start != frame"}}
+  name Switch1
+  xpos -1170
+  ypos -587
+ }
+ Dot {
+  name Dot4
+  xpos -1136
+  ypos 164
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge3
+  xpos -956
+  ypos 160
+ }
+ Clamp {
+  channels rgba
+  maximum 1.#INF
+  name Clamp2
+  label "MIN 0\n"
+  xpos -956
+  ypos 186
+ }
+ Dot {
+  name Dot21
+  xpos -922
+  ypos 474
+ }
+set N311d7800 [stack 0]
+push $N31183400
+ Dot {
+  name Dot62
+  xpos -488
+  ypos -128
+ }
+ Expression {
+  expr0 "(r - r(x-1, y+1)) * flow_rate_div"
+  expr1 "(g - g(x+1, y+1)) * flow_rate_div"
+  expr2 "(b - b(x+1, y-1)) * flow_rate_div"
+  expr3 "(a - a(x-1, y-1)) * flow_rate_div"
+  name DIAGONAL
+  label "Height difference / pipe length"
+  xpos -522
+  ypos -62
+ }
+push $N31182400
+add_layer {FlowD FlowD.red FlowD.green FlowD.blue FlowD.alpha}
+ Shuffle {
+  in FlowD
+  name Shuffle3
+  label "<center><font size = \"5\"> \[value in]\nSimulation</center>"
+  xpos -270
+  ypos -755
+  postage_stamp true
+ }
+ Dot {
+  name Dot6
+  note_font_size 20
+  xpos -236
+  ypos -583
+ }
+push $N311ad400
+ Shuffle {
+  in FlowD
+  name Shuffle7
+  label "<center><font size = \"5\"> \[value in]\nSTART</center>"
+  xpos -126
+  ypos -755
+  postage_stamp true
+ }
+ Switch {
+  inputs 2
+  which {{"start != frame"}}
+  name Switch3
+  xpos -126
+  ypos -587
+ }
+set N311fdc00 [stack 0]
+ Dot {
+  name Dot8
+  xpos -92
+  ypos 164
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge4
+  xpos -522
+  ypos 160
+ }
+ Clamp {
+  channels rgba
+  maximum 1.#INF
+  name Clamp3
+  label "MIN 0"
+  xpos -522
+  ypos 186
+ }
+ Dot {
+  name Dot34
+  xpos -488
+  ypos 371
+ }
+set N311fcc00 [stack 0]
+ Dot {
+  name Dot22
+  xpos -91
+  ypos 371
+ }
+ MergeExpression {
+  inputs 2
+  channel0 rgba
+  expr0 "Ar + Ag + Ab + Aa + Br + Bg + Bb + Ba"
+  name OUTFLOW_MAX
+  label "Total outflow per pixel"
+  xpos -125
+  ypos 464
+ }
+set N311fc400 [stack 0]
+push $N31183c00
+ Dot {
+  name Dot64
+  note_font_size 20
+  xpos 374
+  ypos 582
+ }
+ MergeExpression {
+  inputs 2
+  temp_name0 scaled
+  temp_expr0 "Ba / Ar"
+  channel0 rgba
+  expr0 "isnan(scaled) ? 1 : scaled"
+  name SCALE_FACTOR
+  xpos -125
+  ypos 578
+ }
+ Clamp {
+  channels rgba
+  name Clamp4
+  label "MAX HERE LIMITS QUANTITY OF OUTFLOW,\nLOWER MEANS A COLUMN CAN'T FULL DEPLETE IN ONE GO"
+  xpos -125
+  ypos 604
+ }
+ Dot {
+  name Dot20
+  xpos -91
+  ypos 740
+ }
+set N31228c00 [stack 0]
+ Dot {
+  name Dot19
+  xpos -91
+  ypos 815
+ }
+set N31228800 [stack 0]
+push $N311fcc00
+ Merge2 {
+  inputs 2
+  operation multiply
+  name RESTRICT_OUTFLOW_DIAGONAL
+  xpos -522
+  ypos 811
+ }
+ Dot {
+  name Dot33
+  xpos -488
+  ypos 1286
+ }
+set N31228000 [stack 0]
+ Dot {
+  name Dot28
+  xpos -1121
+  ypos 1286
+ }
+ Dot {
+  name Dot67
+  note_font_size 20
+  xpos -1121
+  ypos 2354
+ }
+push $N31228c00
+push $N311d7800
+ Merge2 {
+  inputs 2
+  operation multiply
+  name RESTRICT_OUTFLOW_CROSS
+  xpos -956
+  ypos 736
+ }
+ Dot {
+  name Dot27
+  xpos -922
+  ypos 1377
+ }
+set N32349000 [stack 0]
+ Dot {
+  name Dot12
+  note_font_size 20
+  xpos -1032
+  ypos 1377
+ }
+ Dot {
+  name Dot68
+  note_font_size 20
+  xpos -1032
+  ypos 2274
+ }
+push $N32349000
+push $N31152800
+ Dot {
+  name Dot38
+  label "COLOUR / HEIGHT"
+  xpos 784
+  ypos 1094
+ }
+set N32348400 [stack 0]
+ Dot {
+  name Dot71
+  xpos 166
+  ypos 1094
+ }
+set N32348000 [stack 0]
+ Dot {
+  name Dot18
+  xpos -40
+  ypos 1094
+ }
+set N32369c00 [stack 0]
+ Dot {
+  name Dot31
+  xpos -206
+  ypos 1094
+ }
+ MergeExpression {
+  inputs 2
+  temp_name0 from_left
+  temp_expr0 "Ab(x-1, y)"
+  temp_name1 from_right
+  temp_expr1 "Ar(x+1, y)"
+  temp_name2 from_below
+  temp_expr2 "Ag(x, y-1)"
+  temp_name3 from_above
+  temp_expr3 "Aa(x, y+1)"
+  expr0 "from_left * Br(x-1, y) + from_right * Br(x+1, y) + from_below * Br(x, y-1) + from_above * Br(x, y+1)"
+  expr1 "from_left * Bg(x-1, y) + from_right * Bg(x+1, y) + from_below * Bg(x, y-1) + from_above * Bg(x, y+1)"
+  expr2 "from_left * Bb(x-1, y) + from_right * Bb(x+1, y) + from_below * Bb(x, y-1) + from_above * Bb(x, y+1)"
+  expr3 "from_left + from_right + from_below + from_above"
+  name INFLOW_CROSS_COLOUR
+  label "Colour from B\nWeight from A\nblue from left (x-1)\nred from right (x+1)\ngreen from down (y-1)\nalpha from up (y+1)"
+  xpos -240
+  ypos 1334
+ }
+ Dot {
+  name Dot32
+  xpos -206
+  ypos 1471
+ }
+push 0
+push $N31228000
+push $N32369c00
+ MergeExpression {
+  inputs 2
+  temp_name0 from_topleft
+  temp_expr0 "Ab(x-1, y+1)"
+  temp_name1 from_botright
+  temp_expr1 "Ar(x+1, y-1)"
+  temp_name2 from_botleft
+  temp_expr2 "Ag(x-1, y-1)"
+  temp_name3 from_topright
+  temp_expr3 "Aa(x+1, y+1)"
+  expr0 "from_topleft * Br(x-1, y+1) + from_botright * Br(x+1, y-1) + from_botleft * Br(x-1, y-1) + from_topright * Br(x+1, y+1)"
+  expr1 "from_topleft * Bg(x-1, y+1) + from_botright * Bg(x+1, y-1) + from_botleft * Bg(x-1, y-1) + from_topright * Bg(x+1, y+1)"
+  expr2 "from_topleft * Bb(x-1, y+1) + from_botright * Bb(x+1, y-1) + from_botleft * Bb(x-1, y-1) + from_topright * Bb(x+1, y+1)"
+  expr3 "from_topleft + from_botright + from_botleft + from_topright"
+  name INFLOW_DIAGONAL_COLOUR
+  label "Colour from B\nWeight from A\nblue from topleft (x-1, y+1)\nred from botright (x+1, y-1)\ngreen from botleft (x-1, y-1)\nalpha from topright (x+1, y+1)"
+  xpos -74
+  ypos 1243
+ }
+push $N32348000
+ Expression {
+  expr0 "r * a"
+  expr1 "g * a"
+  expr2 "b * a"
+  expr3 a
+  name WEIGHTED_COLOUR
+  xpos 132
+  ypos 1212
+ }
+ Merge2 {
+  inputs 3+1
+  operation plus
+  name SUM_WEIGHTED_COLOUR
+  xpos 132
+  ypos 1467
+ }
+ Expression {
+  temp_name0 col_r
+  temp_expr0 "r / a"
+  temp_name1 col_g
+  temp_expr1 "g / a"
+  temp_name2 col_b
+  temp_expr2 "b / a"
+  expr0 "isnan(col_r) ? 0 : col_r"
+  expr1 "isnan(col_g) ? 0 : col_g"
+  expr2 "isnan(col_b) ? 0 : col_b"
+  name COLOUR_OUTPUT
+  xpos 132
+  ypos 1508
+ }
+ Dot {
+  name Dot14
+  xpos 166
+  ypos 2129
+ }
+push $N32349000
+push $N31228000
+ Dot {
+  name Dot23
+  xpos -488
+  ypos 1554
+ }
+ MergeExpression {
+  inputs 2
+  channel0 rgba
+  expr0 "Ab(x-1,y) + Aa(x,y+1) + Ar(x+1,y) + Ag(x,y-1) + Bb(x-1,y+1) + Ba(x+1,y+1) + Br(x+1,y-1) + Bg(x-1,y-1)"
+  channel1 {-rgba.red -rgba.green -rgba.blue none}
+  channel2 {-rgba.red -rgba.green -rgba.blue none}
+  channel3 none
+  name INFLOW
+  xpos -956
+  ypos 1550
+ }
+ Dot {
+  name Dot26
+  xpos -922
+  ypos 1646
+ }
+push $N311fc400
+ Dot {
+  name Dot24
+  xpos 483
+  ypos 474
+ }
+push $N31228800
+ Merge2 {
+  inputs 2
+  operation multiply
+  name OUTFLOW
+  xpos 449
+  ypos 811
+ }
+ Merge2 {
+  inputs 2
+  operation minus
+  name HEIGHT_CHANGE
+  xpos 449
+  ypos 1642
+ }
+ Dot {
+  name Dot25
+  xpos 483
+  ypos 1893
+ }
+push $N32348400
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge8
+  xpos 750
+  ypos 1889
+ }
+ ShuffleCopy {
+  inputs 2
+  red red
+  green green
+  blue blue
+  alpha alpha2
+  name COLOUR_AND_HEIGHT
+  xpos 750
+  ypos 2125
+  disable {{"1 - parent.colour_flow"}}
+ }
+ Dot {
+  name Dot29
+  label "WATER OUT"
+  xpos 784
+  ypos 2205
+ }
+ ShuffleCopy {
+  inputs 2
+  alpha alpha2
+  black red
+  white green
+  red2 blue
+  green2 alpha
+  out2 FlowC
+  name ShuffleCopy2
+  xpos 750
+  ypos 2270
+ }
+ ShuffleCopy {
+  inputs 2
+  alpha alpha2
+  black red
+  white green
+  red2 blue
+  green2 alpha
+  out2 FlowD
+  name ShuffleCopy1
+  xpos 750
+  ypos 2350
+ }
+ Write {
+  channels all
+  file "\[value cache]"
+  file_type exr
+  version 39517
+  name WriteWATER
+  label "DO NOT RENAME"
+  xpos 750
+  ypos 2425
+ }
+push $N311fdc00
+push $N3a51800
+push 0
+ Viewer {
+  inputs 3
+  frame_range 1-100
+  frame_range_lock true
+  fps 25
+  colour_sample_bbox {0.1541666687 0.04583333433 0.1583333313 0.05000000075}
+  samplepoints {{0.1541666687 0.04583333433}
+    }
+  name Viewer1
+  xpos 2697
+  ypos 371
+ }
+end_group

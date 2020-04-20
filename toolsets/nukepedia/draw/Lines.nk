@@ -1,0 +1,88 @@
+Group {
+ name Lines
+ inputs 0
+ addUserKnob {20 Lines l Appearance}
+ addUserKnob {41 format T BlinkScript2.format}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 "Max PTS" +HIDDEN T "BlinkScript2.Lines_Max PTS"}
+ addUserKnob {41 "Max Limit" +HIDDEN T "BlinkScript2.Lines_Max Limit"}
+ addUserKnob {41 "Close end" T "BlinkScript2.Lines_Close end"}
+ addUserKnob {41 "Round ends" T "BlinkScript2.Lines_Round ends"}
+ addUserKnob {41 Colour T BlinkScript2.Lines_Colour}
+ addUserKnob {41 Width T BlinkScript2.Lines_Width}
+ addUserKnob {41 Softness T BlinkScript2.Lines_Softness}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 Dashed T BlinkScript2.Lines_Dashed}
+ addUserKnob {41 Spacing T BlinkScript2.Lines_Spacing}
+ addUserKnob {41 "Dash Offset" T "BlinkScript2.Lines_Dash Offset"}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 Time T BlinkScript2.Lines_Time}
+ addUserKnob {20 Points}
+ addUserKnob {26 info l "" +STARTLINE T "Insert adds a point between its adjacent and previous point\nDelete removes the adjacent point\nAdd adds a point at the end"}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 Start T BlinkScript2.Lines_Start}
+ addUserKnob {41 pt1 T BlinkScript2.Lines_pt1}
+ addUserKnob {22 delete1 l Delete -STARTLINE T Lines_Callbacks.delete_pt()}
+ addUserKnob {22 insert1 l Insert -STARTLINE T Lines_Callbacks.insert_pt()}
+ addUserKnob {41 pt2 T BlinkScript2.Lines_pt2}
+ addUserKnob {22 delete2 l Delete -STARTLINE T Lines_Callbacks.delete_pt()}
+ addUserKnob {22 insert2 l Insert -STARTLINE T Lines_Callbacks.insert_pt()}
+ addUserKnob {41 pt3 T BlinkScript2.Lines_pt3}
+ addUserKnob {22 delete3 l Delete -STARTLINE T Lines_Callbacks.delete_pt()}
+ addUserKnob {22 insert3 l Insert -STARTLINE T Lines_Callbacks.insert_pt()}
+ addUserKnob {41 pt4 +HIDDEN T BlinkScript2.Lines_pt4}
+ addUserKnob {22 delete4 l Delete -STARTLINE +HIDDEN T Lines_Callbacks.delete_pt()}
+ addUserKnob {22 insert4 l Insert -STARTLINE +HIDDEN T Lines_Callbacks.insert_pt()}
+ addUserKnob {41 pt5 +HIDDEN T BlinkScript2.Lines_pt5}
+ addUserKnob {22 delete5 l Delete -STARTLINE +HIDDEN T Lines_Callbacks.delete_pt()}
+ addUserKnob {22 insert5 l Insert -STARTLINE +HIDDEN T Lines_Callbacks.insert_pt()}
+ addUserKnob {41 pt6 +HIDDEN T BlinkScript2.Lines_pt6}
+ addUserKnob {22 delete6 l Delete -STARTLINE +HIDDEN T Lines_Callbacks.delete_pt()}
+ addUserKnob {22 insert6 l Insert -STARTLINE +HIDDEN T Lines_Callbacks.insert_pt()}
+ addUserKnob {41 pt7 +HIDDEN T BlinkScript2.Lines_pt7}
+ addUserKnob {22 delete7 l Delete -STARTLINE +HIDDEN T Lines_Callbacks.delete_pt()}
+ addUserKnob {22 insert7 l Insert -STARTLINE +HIDDEN T Lines_Callbacks.insert_pt()}
+ addUserKnob {41 pt8 +HIDDEN T BlinkScript2.Lines_pt8}
+ addUserKnob {22 delete8 l Delete -STARTLINE +HIDDEN T Lines_Callbacks.delete_pt()}
+ addUserKnob {22 insert8 l Insert -STARTLINE +HIDDEN T Lines_Callbacks.insert_pt()}
+ addUserKnob {41 pt9 +HIDDEN T BlinkScript2.Lines_pt9}
+ addUserKnob {22 delete9 l Delete -STARTLINE +HIDDEN T Lines_Callbacks.delete_pt()}
+ addUserKnob {22 insert9 l Insert -STARTLINE +HIDDEN T Lines_Callbacks.insert_pt()}
+ addUserKnob {41 pt10 +HIDDEN T BlinkScript2.Lines_pt10}
+ addUserKnob {22 delete10 l Delete -STARTLINE +HIDDEN T Lines_Callbacks.delete_pt()}
+ addUserKnob {22 insert10 l Insert -STARTLINE +HIDDEN T Lines_Callbacks.insert_pt()}
+ addUserKnob {41 pt11 +HIDDEN T BlinkScript2.Lines_pt11}
+ addUserKnob {22 delete11 l Delete -STARTLINE +HIDDEN T Lines_Callbacks.delete_pt()}
+ addUserKnob {22 insert11 l Insert -STARTLINE +HIDDEN T Lines_Callbacks.insert_pt()}
+ addUserKnob {41 pt12 +HIDDEN T BlinkScript2.Lines_pt12}
+ addUserKnob {22 delete12 l Delete -STARTLINE +HIDDEN T Lines_Callbacks.delete_pt()}
+ addUserKnob {22 insert12 l Insert -STARTLINE +HIDDEN T Lines_Callbacks.insert_pt()}
+ addUserKnob {41 pt13 +HIDDEN T BlinkScript2.Lines_pt13}
+ addUserKnob {22 delete13 l Delete -STARTLINE +HIDDEN T Lines_Callbacks.delete_pt()}
+ addUserKnob {22 insert13 l Insert -STARTLINE +HIDDEN T Lines_Callbacks.insert_pt()}
+ addUserKnob {41 pt14 +HIDDEN T BlinkScript2.Lines_pt14}
+ addUserKnob {22 delete14 l Delete -STARTLINE +HIDDEN T Lines_Callbacks.delete_pt()}
+ addUserKnob {22 insert14 l Insert -STARTLINE +HIDDEN T Lines_Callbacks.insert_pt()}
+ addUserKnob {41 pt15 +HIDDEN T BlinkScript2.Lines_pt15}
+ addUserKnob {22 delete15 l Delete -STARTLINE +HIDDEN T Lines_Callbacks.delete_pt()}
+ addUserKnob {22 insert15 l Insert -STARTLINE +HIDDEN T Lines_Callbacks.insert_pt()}
+ addUserKnob {22 add_pt l Add T Lines_Callbacks.add_pt() +STARTLINE}
+}
+ BlinkScript {
+  inputs 0
+  kernelSourceFile C:/Users/Matthew/.nuke/plugins/LineDrawer/Lines.cpp
+  KernelDescription "1 \"Lines\" iterate pixelWise 696104375bd331d51009583dbc7f63b89544716da141a7692839bec3e6f88b16 1 \"dst\" Write Point 27 \"Max PTS\" Int 1 AgAAAA== \"Max Limit\" Int 1 EAAAAA== \"Close end\" Bool 1 AA== \"Round ends\" Bool 1 AA== \"Colour\" Float 4 AACAPwAAgD8AAIA/AACAPw== \"Width\" Float 1 AACgQA== \"Softness\" Float 1 AACAPw== \"Dashed\" Bool 1 AA== \"Spacing\" Float 1 AADwQQ== \"Dash Offset\" Float 1 AAAAAA== \"Time\" Float 1 AACAPw== \"Start\" Float 2 AADIQgAAyEI= \"pt1\" Float 2 AAAHRAAAyEI= \"pt2\" Float 2 AAAHRAAAvkM= \"pt3\" Float 2 AADIQgAAvkM= \"pt4\" Float 2 AAAAAAAAAAA= \"pt5\" Float 2 AAAAAAAAAAA= \"pt6\" Float 2 AAAAAAAAAAA= \"pt7\" Float 2 AAAAAAAAAAA= \"pt8\" Float 2 AAAAAAAAAAA= \"pt9\" Float 2 AAAAAAAAAAA= \"pt10\" Float 2 AAAAAAAAAAA= \"pt11\" Float 2 AAAAAAAAAAA= \"pt12\" Float 2 AAAAAAAAAAA= \"pt13\" Float 2 AAAAAAAAAAA= \"pt14\" Float 2 AAAAAAAAAAA= \"pt15\" Float 2 AAAAAAAAAAA="
+  kernelSource "// Max number of points hard coded. Must be this number of points declared in param, and added to points\[] in init()\n# define upper_limit 16\n\nkernel Lines : ImageComputationKernel<ePixelWise>\n\{\n  \n  Image<eWrite> dst;\n\n\n  param:\n    int max_pts;\n    int max_limit;\n    bool close;\n    bool round_ends;\n    float4 colour;\n    float width;\n    float softness;\n    bool dashed;\n    float spacing;\n    float offset;\n    float anim_time;\n    float2 start;\n\n    // # of points = upper_limit\n    float2 pt1;\n    float2 pt2;\n    float2 pt3;\n    float2 pt4;\n    float2 pt5;\n    float2 pt6;\n    float2 pt7;\n    float2 pt8;\n    float2 pt9;\n    float2 pt10;\n    float2 pt11;\n    float2 pt12;\n    float2 pt13;\n    float2 pt14;\n    float2 pt15;\n\n\n  local:\n    float2 points\[upper_limit];\n    float lines\[upper_limit]\[5];\n    int pt_limit;\n    int line_limit;\n    float max_length;\n    float animated_end;\n    bool _close;\n\n\n  void define() \{\n    defineParam( max_pts,    \"Max PTS\",     2 );\n    defineParam( max_limit,  \"Max Limit\",   upper_limit );\n    defineParam( close,      \"Close end\",   false );\n    defineParam( round_ends, \"Round ends\",  false );\n    defineParam( colour,     \"Colour\",      float4( 1.0f, 1.0f, 1.0f, 1.0f ) );\n    defineParam( width,      \"Width\",       5.0f );\n    defineParam( softness,   \"Softness\",    1.0f );\n    defineParam( dashed,     \"Dashed\",      false );\n    defineParam( spacing,    \"Spacing\",     30.0f );\n    defineParam( offset,     \"Dash Offset\", 0.0f );\n    defineParam( anim_time,  \"Time\",        1.0f );\n    defineParam( start,      \"Start\",       float2( 100.0f, 100.0f ) );\n    defineParam( pt1,        \"pt1\",         float2( 540.0f, 100.0f ) );\n    defineParam( pt2,        \"pt2\",         float2( 540.0f, 380.0f ) );\n    defineParam( pt3,        \"pt3\",         float2( 100.0f, 380.0f ) );\n  \}\n\n\n  void init() \{\n\n    // # of points = upper_limit\n    points\[0] = start;\n    points\[1] = pt1;\n    points\[2] = pt2;\n    points\[3] = pt3;\n    points\[4] = pt4;\n    points\[5] = pt5;\n    points\[6] = pt6;\n    points\[7] = pt7;\n    points\[8] = pt8;\n    points\[9] = pt9;\n    points\[10] = pt10;\n    points\[11] = pt11;\n    points\[12] = pt12;\n    points\[13] = pt13;\n    points\[14] = pt14;\n    points\[15] = pt15;\n\n    // Keep used points within upper limit\n    pt_limit = min( max_pts, upper_limit );\n    _close = pt_limit > 2 ? close : false;\n    line_limit = _close ? pt_limit : pt_limit - 1;\n\n    max_length = 0.0f;\n\n    // Calculate line equation components for each line\n    // \[ slope, y_intercept, slope_perp, horizontal/vertical, cumulative distance ]\n    for ( int i = 0; i < line_limit; i++ ) \{\n\n      int next = ( i + 1 ) % pt_limit;\n      float2 direction = points\[next] - points\[i];\n\n      if ( direction.y == 0 ) \{\n        // Horizontal\n        lines\[i]\[3] = 1.0f;\n      \} else if ( direction.x == 0 ) \{\n        // Vertical\n        lines\[i]\[3] = 2.0f;\n      \} else \{\n        // Slope\n        lines\[i]\[0] = direction.y / direction.x;\n        // Y Intercept\n        lines\[i]\[1] = points\[next].y - lines\[i]\[0] * points\[next].x;\n        // Slope Perp\n        lines\[i]\[2] = -( 1 / lines\[i]\[0] );\n        // Not Horizontal or Vertical\n        lines\[i]\[3] = 0.0f;\n      \}\n\n      float line_length = length( points\[next] - points\[i] );\n      max_length += line_length;\n      lines\[i]\[4] = max_length;\n    \}\n\n    \n    // --- Animation ---\n\n    animated_end = clamp( anim_time, 0.0f, 1.0f ) * max_length;\n  \}\n\n\n\n  // --- Width and Softness ---\n  float distanceToValue( float distance ) \{\n  \t\n    float result = 0.0f;\n\n    if ( distance <= width )\n      result = 1.0f;\n    else if ( distance <= width + softness )\n      result = 1 - ( distance - width ) / softness;\n\n    return result;\n  \}\n\n\n\n  void process( int2 pos ) \{\n\n    float result = 0.0f;\n    float2 intersection;\n\n    if ( anim_time == 0.0f )\n      return;\n\n    // Find the current pixel value from each line\n    for ( int i = 0; i < line_limit; i++) \{\n\n      // --- Intersection from current point ---\n\n      if ( lines\[i]\[3] == 2.0f ) \{\n        // Vertical\n        intersection = float2( points\[i].x, pos.y );\n      \} else if ( lines\[i]\[3] == 1.0f ) \{\n        // Horizontal\n        intersection = float2( pos.x, points\[i].y );\n      \} else \{\n        // Intersection @ x using line equations\n        intersection\[0] = ( pos.y - lines\[i]\[1] - lines\[i]\[2] * pos.x ) / ( lines\[i]\[0] - lines\[i]\[2] );\n        // Intersection @ y using Line 1 equation\n        intersection\[1] = intersection\[0] * lines\[i]\[0] + lines\[i]\[1];\n      \}\n\n\n      // --- Value for current line ---\n\n      int next = ( i + 1 ) % pt_limit;\n      float distance = length( float2( pos.x - intersection.x, pos.y - intersection.y ) );\n      float line_result = 0.0f;\n      float distance_along_line = i > 0 ? lines\[i-1]\[4] : 0.0f;\n      bool edge = false;\n\n      // If in bounds\n      if ( intersection.x >= min( points\[i].x, points\[next].x ) && max( points\[i].x, points\[next].x ) >= intersection.x &&\n           intersection.y >= min( points\[i].y, points\[next].y ) && max( points\[i].y, points\[next].y ) >= intersection.y ) \{\n\n        line_result = distanceToValue( distance );\n        distance_along_line += length( intersection - points\[i] );\n\n      \} else \{\n\n        edge = true;\n\n        // Calculate closest end point\n        float dist_to_start = length( float2( points\[i].x - pos.x, points\[i].y - pos.y ) );\n        float dist_to_end = length( float2( points\[next].x - pos.x, points\[next].y - pos.y ) );\n\n        float closest = min( dist_to_start, dist_to_end );\n        distance_along_line = ( closest == dist_to_end ) ? lines\[i]\[4] : distance_along_line;\n\n        // Straight edges\n        if ( !_close && !round_ends && ( i == 0 || i == pt_limit - 2 ) ) \{\n\n          float closest_end;\n          if ( dist_to_start < dist_to_end )\n            closest_end = length( intersection - points\[i] );\n          else\n            closest_end = length( intersection - points\[next] );\n\n          if ( closest_end <= softness )\n            line_result = distanceToValue( closest_end + width ) * distanceToValue( distance );\n        \}\n        // Round ends\n        else \{\n          line_result = distanceToValue( closest );\n        \}\n      \}\n\n      // Cutoff Animated Length\n      if ( distance_along_line > animated_end )\n      \tline_result = 0.0f;\n\n\n      // --- Dashed Line ---\n\n      // If dashed\n      if ( dashed && line_result > 0.0f ) \{\n\n        // Dash animation\n        float dash_offset = distance_along_line + spacing * offset;\n        // Prevent double line at start if reversed\n        float new_distance = dash_offset < 0 ? fabs( dash_offset - spacing ) : dash_offset;\n\n        // On / Off segments\n        float segment = new_distance / spacing;\n        int gap = ( int )segment % 2;\n\n        // If an odd numbered segment, fade edges into nothing\n        if ( gap == 1) \{\n          float segment_distance = ( segment - floor( segment ) ) * spacing;\n          if ( segment_distance < softness && !edge )\n            line_result = line_result * ( 1 - segment_distance / softness );\n          else if ( spacing - segment_distance < softness && !edge )\n            line_result = line_result * ( 1 - ( spacing - segment_distance ) / softness );\n          else\n            line_result = 0.0f;\n        \}\n      \}\n\n\n      // --- Use max line value ---\n\n      result = max( line_result, result );\n    \}\n\n    dst() = colour * result;\n  \}\n\n\};"
+  rebuild ""
+  "Lines_Max PTS" 4
+  specifiedFormat true
+  name BlinkScript2
+  xpos 29
+  ypos -154
+ }
+ Output {
+  name Output1
+  xpos 29
+  ypos -54
+ }
+end_group

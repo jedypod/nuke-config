@@ -1,0 +1,55 @@
+Group {
+name CornerPinMatrix
+help "<b>PlanarProjection</b>\n\nGenerates 2D coordinates for points in 3D space. Type in 3D point coordinates, or use vertex selection in 3D viewer and click set to pick average of selected points, or set points to set all four points at once. You can connect node output to scene together with your pointcloud or geometry and see where your points are located in 3d space. Double click any of them to move it in 3d space like any traditional nuke transform control.\n\nA matrix transform is also generated to be used with RotoPaint, SplineWarp and GridWarp nodes.\n\nIf you are using matrix in GridWarp, points have to be in clockwise order, pick them one by one! Command set points doesn't respect selection order!\n\nCheck out the demo video on my website!\n\nKudos to Ivan Busquets for help with matrix math.\n\n--\ndeveloped by Vit Sedlacek (c)2012\nwww.vitsedlacek.com\n\n-- \nModified by Jed Smith to make calculation time nearly instantaneous, fix some bugs and create a BG input so that the sampled format could be easily specified instead of using nuke.root() format.\n"
+selected true
+xpos 500
+ypos -5026
+addUserKnob {20 tab l "CornerPin Matrix"}
+addUserKnob {22 Calculate l "Calculate Matrix" -STARTLINE T "import nuke\nfrom nukescripts import snap3d as sn\nimport math\n\n\ndef pointsToMatrix(frame, node):\n    cpToMtx = nuke.math.Matrix4()\n    cpFromMtx = nuke.math.Matrix4()\n \n    # Get a list of Vector2 objects for each of the 'to' knobs and each of the 'from' knobs.\n    ToVectors = \[nuke.math.Vector2(node\[f].getValueAt(frame,0), node\[f].getValueAt(frame,1)) for f in sorted(node.knobs().keys()) if f.startswith('op')]\n\n    # Feed all 4 coordinates into the mapUnitSquareToQuad() function\n    cpToMtx.mapUnitSquareToQuad(ToVectors\[0].x, ToVectors\[0].y, ToVectors\[1].x, ToVectors\[1].y, ToVectors\[2].x, ToVectors\[2].y, ToVectors\[3].x, ToVectors\[3].y)\n\n    cpFromMtx.mapUnitSquareToQuad(0, 0, node.width(), 0, node.width(), node.height(), 0, node.height())\n\n    transform_matrix = cpToMtx * cpFromMtx.inverse()\n\n    # This is not needed to apply the transformation. The matrix is already correct. \n    # However, the matrix knob in rotopaint is indexed differently (row major), so I just transpose the matrix here to make it easier to copy its values to the knob\n    transform_matrix.transpose()\n\n    # Fill in the transform_matrix knob of the target node\n    return transform_matrix\n\n\ndef calculate_matrix(node):\n    first = nuke.root().firstFrame()\n    last = nuke.root().lastFrame()\n    framerange = nuke.FrameRange('\{0\}-\{1\}'.format(first, last))\n       \n    # Calculate the transformation Matrix\n    mknob = node\['matrix']\n    mknob.clearAnimated()\n    mknob.setAnimated()\n    \n    matrix_animcurve = \[\[] for i in xrange(16)]\n    for frame in framerange:\n        matrix_data = pointsToMatrix(frame, node)\n        for index in xrange(16):\n            matrix_animcurve\[index].append(nuke.AnimationKey(frame, matrix_data\[index]))\n    for index, item in enumerate(mknob.animations()):\n        item.addKey(matrix_animcurve\[index])\n\nif __name__==\"__main__\":\n    calculate_matrix(nuke.thisNode())"}
+addUserKnob {26 outputtab l <b>tracks}
+addUserKnob {12 op1 l "point 1"}
+addUserKnob {12 op2 l "point 2"}
+addUserKnob {12 op3 l "point 3"}
+addUserKnob {12 op4 l "point 4"}
+addUserKnob {26 ""}
+addUserKnob {41 matrix T dummyAxis.matrix}
+addUserKnob {20 endGroup n -1}
+addUserKnob {26 div2 l create}
+addUserKnob {22 createRotoPaint l RotoPaint T "import nuke.rotopaint as rp\nimport _curvelib as cl\n\nnode = nuke.thisNode()\nmatrix = node\['matrix']\n\nfirst = None\nfor every in matrix.animations():\n    if first == None:\n        first = int(every.keys()\[0].x)\n    else:\n        first = min(first, int(every.keys()\[0].x))\n\nlast = None\nfor every in matrix.animations():\n    if last == None:\n        last = int(every.keys()\[0].x)\n    else:\n        last = max(last, int(every.keys()\[-1].x))\n\nif first != None and last != None:\n    nuke.root().begin()\n    p = nuke.createNode(\"RotoPaint\")\n    cKnob = p\['curves']\n    nLayer = rp.Layer(cKnob)\n    if node\['layer_name'].value() == \"\":\n        nLayer.name = node.name()\n    else:\n        nLayer.name = node\['layer_name'].value()\n\n    curve = \[cl.AnimCurve() for i in range(16)]\n\n    for f in range(first,last+1):\n        val = matrix.valueAt(f)\n        for i in range(16):\n            curve\[i].addKey(int(f), val\[i])\n\n    for y in range(1,5):\n        for x in range(1,5):\n            cell = ((y-1)*4)+x-1\n            nLayer.getTransform().setExtraMatrixAnimCurve(y-1,x-1, curve\[cell])\n\n    cKnob.rootLayer.append(nLayer)" +STARTLINE}
+addUserKnob {22 createSplineWarp l SplineWarp -STARTLINE T "import nuke.rotopaint as rp\nimport _splinewarp as sw\nimport _curvelib as cl\nimport _curveknob as ck\n\nnode = nuke.thisNode()\nmatrix = node\['matrix']\n\nfirst = None\nfor every in matrix.animations():\n    if first == None:\n        first = int(every.keys()\[0].x)\n    else:\n        first = min(first, int(every.keys()\[0].x))\n\nlast = None\nfor every in matrix.animations():\n    if last == None:\n        last = int(every.keys()\[0].x)\n    else:\n        last = max(last, int(every.keys()\[-1].x))\n\nif first != None and last != None:\n    nuke.root().begin()\n    p = nuke.createNode(\"SplineWarp3\")\n    p\['boundary_bbox'].setValue(0)\n    cKnob = p\['curves']\n    nLayer = ck.Layer(cKnob)\n    if node\['layer_name'].value() == \"\":\n        nLayer.name = node.name()\n    else:\n        nLayer.name = node\['layer_name'].value()\n\n    curve = \[cl.AnimCurve() for i in range(16)]\n\n    for f in range(first,last+1):\n        val = matrix.valueAt(f)\n        for i in range(16):\n            curve\[i].addKey(int(f), val\[i])\n\n    for y in range(1,5):\n        for x in range(1,5):\n            cell = ((y-1)*4)+x-1\n            nLayer.getTransform().setExtraMatrixAnimCurve(y-1,x-1, curve\[cell])\n\n    cKnob.rootLayer.append(nLayer)"}
+addUserKnob {22 createGridWarp l GridWarp -STARTLINE T "vPPm = nuke.thisNode()\['matrix']\nif vPPm.isAnimated():\n    nuke.root().begin()\n    gW = nuke.createNode(\"GridWarp3\")\n    gWm = gW\['source_grid_transform_matrix']\n    gWm.copyAnimations(vPPm.animations())"}
+addUserKnob {22 createCPinMatchMove l "CornerPin Matchmove" T "node = nuke.thisNode()\n\np1 = node\['op1']\np2 = node\['op2']\np3 = node\['op3']\np4 = node\['op4']\n\nif p1.isAnimated() or p2.isAnimated() or p3.isAnimated() or p4.isAnimated():\n    nuke.root().begin()\n    cP = nuke.createNode(\"CornerPin2D\")\n    cP\['label'].setValue(\"frame %d\\nmatchmove\" % nuke.frame())\n    cP\['to1'].copyAnimations(p1.animations())\n    cP\['to2'].copyAnimations(p2.animations())\n    cP\['to3'].copyAnimations(p3.animations())\n    cP\['to4'].copyAnimations(p4.animations())\n    cP\['from1'].setValue(p1.value())\n    cP\['from2'].setValue(p2.value())\n    cP\['from3'].setValue(p3.value())\n    cP\['from4'].setValue(p4.value())" +STARTLINE}
+addUserKnob {22 createCPinStab l "CornerPin Stabilize" -STARTLINE T "node = nuke.thisNode()\n\np1 = node\['op1']\np2 = node\['op2']\np3 = node\['op3']\np4 = node\['op4']\n\nif p1.isAnimated() or p2.isAnimated() or p3.isAnimated() or p4.isAnimated():\n    nuke.root().begin()\n    cP = nuke.createNode(\"CornerPin2D\")\n    cP\['label'].setValue(\"frame %d\\nstabilize\" % nuke.frame())\n    cP\['from1'].copyAnimations(p1.animations())\n    cP\['from2'].copyAnimations(p2.animations())\n    cP\['from3'].copyAnimations(p3.animations())\n    cP\['from4'].copyAnimations(p4.animations())\n    cP\['to1'].setValue(p1.value())\n    cP\['to2'].setValue(p2.value())\n    cP\['to3'].setValue(p3.value())\n    cP\['to4'].setValue(p4.value())"}
+addUserKnob {26 ""}
+addUserKnob {1 layer_name l "layer name"}
+addUserKnob {22 add l "add layer to selected RotoPaint/Splinewarp nodes" T "node = nuke.thisNode()\nfor cNode in nuke.root().selectedNodes():\n    if cNode != None:\n        if cNode.Class() == \"SplineWarp3\" or cNode.Class() ==\"RotoPaint\" or cNode.Class() ==\"Roto\":\n            cKnob = cNode\['curves']\n            if cNode.Class() == \"RotoPaint\":\n                nLayer = rp.Layer(cKnob)\n            else:\n                nLayer = ck.Layer(cKnob)\n            \n            if node\['layer_name'].value() == \"\":\n                nLayer.name = node.name()\n            else:\n                nLayer.name = node\['layer_name'].value()\n\n\n            for y in range(1,5):\n                for x in range(1,5):\n                    cell = ((y-1)*4)+x-1\n                    nLayer.getTransform().setExtraMatrixAnimCurve(y-1,x-1, curve\[cell])\n\n            cKnob.rootLayer.append(nLayer)" +STARTLINE}
+addUserKnob {26 ""}
+addUserKnob {26 desc l "" +STARTLINE T "developed by Vit Sedlacek www.vitsedlacek.com\\n\noptimized and improved by Jed Smith"}
+}
+Axis2 {
+inputs 0
+useMatrix true
+name dummyAxis
+xpos 93
+ypos -117
+disable true
+}
+Input {
+inputs 0
+name Input
+xpos 620
+ypos -178
+}
+Dot {
+name Dot1
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos 654
+ypos -30
+}
+Output {
+name Output1
+xpos 620
+ypos 159
+}
+end_group

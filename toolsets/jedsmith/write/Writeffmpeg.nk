@@ -1,0 +1,41 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name Writeffmpeg
+ tile_color 0xbfbf00ff
+ addUserKnob {20 ffmpeg}
+ addUserKnob {35 presets M {"Prores 422" "knobs this \{ffmpeg_args \"-c:v prores_ks -profile:v 2 -qscale:v 7 -pix_fmt yuv444p10le -r 24 -vf colormatrix=bt601:bt709 -vendor ap10 -metadata:s encoder=\\\"Apple ProRes 422\\\"\" framerate 24 label \"Prores 422\"\}" "Prores 422 HQ" "knobs this \{ffmpeg_args \"-c:v prores_ks -profile:v 3 -qscale:v 7 -pix_fmt yuv444p10le -r 24 -vf colormatrix=bt601:bt709 -vendor ap10 -metadata:s encoder=\\\"Apple ProRes 422 HQ\\\"\" framerate 24 label \"Prores 422 HQ\"\}" "Prores 4444" "knobs this \{ffmpeg_args \"-c:v prores_ks -profile:v 4 -qscale:v 5 -pix_fmt yuv444p10le -r 24 -vf colormatrix=bt601:bt709 -vendor ap10 -metadata:s encoder=\\\"Apple ProRes 4444\\\"\\\"\" framerate 24 label \"Prores 4444\"\}" "DNxHD 36" "knobs this \{ffmpeg_args \"-c:v dnxhd -profile:v dnxhd -pix_fmt yuv422p -b:v 36M -vf \\\"scale=1920:1080,fps=24000/1001,colormatrix=bt601:bt709\\\"\" framerate 23.976 label \"DNxHD 36\"\}" "DNxHD 115" "knobs this \{ffmpeg_args \"-c:v dnxhd -profile:v dnxhd -pix_fmt yuv422p -b:v 115M -vf \\\"scale=1920:1080,fps=24000/1001,colormatrix=bt601:bt709\\\"\" framerate 23.976 label \"DNxHD 115\"\}" "DNxHD 175" "knobs this \{ffmpeg_args \"-c:v dnxhd -profile:v dnxhd -pix_fmt yuv422p -b:v 175M -vf \\\"scale=1920:1080,fps=24000/1001,colormatrix=bt601:bt709\\\"\" framerate 23.976 label \"DNxHD 175\"\}" "DNxHD 175 10bit" "knobs this \{ffmpeg_args \"-c:v dnxhd -profile:v dnxhd -pix_fmt yuv422p10 -b:v 175M -vf \\\"scale=1920:1080,fps=24000/1001,colormatrix=bt601:bt709\\\"\" framerate 23.976 label \"DNxHD 175 10bit\"\}" "DNxHD 220 10bit" "knobs this \{ffmpeg_args \"-c:v dnxhd -profile:v dnxhd -pix_fmt yuv422p10 -b:v 220M -vf \\\"scale=1920:1080,fps=24000/1001,colormatrix=bt601:bt709\\\"\" framerate 23.976 label \"DNxHD 220 10bit\"\}" "DNxHR HQ" "knobs this \{ffmpeg_args \"-c:v dnxhd -profile:v dnxhr_hq -pix_fmt yuv422p -vf \\\"colormatrix=bt601:bt709\\\"\" framerate 24 label \"DNxHR HQ\"\}" "DNxHR HQX" "knobs this \{ffmpeg_args \"-c:v dnxhd -profile:v dnxhr_hqx -pix_fmt yuv422p10le -vf \\\"colormatrix=bt601:bt709\\\"\" framerate 24 label \"DNxHR HQX\"\}" "DNxHR 444" "knobs this \{ffmpeg_args \"-c:v dnxhd -profile:v dnxhr_444 -pix_fmt yuv444p10le -vf \\\"colormatrix=bt601:bt709\\\"\" framerate 24 label \"DNxHR 444\"\}" "h264 standard" "knobs this \{ffmpeg_args \"-c:v libx264 -profile:v high -crf 15 -preset slow -tune film -pix_fmt yuv420p -g 4 -bf 2 -vf colormatrix=bt601:bt709\" framerate 24 label \"h264 standard\"\}" "h264 intra" "knobs this \{ffmpeg_args \"-c:v libx264 -profile:v high -crf 12 -preset slow -tune film -pix_fmt yuv420p -g 1 -bf 0 -vf colormatrix=bt601:bt709\" framerate 24 label \"h264 intra\"\}" "h264 intra 444" "knobs this \{ffmpeg_args \"-c:v libx264 -profile:v high444 -crf 12 -preset slow -tune film -pix_fmt yuv444p -g 1 -bf 0 -vf colormatrix=bt601:bt709\" framerate 24 label \"h264 intra 444\"\}" "h264 intra 444 10bit" "knobs this \{ffmpeg_args \"-c:v libx264 -profile:v high444 -crf 12 -preset slow -tune film -pix_fmt yuv444p10le -g 1 -bf 0 -vf colormatrix=bt601:bt709\" framerate 24 label \"h264 intra 444 10bit\"\}" "h265 standard 10bit" "knobs this \{ffmpeg_args \"-c:v libx265 -profile:v main10 -crf 15 -preset slow -tune psnr -pix_fmt yuv420p10le -g 2 -bf 0 -vf colormatrix=bt601:bt709\" framerate 24 label \"h265 standard 10bit\"\}" "h265 intra 422 10bit" "knobs this \{ffmpeg_args \"-c:v libx265 -profile:v main422-10-intra -crf 12 -preset slow -tune psnr -pix_fmt yuv422p10le -g 1 -bf 0 -vf colormatrix=bt601:bt709\" framerate 24 label \"h265 intra 10bit\"\}" "h265 intra 444 10bit" "knobs this \{ffmpeg_args \"-c:v libx265 -profile:v main444-10-intra -crf 12 -preset slow -tune psnr -pix_fmt yuv444p10le -g 1 -bf 0 -vf colormatrix=bt601:bt709\" framerate 24 label \"h265 intra 444 10bit\"\}" ""}}
+ addUserKnob {2 file t "output file"}
+ addUserKnob {7 framerate R 23 30}
+ framerate 24
+ addUserKnob {1 ffmpeg_args l "ffmpeg args"}
+ addUserKnob {1 ffmpeg_cmd l "ffmpeg command" t "Enter the path to the ffmpeg executable. \n\nffmpeg without a path will use the environment."}
+ ffmpeg_cmd ffmpeg
+ addUserKnob {1 framerange -STARTLINE}
+ addUserKnob {22 set_framerange l "Set to Input" -STARTLINE T "n = nuke.thisNode()\nfr = n.frameRange()\nn\['framerange'].setValue(\"\{0\}-\{1\}\".format(fr.first(), fr.last()))"}
+ addUserKnob {22 render l Render T "import ffmpeg_render\nffmpeg_render.prep()" +STARTLINE}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos -40
+  ypos -10
+ }
+ Write {
+  raw true
+  file_type tiff
+  datatype "16 bit"
+  compression none
+  checkHashOnRead false
+  version 486
+  name write_tmp
+  selected true
+  xpos -40
+  ypos 98
+ }
+ Output {
+  name Output
+  xpos -40
+  ypos 230
+ }
+end_group

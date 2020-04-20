@@ -1,0 +1,15 @@
+FrameBlend {
+ channels rgba
+ numframes 206
+ startframe {{t-fwidth/2 x1026 1001}}
+ endframe {{t+fwidth/2 x1026 1206}}
+ userange true
+ name FrameBlend1
+ label "Width: \[value fwidth]"
+ selected true
+ xpos -2240
+ ypos -376
+ addUserKnob {20 Width}
+ addUserKnob {3 fwidth l width}
+ fwidth 3
+}

@@ -1,0 +1,283 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name LightSelectRebuild
+ tile_color 0x828b98ff
+ addUserKnob {20 LightSelectRebuild}
+ addUserKnob {22 Create l "Create Rebuild" t "Create an AOV Rebuild tree for all light select layers in the AOVs of the input pipe." T "from __future__ import print_function\nimport nuke\nimport re\nimport six\nfrom collections import defaultdict\n\ngrid_x = 134\ngrid_y = 40\n\ndef unselect_all():\n    # Deselect all nodes\n    for n in nuke.allNodes(recurseGroups=True):\n        n.setSelected(False)\n\ndef add_removal_knob(node):\n    # Add a special knob that will be cleaned up by the \"Clean\" function\n    node.addKnob(nuke.Text_Knob('lightselect_rebuild_cleanup_knob', ' ', ' '))\n\ndef center_node(node):\n    new_xpos = node.xpos() - int(node.screenWidth()/2)\n    # print(\"Centering: \{0\}\\t\{1\} -> \{2\}\".format(node.name(), node.xpos(), new_xpos))\n    node.setXpos(new_xpos)\n\ndef setpos(node, xpos, ypos):\n    # Set a node's position relative to the center of the node\n    # input_node = node.input(0)\n    # if input_node:\n    #     return node.setXYpos(xpos - (node.screenWidth()/2 + input_node.screenWidth()/2), ypos - (node.screenHeight()/2 + input_node.screenHeight()/2))\n    # else:\n    # return node.setXYpos(xpos, ypos)\n    node.setXYpos(xpos, ypos)\n    # offset by node dimensions\n    # node.setXYpos(node.xpos() - node.screenWidth()/2, node.ypos() - node.screenHeight()/2)\n    # node.setXYpos(xpos - node.screenWidth()/2, ypos - node.screenHeight()/2)\n    # node.setXYpos(xpos - int(node.screenWidth()/2), ypos)\n\ndef getxpos(node):\n    # Return a node's centered x position\n    # return node.xpos() + node.screenWidth() / 2\n    return node.xpos()\n\ndef getypos(node):\n    # Return a node's centered y position\n    # return node.ypos() + node.screenHeight() / 2\n    return node.ypos()\n\ndef make_node(nodeclass, pos_x, pos_y, nodeinput=None, nodename=None, knobvalues=''):\n    # Helper function to create a node with specified nodeclass, position, name and input\n    unselect_all()\n    node = nuke.createNode(nodeclass, knobvalues, inpanel=False)\n    if nodeinput:\n        node.setInput(0, nodeinput)\n    if nodename:\n        node.setName(nodename)\n    setpos(node, pos_x, pos_y)\n    # nuke.autoplaceSnap(node)\n    add_removal_knob(node)\n    return node\n\n\ndef get_layers(node, filters):\n    # Get all layers with a specified filter at the specified node\n    channels = node.channels()\n    all_layers = list(set(\[channel.split('.')\[0] for channel in channels]))\n    all_layers.sort()\n    # lslayers is a dictionary. Key = lightselect name. Value = a list of suffixes.\n    lslayers = defaultdict(list)\n    for layer in all_layers:\n        for filter_string in filters:\n            match = re.search(filter_string, layer)\n            if match:\n                ls_suffix = match.group(0)\n                lsname = layer.split(match.group(0))\[0]\n                lslayers\[lsname].append(ls_suffix)\n    return lslayers\n\n\ndef ls_create(ls_suffix, ls_prefix, ls_counter, base_dot, base_ls_replace):\n    # Create one node tree for a light select layer.\n    lslayer = ls_prefix + ls_suffix\n    print(\"Setting up \{0\}:\\t\{1\} - \{2\}\".format(lslayer, ls_prefix, ls_suffix))\n\n    # Add additional horizontal spacing if it's the first layer of the lightselect\n    if ls_counter == 0:\n        xpos = getxpos(base_dot) - grid_x * 4\n    else:\n        xpos = getxpos(base_dot) - grid_x * 2\n\n    ypos = getypos(base_dot)\n\n    base_dot = make_node('Dot', xpos, ypos, base_dot, '\{0\}_top_dot'.format(lslayer))\n\n    ls_shuffle = make_node('Shuffle', xpos, ypos+grid_y*4,\n        nodeinput=base_dot,\n        nodename='Shuffle__\{0\}'.format(lslayer),\n        knobvalues='in \{0\} red red green green blue blue alpha alpha out rgb'.format(lslayer)\n        )\n    # Base Light Select AOV\n    base_ls_dot = make_node('Dot', xpos, getypos(ls_shuffle)+grid_y*3,\n        nodeinput=ls_shuffle,\n        knobvalues='label \{0\}'.format(lslayer),\n        nodename='\{0\}_start_dot'.format(lslayer)\n        )\n\n    # ls_grade = make_node('Multiply', xpos, base_ls_dot.ypos()+grid_y*6, nodeinput=base_ls_dot, nodename='Mult_\{0\}'.format(lslayer))\n    # Copy Exposure node template\n    unselect_all()\n    tmp_exposure = nuke.toNode(\"__EXPOSURE__\")\n    tmp_exposure.setSelected(True)\n    nuke.nodeCopy('%clipboard%')\n    unselect_all()\n    base_ls_dot.setSelected(True)\n    nuke.nodePaste('%clipboard%')\n    ls_grade = nuke.selectedNode()\n    unselect_all()\n    add_removal_knob(ls_grade)\n    ls_grade.setName('Mult_\{0\}'.format(lslayer))\n    setpos(ls_grade, xpos, getypos(base_ls_dot)+grid_y*4)\n\n    ls_grade\['exposure'].setExpression('parent.exposure__\{0\}'.format(ls_prefix))\n\n    ls_end_dot = make_node('Dot', xpos, getypos(ls_grade)+grid_y*42,\n        nodeinput=ls_grade,\n        nodename='\{0\}_end_dot'.format(lslayer)\n        )\n\n    # Move end dot down one grid space for each additional aov in current lightselect prefix\n    setpos(ls_end_dot, getxpos(ls_end_dot), getypos(ls_end_dot) + grid_y*2 * ls_counter)\n\n\n    # Connect this light select layer to the proper merge nodes\n    merge_orig = nuke.toNode('ORIG_LS\{0\}'.format(ls_suffix))\n    merge_out = nuke.toNode('OUT_LS\{0\}'.format(ls_suffix))\n    merge_orig.connectInput(0, base_ls_dot)\n    merge_out.connectInput(0, ls_end_dot)\n    # setpos(ls_shuffle, xpos, getypos(ls_shuffle))\n\n\n    create_ls_replace = nuke.thisNode()\['shuffle_changed_ls_layers'].getValue()\n    if create_ls_replace:\n        # Replace lightselect AOV\n        lsreplace_dot = make_node('Dot', getxpos(base_ls_replace)-grid_x, getypos(base_ls_replace)+grid_y*2,\n            nodeinput=ls_end_dot\n            )\n        lsreplace_dot\['hide_input'].setValue(True)\n        # lsreplace_premult = make_node('Premult', base_ls_replace.xpos()-grid_x, lsreplace_dot.ypos()+grid_y, nodeinput=lsreplace_dot)\n        lsreplace_shufflecopy = make_node('ShuffleCopy', getxpos(base_ls_replace), getypos(base_ls_replace)+grid_y*2,\n            nodeinput=base_ls_replace,\n            nodename='LSReplace_\{0\}'.format(lslayer),\n            knobvalues='red red green green blue blue alpha alpha out \{0\}'.format(lslayer)\n            )\n        lsreplace_shufflecopy.setInput(1, lsreplace_dot)\n\n        # Connect output to last lsreplace shufflecopy\n        nuke.toNode('_FINAL_PREMULT_').setInput(0, lsreplace_shufflecopy)\n        base_ls_replace = lsreplace_shufflecopy\n        setpos(nuke.toNode('_FINAL_PREMULT_'), getxpos(base_ls_replace), getypos(base_ls_replace) + grid_y*4)\n        setpos(nuke.toNode('Output'), getxpos(base_ls_replace), getypos(base_ls_replace) + grid_y*8)\n    else:\n        nuke.toNode('_FINAL_PREMULT_').setInput(0, base_ls_replace)\n\n    return base_dot, base_ls_replace\n\ndef create():\n    node = nuke.thisNode()\n    print(node.name())\n    node.begin()\n    # # node = nuke.toNode('LightSelectRebuild')\n\n    ls_layers_string = node\['ls_layers'].getValue()\n    ls_layer_filters = ls_layers_string.strip().replace(\" \", \"\").split(':')\n\n    base_dot = node\['base_node'].getValue()\n    base_ls_replace = node\['base_ls_replace'].getValue()\n    base_dot = nuke.toNode(base_dot)\n    print(base_dot.name())\n    base_ls_replace = nuke.toNode(base_ls_replace)\n\n    if not base_dot or not base_ls_replace:\n        nuke.message(\"Base node or Base AOV Replace node does not exist in the group. \\nPlease double check...\")\n        return\n\n    lslayers = get_layers(node, ls_layer_filters)\n    print(\"FOUND LAYERS:\\n\{0\}\".format(lslayers))\n    if lslayers:\n        suffixes = six.next(six.itervalues(lslayers))\n    else:\n        nuke.message(\"No lightselect layers found in input!\")\n        return\n\n    # Create needed merge nodes for each suffix\n    for which in \['ORIG', 'OUT']:\n        for i, ls_suffix in enumerate(suffixes):\n            if i == 0:\n                base_node = nuke.toNode('_\{0\}_LS_SUM_'.format(which))\n                ypos = getypos(base_node) + grid_y * 10\n                xpos = getxpos(base_node)\n            ls_sum_merge = make_node('Merge2', xpos, ypos,\n                nodeinput=base_node,\n                nodename=\"\{0\}_LS_summed\{1\}\".format(which, ls_suffix),\n                knobvalues='operation plus output rgb'\n                )\n            ls_merge_dot = make_node('Dot', xpos-(grid_x * 2) - (grid_x*2*i), getypos(ls_sum_merge),\n                nodename=\"\{0\}_LS_Dot\{1\}\".format(which, ls_suffix)\n                )\n            ls_sum_merge.setInput(1, ls_merge_dot)\n            ls_merge = make_node('Merge2', getxpos(ls_merge_dot), getypos(nuke.toNode('_\{0\}_LS_SUM_'.format(which))),\n                nodename=\"\{0\}_LS\{1\}\".format(which, ls_suffix),\n                knobvalues='operation plus output rgb'\n                )\n            ls_merge_dot.setInput(0, ls_merge)\n            ypos += grid_y * 4\n            base_node = ls_sum_merge\n            if which == \"OUT\":\n                ls_sum_shufflecopy = make_node('ShuffleCopy', getxpos(base_node), getypos(ls_sum_merge)+grid_y*1,\n                    nodeinput=ls_sum_merge,\n                    nodename='LSSum\{0\}'.format(ls_suffix),\n                    knobvalues='red red green green blue blue alpha alpha'\n                    )\n                ls_sum_shufflecopy.setInput(1, ls_merge_dot)\n                nuke.tcl(\"add_layer\", \"\{0\} \{0\}.red \{0\}.green \{0\}.blue\".format(\"sum\" + ls_suffix))\n                ls_sum_shufflecopy\['out'].setValue(\"sum\" + ls_suffix)\n                base_node = ls_sum_shufflecopy\n            nuke.toNode('_\{0\}_LS_SUM_END_'.format(which)).setInput(0, base_node)\n\n\n    for lslayer in lslayers.iteritems():\n        ls_prefix = lslayer\[0]\n        suffixes = lslayer\[1]\n        print(\"Processing layer: \{0\}, \{1\}\".format(ls_prefix, suffixes))\n        for ls_counter, ls_suffix in enumerate(suffixes):\n            base_dot, base_ls_replace = ls_create(ls_suffix, ls_prefix, ls_counter, base_dot, base_ls_replace)\n\n            if node\['create_controller_knobs'].getValue():\n                if ls_counter == 0:\n                    # Add label for the grade knobs on this lightselect\n                    label_knob = nuke.Text_Knob('divider_label_' + ls_prefix)\n                    label_knob.setValue(\" \")\n                    label_knob.setLabel(\"@b;\" + ls_prefix)\n                    node.addKnob(label_knob)\n\n                    exposure_knob = nuke.Color_Knob('exposure__\{0\}'.format(ls_prefix))\n                    exposure_knob.setLabel('exp')\n                    exposure_knob.setRange(-15, 15)\n                    exposure_knob.setSingleValue(True)\n                    node.addKnob(exposure_knob)\n\n    # Center all created nodes to align them.\n    _ = \[center_node(n) for n in nuke.allNodes() if \"lightselect_rebuild_cleanup_knob\" in n.knobs()]\n\n    nuke.root().begin()\n    if node\['auto_copy_to_nodegraph'].getValue():\n        # Copy to root nodegraph then self destruct\n        node\['CopyToNodegraph'].execute()\n        unselect_all()\n        # Remove all lightselectrebuildcleanup knobs\n        _ = \[n.removeKnob(n\['lightselect_rebuild_cleanup_knob']) for n in nuke.allNodes() if \"lightselect_rebuild_cleanup_knob\" in n.knobs()]\n\nif __name__==\"__main__\":\n    create()" +STARTLINE}
+ addUserKnob {6 auto_copy_to_nodegraph l "auto copy to nodegraph" t "If enabled, the rebuild network will be copied to the node graph and this node will be deleted." +STARTLINE}
+ addUserKnob {22 CopyToNodegraph l "Copy To Nodegraph" t "Copy the AOV Rebuild tree into the node graph." -STARTLINE T "## Copy LightSelectRebuild graph to node graph\nnode = nuke.thisNode()\n\nnuke.root().begin()\nnode.begin()\n# bake expressions in mults\n_ = \[n\['exposure'].clearAnimated() for n in nuke.allNodes() if n\['tile_color'].getValue() == 2041184255.0]\n_ = \[n.setSelected(True) for n in nuke.allNodes() if \"Input\" not in n.name() and \"Output\" not in n.name() and n.input(0)]\nnuke.nodeCopy(\"%clipboard%\")\nnuke.root().begin()\nnuke.nodePaste(\"%clipboard%\")\nnuke.delete(node)"}
+ addUserKnob {6 shuffle_changed_ls_layers l "shuffle changed ls layers" t "If this is enabled, each modified light select layer will be replaced in the main stream. \n\nUse if you might want to do subtractive adjustments downstream of this rebuild network." +STARTLINE}
+ addUserKnob {26 spacer l " &nbsp;&nbsp;&nbsp;&nbsp;" -STARTLINE T " "}
+ addUserKnob {6 create_controller_knobs l "create exposure knobs" t "If this is enabled, also create knobs to control a grade for each light select on the parent group. (This is slower to create)" +INVISIBLE +STARTLINE}
+ create_controller_knobs true
+ addUserKnob {22 Clear t "Clear all light select nodes" T "\n## Clear all created light select nodes\nnode = nuke.thisNode()\n\nnode.begin()\n\n# Remove all created nodes\n_ = \[nuke.delete(n) for n in nuke.allNodes() if \"lightselect_rebuild_cleanup_knob\" in n.knobs()]\n\n# Remove all knobs on parent group except the python script buttons\nkeep_knob_names = \['Create', 'Clear', 'CopyToNodeGraph']\n\nfor knob in node.allKnobs():\n    if 'divider' in knob.name():\n        node.removeKnob(knob)\n    elif isinstance(knob, nuke.Link_Knob):\n        node.removeKnob(knob)\n    elif knob.name().startswith('exposure'):\n        node.removeKnob(knob)\n    elif isinstance(knob, nuke.Tab_Knob):\n        if \"LightSelectRebuild\" not in knob.name():\n            node.removeKnob(knob)" +STARTLINE}
+ addUserKnob {26 div01 l " " T " "}
+ addUserKnob {35 aov_re_presets l choose t "Choose an AOV name preset" M {"aov_re_search/prman with refr" "knobs this \{ls_layers _spec\$:_diff\$:_refr\$\}" aov_re_search/prman "knobs this \{ls_layers _spec\$:_diff\$\}" aov_re_search/mantra "knobs this \{ls_layers _volume\$:_refract\$:_reflect\$:_diffuse\$\}"}}
+ addUserKnob {1 ls_layers l "aov re search" t "enter a comma seperated list of lightselect aov name endings.\n\nFor example if your light select aovs are rendered as keylight_spec, keylight_diff, keylight_refr, you would enter \"spec,diff,refr\""}
+ ls_layers "_volume\$:_refract\$:_reflect\$:_diffuse\$"
+ addUserKnob {1 base_node l "base node" t "Name of base node to start aov rebuild from." +INVISIBLE}
+ base_node _INPUT_AOVS_START_
+ addUserKnob {1 base_ls_replace l "base aov replace" t "Base AOV replace node" +INVISIBLE}
+ base_ls_replace _LS_REPLACE_AOVS_
+ addUserKnob {26 ""}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos -7080
+  ypos 747
+ }
+ Dot {
+  name Dot4
+  label " INPUT"
+  note_font_size 24
+  note_font_color 0xa5a5a5ff
+  xpos -7046
+  ypos 930
+ }
+ Unpremult {
+  channels all
+  name _START_UNPREMULT_
+  xpos -7080
+  ypos 1029
+ }
+ Dot {
+  name Dot99
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos -7046
+  ypos 1182
+ }
+set Nbe90340 [stack 0]
+ Dot {
+  name Dot15
+  label " "
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos -9446
+  ypos 1182
+ }
+set Nbfa1c90 [stack 0]
+ Dot {
+  name Dot2
+  label " "
+  note_font "Helvetica Bold"
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos -9606
+  ypos 1182
+ }
+set Nbfa5230 [stack 0]
+ Fill {
+  color 0
+  name Fill
+  tile_color 0x222222ff
+  xpos -9640
+  ypos 1251
+ }
+ Dot {
+  name _ORIG_LS_SUM_
+  tile_color 0xff0000ff
+  label " "
+  note_font "Helvetica Bold"
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos -9606
+  ypos 1470
+ }
+ Dot {
+  name _ORIG_LS_SUM_END_
+  tile_color 0xff0000ff
+  label " "
+  note_font "Helvetica Bold"
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos -9606
+  ypos 2478
+ }
+ Dot {
+  name Dot14
+  label " "
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos -9606
+  ypos 2586
+ }
+push $Nbfa1c90
+ Dot {
+  name Dot20
+  label " Difference\n<font size=1> between input beauty and \nsum of all light selects + emissive+transmissive"
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos -9446
+  ypos 1470
+ }
+ Merge2 {
+  inputs 2
+  operation from
+  bbox B
+  output rgb
+  name Merge4
+  xpos -9480
+  ypos 2583
+ }
+ Dot {
+  name Dot21
+  label " The Leftovers"
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos -9446
+  ypos 4818
+ }
+ Dot {
+  name Dot16
+  label " "
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos -9446
+  ypos 4926
+ }
+push $Nbe90340
+ Shuffle {
+  red black
+  green black
+  blue black
+  name _BLACK_2
+  tile_color 0xff
+  label "\[value in]"
+  xpos -7080
+  ypos 1209
+ }
+add_layer {directDiffuse directDiffuse.red directDiffuse.green directDiffuse.blue directDiffuse._w}
+add_layer {directSpecular directSpecular.red directSpecular.green directSpecular.blue directSpecular._w}
+add_layer {indirectDiffuse indirectDiffuse.red indirectDiffuse.green indirectDiffuse.blue indirectDiffuse._w}
+add_layer {indirectSpecular indirectSpecular.red indirectSpecular.green indirectSpecular.blue indirectSpecular._w}
+ Remove {
+  channels directDiffuse
+  channels2 directSpecular
+  channels3 indirectDiffuse
+  channels4 indirectSpecular
+  name Remove1
+  label "\[value operation]:\\n\[value channels]\\n\[value channels2]\\n\[value channels3]\\n\[value channels4]\nRemove Beauty AOVs that will break downstream"
+  xpos -7080
+  ypos 1350
+ }
+add_layer {subsurface subsurface.red subsurface.green subsurface.blue subsurface.alpha subsurface._w}
+ Remove {
+  channels subsurface
+  name Remove2
+  label "Remove Beauty AOVs that will break downstream"
+  xpos -7080
+  ypos 1490
+ }
+ Dot {
+  name _OUT_LS_SUM_
+  tile_color 0xff0000ff
+  label " "
+  note_font "Helvetica Bold"
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos -7046
+  ypos 3306
+ }
+ Dot {
+  name _OUT_LS_SUM_END_
+  tile_color 0xff0000ff
+  label " "
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos -7052
+  ypos 4674
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  bbox B
+  output rgb
+  name Merge6
+  xpos -7086
+  ypos 4923
+ }
+ Dot {
+  name BEAUTY_REBUILD_OUT
+  label " REBUILT CG OUT"
+  note_font_size 24
+  note_font_color 0xa5a5a5ff
+  xpos -7052
+  ypos 5106
+ }
+ Dot {
+  name _LS_REPLACE_AOVS_
+  tile_color 0xff0000ff
+  label " Replace Light Select AOVS"
+  note_font_size 24
+  note_font_color 0xa5a5a5ff
+  xpos -7052
+  ypos 5430
+ }
+ Premult {
+  channels all
+  name _FINAL_PREMULT_
+  xpos -7052
+  ypos 7750
+  addUserKnob {20 User}
+  addUserKnob {26 donotdeleteme l " " T " "}
+  addUserKnob {26 lightselect_rebuild_prman_final_premult l "" +STARTLINE}
+ }
+ Output {
+  name Output
+  xpos -7052
+  ypos 7910
+ }
+push $Nbfa5230
+ Dot {
+  name _INPUT_AOVS_START_
+  tile_color 0xff0000ff
+  label "\nINPUT AOVS START"
+  note_font "Helvetica Bold"
+  note_font_size 29.7
+  note_font_color 0xa5a5a5ff
+  xpos -10726
+  ypos 1182
+ }
+ Group {
+  inputs 0
+  name __EXPOSURE__
+  tile_color 0x79a9ffff
+  selected true
+  xpos -7240
+  ypos 747
+  addUserKnob {20 Exposure}
+  addUserKnob {18 exposure R -8 8}
+  exposure {0 0 0}
+  addUserKnob {6 exposure_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ }
+  Input {
+   inputs 0
+   name Inputmask
+   xpos 70
+   ypos -10
+   number 1
+  }
+  Input {
+   inputs 0
+   name Input
+   xpos -40
+   ypos -58
+  }
+  Multiply {
+   inputs 1+1
+   channels rgb
+   value {{"pow(2, parent.exposure)"} {"pow(2, parent.exposure)"} {"pow(2, parent.exposure)"} {"pow(2, parent.exposure)"}}
+   name _EXPOSURE_
+   xpos -40
+   ypos -10
+  }
+  Output {
+   name Output1
+   xpos -40
+   ypos 38
+  }
+ end_group
+end_group

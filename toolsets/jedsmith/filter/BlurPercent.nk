@@ -1,0 +1,45 @@
+Group {
+ name BlurPercent
+ tile_color 0xc4814dff
+ addUserKnob {20 percentBlur l "Percent Blur"}
+ addUserKnob {41 channels T _BLUR_.channels}
+ addUserKnob {14 percent R 0 100}
+ percent .5
+ addUserKnob {41 filter T _BLUR_.filter}
+ addUserKnob {41 quality l "" -STARTLINE T _BLUR_.quality}
+ addUserKnob {41 crop l "crop to format" -STARTLINE T _BLUR_.crop}
+ addUserKnob {41 mix T _BLUR_.mix}
+}
+ Input {
+  inputs 0
+  name Inputmask
+  xpos 600
+  ypos -153
+  number 1
+ }
+ Input {
+  inputs 0
+  name Input
+  xpos 440
+  ypos -225
+ }
+ Blur {
+  inputs 1+1
+  channels rgba
+  size {{width/3*(percent/100) x1001 6.826666667e+10} {width/3*(percent/100)*(1/pixel_aspect)}}
+  crop false
+  name _BLUR_
+  xpos 440
+  ypos -153
+  addUserKnob {20 User}
+  addUserKnob {7 xpercent l xPercent R 0 100}
+  xpercent 25.5
+  addUserKnob {7 ypercent l yPercent R 0 100}
+  ypercent {{xpercent}}
+ }
+ Output {
+  name Output1
+  xpos 440
+  ypos -81
+ }
+end_group

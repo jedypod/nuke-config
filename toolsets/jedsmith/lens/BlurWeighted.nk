@@ -1,0 +1,671 @@
+Group {
+ name BlurWeighted
+ tile_color 0xcc804eff
+ postage_stamp_frame 1017
+ addUserKnob {20 WeightedBlur}
+ addUserKnob {6 effect_only l "effect only" t "Return the Blur without adding the input so you can composite it yourself." +STARTLINE}
+ effect_only true
+ addUserKnob {14 size R 0 100}
+ size 300
+ addUserKnob {7 scale l "recursive scale" t "Size of the smaller blur kernels. i.e. if Blur size = 100, and the Recursive scale = 0.5:\nBlur1 = 100,\nBlur2 = 100 * .5 (50)\nBlur3 = 100 * .5 * .5 (25)\netc."}
+ scale 0.82
+ addUserKnob {7 cw l "center weight" t "Number of blur kernels to use. Higher number equals greater center weighting.\n" R 1 20}
+ cw 20
+ addUserKnob {7 brightness t "a mulitiplier on the blur" R 0 5}
+ brightness 1
+ addUserKnob {26 ""}
+ addUserKnob {7 mix}
+ mix 1
+}
+ Input {
+  inputs 0
+  name Input
+  xpos 950
+  ypos -730
+ }
+ Dot {
+  name Dot1
+  xpos 984
+  ypos -414
+ }
+set N613172a0 [stack 0]
+ Dot {
+  name Dot2
+  xpos 3184
+  ypos -414
+ }
+ Dot {
+  name Dot3
+  xpos 3184
+  ypos 426
+ }
+ Dot {
+  name Dot5
+  xpos 1204
+  ypos 426
+ }
+set Nfa79cb0 [stack 0]
+push $N613172a0
+ Dot {
+  name Dot7
+  xpos 984
+  ypos -270
+ }
+set N8dcbecd0 [stack 0]
+ Blur {
+  channels rgba
+  size {{parent.size.w} {parent.size.h}}
+  crop false
+  name Blur1
+  xpos 400
+  ypos -250
+ }
+set N8e7fd7e0 [stack 0]
+push $N8dcbecd0
+ Blur {
+  channels rgba
+  size {{Blur1.size.w*parent.scale} {Blur1.size.h*parent.scale}}
+  crop false
+  name Blur2
+  xpos 510
+  ypos -106
+ }
+ Merge {
+  inputs 2
+  operation plus
+  also_merge all
+  name Plus10
+  xpos 510
+  ypos -58
+ }
+set N90792660 [stack 0]
+push $N8dcbecd0
+ Blur {
+  channels rgba
+  size {{Blur2.size.w*parent.scale} {Blur2.size.h*parent.scale}}
+  crop false
+  name Blur3
+  xpos 620
+  ypos -106
+ }
+ Merge {
+  inputs 2
+  operation plus
+  also_merge all
+  name Plus11
+  xpos 620
+  ypos -58
+ }
+set N40d7a8a0 [stack 0]
+push $N8dcbecd0
+ Blur {
+  channels rgba
+  size {{Blur3.size.w*parent.scale} {Blur3.size.h*parent.scale}}
+  crop false
+  name Blur4
+  xpos 730
+  ypos -106
+ }
+ Merge {
+  inputs 2
+  operation plus
+  also_merge all
+  name Plus12
+  xpos 730
+  ypos -58
+ }
+set N5345d560 [stack 0]
+push $N8dcbecd0
+ Blur {
+  channels rgba
+  size {{Blur4.size.w*parent.scale} {Blur4.size.h*parent.scale}}
+  crop false
+  name Blur5
+  xpos 840
+  ypos -106
+ }
+ Merge {
+  inputs 2
+  operation plus
+  also_merge all
+  name Plus13
+  xpos 840
+  ypos -58
+ }
+set N879b46d0 [stack 0]
+push $N8dcbecd0
+ Blur {
+  channels rgba
+  size {{Blur5.size.w*parent.scale} {Blur5.size.h*parent.scale}}
+  crop false
+  name Blur6
+  xpos 950
+  ypos -106
+ }
+ Merge {
+  inputs 2
+  operation plus
+  also_merge all
+  name Plus14
+  xpos 950
+  ypos -58
+ }
+set N432a5e00 [stack 0]
+push $N8dcbecd0
+ Blur {
+  channels rgba
+  size {{Blur6.size.w*parent.scale} {Blur6.size.h*parent.scale}}
+  crop false
+  name Blur7
+  xpos 1060
+  ypos -106
+ }
+ Merge {
+  inputs 2
+  operation plus
+  also_merge all
+  name Plus1
+  xpos 1060
+  ypos -58
+ }
+set N61310500 [stack 0]
+push $N8dcbecd0
+ Blur {
+  channels rgba
+  size {{Blur7.size.w*parent.scale} {Blur7.size.h*parent.scale}}
+  crop false
+  name Blur8
+  xpos 1170
+  ypos -106
+ }
+ Merge {
+  inputs 2
+  operation plus
+  also_merge all
+  name Plus2
+  xpos 1170
+  ypos -58
+ }
+set N8dcc73a0 [stack 0]
+push $N8dcbecd0
+ Blur {
+  channels rgba
+  size {{Blur8.size.w*parent.scale} {Blur8.size.h*parent.scale}}
+  crop false
+  name Blur9
+  xpos 1280
+  ypos -106
+ }
+ Merge {
+  inputs 2
+  operation plus
+  also_merge all
+  name Plus3
+  xpos 1280
+  ypos -58
+ }
+set N40481660 [stack 0]
+push $N8dcbecd0
+ Blur {
+  channels rgba
+  size {{Blur9.size.w*parent.scale} {Blur9.size.h*parent.scale}}
+  crop false
+  name Blur10
+  xpos 1390
+  ypos -106
+ }
+ Merge {
+  inputs 2
+  operation plus
+  also_merge all
+  name Plus4
+  xpos 1390
+  ypos -58
+ }
+set N3f84e560 [stack 0]
+push $N8dcbecd0
+ Blur {
+  channels rgba
+  size {{Blur10.size.w*parent.scale} {Blur10.size.h*parent.scale}}
+  crop false
+  name Blur11
+  xpos 1500
+  ypos -106
+ }
+ Merge {
+  inputs 2
+  operation plus
+  also_merge all
+  name Plus5
+  xpos 1500
+  ypos -58
+ }
+set N39a95080 [stack 0]
+push $N8dcbecd0
+ Blur {
+  channels rgba
+  size {{Blur11.size.w*parent.scale} {Blur11.size.h*parent.scale}}
+  crop false
+  name Blur12
+  xpos 1610
+  ypos -106
+ }
+ Merge {
+  inputs 2
+  operation plus
+  also_merge all
+  name Plus6
+  xpos 1610
+  ypos -58
+ }
+set N8e0fb9d0 [stack 0]
+push $N8dcbecd0
+ Blur {
+  channels rgba
+  size {{Blur12.size.w*parent.scale} {Blur12.size.h*parent.scale}}
+  crop false
+  name Blur13
+  xpos 1720
+  ypos -106
+ }
+ Merge {
+  inputs 2
+  operation plus
+  also_merge all
+  name Plus7
+  xpos 1720
+  ypos -58
+ }
+set Nf2dd4ea0 [stack 0]
+push $N8dcbecd0
+ Blur {
+  channels rgba
+  size {{Blur13.size.w*parent.scale} {Blur13.size.h*parent.scale}}
+  crop false
+  name Blur14
+  xpos 1830
+  ypos -106
+ }
+ Merge {
+  inputs 2
+  operation plus
+  also_merge all
+  name Plus8
+  xpos 1830
+  ypos -58
+ }
+set N3f84b400 [stack 0]
+push $N8dcbecd0
+ Blur {
+  channels rgba
+  size {{Blur14.size.w*parent.scale} {Blur14.size.h*parent.scale}}
+  crop false
+  name Blur15
+  xpos 1940
+  ypos -106
+ }
+ Merge {
+  inputs 2
+  operation plus
+  also_merge all
+  name Plus9
+  xpos 1940
+  ypos -58
+ }
+set N66e0e920 [stack 0]
+push $N8dcbecd0
+ Blur {
+  channels rgba
+  size {{Blur15.size.w*parent.scale} {Blur15.size.h*parent.scale}}
+  crop false
+  name Blur16
+  xpos 2050
+  ypos -106
+ }
+ Merge {
+  inputs 2
+  operation plus
+  also_merge all
+  name Plus15
+  xpos 2050
+  ypos -58
+ }
+set Nfa73250 [stack 0]
+push $N8dcbecd0
+ Blur {
+  channels rgba
+  size {{Blur16.size.w*parent.scale} {Blur16.size.h*parent.scale}}
+  crop false
+  name Blur17
+  xpos 2160
+  ypos -106
+ }
+ Merge {
+  inputs 2
+  operation plus
+  also_merge all
+  name Plus16
+  xpos 2160
+  ypos -58
+ }
+set N3b1aa540 [stack 0]
+push $N8dcbecd0
+ Blur {
+  channels rgba
+  size {{Blur17.size.w*parent.scale} {Blur17.size.h*parent.scale}}
+  crop false
+  name Blur18
+  xpos 2270
+  ypos -106
+ }
+ Merge {
+  inputs 2
+  operation plus
+  also_merge all
+  name Plus17
+  xpos 2270
+  ypos -58
+ }
+set Nfa78220 [stack 0]
+push $N8dcbecd0
+ Blur {
+  channels rgba
+  size {{Blur18.size.w*parent.scale} {Blur18.size.h*parent.scale}}
+  crop false
+  name Blur19
+  xpos 2380
+  ypos -106
+ }
+ Merge {
+  inputs 2
+  operation plus
+  also_merge all
+  name Plus18
+  xpos 2380
+  ypos -58
+ }
+set Nf2cf2620 [stack 0]
+push $N8dcbecd0
+ Blur {
+  channels rgba
+  size {{Blur19.size.w*parent.scale} {Blur19.size.h*parent.scale}}
+  crop false
+  name Blur20
+  xpos 2490
+  ypos -106
+ }
+ Merge {
+  inputs 2
+  operation plus
+  also_merge all
+  name Plus19
+  xpos 2490
+  ypos -58
+ }
+ Multiply {
+  channels rgba
+  value 0.05
+  name Multiply14
+  xpos 2490
+  ypos -10
+  addUserKnob {20 User}
+  addUserKnob {7 numInputs}
+  numInputs 6
+ }
+push $Nf2cf2620
+ Multiply {
+  channels rgba
+  value 0.0526316
+  name Multiply13
+  xpos 2380
+  ypos -10
+  addUserKnob {20 User}
+  addUserKnob {7 numInputs}
+  numInputs 6
+ }
+push $Nfa78220
+ Multiply {
+  channels rgba
+  value 0.0555556
+  name Multiply12
+  xpos 2270
+  ypos -10
+  addUserKnob {20 User}
+  addUserKnob {7 numInputs}
+  numInputs 6
+ }
+push $N3b1aa540
+ Multiply {
+  channels rgba
+  value 0.0588235
+  name Multiply11
+  xpos 2160
+  ypos -10
+  addUserKnob {20 User}
+  addUserKnob {7 numInputs}
+  numInputs 6
+ }
+push $Nfa73250
+ Multiply {
+  channels rgba
+  value 0.0625
+  name Multiply10
+  xpos 2050
+  ypos -10
+  addUserKnob {20 User}
+  addUserKnob {7 numInputs}
+  numInputs 6
+ }
+push $N66e0e920
+ Multiply {
+  channels rgba
+  value 0.0666667
+  name Multiply9
+  xpos 1940
+  ypos -10
+  addUserKnob {20 User}
+  addUserKnob {7 numInputs}
+  numInputs 6
+ }
+push $N3f84b400
+ Multiply {
+  channels rgba
+  value 0.0714286
+  name Multiply8
+  xpos 1830
+  ypos -10
+  addUserKnob {20 User}
+  addUserKnob {7 numInputs}
+  numInputs 6
+ }
+push $Nf2dd4ea0
+ Multiply {
+  channels rgba
+  value 0.0769231
+  name Multiply7
+  xpos 1720
+  ypos -10
+  addUserKnob {20 User}
+  addUserKnob {7 numInputs}
+  numInputs 6
+ }
+push $N8e0fb9d0
+ Multiply {
+  channels rgba
+  value 0.0833333
+  name Multiply6
+  xpos 1610
+  ypos -10
+  addUserKnob {20 User}
+  addUserKnob {7 numInputs}
+  numInputs 6
+ }
+push $N39a95080
+ Multiply {
+  channels rgba
+  value 0.0909091
+  name Multiply5
+  xpos 1500
+  ypos -10
+  addUserKnob {20 User}
+  addUserKnob {7 numInputs}
+  numInputs 6
+ }
+push $N3f84e560
+ Multiply {
+  channels rgba
+  value 0.1
+  name Multiply4
+  xpos 1390
+  ypos -10
+  addUserKnob {20 User}
+  addUserKnob {7 numInputs}
+  numInputs 6
+ }
+push $N40481660
+ Multiply {
+  channels rgba
+  value 0.111111
+  name Multiply3
+  xpos 1280
+  ypos -10
+  addUserKnob {20 User}
+  addUserKnob {7 numInputs}
+  numInputs 6
+ }
+push $N8dcc73a0
+ Multiply {
+  channels rgba
+  value 0.125
+  name Multiply2
+  xpos 1170
+  ypos -10
+  addUserKnob {20 User}
+  addUserKnob {7 numInputs}
+  numInputs 6
+ }
+push $N61310500
+ Multiply {
+  channels rgba
+  value 0.142857
+  name Multiply1
+  xpos 1060
+  ypos -10
+  addUserKnob {20 User}
+  addUserKnob {7 numInputs}
+  numInputs 6
+ }
+push $N432a5e00
+ Multiply {
+  channels rgba
+  value 0.166667
+  name Multiply18
+  xpos 950
+  ypos -10
+  addUserKnob {20 User}
+  addUserKnob {7 numInputs}
+  numInputs 6
+ }
+push $N879b46d0
+ Multiply {
+  channels rgba
+  value 0.2
+  name Multiply21
+  xpos 840
+  ypos -10
+  addUserKnob {20 User}
+  addUserKnob {7 numInputs}
+  numInputs 5
+ }
+push $N5345d560
+ Multiply {
+  channels rgba
+  value 0.25
+  name Multiply20
+  xpos 730
+  ypos -10
+  addUserKnob {20 User}
+  addUserKnob {7 numInputs}
+  numInputs 4
+ }
+push $N40d7a8a0
+ Multiply {
+  channels rgba
+  value 0.333333
+  name Multiply19
+  xpos 620
+  ypos -10
+  addUserKnob {20 User}
+  addUserKnob {7 numInputs}
+  numInputs 3
+ }
+push 0
+push $N90792660
+ Multiply {
+  channels rgba
+  value 0.5
+  name Multiply22
+  xpos 510
+  ypos -10
+  addUserKnob {20 User}
+  addUserKnob {7 numInputs}
+  numInputs 2
+ }
+push $N8e7fd7e0
+ Multiply {
+  channels rgba
+  name Multiply23
+  xpos 400
+  ypos -10
+  addUserKnob {20 User}
+  addUserKnob {7 numInputs}
+  numInputs 1
+ }
+ Dissolve {
+  inputs 20+1
+  which {{parent.cw-1}}
+  name Dissolve1
+  xpos 840
+  ypos 176
+ }
+ Multiply {
+  channels rgba
+  value {{parent.brightness}}
+  name Multiply15
+  xpos 840
+  ypos 254
+ }
+set N929b0030 [stack 0]
+ Merge2 {
+  inputs 2
+  operation plus
+  bbox B
+  also_merge all
+  name Merge1
+  xpos 840
+  ypos 422
+  disable {{parent.effect_only}}
+ }
+push $Nfa79cb0
+ Dissolve {
+  inputs 2
+  channels rgba
+  which {{parent.mix}}
+  name __MIX__
+  xpos 840
+  ypos 542
+ }
+ Output {
+  name Output
+  xpos 840
+  ypos 830
+ }
+push $N929b0030
+ Viewer {
+  frame_range 1001-1163
+  fps 23.97602463
+  name Viewer1
+  xpos 950
+  ypos -396
+ }
+end_group

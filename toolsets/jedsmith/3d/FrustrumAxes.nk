@@ -1,0 +1,167 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name FrustrumAxes
+ addUserKnob {20 Parameters l "" +STARTLINE}
+ addUserKnob {3 ref_frame}
+ ref_frame 1001
+ addUserKnob {7 distance R 0 1000}
+ distance 1000
+ addUserKnob {7 width_from_center}
+ width_from_center 0.5
+ addUserKnob {22 setup_fov l "@b; Get Animation Curves" t "Calculate the animation curves of the two axes at the distance specified, at the width from the camera center." T "## Setup overscan tracking code\nimport nuke\nfrom nukescripts import snap3d as sn\nimport math\n\ndef cameraProjectionMatrix(cameraNode, frame, imageformat):\n    wm = nuke.math.Matrix4()\n    for i in xrange(16):\n        wm\[i] = cameraNode\['matrix'].getValueAt(frame,i)\n    wm.transpose()\n    camTransform = wm.inverse()\n    roll = float(cameraNode\['winroll'].getValueAt(frame,0))\n    scale_x = float(cameraNode\['win_scale'].getValueAt(frame,0))\n    scale_y = float(cameraNode\['win_scale'].getValueAt(frame,1))\n    translate_x = float(cameraNode\['win_translate'].getValueAt(frame,0))\n    translate_y = float(cameraNode\['win_translate'].getValueAt(frame,1))\n    m = nuke.math.Matrix4()\n    m.makeIdentity()\n    m.rotateZ(math.radians(roll))\n    m.scale(1.0 / scale_x, 1.0 / scale_y, 1.0)\n    m.translate(-translate_x, -translate_y, 0.0)\n    focal_length = float(cameraNode\['focal'].getValueAt(frame))\n    h_aperture = float(cameraNode\['haperture'].getValueAt(frame))\n    near = float(cameraNode\['near'].getValueAt(frame))\n    far = float(cameraNode\['far'].getValueAt(frame))\n    projection_mode = int(cameraNode\['projection_mode'].getValueAt(frame))\n    p = nuke.math.Matrix4()\n    p.projection(focal_length / h_aperture, near, far, projection_mode == 0)\n    imageAspect = float(imageformat.height()) / float(imageformat.width())\n    t = nuke.math.Matrix4()\n    t.makeIdentity()\n    t.translate( 1.0, 1.0 - (1.0 - imageAspect / float(imageformat.pixelAspect())), 0.0 )\n    x_scale = float(imageformat.width()) / 2.0\n    y_scale = x_scale * imageformat.pixelAspect()\n    s = nuke.math.Matrix4()\n    s.makeIdentity()\n    s.scale(x_scale, y_scale, 1.0)\n    return s * t * p * m * camTransform\n\n\ndef projectPoints(frame, camera=None, point=None, imageformat=None):\n    if not imageformat:\n        imageformat = nuke.root()\['format'].value()\n    camMatrix = cameraProjectionMatrix(camera, frame, imageformat)\n    if camMatrix == None:\n        raise RuntimeError, \"snap3d.cameraProjectionMatrix() returned None for camera.\"\n    if not ( isinstance(point, list) or isinstance(point, tuple) ):\n        raise ValueError, \"Argument point must be a list or tuple.\"\n    for point in point:\n        if isinstance(point, nuke.math.Vector3):\n            pt = point\n        elif isinstance(point, list) or isinstance(point, tuple):\n            pt = nuke.math.Vector3(point\[0], point\[1], point\[2])\n        else:\n            raise ValueError, \"All items in point must be nuke.math.Vector3 or list/tuple of 3 floats.\"\n        tPos = camMatrix * nuke.math.Vector4(pt.x, pt.y, pt.z, 1.0)\n        try:\n            yield nuke.math.Vector2(tPos.x / tPos.w, tPos.y / tPos.w)\n        except ZeroDivisionError:\n            print \"Zero Division Error on frame \{0\} with point data \{1\}\".format(frame, point)\n            yield nuke.math.Vector2()\n\n\ndef get_world_pos(node):\n    if 'world_matrix' not in node.knobs():\n        raise NameError\n    mResult = nuke.math.Matrix4()\n    for i in range(0,16):\n        mResult\[i] = node\['world_matrix'].getValue()\[i]\n    mResult.transpose()\n    mTranslate = nuke.math.Matrix4(mResult)\n    mTranslate.translationOnly()\n    translate = \[mTranslate\[12], mTranslate\[13], mTranslate\[14]]\n\n    return translate\n\n\ndef calc():\n    thisnode = nuke.thisNode()\n    #thisnode = nuke.toNode('.'.join(thisnode.fullName().split('.')\[:-1]))\n    thisnode.begin()\n\n    node = nuke.toNode('InputLayout_Res')\n\n    cam_input = thisnode.input(0)\n    if not (cam_input and isinstance(cam_input, nuke.Node)):\n        print \"A Camera node must be connected.\"\n        return\n    if 'Camera' in cam_input.Class():\n        cam = cam_input\n    else:\n        cam = nuke.toNode(nuke.tcl(\"full_name \[topnode %s]\" % cam_input.name()))\n    \n    # Get world translate for each of our Axes position\n    axis_points = \[get_world_pos(nuke.toNode('SL_FRUSTRUM_EDGE')), get_world_pos(nuke.toNode('SR_FRUSTRUM_EDGE'))]\n\n    # Get Camera animation range\n    first = None\n    last = None\n    if cam\['translate'].isAnimated():        \n        for curve in cam\['translate'].animations():\n            if first == None:\n                first = int(curve.keys()\[0].x)\n            else:\n                first = min(first, int(curve.keys()\[0].x))\n        for curve in cam\['translate'].animations():\n            if last == None:\n                last = int(curve.keys()\[-1].x)\n            else:\n                last = max(last, int(curve.keys()\[-1].x))\n    else:\n        nuke.tprint(\"Input Camera is not animated.\")\n        first = nuke.root().firstFrame()\n        last = nuke.root().lastFrame()\n        \n    framerange = nuke.FrameRange('\{0\}-\{1\}'.format(first, last))\n\n    nuke.root().begin()\n    tracker = nuke.createNode('Tracker3')\n    tracker.setName('Track_CamFrustrum')\n    tracker\['reference_frame'].setValue(nuke.root()\['first_frame'].getValue())\n    \n\n    for opnum in xrange(2):\n        opknob = tracker\['track\{0\}'.format(opnum+1)]\n        opknob.clearAnimated()\n        opknob.setAnimated()\n        tracker\['enable\{0\}'.format(opnum+1)].setValue(True)\n        tracker\['use_for\{0\}'.format(opnum+1)].setValue(3)\n\n        point_animcurve = \[\[], \[]]\n        for frame in framerange:\n            #print \"PROJECTING:\", axis_points\[opnum]\n            #print nuke.math.Vector3(axis_points\[opnum]\[0], axis_points\[opnum]\[1], axis_points\[opnum]\[2])\n            point = projectPoints(frame, cam, \[axis_points\[opnum]], node.format()).next()\n            for index in xrange(2):\n                point_animcurve\[index].append(nuke.AnimationKey(frame, point\[index]))\n\n        for index, curve in enumerate(opknob.animations()):\n            curve.addKey(point_animcurve\[index])\n\n    \n    tracker.setTab(2)\n    tracker.showControlPanel()\n    tracker\['use_for1'].setValue(1)\n    tracker\['use_for1'].setValue(3)\n    tracker\['transform'].setValue('none')\n    tracker\['transform'].setValue('match-move')\n    tracker.hideControlPanel()\n\nif __name__ == '__main__':\n    calc()" +STARTLINE}
+}
+ Camera2 {
+  inputs 0
+  display off
+  xform_order {{"\[topnode input1].knob.xform_order"}}
+  rot_order {{"\[topnode input1].knob.rot_order"}}
+  translate {{"\[exists parent.input0] ? \[topnode this.parent.input0].translate : 0"} {"\[exists parent.input0] ? \[topnode this.parent.input0].translate : 0"} {"\[exists parent.input0] ? \[topnode this.parent.input0].translate : 0"}}
+  rotate {{"\[exists parent.input0] ? \[topnode this.parent.input0].rotate : 0"} {"\[exists parent.input0] ? \[topnode this.parent.input0].rotate : 0"} {"\[exists parent.input0] ? \[topnode this.parent.input0].rotate : 0"}}
+  scaling {{"\[exists parent.input0] ? \[topnode this.parent.input0].scaling : 0"} {"\[exists parent.input0] ? \[topnode this.parent.input0].scaling : 0"} {"\[exists parent.input0] ? \[topnode this.parent.input0].scaling : 0"}}
+  uniform_scale {{"\[exists parent.input0] ? \[topnode this.parent.input0].uniform_scale : 0"}}
+  skew {{"\[exists parent.input0] ? \[topnode this.parent.input0].skew : 0"} {"\[exists parent.input0] ? \[topnode this.parent.input0].skew : 0"} {"\[exists parent.input0] ? \[topnode this.parent.input0].skew : 0"}}
+  pivot {{"\[exists parent.input0] ? \[topnode this.parent.input0].pivot : 0"} {"\[exists parent.input0] ? \[topnode this.parent.input0].pivot : 0"} {"\[exists parent.input0] ? \[topnode this.parent.input0].pivot : 0"}}
+  projection_mode {{"\[topnode input1].knob.projection_mode"}}
+  focal {{"\[exists parent.input0] ? \[topnode this.parent.input0].focal : 0"}}
+  haperture {{"\[exists parent.input0] ? \[topnode this.parent.input0].haperture : 0"}}
+  vaperture {{"\[exists parent.input0] ? \[topnode this.parent.input0].vaperture : 0"}}
+  far 900000
+  name CAM_ORIG
+  xpos -800
+  ypos -54
+ }
+ Dot {
+  name Dot11
+  label " "
+  note_font "Helvetica Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos -776
+  ypos 90
+ }
+ FrameHold {
+  first_frame {{parent.ref_frame}}
+  name REF_FRAME
+  xpos -810
+  ypos 344
+  addUserKnob {20 Set}
+  addUserKnob {22 Set_BTN l "Set To Current Frame" -STARTLINE T "fh = nuke.thisNode()\nfh.knob('first_frame').setValue(nuke.frame())"}
+ }
+ Dot {
+  name Dot6
+  label " "
+  note_font "Helvetica Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos -776
+  ypos 498
+ }
+set N87056e0 [stack 0]
+ Dot {
+  name Dot7
+  label " "
+  note_font "Helvetica Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos -556
+  ypos 498
+ }
+ Axis2 {
+  translate {{-parent.SL_FRUSTRUM_EDGE.translate.x} 0 {-parent.CAM_WIN_SCALE.distance}}
+  name SR_FRUSTRUM_EDGE
+  xpos -580
+  ypos 546
+ }
+push $N87056e0
+ Axis2 {
+  translate {{parent.CAM_WIN_SCALE.width_at_distance} 0 {-parent.CAM_WIN_SCALE.distance}}
+  name SL_FRUSTRUM_EDGE
+  xpos -800
+  ypos 546
+ }
+ Scene {
+  inputs 2
+  name Scene1
+  xpos -690
+  ypos 618
+ }
+ Output {
+  name Output1
+  xpos -700
+  ypos 830
+ }
+ Input {
+  inputs 0
+  name InputCamera
+  label "\[value number]"
+  xpos -370
+  ypos -208
+ }
+ Input {
+  inputs 0
+  name InputCG_Res
+  label "\[value number]"
+  xpos -590
+  ypos -208
+  number 1
+ }
+ Camera2 {
+  inputs 0
+  xform_order {{"\[topnode input1].knob.xform_order"}}
+  rot_order {{"\[topnode input1].knob.rot_order"}}
+  translate {{parent.CAM_ORIG.translate} {parent.CAM_ORIG.translate} {parent.CAM_ORIG.translate}}
+  rotate {{parent.CAM_ORIG.rotate(parent.ref_frame)} {parent.CAM_ORIG.rotate(parent.ref_frame)} {parent.CAM_ORIG.rotate(parent.ref_frame)}}
+  scaling {{parent.CAM_ORIG.scaling} {parent.CAM_ORIG.scaling} {parent.CAM_ORIG.scaling}}
+  uniform_scale {{"\[topnode this.parent.input0].uniform_scale"}}
+  skew {{parent.CAM_ORIG.skew} {parent.CAM_ORIG.skew} {parent.CAM_ORIG.skew}}
+  pivot {{parent.CAM_ORIG.pivot} {parent.CAM_ORIG.pivot} {parent.CAM_ORIG.pivot}}
+  projection_mode {{"\[topnode input1].knob.projection_mode"}}
+  focal {{parent.CAM_ORIG.focal}}
+  haperture {{parent.CAM_ORIG.haperture}}
+  vaperture {{parent.CAM_ORIG.vaperture}}
+  far 900000
+  name CAM_FOV
+  xpos -580
+  ypos -54
+ }
+ Camera2 {
+  xform_order {{"\[topnode input1].knob.xform_order"}}
+  rot_order {{"\[topnode input1].knob.rot_order"}}
+  projection_mode {{"\[topnode input1].knob.projection_mode"}}
+  focal {{parent.CAM_ORIG.focal}}
+  haperture {{parent.CAM_ORIG.haperture}}
+  vaperture {{"\[topnode this.parent.input0].vaperture"}}
+  near {{"\[topnode this.parent.input0].near"}}
+  far 900000
+  win_translate {{"-1 * xform.x / inwidth * inpar * win_scale.u"} {"-1 * xform.y / inwidth *  win_scale.u"}}
+  win_scale {{parent.fov_mult} {win_scale.u}}
+  name CAM_WIN_SCALE
+  xpos -580
+  ypos 66
+  addUserKnob {20 FOV}
+  addUserKnob {7 fov t "camera field of view in degrees" R 1 180}
+  fov {{"(atan2(haperture/2, focal)*2)*180/3.14159265359"}}
+  addUserKnob {7 fov_rad t "camera field of view in radians" R 0 10}
+  fov_rad {{"(atan2(haperture/2, focal)*2)"}}
+  addUserKnob {7 distance R 0 10000}
+  distance {{parent.distance}}
+  addUserKnob {7 width_at_distance t "width of the camera frustrum at a specified distance" R 0 10000}
+  width_at_distance {{"distance * tan(fov_rad/2) * parent.width_from_center"}}
+  addUserKnob {26 ""}
+  addUserKnob {3 inwidth}
+  inwidth {{"\[exists parent.input1] ? \[topnode this.parent.input1].width : 0"}}
+  addUserKnob {3 inheight}
+  inheight {{"\[exists parent.input1] ? \[topnode this.parent.input1].height : 0"}}
+  addUserKnob {7 inpar R 0 2}
+  inpar {{"\[exists parent.input1] ? \[topnode this.parent.input1].pixel_aspect : 0"}}
+  addUserKnob {7 unitpx_x}
+  unitpx_x {{"-1*haperture / inwidth"}}
+  addUserKnob {7 unitpx_y}
+  unitpx_y {{"-1 * vaperture / inwidth"}}
+  addUserKnob {12 xform}
+  xform {{parent.TRACK.translate} {parent.TRACK.translate}}
+  addUserKnob {7 rot R -180 180}
+  rot {{parent.TRACK.rotate}}
+ }
+end_group

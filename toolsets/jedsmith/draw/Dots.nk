@@ -1,0 +1,115 @@
+Group {
+ inputs 0
+ name Dots
+ addUserKnob {20 dots l Dots}
+ addUserKnob {7 number R 0 100}
+ number 14
+ addUserKnob {7 brightness R 0 100}
+ brightness 100
+ addUserKnob {7 dot_size R 0 10}
+ dot_size 1
+}
+ CheckerBoard2 {
+  inputs 0
+  boxsize {{"parent.width / (parent.number)"}}
+  color0 0
+  color1 1
+  color2 0
+  color3 1
+  linecolor {1 1 1 1}
+  centerlinewidth 0
+  name CheckerBoard1
+  xpos -260
+  ypos 470
+  postage_stamp false
+ }
+ Reformat {
+  type "to box"
+  box_width {{parent.parent.width}}
+  box_height {{parent.parent.height}}
+  box_fixed true
+  box_pixel_aspect {{parent.parent.pixel_aspect}}
+  resize distort
+  name _MATCH_PARENT_FORMAT_
+  xpos -260
+  ypos 510
+ }
+set N1d325060 [stack 0]
+push $N1d325060
+ Position {
+  translate {0 1}
+  name Position4
+  xpos -480
+  ypos 734
+ }
+push $N1d325060
+ Merge2 {
+  inputs 2
+  operation max
+  bbox B
+  name Merge6
+  xpos -260
+  ypos 734
+ }
+ Merge2 {
+  inputs 2
+  operation stencil
+  bbox B
+  name Merge8
+  xpos -370
+  ypos 854
+ }
+push $N1d325060
+push $N1d325060
+ Position {
+  translate {1 0}
+  name Position3
+  xpos -480
+  ypos 686
+ }
+push $N1d325060
+ Merge2 {
+  inputs 2
+  operation max
+  bbox B
+  name Merge4
+  xpos -370
+  ypos 686
+ }
+ Merge2 {
+  inputs 2
+  operation stencil
+  bbox B
+  name Merge5
+  xpos -370
+  ypos 805
+ }
+ Merge2 {
+  inputs 2
+  operation min
+  bbox B
+  name Merge9
+  xpos -260
+  ypos 854
+ }
+ Dilate {
+  channels rgba
+  size {{parent.dot_size}}
+  name Dilate1
+  xpos -260
+  ypos 902
+ }
+ Multiply {
+  channels rgba
+  value {{parent.brightness}}
+  name Multiply1
+  xpos -260
+  ypos 948
+ }
+ Output {
+  name Output1
+  xpos -260
+  ypos 1142
+ }
+end_group
+

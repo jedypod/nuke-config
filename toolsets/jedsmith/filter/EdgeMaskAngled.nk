@@ -1,0 +1,132 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name EdgeMaskAngled
+ tile_color 0xcc804eff
+ addUserKnob {20 EdgeMaskAngled}
+ addUserKnob {41 angle T Transform1.angle}
+ addUserKnob {41 size T Transform1.size}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {26 pregrade_label l "@b; pre-grade" T ""}
+ addUserKnob {41 whitepoint T Grade_Input.whitepoint}
+ addUserKnob {41 blackpoint T Grade_Input.blackpoint}
+ addUserKnob {41 erode T Dilate1.size}
+}
+ Input {
+  inputs 0
+  name InputFilter
+  xpos 280
+  ypos -297
+  number 1
+ }
+ Input {
+  inputs 0
+  name Input
+  xpos -40
+  ypos -660
+ }
+ Add {
+  channels rgba
+  name Add1
+  xpos -40
+  ypos -588
+ }
+ Dot {
+  name Dot1
+  label " "
+  note_font "Helvetica Bold Bold"
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos -6
+  ypos -549
+ }
+set N195941f0 [stack 0]
+ Shuffle {
+  red white
+  green white
+  blue white
+  alpha white
+  name WHITE
+  tile_color 0xfefefeff
+  xpos 120
+  ypos -552
+ }
+ Switch {
+  inputs 2
+  which {{"\[exists parent.input1]"}}
+  name MaskSwitch
+  xpos 120
+  ypos -297
+ }
+push $N195941f0
+ Grade {
+  channels alpha
+  white_clamp true
+  name Grade_Input
+  xpos -40
+  ypos -522
+ }
+ Dilate {
+  channels rgba
+  name Dilate1
+  label "\[value size]"
+  xpos -40
+  ypos -486
+ }
+ Dot {
+  name Dot26
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos -6
+  ypos -438
+ }
+set N17bd87c0 [stack 0]
+ Dot {
+  name Dot27
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos -166
+  ypos -438
+ }
+ Transform {
+  translate {{"(size * sin(angle * pi/180))"} {"(size * cos(angle * pi/180))"}}
+  shutteroffset centred
+  name Transform1
+  xpos -200
+  ypos -405
+  addUserKnob {20 User}
+  addUserKnob {7 angle R 0 360}
+  addUserKnob {7 size R 0 100}
+  size 10
+ }
+push $N17bd87c0
+ Merge2 {
+  inputs 2
+  operation stencil
+  bbox B
+  name Merge3
+  xpos -40
+  ypos -405
+ }
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name Shuffle1
+  tile_color 0x222222ff
+  xpos -40
+  ypos -333
+ }
+ Merge2 {
+  inputs 2
+  operation mask
+  name Merge2
+  xpos -40
+  ypos -297
+ }
+ Output {
+  name Output
+  xpos -40
+  ypos -225
+ }
+end_group

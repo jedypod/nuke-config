@@ -1,0 +1,103 @@
+Group {
+name SynthesizeFrame
+label "\[value sframe] : \[value fwidth]"
+selected true
+xpos 10002
+ypos -24838
+addUserKnob {20 SynthesizeFrame}
+addUserKnob {3 sframe}
+sframe 1001
+addUserKnob {3 fwidth l width -STARTLINE}
+fwidth 1
+addUserKnob {22 set_frame l "Set Current" -STARTLINE T "nuke.thisNode()\['sframe'].setValue(nuke.frame())"}
+addUserKnob {22 set_retime l "Set Up Retime" -STARTLINE T "n = nuke.thisNode()\n\nframe = n\['sframe'].getValue()\nfwidth = n\['fwidth'].getValue()\nn.begin()\nretime_node = nuke.toNode('_RETIME_')\nanimframe = retime_node\['timingFrame2']\nanimframe.clearAnimated()\nanimframe.setAnimated()\nanimframe.setValueAt(frame-1, frame-1)\nanimframe.setValueAt(frame, frame+fwidth)\n"}
+addUserKnob {6 FrameLabel +STARTLINE}
+addUserKnob {41 useGPUIfAvailable l "Use GPU if available" T Kronos.useGPUIfAvailable}
+}
+Input {
+inputs 0
+name Input
+xpos -480
+ypos 62
+}
+Text {
+message "\[frame]"
+font /Library/Fonts/Arial.ttf
+xjustify right
+yjustify bottom
+Transform 1
+box {0 0 {width-150} {height}}
+center {1024 576}
+name Text1
+xpos -480
+ypos 134
+disable {{!parent.FrameLabel}}
+}
+Dot {
+name Dot10
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos -446
+ypos 210
+}
+set N3f54d190 [stack 0]
+Dot {
+name Dot9
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos -556
+ypos 210
+}
+set N3f00bce0 [stack 0]
+TimeOffset {
+time_offset {{-parent.fwidth i}}
+time ""
+name TimeOffset1
+label "\[value time_offset]"
+xpos -700
+ypos 200
+}
+push $N3f00bce0
+Switch {
+inputs 2
+which {{"t >= parent.sframe && t <= parent.sframe+parent.fwidth-1"}}
+name Switch1
+xpos -590
+ypos 278
+}
+Kronos {
+input.first 0
+input.last 122
+retimedChannels all
+timing2 Frame
+timingFrame2 {{parent._RETIME_.timingFrame2}}
+showLegacyMode false
+motionEstimation Regularized
+legacyModeNuke9 false
+name Kronos
+xpos -590
+ypos 344
+}
+push $N3f54d190
+Switch {
+inputs 2
+which {{"t >= parent.sframe && t <= parent.sframe+parent.fwidth-1"}}
+name Switch2
+xpos -480
+ypos 350
+}
+Output {
+name Output1
+xpos -480
+ypos 518
+}
+NoOp {
+inputs 0
+name _RETIME_
+xpos -700
+ypos 350
+addUserKnob {20 User}
+addUserKnob {7 timingFrame2 l frame R 1001 2000}
+timingFrame2 {{curve x1000 1000 x1002 1001}}
+}
+end_group

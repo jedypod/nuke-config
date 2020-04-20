@@ -1,0 +1,258 @@
+Group {
+name ClonePatch
+help "<b>ClonePatch</b>\n\nClone offset an area defined by the Mask input. Optional color adjustment and onion-skinning."
+tile_color 0x508c44ff
+addUserKnob {20 ClonePatch}
+addUserKnob {41 channels T Keymix1.channels}
+addUserKnob {41 bbox l "Set BBox to" T Keymix1.bbox}
+addUserKnob {26 ""}
+addUserKnob {6 overlay_patch l "onion skin" +STARTLINE}
+addUserKnob {6 overlay_difference l difference t "Display onion skin as difference" -STARTLINE}
+addUserKnob {41 feather T Blur1.size}
+addUserKnob {26 breaker l " " T " "}
+addUserKnob {26 alpha_controls l "<font size=4 color=#999><b>Clone"}
+addUserKnob {41 translate T Transform_patch.translate}
+addUserKnob {41 rotate T Transform_patch.rotate}
+addUserKnob {41 scale T Transform_patch.scale}
+addUserKnob {41 skewX l "skew X" T Transform_patch.skewX}
+addUserKnob {41 skewY l "skew Y" T Transform_patch.skewY}
+addUserKnob {41 skew_order l "skew order" T Transform_patch.skew_order}
+addUserKnob {41 center T Transform_patch.center}
+addUserKnob {41 filter -STARTLINE T Transform_patch.filter}
+addUserKnob {41 black_outside l "black outside" -STARTLINE T Transform_patch.black_outside}
+addUserKnob {26 spacer l " " T " "}
+addUserKnob {3 time_offset l "time offset" t "Offset the clone patch in time. If Absolute is checked, it will use absolute frame numbers instead of a relative offset."}
+addUserKnob {6 to_absolute l absolute -STARTLINE}
+addUserKnob {26 patch_color l "<font size=4 color=#999><b>Color&nbsp;&nbsp;"}
+addUserKnob {20 color l "" +STARTLINE n 1}
+color 0
+addUserKnob {41 saturation T CC_PATCH.saturation}
+addUserKnob {41 contrast T CC_PATCH.contrast}
+addUserKnob {41 gamma T CC_PATCH.gamma}
+addUserKnob {41 gain T CC_PATCH.gain}
+addUserKnob {41 offset T CC_PATCH.offset}
+addUserKnob {20 endGroup n -1}
+addUserKnob {26 ""}
+addUserKnob {6 invert_mask +STARTLINE}
+addUserKnob {7 mix}
+mix 1
+}
+Input {
+inputs 0
+name Input
+xpos 70
+ypos -154
+}
+Dot {
+name Dot2
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos 104
+ypos 234
+}
+set N27abbb00 [stack 0]
+Dot {
+name Dot7
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos -116
+ypos 234
+}
+set N38653d40 [stack 0]
+Transform {
+center {1078.5 453}
+name Transform_patch
+xpos -150
+ypos 326
+}
+set N3cb07210 [stack 0]
+FrameHold {
+first_frame {{parent.time_offset}}
+name FrameHold1
+xpos -260
+ypos 392
+addUserKnob {20 Set}
+addUserKnob {22 Set_BTN l "Set To Current Frame" -STARTLINE T "fh = nuke.thisNode()\nfh.knob('first_frame').setValue(nuke.frame())"}
+}
+push $N3cb07210
+TimeOffset {
+time_offset {{parent.time_offset}}
+time ""
+name TimeOffset1
+label "\[value time_offset]"
+xpos -150
+ypos 392
+}
+Switch {
+inputs 2
+which {{parent.to_absolute}}
+name Switch1
+xpos -150
+ypos 470
+}
+ColorCorrect {
+name CC_PATCH
+xpos -150
+ypos 542
+}
+Dot {
+name Dot1
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos -116
+ypos 616
+}
+set N3c546600 [stack 0]
+Dot {
+name Dot3
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos -116
+ypos 784
+}
+set N3c262100 [stack 0]
+Shuffle {
+red alpha
+green black
+blue black
+alpha black
+name Shuffle1
+label "\[value in]"
+xpos -150
+ypos 942
+}
+push $N3c262100
+push $N38653d40
+Dot {
+name Dot8
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos -336
+ypos 234
+}
+Dot {
+name Dot13
+label "Onion Skin"
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos -336
+ypos 736
+}
+set N341d9f90 [stack 0]
+Merge2 {
+inputs 2
+operation difference
+name Difference_Merge
+xpos -370
+ypos 828
+}
+push $N3c262100
+push $N341d9f90
+Merge2 {
+inputs 2
+name Difference_Merge1
+xpos -480
+ypos 780
+}
+Switch {
+inputs 2
+which {{parent.overlay_difference}}
+name Switch4
+xpos -370
+ypos 900
+}
+Merge2 {
+inputs 2
+operation plus
+bbox B
+mix 0.15
+name Merge3
+xpos -370
+ypos 948
+}
+Dot {
+name Dot10
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos -336
+ypos 1048
+}
+Input {
+inputs 0
+name InputAlpha
+xpos 620
+ypos 62
+number 1
+}
+Dot {
+name Dot5
+label Mask
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos 654
+ypos 234
+}
+Dot {
+name Dot4
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos 654
+ypos 616
+}
+push $N27abbb00
+Dot {
+name Dot6
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos 434
+ypos 234
+}
+Shuffle {
+red black
+green black
+blue black
+alpha black
+name Shuffle2
+tile_color 0xff
+label FloodBLACK
+xpos 400
+ypos 320
+}
+Switch {
+inputs 2
+which {{"\[ exists parent.input\[value InputAlpha.number] ]"}}
+name Switch2
+xpos 400
+ypos 612
+}
+Blur {
+channels alpha
+size 2
+name Blur1
+xpos 290
+ypos 606
+}
+push $N3c546600
+push $N27abbb00
+Keymix {
+inputs 3
+channels rgba
+invertMask {{parent.invert_mask}}
+mix {{parent.mix}}
+name Keymix1
+xpos 70
+ypos 612
+}
+Switch {
+inputs 2
+which {{parent.overlay_patch}}
+name Switch3
+xpos 70
+ypos 1044
+}
+Output {
+name Output1
+xpos 70
+ypos 1334
+}
+end_group

@@ -1,0 +1,380 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name CameraShake
+ tile_color 0x676767ff
+ addUserKnob {20 CameraShake}
+ addUserKnob {41 translate l INVISIBLE +INVISIBLE T CAM_SHAKE.translate}
+ addUserKnob {41 rotate l INVISIBLE +INVISIBLE T CAM_SHAKE.rotate}
+ addUserKnob {35 presets l Presets t "A number of useful presets to start from." -STARTLINE M {"Presets/Shake A: Low amp low freq" "knobs this \{scale 1 master_amplitude 1 master_frequency 1 tilt_frequency 0.204 tilt_amplitude 30 tilt_octaves 4 tilt_lucanarity 2.3 tilt_gain 0.15 pan_frequency 0.206 pan_amplitude 30 pan_octaves 4 pan_lucanarity 2.25 pan_gain 0.2 roll_frequency 0.02 roll_amplitude 0.5 roll_octaves 5 roll_lucanarity 1.8 roll_gain 0.14 swim_influence 0.19 swim_frequency 0.17 swim_amplitude 0 swim_octaves 6.5 swim_lucanarity 1.75 swim_gain 0.73 label \{Shake A: Low amp low freq\}\}" "Presets/Shake B: Med amp med freq" "knobs this \{scale 1 master_amplitude 1 master_frequency 1 tilt_frequency 0.224 tilt_amplitude 48 tilt_octaves 4 tilt_lucanarity 2.3 tilt_gain 0.265 pan_frequency 0.233 pan_amplitude 48 pan_octaves 4 pan_lucanarity 2.25 pan_gain 0.305 roll_frequency 0.023 roll_amplitude 1.28 roll_octaves 5 roll_lucanarity 1.8 roll_gain 0.14 swim_influence 0.38 swim_frequency 0.051 swim_amplitude 1.35 swim_octaves 6.5 swim_lucanarity 1.75 swim_gain 0.49 label \{Shake B: Med amp med freq\}\}" "Presets/Shake C: High amp med freq" "knobs this \{scale 1 master_amplitude 1 master_frequency 1 tilt_seed 4357 tilt_frequency 0.181 tilt_amplitude 77 tilt_octaves 4 tilt_lucanarity 1.8 tilt_gain 0.425 pan_frequency 0.181 pan_amplitude 76 pan_octaves 2.6 pan_lucanarity 2.25 pan_gain 0.21 roll_frequency 0.068 roll_amplitude 1.36 roll_octaves 5 roll_lucanarity 1.2 roll_gain 0.615 swim_influence 0.57 swim_frequency 0.124 swim_amplitude 9.35 swim_octaves 6.5 swim_lucanarity 2.65 swim_gain 0.265 label \{Shake C: High amp med freq\}\}" "Presets/Shake D: High amp high freq" "knobs this \{scale 1 master_amplitude 1 master_frequency 1 tilt_frequency 0.269 tilt_amplitude 92 tilt_octaves 4 tilt_lucanarity 1.8 tilt_gain 0.355 pan_frequency 0.24 pan_amplitude 85 pan_octaves 2.6 pan_lucanarity 2.25 pan_gain 0.325 roll_frequency 0.064 roll_amplitude 1.4 roll_octaves 5 roll_lucanarity 1.8 roll_gain 0.43 swim_influence 0.125 swim_frequency 0.067 swim_amplitude 10 swim_octaves 6.5 swim_lucanarity 2.65 swim_gain 0.16 label \{Shake D: High amp high freq\}\}" "Presets/Shake E: Low amp high freq" "knobs this \{scale 1 master_amplitude 1 master_frequency 1 tilt_frequency 0.18 tilt_amplitude 30 tilt_octaves 4 tilt_lucanarity 2.3 tilt_gain 0.535 pan_frequency 0.18 pan_amplitude 30 pan_octaves 4 pan_lucanarity 2.25 pan_gain 0.56 roll_frequency 0.02 roll_amplitude 0.7 roll_octaves 5 roll_lucanarity 1.8 roll_gain 0.14 swim_influence 0.2 swim_frequency 0.059 swim_amplitude 4.45 swim_octaves 6.5 swim_lucanarity 1.75 swim_gain 0.32 label \{Shake E: Low amp high freq\}\}" "Presets/Shake F: Med amp high freq" "knobs this \{scale 1 master_amplitude 1 master_frequency 1 tilt_frequency 0.24 tilt_amplitude 45 tilt_octaves 4 tilt_lucanarity 2.3 tilt_gain 0.48 pan_frequency 0.24 pan_amplitude 45 pan_octaves 4 pan_lucanarity 2.25 pan_gain 0.465 roll_frequency 0.023 roll_amplitude 1.28 roll_octaves 5 roll_lucanarity 1.8 roll_gain 0.14 swim_influence 0.38 swim_frequency 0.051 swim_amplitude 4.3 swim_octaves 6.5 swim_lucanarity 1.75 swim_gain 0.49 label \{Shake F: Med amp high freq\}\}"}}
+ addUserKnob {22 randomize_seeds l Re-Seed t "Randomize all seed values" -STARTLINE T "import random\nn = nuke.thisNode()\nseed_knobs = \['master_seed', 'tilt_seed', 'pan_seed', 'roll_seed', 'swim_seed']\nfor k in seed_knobs:\n    n\[k].setValue(random.randint(0,10000))"}
+ addUserKnob {6 use_test_pattern l "test pattern" t "Display a test pattern for camerashake testing" -STARTLINE}
+ addUserKnob {26 ""}
+ addUserKnob {26 motionblur_label_1 l <b>Motionblur T " "}
+ addUserKnob {6 motionblur l enable -STARTLINE}
+ motionblur true
+ addUserKnob {7 shutter R 0.5 1}
+ shutter 0.5
+ addUserKnob {41 filter T CAM_SHAKE.filter}
+ addUserKnob {41 black_outside l "black outside" -STARTLINE T CAM_SHAKE.black_outside}
+ addUserKnob {26 motionblur_label l "" +STARTLINE}
+ addUserKnob {26 s l "<b>Master Control</b>" T "\n"}
+ addUserKnob {3 master_seed l "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; seed" t "Master seed for all random functions" -STARTLINE}
+ master_seed 6734
+ addUserKnob {41 scale l "image scale" t "Scale up the input image by this amount." T CAM_SHAKE.scale}
+ addUserKnob {41 master_amplitude l amplitude t "Global amplitude multiplier for the camera shake." T CAM_SHAKE.master_amplitude}
+ addUserKnob {41 master_frequency l frequency T CAM_SHAKE.master_frequency}
+ addUserKnob {26 ""}
+ addUserKnob {26 t l "<b>Tilt Control" T "\n"}
+ addUserKnob {3 tilt_seed l "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; seed" t "Tilt seed" -STARTLINE}
+ tilt_seed 2792
+ addUserKnob {41 tilt_frequency l frequency t "How frequent the wavelength of the random curve is: 1 is about as high as you would want to go as it's the nyquist limit of one variation per frame. " T CAM_SHAKE.tilt_frequency}
+ addUserKnob {41 tilt_amplitude l amplitude t "Amplitude of the curve\nThis is roughly equivalent to pixels: a value of 30 will move up and down from the center 15 pixels." T CAM_SHAKE.tilt_amplitude}
+ addUserKnob {41 tilt_octaves l octaves t "Same as the Noise node in fBm mode\nThis adds additional noise on the main variation. Works in conjunction with Lucanarity (graininess), and gain (intensity). \n\nSwim also adds overall random variation to the curve, but this is a secondary variation." T CAM_SHAKE.tilt_octaves}
+ addUserKnob {41 tilt_lucanarity l lucanarity t "grainyness of the random variation added" T CAM_SHAKE.tilt_lucanarity}
+ addUserKnob {41 tilt_gain l gain t "How much random variation to add to the curve" T CAM_SHAKE.tilt_gain}
+ addUserKnob {26 ""}
+ addUserKnob {26 p l "<b>Pan Control</b>" T "\n"}
+ addUserKnob {3 pan_seed l "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; seed" t "Pan Seed" -STARTLINE}
+ pan_seed 9265
+ addUserKnob {41 pan_frequency l frequency T CAM_SHAKE.pan_frequency}
+ addUserKnob {41 pan_amplitude l amplitude T CAM_SHAKE.pan_amplitude}
+ addUserKnob {41 pan_octaves l octaves T CAM_SHAKE.pan_octaves}
+ addUserKnob {41 pan_lucanarity l lucanarity T CAM_SHAKE.pan_lucanarity}
+ addUserKnob {41 pan_gain l gain T CAM_SHAKE.pan_gain}
+ addUserKnob {26 ""}
+ addUserKnob {26 r l "<b>Roll Control<b>" T "\n"}
+ addUserKnob {3 roll_seed l "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; seed" t "Roll seed" -STARTLINE}
+ roll_seed 382
+ addUserKnob {41 roll_frequency l frequency T CAM_SHAKE.roll_frequency}
+ addUserKnob {41 roll_amplitude l amplitude T CAM_SHAKE.roll_amplitude}
+ addUserKnob {41 roll_octaves l octaves T CAM_SHAKE.roll_octaves}
+ addUserKnob {41 roll_lucanarity l lucanarity T CAM_SHAKE.roll_lucanarity}
+ addUserKnob {41 roll_gain l gain T CAM_SHAKE.roll_gain}
+ addUserKnob {7 swim_influence}
+ swim_influence 0.125
+ addUserKnob {26 ""}
+ addUserKnob {26 swim_control_label l "<b>Swim Control</b>" t "Additional random variation in the curve" T "\n"}
+ addUserKnob {3 swim_seed l "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; seed" t "Swim Seed" -STARTLINE}
+ swim_seed 1473
+ addUserKnob {41 swim_frequency l frequency T CAM_SHAKE.swim_frequency}
+ addUserKnob {41 swim_amplitude l amplitude T CAM_SHAKE.swim_amplitude}
+ addUserKnob {41 swim_octaves l octaves T CAM_SHAKE.swim_octaves}
+ addUserKnob {41 swim_lucanarity l lucanarity T CAM_SHAKE.swim_lucanarity}
+ addUserKnob {41 swim_gain l gain T CAM_SHAKE.swim_gain}
+}
+ Group {
+  inputs 0
+  name Dots
+  xpos 620
+  ypos 86
+  addUserKnob {20 dots l Dots}
+  addUserKnob {7 number R 0 100}
+  number 14
+  addUserKnob {7 brightness R 0 100}
+  brightness 100
+  addUserKnob {7 dot_size R 0 10}
+  dot_size 5.6
+ }
+  CheckerBoard2 {
+   inputs 0
+   boxsize {{"parent.width / (parent.number)"}}
+   color0 0
+   color1 1
+   color2 0
+   color3 1
+   linecolor {1 1 1 1}
+   centerlinewidth 0
+   name CheckerBoard1
+   xpos -260
+   ypos 470
+   postage_stamp false
+  }
+  Reformat {
+   type "to box"
+   box_width {{parent.parent.width}}
+   box_height {{parent.parent.height}}
+   box_fixed true
+   box_pixel_aspect {{parent.parent.pixel_aspect}}
+   resize distort
+   name _MATCH_PARENT_FORMAT_
+   xpos -260
+   ypos 524
+  }
+  Dot {
+   name Dot1
+   note_font "Helvetica Bold"
+   note_font_size 24
+   note_font_color 0xff
+   xpos -226
+   ypos 642
+  }
+set Nfdbeb70 [stack 0]
+  Dot {
+   name Dot3
+   note_font "Helvetica Bold"
+   note_font_size 24
+   note_font_color 0xff
+   xpos -101
+   ypos 642
+  }
+push $Nfdbeb70
+  Position {
+   translate {0 1}
+   name Position4
+   xpos -480
+   ypos 734
+  }
+push $Nfdbeb70
+  Merge2 {
+   inputs 2
+   operation max
+   bbox B
+   name Merge6
+   xpos -260
+   ypos 734
+  }
+  Merge2 {
+   inputs 2
+   operation stencil
+   bbox B
+   name Merge8
+   xpos -125
+   ypos 806
+  }
+push $Nfdbeb70
+push $Nfdbeb70
+  Dot {
+   name Dot2
+   note_font "Helvetica Bold"
+   note_font_size 24
+   note_font_color 0xff
+   xpos -446
+   ypos 646
+  }
+  Position {
+   translate {1 0}
+   name Position3
+   xpos -480
+   ypos 686
+  }
+push $Nfdbeb70
+  Merge2 {
+   inputs 2
+   operation max
+   bbox B
+   name Merge4
+   xpos -370
+   ypos 686
+  }
+  Merge2 {
+   inputs 2
+   operation stencil
+   bbox B
+   name Merge5
+   xpos -370
+   ypos 805
+  }
+  Merge2 {
+   inputs 2
+   operation min
+   bbox B
+   name Merge9
+   xpos -260
+   ypos 854
+  }
+  Dilate {
+   channels rgba
+   size {{parent.dot_size}}
+   name Dilate1
+   xpos -260
+   ypos 902
+  }
+  Multiply {
+   channels rgba
+   value {{parent.brightness}}
+   name Multiply1
+   xpos -260
+   ypos 948
+  }
+  Output {
+   name Output1
+   xpos -260
+   ypos 1013
+  }
+ end_group
+ Reformat {
+  type "to box"
+  box_width {{Input.width}}
+  box_height {{Input.height}}
+  box_fixed true
+  box_pixel_aspect {{Input.pixel_aspect}}
+  name ReformatBox
+  xpos 620
+  ypos 210
+ }
+ Shuffle {
+  green black
+  blue black
+  alpha red
+  name Shuffle1
+  label "\[value in]"
+  selected true
+  xpos 620
+  ypos 296
+ }
+ Input {
+  inputs 0
+  name Input
+  xpos 400
+  ypos 86
+ }
+ Switch {
+  inputs 2
+  which {{parent.use_test_pattern}}
+  name switch_TestPattern
+  xpos 400
+  ypos 302
+ }
+ Dot {
+  name Dot3
+  label " "
+  note_font "Helvetica Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos 434
+  ypos 378
+ }
+set Nbf0ed70 [stack 0]
+ Transform {
+  translate {{"t%(curve_sample) ? lerp( t-(t%curve_sample), translate_random(t-(t%curve_sample)), t+(curve_sample-(t%curve_sample)), translate_random(t+(curve_sample-(t%curve_sample))), t) : translate_random"} {"t%(curve_sample) ? lerp( t-(t%curve_sample), translate_random(t-(t%curve_sample)), t+(curve_sample-(t%curve_sample)), translate_random(t+(curve_sample-(t%curve_sample))), t) : translate_random"}}
+  rotate {{"t%(curve_sample) ? lerp( t-(t%curve_sample), rotate_random(t-(t%curve_sample)), t+(curve_sample-(t%curve_sample)), rotate_random(t+(curve_sample-(t%curve_sample))), t) : rotate_random"}}
+  scale 1.03
+  center {{input.width*0.5} {input.height*0.5}}
+  shutteroffset centred
+  shuttercustomoffset -0.25
+  name CAM_SHAKE
+  xpos 400
+  ypos 422
+  addUserKnob {20 CameraShake}
+  addUserKnob {12 translate_random}
+  translate_random {{"(fBm(t * pan_frequency*master_frequency-0.10, 0.21*master_seed*pan_seed, 0.01, pan_octaves, pan_lucanarity, pan_gain) * pan_amplitude * master_amplitude) + (fBm(0.1121, t * swim_frequency*master_frequency, 0.21*master_seed*swim_seed, swim_octaves, swim_lucanarity, swim_gain) * (swim_amplitude*master_amplitude*2.5))"} {"(fBm(t * tilt_frequency*master_frequency, 2*master_seed*tilt_seed, 10, tilt_octaves, tilt_lucanarity, tilt_gain) * tilt_amplitude*master_amplitude) + (fBm(t * swim_frequency*master_frequency, 0.1*master_seed*swim_seed, 0.1, swim_octaves, swim_lucanarity, swim_gain) * (swim_amplitude*master_amplitude * 2.0))"}}
+  addUserKnob {7 rotate_random R -180 180}
+  rotate_random {{"(fBm(t * roll_frequency*master_frequency, 0.1*master_seed*roll_seed, 0.1, roll_octaves, roll_lucanarity, roll_gain) * (roll_amplitude*master_amplitude)) + (fBm(0.1, 0.1*master_seed*roll_seed, t * swim_frequency*master_frequency, swim_octaves, swim_lucanarity, swim_gain) * (swim_influence*master_amplitude))"}}
+  addUserKnob {7 curve_sample R 0 10}
+  curve_sample 1
+  addUserKnob {26 ""}
+  addUserKnob {7 master_amplitude l master_amplitudelitude}
+  master_amplitude 1
+  addUserKnob {7 master_frequency R 0.1 2}
+  master_frequency 1
+  addUserKnob {7 master_seed R 0 1000}
+  master_seed {{parent.master_seed}}
+  addUserKnob {26 ""}
+  addUserKnob {7 tilt_seed R 0 1000}
+  tilt_seed {{parent.tilt_seed}}
+  addUserKnob {7 tilt_frequency t "How frequent the wavelength of the random curve is: 1 is about as high as you would want to go as it's the nyquist limit of one variation per frame. " R 0 0.3}
+  tilt_frequency 0.269
+  addUserKnob {7 tilt_amplitude R 0 100}
+  tilt_amplitude 92
+  addUserKnob {7 tilt_octaves R 0 10}
+  tilt_octaves 4
+  addUserKnob {7 tilt_lucanarity l "tilt lucanarity" R 0 10}
+  tilt_lucanarity 1.8
+  addUserKnob {7 tilt_gain}
+  tilt_gain 0.355
+  addUserKnob {26 ""}
+  addUserKnob {7 pan_seed R 0 1000}
+  pan_seed {{parent.pan_seed}}
+  addUserKnob {7 pan_frequency R 0 0.3}
+  pan_frequency 0.24
+  addUserKnob {7 pan_amplitude R 0 100}
+  pan_amplitude 85
+  addUserKnob {7 pan_octaves R 0 10}
+  pan_octaves 2.6
+  addUserKnob {7 pan_lucanarity l "pan lucanarity" R 0 10}
+  pan_lucanarity 2.25
+  addUserKnob {7 pan_gain}
+  pan_gain 0.325
+  addUserKnob {26 ""}
+  addUserKnob {7 roll_seed R 0 1000}
+  roll_seed {{parent.roll_seed}}
+  addUserKnob {7 roll_frequency R 0 0.3}
+  roll_frequency 0.064
+  addUserKnob {7 roll_amplitude R 0 5}
+  roll_amplitude 1.4
+  addUserKnob {7 roll_octaves R 0 10}
+  roll_octaves 5
+  addUserKnob {7 roll_lucanarity l roll_lucanarityanarity R 0 10}
+  roll_lucanarity 1.8
+  addUserKnob {7 roll_gain}
+  roll_gain 0.43
+  addUserKnob {7 swim_influence}
+  swim_influence {{parent.swim_influence}}
+  addUserKnob {26 ""}
+  addUserKnob {7 swim_seed R 0 1000}
+  swim_seed {{parent.swim_seed}}
+  addUserKnob {7 swim_frequency R 0 0.3}
+  swim_frequency 0.067
+  addUserKnob {7 swim_amplitude R 0 10}
+  swim_amplitude 10
+  addUserKnob {7 swim_octaves R 0 10}
+  swim_octaves 6.5
+  addUserKnob {7 swim_lucanarity l "swim lucanarity" R 0 10}
+  swim_lucanarity 2.65
+  addUserKnob {7 swim_gain}
+  swim_gain 0.16
+ }
+set Nbf20c70 [stack 0]
+push $Nbf0ed70
+ Dot {
+  name Dot4
+  label " "
+  note_font "Helvetica Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos 324
+  ypos 378
+ }
+ MotionBlur2D {
+  inputs 2
+  shutter {{parent.shutter}}
+  shutteroffset centred
+  name MotionBlur2D1
+  xpos 290
+  ypos 422
+ }
+push $Nbf20c70
+add_layer {camerashake_motionblur camerashake_motionblur.u camerashake_motionblur.v}
+ Copy {
+  inputs 2
+  from0 forward.u
+  to0 camerashake_motionblur.u
+  from1 forward.v
+  to1 camerashake_motionblur.v
+  bbox B
+  name Copy1
+  xpos 400
+  ypos 470
+ }
+ VectorBlur2 {
+  uv camerashake_motionblur
+  blur_type uniform
+  scale {{parent.motionblur}}
+  motion_falloff 1
+  name VectorBlur2_1
+  xpos 400
+  ypos 536
+ }
+ Remove {
+  channels camerashake_motionblur
+  name Remove1
+  xpos 400
+  ypos 595
+ }
+ Output {
+  name Output
+  xpos 400
+  ypos 667
+ }
+end_group

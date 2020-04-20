@@ -1,0 +1,194 @@
+Group {
+ name DofCalc
+ label "<left>\nfocal length: \[format \"%.0f\" \[value f]]\nf-stop: \[format \"%.2f\" \[value N]]\nsubject dist: \[format \"%.2f\" \[value s]]\n\nhyperfocal dist: \[format \"%.2f\" \[value H]]\n---------------------------\ndof: \[format \"%.2f\" \[value dof]]\ndof near: \[format \"%.2f\" \[value Dn]]\ndof far: \[format \"%.2f\" \[value Df]]"
+ note_font Helvetica
+ selected true
+ xpos 16240
+ ypos 14393
+ dope_sheet true
+ addUserKnob {20 User}
+ addUserKnob {41 s l subject_distance T VAR.s}
+ addUserKnob {41 f l focal_length T VAR.f}
+ addUserKnob {41 N l f-number T VAR.N}
+ addUserKnob {41 c l "coc limit" t "The smallest circle of confusion to be treated as a point in mm" T VAR.c}
+ addUserKnob {41 H l "hyperfocal_distance (m)" t "The hyperfocal distance in Meters" T VAR.H}
+ addUserKnob {7 h_ft l "hyperfocal distance (ft)" R 0 1000}
+ h_ft {{"(pow(f, 2)) / (N*c)/304.8"}}
+ addUserKnob {41 Dn l dof_near T VAR.Dn}
+ addUserKnob {41 Df l dof_far T VAR.Df}
+ addUserKnob {7 dof R 0 100}
+ dof {{Df-Dn}}
+ addUserKnob {7 mm l mm_mult t "How much to multiply distance values by from mm. For example if distance is in M set this value to 1000." R 0 1000}
+ mm 1000
+}
+ Camera2 {
+  inputs 0
+  xform_order {{"\[topnode input0].knob.xform_order"}}
+  rot_order {{"\[topnode input0].knob.rot_order"}}
+  translate {{"\[topnode input0].translate.x"} {"\[topnode input0].translate.y"} {"\[topnode input0].translate.z"}}
+  rotate {{"\[topnode input0].rotate.x"} {"\[topnode input0].rotate.y"} {"\[topnode input0].rotate.z"}}
+  scaling {{"\[topnode input0].knob.scaling"} {"\[topnode input0].knob.scaling"} {"\[topnode input0].knob.scaling"}}
+  uniform_scale {{"\[topnode input0].knob.uniform_scale"}}
+  skew {{"\[topnode input0].knob.skew"} {"\[topnode input0].knob.skew"} {"\[topnode input0].knob.skew"}}
+  pivot {{"\[topnode input0].knob.pivot"} {"\[topnode input0].knob.pivot"} {"\[topnode input0].knob.pivot"}}
+  projection_mode {{"\[topnode input0].knob.projection_mode"}}
+  focal {{"\[topnode input0]knob.focal"}}
+  haperture {{"\[topnode input0].haperture"}}
+  vaperture {{"\[topnode input0].vaperture"}}
+  near {{"\[topnode input0].knob.near"}}
+  far {{"\[topnode input0].knob.far"}}
+  win_translate {{"\[topnode input0].knob.win_translate"} {"\[topnode input0].knob.win_translate"}}
+  win_scale {{"parent.stabilize == 1 ? parent.overscan_percentage : 1"} {win_scale.u}}
+  winroll {{"\[topnode input0].knob.winroll"}}
+  focal_point {{"\[topnode input0].knob.focal_point"}}
+  fstop {{"\[topnode input0].knob.fstop"}}
+  name cam_dof
+  selected true
+  xpos -360
+  ypos -270
+ }
+ Dot {
+  name Dot6
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos -337
+  ypos -50
+ }
+set Nd22bae0 [stack 0]
+ Constant {
+  inputs 0
+  color {0.2 0 0 0}
+  name Constant8
+  xpos -481
+  ypos -101
+ }
+ Card2 {
+  image_aspect false
+  control_points {3 3 3 6 
+
+1 {-0.5 -0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0 0 0} 
+1 {0 -0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0.5 0 0} 
+1 {0.5 -0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {1 0 0} 
+1 {-0.5 0 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0 0.5 0} 
+1 {0 0 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0.5 0.5 0} 
+1 {0.5 0 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {1 0.5 0} 
+1 {-0.5 0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0 1 0} 
+1 {0 0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0.5 1 0} 
+1 {0.5 0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {1 1 0} }
+  name Card5
+  xpos -481
+  ypos -5
+ }
+ TransformGeo {
+  inputs 2
+  translate {0 0 {-parent.VAR.Df}}
+  scaling {{(parent.cam_dof.haperture/parent.cam_dof.focal)*-translate.z} {(cam_dof.vaperture/cam_dof.focal)*-translate.z} 1}
+  name TransformGeo5
+  xpos -481
+  ypos 43
+ }
+push $Nd22bae0
+ Constant {
+  inputs 0
+  color {0 0 0.2 0}
+  name Constant7
+  xpos -591
+  ypos -101
+ }
+ Card2 {
+  image_aspect false
+  control_points {3 3 3 6 
+
+1 {-0.5 -0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0 0 0} 
+1 {0 -0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0.5 0 0} 
+1 {0.5 -0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {1 0 0} 
+1 {-0.5 0 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0 0.5 0} 
+1 {0 0 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0.5 0.5 0} 
+1 {0.5 0 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {1 0.5 0} 
+1 {-0.5 0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0 1 0} 
+1 {0 0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0.5 1 0} 
+1 {0.5 0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {1 1 0} }
+  name Card4
+  xpos -591
+  ypos -5
+ }
+ TransformGeo {
+  inputs 2
+  translate {0 0 {-parent.VAR.Dn}}
+  scaling {{(parent.cam_dof.haperture/parent.cam_dof.focal)*-translate.z} {(parent.cam_dof.vaperture/parent.cam_dof.focal)*-translate.z} 1}
+  name TransformGeo4
+  xpos -591
+  ypos 43
+ }
+push $Nd22bae0
+ Constant {
+  inputs 0
+  color {0.03306 0.364 0.03306 0}
+  name Constant6
+  xpos -701
+  ypos -101
+ }
+ Card2 {
+  image_aspect false
+  control_points {3 3 3 6 
+
+1 {-0.5 -0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0 0 0} 
+1 {0 -0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0.5 0 0} 
+1 {0.5 -0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {1 0 0} 
+1 {-0.5 0 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0 0.5 0} 
+1 {0 0 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0.5 0.5 0} 
+1 {0.5 0 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {1 0.5 0} 
+1 {-0.5 0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0 1 0} 
+1 {0 0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0.5 1 0} 
+1 {0.5 0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {1 1 0} }
+  name Card3
+  xpos -701
+  ypos -5
+ }
+ TransformGeo {
+  inputs 2
+  translate {0 0 {-parent.cam_dof.focal_point}}
+  scaling {{(parent.cam_dof.haperture/parent.cam_dof.focal)*parent.cam_dof.focal_point} {(parent.cam_dof.vaperture/parent.cam_dof.focal)*parent.cam_dof.focal_point} 1}
+  name TransformGeo3
+  xpos -701
+  ypos 43
+ }
+ Scene {
+  inputs 3
+  name Scene2
+  xpos -691
+  ypos 129
+ }
+ Output {
+  name Output1
+  xpos -701
+  ypos 375
+ }
+ Input {
+  inputs 0
+  name InputCam
+  label "\[value number]"
+  xpos -260
+  ypos -249
+ }
+ NoOp {
+  name VAR
+  xpos -260
+  ypos -177
+  addUserKnob {20 User}
+  addUserKnob {7 s l subject_distance R 0 1000}
+  s {{parent.cam_dof.focal_point}}
+  addUserKnob {7 f l focal_length R 0 250}
+  f {{parent.cam_dof.focal}}
+  addUserKnob {7 N l f-number R 0 45}
+  N {{parent.cam_dof.fstop}}
+  addUserKnob {7 c l coc}
+  c 0.025
+  addUserKnob {7 H l hyperfocal_distance R 0 1000}
+  H {{"(pow(f, 2)) / (N*c)/mm"}}
+  addUserKnob {7 Dn l dof_near R 0 1000}
+  Dn {{"(s*mm * (H*mm-f) / (H*mm + s*mm - f*2))/mm"}}
+  addUserKnob {7 Df l dof_far R 0 1000}
+  Df {{"s > H ? 100000 : (s*mm * (H*mm-f) / (H*mm - s*mm))/mm"}}
+ }
+end_group

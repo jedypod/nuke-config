@@ -1,0 +1,68 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name VectorDistort
+ addUserKnob {20 VectorDistort}
+ addUserKnob {41 reference_frame l "reference frame" T VectorDistortCTRL.reference_frame}
+ addUserKnob {41 hold_frame l "hold frame" -STARTLINE T VectorDistortCTRL.hold_frame}
+ addUserKnob {41 frame_distance l "frame distance" T VectorDistortCTRL.frame_distance}
+ addUserKnob {41 first l from T VectorDistortCTRL.first}
+ addUserKnob {41 last l to -STARTLINE T VectorDistortCTRL.last}
+ addUserKnob {22 set_framerange l "Set FrameRange" -STARTLINE T "n = nuke.thisNode()\nn\['first'].setValue(int(nuke.root()\['first_frame'].getValue()))\nn\['last'].setValue(int(nuke.root()\['last_frame'].getValue()))"}
+ addUserKnob {41 vector_filter l "vector filter" T VectorDistortCTRL.vector_filter}
+ addUserKnob {41 output_mode l output T VectorDistortCTRL.output_mode}
+}
+ Input {
+  inputs 0
+  name InputSrc
+  label "\[value number] "
+  xpos -150
+  ypos -520
+  number 1
+ }
+ Input {
+  inputs 0
+  name InputSmartVector
+  label "\[value number]"
+  xpos 70
+  ypos -520
+ }
+ VectorDistort {
+  inputs 2
+  referenceFrame {{parent.VectorDistortCTRL.reference_frame}}
+  reference_frame_set true
+  holdFrame {{parent.VectorDistortCTRL.hold_frame}}
+  frameDistance {{parent.VectorDistortCTRL.frame_distance}}
+  outputMode {{parent.VectorDistortCTRL.output_mode}}
+  vector_filter {{parent.VectorDistortCTRL.vector_filter}}
+  name VectorDistort
+  xpos -150
+  ypos -322
+ }
+set Ne19adf0 [stack 0]
+ Output {
+  name Output1
+  xpos -150
+  ypos -178
+ }
+push $Ne19adf0
+ NoOp {
+  name VectorDistortCTRL
+  xpos -370
+  ypos -322
+  addUserKnob {20 VectorDistortCTRL}
+  addUserKnob {3 reference_frame l "reference frame"}
+  reference_frame 1001
+  addUserKnob {6 hold_frame l "hold frame" -STARTLINE}
+  addUserKnob {7 frame_distance l "frame distance" R 0 6}
+  frame_distance 2
+  addUserKnob {3 first l from}
+  first 1001
+  addUserKnob {3 last l to -STARTLINE}
+  last 1100
+  addUserKnob {4 vector_filter l "vector filter" M {Impulse Cubic Keys Simon Rifman Mitchell Parzen Notch Lanczos4 Lanczos6 Sinc4}}
+  vector_filter Cubic
+  addUserKnob {4 output_mode l output M {"warped src" stmap "stmap inverse" ""}}
+  output_mode stmap
+ }
+end_group

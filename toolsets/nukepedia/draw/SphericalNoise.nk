@@ -1,0 +1,81 @@
+set cut_paste_input [stack 0]
+Group {
+inputs 0
+name SphericalNoise
+addUserKnob {20 SphericalNoise}
+addUserKnob {3 FormatX l "Resolution X"}
+FormatX 4096
+addUserKnob {3 Y -STARTLINE}
+Y 2048
+addUserKnob {26 "" +STARTLINE}
+addUserKnob {13 offset l Offset}
+addUserKnob {13 scale l Scale}
+scale {1 1 1}
+addUserKnob {26 NoiseSettings l "@b;Noise Settings" T " "}
+addUserKnob {7 octaves R 0 10}
+octaves 10
+addUserKnob {7 lacunarity R 0 10}
+lacunarity 2.35
+addUserKnob {7 gain}
+gain 0.555
+}
+Constant {
+inputs 0
+name Constant1
+xpos 440
+ypos -225
+postage_stamp false
+}
+Reformat {
+type "to box"
+box_width {{parent.FormatX}}
+box_height {{parent.Y}}
+box_fixed true
+resize distort
+name Reformat1
+xpos 440
+ypos -153
+}
+Expression {
+temp_name0 lat
+temp_expr0 "y / parent.Y * 180- 90"
+temp_name1 lon
+temp_expr1 "x / parent.FormatX * 360-180"
+temp_name2 r
+temp_expr2 "cos(0.017453292519943295769236907684886 *  lat)"
+expr0 "(r * cos (0.017453292519943295769236907684886 * lon) +1)*0.5"
+expr1 "(sin (0.017453292519943295769236907684886 * lat)+1)*.5"
+expr2 "(r * sin(0.017453292519943295769236907684886 * lon)+1)*.5"
+name Expression9
+xpos 440
+ypos -81
+}
+Grade {
+multiply {{parent.scale} {parent.scale} {parent.scale} 1}
+multiply_panelDropped true
+name Grade1
+xpos 440
+ypos -45
+}
+Expression {
+expr0 fBm(r+parent.offset.x,g+parent.offset.y,b+parent.offset.z,parent.octaves,parent.lacunarity,parent.gain)*.5+0.5
+expr1 fBm(r+parent.offset.x,g+parent.offset.y,b+parent.offset.z,parent.octaves,parent.lacunarity,parent.gain)*.5+0.5
+expr2 fBm(r+parent.offset.x,g+parent.offset.y,b+parent.offset.z,parent.octaves,parent.lacunarity,parent.gain)*.5+0.5
+name Expression10
+xpos 440
+ypos -45
+}
+Shuffle {
+red blue
+green blue
+alpha blue
+name Shuffle1
+xpos 440
+ypos -9
+}
+Output {
+name Output1
+xpos 440
+ypos 99
+}
+end_group

@@ -1,0 +1,632 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name BloomWrap
+ help "Creates an optical bloom lens contamination style light-wrap. Based on the bm_Lightwrap gizmo created by Ben McEwan\nwww.benmcewan.com"
+ tile_color 0x8c8c8cff
+ addUserKnob {20 BloomWrap}
+ addUserKnob {6 generate_wrap_only l "generate wrap only" t "Enabled: Renders the wrap over black.\nDisabled: Renders wrap over the input image." +STARTLINE}
+ addUserKnob {4 GLOWCONTROLLER_blurFilter l INVISIBLE t "Set the type of filter used in all the blur layers." +INVISIBLE M {Box Triange Quadratic Gaussian "" ""}}
+ GLOWCONTROLLER_blurFilter Gaussian
+ addUserKnob {3 GLOWCONTROLLER_blurQuality l INVISIBLE t "Does what it says on the tin." -STARTLINE +INVISIBLE}
+ GLOWCONTROLLER_blurQuality 15
+ addUserKnob {4 blendWithOriginal l INVISIBLE t "This is the operation used to blend the glow with the input image." -STARTLINE +INVISIBLE M {Plus Hypot Screen Over "" ""}}
+ addUserKnob {26 bloom_ctrls l "<b>Bloom Controls" T " "}
+ addUserKnob {7 GLOWCONTROLLER_glowRadius l size t "The size of the bloom." R 0 100}
+ GLOWCONTROLLER_glowRadius 32
+ addUserKnob {7 GLOWCONTROLLER_glowIntensity l intensity t "The intensity of the bloom wrap."}
+ GLOWCONTROLLER_glowIntensity 0.085
+ addUserKnob {7 tolerance t "Adjust the tolerance: A tolerance of 1 means only highlights are glowed - a tolerance of 0 means everything is glowed."}
+ tolerance 0.11
+ addUserKnob {41 globalBias l INVISIBLE t "Shifts the midpoint towards the centre or outside of the glow." +INVISIBLE T ColorCorrect1.gamma}
+ addUserKnob {41 saturation t "Adjust the saturation of the bloom." T ColorCorrect1.saturation}
+ addUserKnob {7 aspectRatio l "aspect ratio" t "Sets the pixel aspect ratio of the glow." R 0 2}
+ aspectRatio 1
+ addUserKnob {26 ""}
+ addUserKnob {14 blurAmt l "blur bg" t "Blurs background image before bloom - softens sharp detail in bg highlights." R 0 100}
+ blurAmt 10
+ addUserKnob {4 numOfLayers l INVISIBLE +INVISIBLE M {1 2 3 4 5 6 7 8 9 10 "" "" ""}}
+ numOfLayers 8
+ addUserKnob {41 layerBlend l blend t "Select the math to blend the layers of the bloom effect - Screen will give good results in most circumstances." T GLOWCONTROLLER.layerBlend}
+ addUserKnob {41 glowPreset l "&nbsp; &nbsp; &nbsp; &nbsp; falloff preset" t "Set the bloom falloff preset. " -STARTLINE T GLOWCONTROLLER.glowPreset}
+ addUserKnob {7 alpha_intensity l "plus / over" t "Adjusts the intensity of the alpha generated from the lightwrap. So the output can be merged with an over, accurately balancing between plus and over." R 1 4}
+ alpha_intensity 1
+ addUserKnob {26 ""}
+ addUserKnob {26 spacer_01_1 l "" +STARTLINE T " "}
+ addUserKnob {22 toggle_mask l "Toggle Mask" t "Toggle the Mask Input" T "# Toggle Mask Input\nfrom __future__ import with_statement\nn = nuke.thisNode()\n# Disconnect Mask Input\nn.setInput(2, None)\nwith n:\n  mask_input = nuke.toNode('InputMask')\n  if mask_input:\n    nuke.delete(mask_input)\n  else:\n    mask_input = nuke.nodes.Input()\n    mask_input\['name'].setValue('InputMask')\n    mask_input.setXpos( -1140 )\n    mask_input.setYpos( 131 )\n    mdot = nuke.toNode('mask_dot')\n    mdot.setInput(0, mask_input)" +STARTLINE}
+}
+ Input {
+  inputs 0
+  name Inputfg
+  label "\[value number]"
+  xpos -1360
+  ypos -37
+ }
+ Dot {
+  name Dot20
+  label " FG"
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos -1326
+  ypos 66
+ }
+ Dot {
+  name Dot12
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos -1326
+  ypos 210
+ }
+set Ncdb4f90 [stack 0]
+ Dot {
+  name Dot18
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos -1326
+  ypos 498
+ }
+set Ncdb9510 [stack 0]
+ Dot {
+  name Dot13
+  label "  "
+  note_font "Arial Black"
+  note_font_size 16
+  xpos -1326
+  ypos 1794
+ }
+ Dot {
+  name Dot11
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos -226
+  ypos 1794
+ }
+set Ncde40e0 [stack 0]
+ Dot {
+  name Dot14
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos -226
+  ypos 1914
+ }
+push $Ncde40e0
+ Dot {
+  inputs 0
+  name mask_dot
+  label "Mask Input"
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos -1106
+  ypos 210
+ }
+push $Ncdb4f90
+ Shuffle {
+  red white
+  green white
+  blue white
+  alpha white
+  name WHITE
+  tile_color 0xfefefeff
+  xpos -1250
+  ypos 207
+ }
+ Dot {
+  name Dot19
+  xpos -1216
+  ypos 330
+ }
+ Switch {
+  inputs 2
+  which {{"\[exists parent.input2]"}}
+  name MaskSwitch
+  xpos -1140
+  ypos 327
+ }
+ Dot {
+  name Dot17
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos -1106
+  ypos 570
+ }
+push $Ncdb9510
+ Input {
+  inputs 0
+  name Inputbg
+  label "\[value number]"
+  xpos -920
+  ypos -37
+  number 1
+ }
+ Dot {
+  name Dot21
+  label " BG"
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos -886
+  ypos 66
+ }
+ Grade {
+  add {{-parent.tolerance}}
+  name Tolerance
+  xpos -920
+  ypos 231
+ }
+ Blur {
+  channels rgba
+  size {{parent.blurAmt}}
+  name Blur10
+  xpos -920
+  ypos 303
+ }
+set Nd9e5550 [stack 0]
+ Merge2 {
+  inputs 2
+  operation stencil
+  bbox B
+  name Merge12
+  xpos -920
+  ypos 495
+ }
+ Merge2 {
+  inputs 2
+  operation mask
+  bbox B
+  name Merge13
+  label "mask input"
+  xpos -920
+  ypos 563
+ }
+ Dot {
+  name Dot2
+  label "  "
+  note_font "Arial Black"
+  note_font_size 16
+  xpos -886
+  ypos 666
+ }
+set Nda12500 [stack 0]
+ Dot {
+  name Dot3
+  label "  "
+  note_font "Arial Black"
+  note_font_size 16
+  xpos -886
+  ypos 762
+ }
+set Nda17520 [stack 0]
+ Dot {
+  name Dot4
+  label "  "
+  note_font "Arial Black"
+  note_font_size 16
+  xpos -886
+  ypos 858
+ }
+set Nda1c3b0 [stack 0]
+ Dot {
+  name Dot5
+  label "  "
+  note_font "Arial Black"
+  note_font_size 16
+  xpos -886
+  ypos 978
+ }
+set Nda212e0 [stack 0]
+ Dot {
+  name Dot6
+  label "  "
+  note_font "Arial Black"
+  note_font_size 16
+  xpos -886
+  ypos 1098
+ }
+set Nda26210 [stack 0]
+ Dot {
+  name Dot7
+  label "  "
+  note_font "Arial Black"
+  note_font_size 16
+  xpos -886
+  ypos 1218
+ }
+set Nda2b140 [stack 0]
+ Dot {
+  name Dot8
+  label "  "
+  note_font "Arial Black"
+  note_font_size 16
+  xpos -886
+  ypos 1338
+ }
+set Nda30070 [stack 0]
+ Dot {
+  name Dot9
+  label "  "
+  note_font "Arial Black"
+  note_font_size 16
+  xpos -886
+  ypos 1458
+ }
+set Nda34fa0 [stack 0]
+ Dot {
+  name Dot10
+  label "  "
+  note_font "Arial Black"
+  note_font_size 16
+  xpos -886
+  ypos 1578
+ }
+ Blur {
+  channels rgb
+  size {{(GLOWCONTROLLER.glowPreset==0?0:GLOWCONTROLLER.glowPreset==1?0:GLOWCONTROLLER.glowPreset==2?0:parent.blur09)*(aspectRatio)} {GLOWCONTROLLER.glowPreset==0?0:GLOWCONTROLLER.glowPreset==1?0:GLOWCONTROLLER.glowPreset==2?0:parent.blur09}}
+  filter {{GLOWCONTROLLER.blurFilter}}
+  quality {{GLOWCONTROLLER.blurQuality}}
+  crop false
+  name Blur9
+  xpos -480
+  ypos 1575
+ }
+ ColorCorrect {
+  saturation {{ColorCorrect1.saturation}}
+  gamma {{ColorCorrect1.gamma}}
+  name ColorCorrect9
+  xpos -370
+  ypos 1575
+ }
+ Multiply {
+  channels rgb
+  value {{GLOWCONTROLLER.glowPreset==0?0:GLOWCONTROLLER.glowPreset==1?0:GLOWCONTROLLER.glowPreset==2?0:parent.mix09}}
+  name Multiply2
+  xpos -260
+  ypos 1575
+ }
+push $Nda34fa0
+ Blur {
+  channels rgb
+  size {{(GLOWCONTROLLER.glowPreset==0?0:GLOWCONTROLLER.glowPreset==1?0:GLOWCONTROLLER.glowPreset==2?0:parent.blur08)*(aspectRatio)} {GLOWCONTROLLER.glowPreset==0?0:GLOWCONTROLLER.glowPreset==1?0:GLOWCONTROLLER.glowPreset==2?0:parent.blur08}}
+  filter {{GLOWCONTROLLER.blurFilter}}
+  quality {{GLOWCONTROLLER.blurQuality}}
+  crop false
+  name Blur8
+  xpos -480
+  ypos 1455
+ }
+ ColorCorrect {
+  saturation {{ColorCorrect1.saturation}}
+  gamma {{ColorCorrect1.gamma}}
+  name ColorCorrect8
+  xpos -370
+  ypos 1455
+ }
+ Multiply {
+  channels rgb
+  value {{GLOWCONTROLLER.glowPreset==0?0:GLOWCONTROLLER.glowPreset==1?0:GLOWCONTROLLER.glowPreset==2?0:parent.mix08}}
+  name Multiply9
+  xpos -260
+  ypos 1455
+ }
+push $Nda30070
+ Blur {
+  channels rgb
+  size {{(GLOWCONTROLLER.glowPreset==0?0:GLOWCONTROLLER.glowPreset==1?0:GLOWCONTROLLER.glowPreset==2?(GLOWCONTROLLER.glowRadius*3.2):parent.blur07)*(aspectRatio)} {GLOWCONTROLLER.glowPreset==0?0:GLOWCONTROLLER.glowPreset==1?0:GLOWCONTROLLER.glowPreset==2?(GLOWCONTROLLER.glowRadius*3.2):parent.blur07}}
+  filter {{GLOWCONTROLLER.blurFilter}}
+  quality {{GLOWCONTROLLER.blurQuality}}
+  crop false
+  name Blur7
+  xpos -480
+  ypos 1335
+ }
+ ColorCorrect {
+  saturation {{ColorCorrect1.saturation}}
+  gamma {{ColorCorrect1.gamma}}
+  name ColorCorrect7
+  xpos -370
+  ypos 1335
+ }
+ Multiply {
+  channels rgb
+  value {{GLOWCONTROLLER.glowPreset==0?0:GLOWCONTROLLER.glowPreset==1?0:GLOWCONTROLLER.glowPreset==2?(GLOWCONTROLLER.glowIntensity*.1):parent.mix07}}
+  name Multiply8
+  xpos -260
+  ypos 1335
+ }
+push $Nda2b140
+ Blur {
+  channels rgb
+  size {{(GLOWCONTROLLER.glowPreset==0?(GLOWCONTROLLER.glowRadius*3.2):GLOWCONTROLLER.glowPreset==1?(GLOWCONTROLLER.glowRadius*3.2):GLOWCONTROLLER.glowPreset==2?(GLOWCONTROLLER.glowRadius*1.6):parent.blur06)*(aspectRatio)} {GLOWCONTROLLER.glowPreset==0?(GLOWCONTROLLER.glowRadius*3.2):GLOWCONTROLLER.glowPreset==1?(GLOWCONTROLLER.glowRadius*3.2):GLOWCONTROLLER.glowPreset==2?(GLOWCONTROLLER.glowRadius*1.6):parent.blur06}}
+  filter {{GLOWCONTROLLER.blurFilter}}
+  quality {{GLOWCONTROLLER.blurQuality}}
+  crop false
+  name Blur6
+  xpos -480
+  ypos 1215
+ }
+ ColorCorrect {
+  saturation {{ColorCorrect1.saturation}}
+  gamma {{ColorCorrect1.gamma}}
+  name ColorCorrect6
+  xpos -370
+  ypos 1215
+ }
+ Multiply {
+  channels rgb
+  value {{GLOWCONTROLLER.glowPreset==0?(GLOWCONTROLLER.glowIntensity*.2):GLOWCONTROLLER.glowPreset==1?(GLOWCONTROLLER.glowIntensity*.2):GLOWCONTROLLER.glowPreset==2?(GLOWCONTROLLER.glowIntensity*.1):parent.mix06}}
+  name Multiply7
+  xpos -260
+  ypos 1215
+ }
+push $Nda26210
+ Blur {
+  channels rgb
+  size {{(GLOWCONTROLLER.glowPreset==0?(GLOWCONTROLLER.glowRadius*1.5):GLOWCONTROLLER.glowPreset==1?(GLOWCONTROLLER.glowRadius*1.6):GLOWCONTROLLER.glowPreset==2?(GLOWCONTROLLER.glowRadius*.8):parent.blur05)*(aspectRatio)} {GLOWCONTROLLER.glowPreset==0?(GLOWCONTROLLER.glowRadius*1.5):GLOWCONTROLLER.glowPreset==1?(GLOWCONTROLLER.glowRadius*1.6):GLOWCONTROLLER.glowPreset==2?(GLOWCONTROLLER.glowRadius*.8):parent.blur05}}
+  filter {{GLOWCONTROLLER.blurFilter}}
+  quality {{GLOWCONTROLLER.blurQuality}}
+  crop false
+  name Blur5
+  xpos -480
+  ypos 1095
+ }
+ ColorCorrect {
+  saturation {{ColorCorrect1.saturation}}
+  gamma {{ColorCorrect1.gamma}}
+  name ColorCorrect5
+  xpos -370
+  ypos 1095
+ }
+ Multiply {
+  channels rgb
+  value {{GLOWCONTROLLER.glowPreset==0?(GLOWCONTROLLER.glowIntensity*.4):GLOWCONTROLLER.glowPreset==1?(GLOWCONTROLLER.glowIntensity*.1):GLOWCONTROLLER.glowPreset==2?(GLOWCONTROLLER.glowIntensity*.2):parent.mix05}}
+  name Multiply6
+  xpos -260
+  ypos 1095
+ }
+push $Nda212e0
+ Blur {
+  channels rgb
+  size {{(GLOWCONTROLLER.glowPreset==0?(GLOWCONTROLLER.glowRadius/2):GLOWCONTROLLER.glowPreset==1?(GLOWCONTROLLER.glowRadius/1.25):GLOWCONTROLLER.glowPreset==2?(GLOWCONTROLLER.glowRadius/2.5):parent.blur04)*(aspectRatio)} {GLOWCONTROLLER.glowPreset==0?(GLOWCONTROLLER.glowRadius/2):GLOWCONTROLLER.glowPreset==1?(GLOWCONTROLLER.glowRadius/1.25):GLOWCONTROLLER.glowPreset==2?(GLOWCONTROLLER.glowRadius/2.5):parent.blur04}}
+  filter {{GLOWCONTROLLER.blurFilter}}
+  quality {{GLOWCONTROLLER.blurQuality}}
+  crop false
+  name Blur4
+  xpos -480
+  ypos 975
+ }
+ ColorCorrect {
+  saturation {{ColorCorrect1.saturation}}
+  gamma {{ColorCorrect1.gamma}}
+  name ColorCorrect4
+  xpos -370
+  ypos 975
+ }
+ Multiply {
+  channels rgb
+  value {{GLOWCONTROLLER.glowPreset==0?(GLOWCONTROLLER.glowIntensity*.6):GLOWCONTROLLER.glowPreset==1?(GLOWCONTROLLER.glowIntensity*.3):GLOWCONTROLLER.glowPreset==2?(GLOWCONTROLLER.glowIntensity*.4):parent.mix04}}
+  name Multiply5
+  xpos -260
+  ypos 975
+ }
+push $Nda1c3b0
+ Blur {
+  channels rgb
+  size {{(GLOWCONTROLLER.glowPreset==0?(GLOWCONTROLLER.glowRadius/4):GLOWCONTROLLER.glowPreset==1?(GLOWCONTROLLER.glowRadius/2.5):GLOWCONTROLLER.glowPreset==2?(GLOWCONTROLLER.glowRadius/5):parent.blur03)*(aspectRatio)} {GLOWCONTROLLER.glowPreset==0?(GLOWCONTROLLER.glowRadius/4):GLOWCONTROLLER.glowPreset==1?(GLOWCONTROLLER.glowRadius/2.5):GLOWCONTROLLER.glowPreset==2?(GLOWCONTROLLER.glowRadius/5):parent.blur03}}
+  filter {{GLOWCONTROLLER.blurFilter}}
+  quality {{GLOWCONTROLLER.blurQuality}}
+  crop false
+  name Blur3
+  xpos -480
+  ypos 855
+ }
+ ColorCorrect {
+  saturation {{ColorCorrect1.saturation}}
+  gamma {{ColorCorrect1.gamma}}
+  name ColorCorrect3
+  xpos -370
+  ypos 855
+ }
+ Multiply {
+  channels rgb
+  value {{GLOWCONTROLLER.glowPreset==0?(GLOWCONTROLLER.glowIntensity*.8):GLOWCONTROLLER.glowPreset==1?(GLOWCONTROLLER.glowIntensity*.5):GLOWCONTROLLER.glowPreset==2?(GLOWCONTROLLER.glowIntensity*.6):parent.mix03}}
+  name Multiply4
+  xpos -260
+  ypos 855
+ }
+push $Nda17520
+ Blur {
+  channels rgb
+  size {{(GLOWCONTROLLER.glowPreset==0?(GLOWCONTROLLER.glowRadius*.07):GLOWCONTROLLER.glowPreset==1?(GLOWCONTROLLER.glowRadius/10):GLOWCONTROLLER.glowPreset==2?(GLOWCONTROLLER.glowRadius/10):parent.blur02)*(aspectRatio)} {GLOWCONTROLLER.glowPreset==0?(GLOWCONTROLLER.glowRadius*.07):GLOWCONTROLLER.glowPreset==1?(GLOWCONTROLLER.glowRadius/10):GLOWCONTROLLER.glowPreset==2?(GLOWCONTROLLER.glowRadius/10):parent.blur02}}
+  filter {{GLOWCONTROLLER.blurFilter}}
+  quality {{GLOWCONTROLLER.blurQuality}}
+  crop false
+  name Blur2
+  xpos -480
+  ypos 759
+ }
+ ColorCorrect {
+  saturation {{ColorCorrect1.saturation}}
+  gamma {{ColorCorrect1.gamma}}
+  name ColorCorrect2
+  xpos -370
+  ypos 759
+ }
+ Multiply {
+  channels rgb
+  value {{GLOWCONTROLLER.glowPreset==0?(GLOWCONTROLLER.glowIntensity):GLOWCONTROLLER.glowPreset==1?(GLOWCONTROLLER.glowIntensity):GLOWCONTROLLER.glowPreset==2?(GLOWCONTROLLER.glowIntensity*.8):parent.mix02}}
+  name Multiply3
+  xpos -260
+  ypos 759
+ }
+push $Nda12500
+ Blur {
+  channels rgb
+  size {{(GLOWCONTROLLER.glowPreset==0?(GLOWCONTROLLER.glowRadius/100):GLOWCONTROLLER.glowPreset==1?(GLOWCONTROLLER.glowRadius/100):GLOWCONTROLLER.glowPreset==2?(GLOWCONTROLLER.glowRadius/50):parent.blur01)*(aspectRatio)} {GLOWCONTROLLER.glowPreset==0?(GLOWCONTROLLER.glowRadius/100):GLOWCONTROLLER.glowPreset==1?(GLOWCONTROLLER.glowRadius/100):GLOWCONTROLLER.glowPreset==2?(GLOWCONTROLLER.glowRadius/50):parent.blur01}}
+  filter {{GLOWCONTROLLER.blurFilter}}
+  quality {{GLOWCONTROLLER.blurQuality}}
+  crop false
+  name Blur1
+  xpos -480
+  ypos 663
+ }
+ ColorCorrect {
+  saturation 0.36
+  name ColorCorrect1
+  xpos -370
+  ypos 663
+ }
+ Multiply {
+  channels rgb
+  value {{GLOWCONTROLLER.glowPreset==0?(GLOWCONTROLLER.glowIntensity):GLOWCONTROLLER.glowPreset==1?(GLOWCONTROLLER.glowIntensity):GLOWCONTROLLER.glowPreset==2?(GLOWCONTROLLER.glowIntensity):parent.mix01}}
+  name Multiply1
+  xpos -260
+  ypos 663
+ }
+push $Nd9e5550
+ Dot {
+  name Dot1
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos -6
+  ypos 306
+ }
+ Multiply {
+  channels rgba
+  value 0
+  name BLACK
+  tile_color 0xff
+  xpos -40
+  ypos 375
+ }
+ Merge2 {
+  inputs 2
+  operation {{GLOWCONTROLLER.layerBlend+24}}
+  bbox B
+  name Merge2
+  xpos -40
+  ypos 663
+ }
+set Ndc22c20 [stack 0]
+ Merge2 {
+  inputs 2
+  operation {{Merge2.operation x1 8}}
+  bbox B
+  name Merge3
+  xpos -40
+  ypos 759
+  disable {{parent.numOfLayers>0?0:1}}
+ }
+ Merge2 {
+  inputs 2
+  operation {{Merge2.operation x1 8}}
+  bbox B
+  name Merge4
+  xpos -40
+  ypos 855
+  disable {{parent.numOfLayers>1?0:1}}
+ }
+ Merge2 {
+  inputs 2
+  operation {{Merge2.operation x1 8}}
+  bbox B
+  name Merge5
+  xpos -40
+  ypos 975
+  disable {{parent.numOfLayers>2?0:1}}
+ }
+ Merge2 {
+  inputs 2
+  operation {{Merge2.operation x1 8}}
+  bbox B
+  name Merge6
+  xpos -40
+  ypos 1095
+  disable {{parent.numOfLayers>3?0:1}}
+ }
+ Merge2 {
+  inputs 2
+  operation {{Merge2.operation x1 8}}
+  bbox B
+  name Merge7
+  xpos -40
+  ypos 1215
+  disable {{parent.numOfLayers>4?0:1}}
+ }
+ Merge2 {
+  inputs 2
+  operation {{Merge2.operation x1 8}}
+  bbox B
+  name Merge8
+  xpos -40
+  ypos 1335
+  disable {{parent.numOfLayers>5?0:1}}
+ }
+ Merge2 {
+  inputs 2
+  operation {{Merge2.operation x1 8}}
+  bbox B
+  name Merge9
+  xpos -40
+  ypos 1455
+  disable {{parent.numOfLayers>6?0:1}}
+ }
+ Merge2 {
+  inputs 2
+  operation {{Merge2.operation x1 8}}
+  bbox B
+  name Merge10
+  xpos -40
+  ypos 1575
+  disable {{parent.numOfLayers>7?0:1}}
+ }
+ Expression {
+  channel0 alpha
+  expr0 clamp((r+g+b)/3*parent.alpha_intensity)
+  name GenerateAlpha
+  xpos -40
+  ypos 1695
+ }
+ Merge2 {
+  inputs 2
+  operation mask
+  name Merge15
+  xpos -40
+  ypos 1791
+ }
+ Merge2 {
+  inputs 2
+  operation under
+  bbox B
+  name Merge1
+  xpos -40
+  ypos 1911
+  disable {{generate_wrap_only}}
+ }
+ Output {
+  name Output1
+  xpos -40
+  ypos 2727
+ }
+push $Ndc22c20
+ NoOp {
+  name GLOWCONTROLLER
+  xpos 180
+  ypos 663
+  addUserKnob {20 User}
+  addUserKnob {26 ""}
+  addUserKnob {4 glowPreset l Preset M {McEwan Caauwe Wieber}}
+  glowPreset Wieber
+  addUserKnob {26 ""}
+  addUserKnob {4 blurFilter l "Blur Filter" M {Box Triangle Quadratic Gaussian}}
+  blurFilter {{parent.GLOWCONTROLLER_blurFilter}}
+  addUserKnob {4 layerBlend l "   Layer Blend " -STARTLINE M {Plus Screen "" "" "" ""}}
+  layerBlend Screen
+  addUserKnob {3 blurQuality l "   Blur Quality " -STARTLINE}
+  blurQuality {{parent.GLOWCONTROLLER_blurQuality}}
+  addUserKnob {26 spacer_01 l "" +STARTLINE T " "}
+  addUserKnob {7 glowRadius l "Glow Radius" R 0 150}
+  glowRadius {{parent.GLOWCONTROLLER_glowRadius}}
+  addUserKnob {7 glowIntensity l "Glow Intensity" R 0 5}
+  glowIntensity {{parent.GLOWCONTROLLER_glowIntensity}}
+  addUserKnob {26 ""}
+  addUserKnob {26 ""}
+ }
+end_group

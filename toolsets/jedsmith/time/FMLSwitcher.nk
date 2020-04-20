@@ -1,0 +1,86 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name FML_SWITCHER
+ tile_color 0xb0a45dff
+ addUserKnob {20 FMLSwitcher}
+ addUserKnob {3 start_frame}
+ start_frame 1001
+ addUserKnob {4 frame_label l "frame label" M {first middle last}}
+ frame_label {{frame_switcher.which}}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos -710
+  ypos -690
+ }
+ Dot {
+  name Dot5
+  xpos -676
+  ypos -526
+ }
+set N3f8b51c0 [stack 0]
+ Text {
+  message "x\[frame] - last"
+  font /Volumes/af/tools/common/nuke/slate/font/Futura.ttc
+  yjustify bottom
+  box {56 46 1767 1342}
+  center {1178 895}
+  name Text3
+  xpos -576
+  ypos -450
+ }
+ FrameHold {
+  first_frame {{last_frame}}
+  name LAST
+  xpos -576
+  ypos -376
+ }
+push $N3f8b51c0
+ Text {
+  message "x\[frame] - middle"
+  font /Volumes/af/tools/common/nuke/slate/font/Futura.ttc
+  yjustify bottom
+  box {56 46 1767 1342}
+  center {1178 895}
+  name Text2
+  xpos -710
+  ypos -450
+ }
+ FrameHold {
+  first_frame {{"floor((first_frame + last_frame)/2)"}}
+  name MIDDLE
+  xpos -710
+  ypos -376
+ }
+push $N3f8b51c0
+ Text {
+  message "x\[frame] - first"
+  font /Volumes/af/tools/common/nuke/slate/font/Futura.ttc
+  yjustify bottom
+  box {56 46 1767 1342}
+  center {1178 895}
+  name Text1
+  xpos -844
+  ypos -450
+ }
+ FrameHold {
+  first_frame {{first_frame}}
+  name FIRST
+  xpos -844
+  ypos -376
+ }
+ Switch {
+  inputs 3
+  which {{(t-start_frame)%3}}
+  name frame_switcher
+  xpos -710
+  ypos -290
+ }
+ Output {
+  name Output
+  xpos -710
+  ypos -50
+ }
+end_group

@@ -1,0 +1,826 @@
+Group {
+name HeatDistortion
+help "Creates a heat distortion effect. Controls for distortion amount and blur amount. Includes 2 noise generators for use as displacement maps. \n<b>Each have:</b>\nSpeed: controls the speed of displacement.\nDirection: a vector specifying the speed and direction of a constant movement of the noise map, for example, rising heat distortion.\nEach also has multipliers to limit the contribution to the blur or distortion amounts. You can also solo each noise map to see what it looks like, and adjust the noise parameters, and add additional tracking in the translate controls if desired. You can also check the use_external_distortion_map and use copies of the node to generate the maps if you need to project the maps through a 3d system or something."
+tile_color 0x553872ff
+selected true
+xpos -217
+ypos 22239
+addUserKnob {20 HeatDistortion}
+addUserKnob {41 channels T IDistort2.channels}
+addUserKnob {7 global_blur_amount t "Set the zblur amount driven by the distortion map" R 0 100}
+global_blur_amount 5
+addUserKnob {7 global_distortion_intensity t "Independently control the intensity scale of the distortion amount" R 0 15}
+global_distortion_intensity 2
+addUserKnob {26 Mask l "<font size=4><b>Mask"}
+addUserKnob {41 from0 l Channel t "Select Channel that will be used for mask" T MaskChannel.from0}
+addUserKnob {6 invert_mask l Invert t "Invert the mask input." -STARTLINE}
+addUserKnob {6 outputnoise l "Output Distortion Map" +STARTLINE}
+addUserKnob {6 use_external_distortion_map t "Use an external distortion map instead of the 2 built-in ones" +STARTLINE}
+addUserKnob {20 DistortionMap1_1 l DistortionMap1}
+addUserKnob {26 ""}
+addUserKnob {20 DistortionMap1 t "Distortion Map One" n 1}
+addUserKnob {7 speed R 0 20}
+speed 9
+addUserKnob {12 direction t "set direction of travel in x and y"}
+direction {0 3}
+addUserKnob {7 dmap_disparity R 0 40}
+dmap_disparity 20
+addUserKnob {7 intensity l "overall intensity" t "Control overall intensity of Heat Distortion - 0 has no effect" R 0 10}
+intensity 8
+addUserKnob {7 blur_contribution t "How much this distortion map influences blur amount"}
+blur_contribution 1
+addUserKnob {7 dmap_contribution1}
+dmap_contribution1 1
+addUserKnob {20 endGroup_3 l endGroup n -1}
+addUserKnob {26 distortionmap l "" +STARTLINE}
+addUserKnob {20 distortion_map l "Distortion Map Controls" n 1}
+addUserKnob {6 solo_dmap1 +STARTLINE}
+addUserKnob {41 type T Noise_Main.type}
+addUserKnob {41 size l x/ysize T Noise_Main.size}
+addUserKnob {41 octaves T Noise_Main.octaves}
+addUserKnob {41 nyquist_1 l "clip at Nyquist limit" -STARTLINE T Noise_Main.nyquist}
+addUserKnob {41 lacunarity T Noise_Main.lacunarity}
+addUserKnob {41 gain T Noise_Main.gain}
+addUserKnob {41 gamma T Noise_Main.gamma}
+addUserKnob {7 blur R 0 40}
+addUserKnob {20 endGroup n -1}
+addUserKnob {20 Translate_Noise_Pattern l "Translate Noise Pattern" n 1}
+Translate_Noise_Pattern 0
+addUserKnob {41 translate_offset l translate T Noise_Main.translate_offset}
+addUserKnob {41 rotate T Noise_Main.rotate}
+addUserKnob {41 scale T Noise_Main.scale}
+addUserKnob {41 center T Noise_Main.center}
+addUserKnob {20 endGroup_1 l endGroup n -1}
+addUserKnob {26 ""}
+addUserKnob {20 DistortionMap2_1 l DistortionMap2}
+addUserKnob {20 DistortionMap2 n 1}
+DistortionMap2 0
+addUserKnob {20 endGroup_2 l endGroup n -1}
+addUserKnob {7 speed2 l speed R 0 20}
+speed2 16
+addUserKnob {12 direction2 l direction}
+direction2 {0 3}
+addUserKnob {7 dmap_disparity2 l dmap_disparity R 0 40}
+dmap_disparity2 10
+addUserKnob {7 overall_intensity2 l overall_intensity R 0 10}
+overall_intensity2 2
+addUserKnob {7 blur_contribution2 l blur_contribution}
+blur_contribution2 1.2
+addUserKnob {7 dmap_contribution2}
+dmap_contribution2 1
+addUserKnob {20 DistortionMapControls l "Distortion Map Controls" n 1}
+addUserKnob {6 solo_dmap2 +STARTLINE}
+addUserKnob {41 type_1 l type T Noise_Main1.type}
+addUserKnob {41 size_1 l x/ysize T Noise_Main1.size}
+addUserKnob {41 octaves_1 l octaves T Noise_Main1.octaves}
+addUserKnob {41 nyquist l "clip at Nyquist limit" -STARTLINE T Noise_Main1.nyquist}
+addUserKnob {41 lacunarity_1 l lacunarity T Noise_Main1.lacunarity}
+addUserKnob {41 gain_1 l gain T Noise_Main1.gain}
+addUserKnob {41 gamma_1 l gamma T Noise_Main1.gamma}
+addUserKnob {7 blur2 l blur R 0 40}
+addUserKnob {20 endGroup_4 l endGroup n -1}
+addUserKnob {20 TranslateControls n 1}
+TranslateControls 0
+addUserKnob {41 translate_offset_1 l translate_offset T Noise_Main1.translate_offset}
+addUserKnob {41 rotate_1 l rotate T Noise_Main1.rotate}
+addUserKnob {41 scale_1 l scale T Noise_Main1.scale}
+addUserKnob {41 center_1 l center T Noise_Main1.center}
+addUserKnob {20 endGroup_5 l endGroup n -1}
+}
+BackdropNode {
+inputs 0
+name BackdropNode1
+tile_color 0x4c4c4c01
+label "<center>Heat Distortion"
+note_font_size 64
+xpos -1401
+ypos -289
+bdwidth 2143
+bdheight 2306
+}
+Input {
+inputs 0
+name Input
+label "\[value number]"
+xpos -40
+ypos -133
+}
+Dot {
+name Dot2
+label "  INPUT"
+note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 18
+xpos -6
+ypos -54
+}
+set N9ac6dd10 [stack 0]
+Dot {
+name Dot9
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos -6
+ypos 18
+}
+set N540b2cb0 [stack 0]
+Dot {
+name Dot7
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos 214
+ypos 18
+}
+Dot {
+name Dot10
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos 214
+ypos 1410
+}
+Input {
+inputs 0
+name InputDMap2
+xpos -480
+ypos 351
+number 2
+}
+push $N9ac6dd10
+Shuffle {
+red black
+green black
+blue black
+alpha black
+name Shuffle3
+tile_color 0xff
+label FloodBLACK
+xpos -370
+ypos -61
+}
+set Nfb713070 [stack 0]
+Crop {
+box {{0-pad_size.w} {0-pad_size.h} {input.width+pad_size.w} {input.height+pad_size.h}}
+crop false
+name CropPadded1
+xpos -370
+ypos -9
+addUserKnob {20 Pad}
+addUserKnob {14 pad_size R 0 100}
+pad_size {100 100}
+}
+set N9ac816f0 [stack 0]
+Dot {
+name Dot15
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos -446
+ypos -6
+}
+Noise {
+cliptype none
+opacity {{parent.Noise_Main1.opacity}}
+size {{parent.Noise_Main1.size}}
+zoffset {{parent.Noise_Main1.zoffset}}
+octaves {{parent.Noise_Main1.octaves}}
+nyquist {{parent.Noise_Main1.nyquist}}
+lacunarity {{parent.Noise_Main1.lacunarity}}
+gain {{parent.Noise_Main1.gain}}
+gamma {{parent.Noise_Main1.gamma}}
+translate {{parent.Noise_Main1.translate} {parent.Noise_Main1.translate}}
+rotate {{parent.Noise_Main1.rotate}}
+scale {{parent.Noise_Main1.scale}}
+center {{parent.Noise_Main1.center} {parent.Noise_Main1.center}}
+color {{parent.Noise_Main1.color}}
+name Noise_U1
+tile_color 0xff0000ff
+xpos -480
+ypos 39
+}
+Transform {
+translate {{-parent.Noise_Main1.disparity} 0}
+center {1078 568}
+shutteroffset centred
+name U_Disparity1
+xpos -480
+ypos 87
+}
+push $N9ac816f0
+Noise {
+cliptype none
+size 30
+zoffset {{(frame*parent.speed2+100)/100}}
+octaves 4
+lacunarity 1.4
+gain 0.72
+gamma 0.35
+translate {{t*parent.direction+translate_offset} {t*parent.direction2+translate_offset}}
+center {1024 778}
+name Noise_Main1
+tile_color 0xfefefeff
+xpos -370
+ypos 39
+addUserKnob {20 Controls}
+addUserKnob {12 translate_offset}
+addUserKnob {12 disparity}
+disparity {{parent.dmap_disparity2} 0}
+}
+Dot {
+name Dot16
+xpos -336
+ypos 138
+}
+set N43e091a0 [stack 0]
+Merge2 {
+inputs 2
+operation from
+bbox B
+name Merge5
+xpos -480
+ypos 135
+}
+push $N9ac816f0
+Dot {
+name Dot17
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos -226
+ypos -6
+}
+Noise {
+cliptype none
+opacity {{parent.Noise_Main1.opacity}}
+size {{parent.Noise_Main1.size}}
+zoffset {{parent.Noise_Main1.zoffset}}
+octaves {{parent.Noise_Main1.octaves}}
+nyquist {{parent.Noise_Main1.nyquist}}
+lacunarity {{parent.Noise_Main1.lacunarity}}
+gain {{parent.Noise_Main1.gain}}
+gamma {{parent.Noise_Main1.gamma}}
+translate {{parent.Noise_Main1.translate} {parent.Noise_Main1.translate}}
+rotate {{parent.Noise_Main1.rotate}}
+scale {{parent.Noise_Main1.scale}}
+center {{parent.Noise_Main1.center} {parent.Noise_Main1.center}}
+color {{parent.Noise_Main1.color}}
+name Noise_V1
+tile_color 0xff3fff
+xpos -260
+ypos 39
+}
+Transform {
+translate {0 {parent.Noise_Main1.disparity.x}}
+center {1078 568}
+shutteroffset centred
+name V_Disparity1
+xpos -260
+ypos 87
+}
+push $N43e091a0
+Merge2 {
+inputs 2
+operation minus
+bbox B
+name Merge6
+xpos -260
+ypos 135
+}
+ShuffleCopy {
+inputs 2
+red red
+blue black
+alpha black
+name ShuffleCopy1
+xpos -370
+ypos 183
+}
+Blur {
+channels {rgba.red rgba.green -rgba.blue -rgba.alpha}
+size {{parent.blur_contribution2}}
+name Blur2
+xpos -370
+ypos 231
+}
+Multiply {
+channels rgba
+value {{parent.overall_intensity2}}
+name Multiply3
+label "\[value value]"
+xpos -370
+ypos 275
+}
+Switch {
+inputs 2
+which {{parent.use_external_distortion_map}}
+name Switch6
+xpos -370
+ypos 351
+}
+Dot {
+name Dot19
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos -336
+ypos 474
+}
+set N24e9d0c0 [stack 0]
+Dot {
+name Dot27
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos -150
+ypos 474
+}
+Dot {
+name Dot26
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos -150
+ypos 1338
+}
+Input {
+inputs 0
+name InputDMap1
+xpos -700
+ypos 351
+number 3
+}
+push $Nfb713070
+Shuffle {
+red black
+green black
+blue black
+alpha black
+name Shuffle1
+tile_color 0xff
+label FloodBLACK
+xpos -810
+ypos -61
+}
+set N24eac460 [stack 0]
+Crop {
+box {{0-pad_size.w} {0-pad_size.h} {input.width+pad_size.w} {input.height+pad_size.h}}
+crop false
+name CropPadded
+xpos -810
+ypos -9
+addUserKnob {20 Pad}
+addUserKnob {14 pad_size R 0 100}
+pad_size {100 100}
+}
+set N24e936d0 [stack 0]
+Dot {
+name Dot1
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos -886
+ypos -6
+}
+Noise {
+cliptype none
+opacity {{parent.Noise_Main.opacity}}
+size {{parent.Noise_Main.size}}
+zoffset {{parent.Noise_Main.zoffset}}
+octaves {{parent.Noise_Main.octaves}}
+nyquist {{parent.Noise_Main.nyquist}}
+lacunarity {{parent.Noise_Main.lacunarity}}
+gain {{parent.Noise_Main.gain}}
+gamma {{parent.Noise_Main.gamma}}
+translate {{parent.Noise_Main.translate} {parent.Noise_Main.translate}}
+rotate {{parent.Noise_Main.rotate}}
+scale {{parent.Noise_Main.scale}}
+center {{parent.Noise_Main.center} {parent.Noise_Main.center}}
+color {{parent.Noise_Main.color}}
+name Noise_U
+tile_color 0xff0000ff
+xpos -920
+ypos 39
+}
+Transform {
+translate {{-parent.Noise_Main.disparity} 0}
+center {1078 568}
+shutteroffset centred
+name U_Disparity
+xpos -920
+ypos 87
+}
+push $N24e936d0
+Noise {
+cliptype none
+size 70
+zoffset {{(frame*parent.speed+100)/100}}
+octaves 4
+lacunarity 1.4
+gain 0.72
+gamma 0.27
+translate {{t*parent.direction+translate_offset} {t*parent.direction+translate_offset}}
+center {1024 778}
+name Noise_Main
+tile_color 0xfefefeff
+xpos -810
+ypos 39
+addUserKnob {20 Controls}
+addUserKnob {12 translate_offset}
+addUserKnob {12 disparity}
+disparity {{parent.dmap_disparity} 0}
+}
+Dot {
+name Dot3
+xpos -776
+ypos 138
+}
+set N24e48810 [stack 0]
+Merge2 {
+inputs 2
+operation from
+bbox B
+name Merge3
+xpos -920
+ypos 135
+}
+push $N24e936d0
+Dot {
+name Dot6
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos -666
+ypos -6
+}
+Noise {
+cliptype none
+opacity {{parent.Noise_Main.opacity}}
+size {{parent.Noise_Main.size}}
+zoffset {{parent.Noise_Main.zoffset}}
+octaves {{parent.Noise_Main.octaves}}
+nyquist {{parent.Noise_Main.nyquist}}
+lacunarity {{parent.Noise_Main.lacunarity}}
+gain {{parent.Noise_Main.gain}}
+gamma {{parent.Noise_Main.gamma}}
+translate {{parent.Noise_Main.translate} {parent.Noise_Main.translate}}
+rotate {{parent.Noise_Main.rotate}}
+scale {{parent.Noise_Main.scale}}
+center {{parent.Noise_Main.center} {parent.Noise_Main.center}}
+color {{parent.Noise_Main.color}}
+name Noise_V
+tile_color 0xff3fff
+xpos -700
+ypos 39
+}
+Transform {
+translate {0 {parent.Noise_Main.disparity.x}}
+center {1078 568}
+shutteroffset centred
+name V_Disparity
+xpos -700
+ypos 87
+}
+push $N24e48810
+Merge2 {
+inputs 2
+operation minus
+bbox B
+name Merge4
+xpos -700
+ypos 135
+}
+ShuffleCopy {
+inputs 2
+red red
+blue black
+alpha black
+name ShuffleCopy2
+xpos -810
+ypos 183
+}
+Blur {
+channels {rgba.red rgba.green -rgba.blue -rgba.alpha}
+size {{parent.blur}}
+name Blur1
+xpos -810
+ypos 231
+}
+Multiply {
+channels rgba
+value {{parent.intensity}}
+name Multiply1
+label "\[value value]"
+xpos -810
+ypos 275
+}
+Switch {
+inputs 2
+which {{parent.use_external_distortion_map}}
+name Switch5
+xpos -810
+ypos 351
+}
+Dot {
+name Dot18
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos -776
+ypos 474
+}
+set N7aed05f0 [stack 0]
+Dot {
+name Dot25
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos -776
+ypos 1290
+}
+Input {
+inputs 0
+name InputMask
+label "\[value number]"
+xpos -996
+ypos 563
+number 1
+}
+push $N24eac460
+Dot {
+name Dot11
+xpos -1106
+ypos -54
+}
+Shuffle {
+red white
+green white
+blue white
+alpha white
+name Shuffle2
+tile_color 0xfefefeff
+label "\[value in]"
+xpos -1140
+ypos 563
+}
+Dot {
+name Dot12
+xpos -1106
+ypos 666
+}
+Switch {
+inputs 2
+which {{"\[exists parent.input1]"}}
+name Switch3
+xpos -996
+ypos 663
+}
+set N7aeef140 [stack 0]
+push $N7aeef140
+Copy {
+inputs 2
+from0 rgba.alpha
+to0 rgba.alpha
+name MaskChannel
+xpos -996
+ypos 707
+disable {{"!\[exists parent.input1]"}}
+}
+Invert {
+channels alpha
+name Invert1
+xpos -996
+ypos 755
+disable {{!parent.invert_mask}}
+}
+Dot {
+name Dot14
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos -962
+ypos 858
+}
+Dot {
+name Dot23
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos -556
+ypos 858
+}
+set N7ae93ad0 [stack 0]
+push $N7aed05f0
+Dot {
+name Dot21
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos -666
+ypos 474
+}
+set N7ae93770 [stack 0]
+Multiply {
+channels rgba
+value {{parent.dmap_contribution1}}
+name DistortionContribution1
+label "\[value value]"
+xpos -700
+ypos 539
+}
+push $N24e9d0c0
+Dot {
+name Dot28
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos -446
+ypos 474
+}
+Multiply {
+channels rgba
+value {{parent.dmap_contribution2}}
+name DistortionContribution2
+label "\[value value]"
+xpos -480
+ypos 539
+}
+Merge2 {
+inputs 2
+operation plus
+bbox B
+name Merge1
+xpos -700
+ypos 615
+}
+Merge2 {
+inputs 2
+operation mask
+bbox B
+Achannels {-rgba.red -rgba.green -rgba.blue rgba.alpha}
+Bchannels {rgba.red rgba.green -rgba.blue -rgba.alpha}
+output {rgba.red rgba.green -rgba.blue -rgba.alpha}
+name Mask
+xpos -700
+ypos 903
+}
+set N7ae800b0 [stack 0]
+Dot {
+name Dot8
+xpos -666
+ypos 1242
+}
+push $N7ae93ad0
+Dot {
+name Dot24
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos -446
+ypos 858
+}
+push $N7ae93770
+Dot {
+name Dot22
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos -556
+ypos 474
+}
+Multiply {
+channels rgba
+value {{parent.blur_contribution}}
+name BlurContribution_1
+label "\[value value]"
+xpos -590
+ypos 539
+}
+push $N24e9d0c0
+Multiply {
+channels rgba
+value {{parent.blur_contribution2}}
+name BlurContribution_2
+label "\[value value]"
+xpos -370
+ypos 539
+}
+Merge2 {
+inputs 2
+operation plus
+bbox B
+name Merge7
+xpos -370
+ypos 615
+}
+Merge2 {
+inputs 2
+operation mask
+bbox B
+Achannels {-rgba.red -rgba.green -rgba.blue rgba.alpha}
+Bchannels {rgba.red rgba.green -rgba.blue -rgba.alpha}
+output {rgba.red rgba.green -rgba.blue -rgba.alpha}
+name Mask1
+xpos -370
+ypos 879
+}
+Dot {
+name Dot4
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos -336
+ypos 954
+}
+Dot {
+name Dot13
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos -336
+ypos 972
+}
+set N7ae29360 [stack 0]
+push $N7ae29360
+ChannelMerge {
+inputs 2
+A rgba.red
+operation from
+B rgba.green
+name ChannelMerge1
+xpos -370
+ypos 990
+}
+Dot {
+name Dot5
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos -336
+ypos 1070
+}
+push $N7ae800b0
+push $N540b2cb0
+add_layer {distort distort.u distort.v}
+Copy {
+inputs 2
+from0 rgba.red
+to0 distort.u
+from1 rgba.green
+to1 distort.v
+name Copy2
+xpos -40
+ypos 894
+}
+Copy {
+inputs 2
+from0 rgba.alpha
+to0 depth.Z
+bbox B
+name Copy1
+xpos -40
+ypos 1063
+}
+ZBlur {
+channels rgba
+math linear
+size {{parent.global_blur_amount}}
+max_size {{size}}
+shape 1
+name ZBlur1
+xpos -40
+ypos 1119
+}
+set Nb21f4240 [stack 0]
+IDistort {
+channels rgb
+uv distort
+uv_scale {{parent.global_distortion_intensity}}
+blur -distort.u
+blur_scale 0
+name IDistort2
+xpos -40
+ypos 1167
+}
+Switch {
+inputs 2
+which {{parent.outputnoise}}
+name Switch2
+xpos -40
+ypos 1239
+}
+Switch {
+inputs 2
+which {{parent.solo_dmap1}}
+name Switch1
+xpos -40
+ypos 1287
+}
+Switch {
+inputs 2
+which {{parent.solo_dmap2}}
+name Switch4
+xpos -40
+ypos 1335
+}
+CopyBBox {
+inputs 2
+name CopyBBox1
+xpos -40
+ypos 1407
+}
+Output {
+name Output1
+xpos -40
+ypos 1623
+}
+push $Nb21f4240
+Viewer {
+frame 1055
+frame_range 936-1140
+frame_range_lock true
+colour_sample_bbox {0.1049618348 0.06965649128 0.1059160307 0.07061068714}
+input_process false
+name Viewer1
+xpos -40
+ypos 1959
+}
+end_group

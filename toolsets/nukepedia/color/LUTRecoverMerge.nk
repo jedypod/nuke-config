@@ -1,0 +1,876 @@
+#! /Applications/The Foundry/Nuke9.0v4/Nuke9.0v4.app/Contents/MacOS//libnuke-9.0.4.dylib -nx
+version 9.0 v4
+define_window_layout_xml {<?xml version="1.0" encoding="UTF-8"?>
+<layout version="1.0">
+    <window x="-1" y="22" w="1440" h="874" screen="0">
+        <splitter orientation="1">
+            <split size="910"/>
+            <splitter orientation="1">
+                <split size="40"/>
+                <dock id="" hideTitles="1" activePageId="Toolbar.1">
+                    <page id="Toolbar.1"/>
+                </dock>
+                <split size="866"/>
+                <splitter orientation="2">
+                    <split size="498"/>
+                    <dock id="" activePageId="Viewer.1">
+                        <page id="Viewer.1"/>
+                    </dock>
+                    <split size="350"/>
+                    <dock id="" activePageId="DAG.1" focus="true">
+                        <page id="DAG.1"/>
+                        <page id="Curve Editor.1"/>
+                        <page id="DopeSheet.1"/>
+                        <page id="uk.co.thefoundry.scripteditor.1"/>
+                    </dock>
+                </splitter>
+            </splitter>
+            <split size="526"/>
+            <dock id="" activePageId="Properties.1">
+                <page id="Properties.1"/>
+            </dock>
+        </splitter>
+    </window>
+</layout>
+}
+Root {
+ inputs 0
+ name /Volumes/BOOTCAMP/work/client/hpd/code/public/general/blink/scripts/LUTRecoverMerge.nk
+ format "2048 1556 0 0 2048 1556 1 2K_Super_35(full-ap)"
+ proxy_type scale
+ proxy_format "1024 778 0 0 1024 778 1 1K_Super_35(full-ap)"
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode19
+ tile_color 0x388e8e00
+ label "Recover - Frame Pair 1"
+ note_font_size 42
+ xpos -1893
+ ypos 147
+ bdwidth 1448
+ bdheight 775
+ z_order -1
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode20
+ tile_color 0x8e8e3800
+ label "Recover - Frame Pair 2 and LUTRecoverMerge 1"
+ note_font_size 42
+ xpos -1902
+ ypos 1018
+ bdwidth 1462
+ bdheight 805
+ z_order -1
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode21
+ tile_color 0xaaaaaa00
+ label "Recover - Frame Pair 3 and LUTRecoverMerge 2"
+ note_font_size 42
+ xpos -1900
+ ypos 1968
+ bdwidth 1482
+ bdheight 797
+ z_order -1
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode1
+ tile_color 0x35847eff
+ label "4. LUTRecover here"
+ note_font_size 42
+ xpos -1890
+ ypos 1412
+ bdwidth 566
+ bdheight 213
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode10
+ tile_color 0x565697ff
+ label "5. Write Recovered Grade LUT"
+ note_font_size 42
+ xpos -1890
+ ypos 2582
+ bdwidth 568
+ bdheight 148
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode11
+ tile_color 0x35847eff
+ label "4. LUTRecover here"
+ note_font_size 42
+ xpos -1881
+ ypos 544
+ bdwidth 566
+ bdheight 213
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode12
+ tile_color 0x565697ff
+ label "5. Write Recovered Grade LUT"
+ note_font_size 42
+ xpos -1883
+ ypos 764
+ bdwidth 568
+ bdheight 148
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode13
+ tile_color 0x747480ff
+ label "6. Compare Graded and Recovered Grade"
+ note_font_size 42
+ xpos -1300
+ ypos 227
+ bdwidth 702
+ bdheight 684
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode14
+ tile_color 0x6e705aff
+ label "1. Choose the resolution for Recovered LUT"
+ note_font_size 42
+ xpos -1884
+ ypos -126
+ bdwidth 1278
+ bdheight 225
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode15
+ tile_color 0x8e7f8eff
+ label "Just an example"
+ note_font_size 42
+ xpos -1824
+ ypos 2121
+ bdwidth 398
+ bdheight 141
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode16
+ tile_color 0x8e7f8eff
+ label "Just an example"
+ note_font_size 42
+ xpos -1817
+ ypos 303
+ bdwidth 398
+ bdheight 141
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode17
+ tile_color 0x8e388e00
+ label "2. Put a second set of \nRaw and Graded images here"
+ note_font_size 42
+ xpos -1889
+ ypos 2048
+ bdwidth 569
+ bdheight 303
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode18
+ tile_color 0x35847eff
+ label "4. LUTRecoverMerge here"
+ note_font_size 42
+ xpos -1272
+ ypos 2361
+ bdwidth 566
+ bdheight 213
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode2
+ tile_color 0x565697ff
+ label "5. Write Recovered Grade LUT"
+ note_font_size 42
+ xpos -1892
+ ypos 1632
+ bdwidth 568
+ bdheight 148
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode22
+ tile_color 0x8e7f8eff
+ label LUTApply
+ note_font_size 42
+ xpos -1069
+ ypos 1639
+ bdwidth 398
+ bdheight 141
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode23
+ tile_color 0x8e7f8eff
+ label LUTApply
+ note_font_size 42
+ xpos -1069
+ ypos 2588
+ bdwidth 398
+ bdheight 141
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode3
+ tile_color 0x8e7f8eff
+ label "Just an example"
+ note_font_size 42
+ xpos -1826
+ ypos 1171
+ bdwidth 398
+ bdheight 141
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode4
+ tile_color 0x8e388e00
+ label "2. Put a second set of \nRaw and Graded images here"
+ note_font_size 42
+ xpos -1891
+ ypos 1098
+ bdwidth 569
+ bdheight 303
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode5
+ tile_color 0x8e7f8eff
+ label LUTApply
+ note_font_size 42
+ xpos -1229
+ ypos 599
+ bdwidth 398
+ bdheight 141
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode6
+ tile_color 0x35847eff
+ label "4. LUTRecoverMerge here"
+ note_font_size 42
+ xpos -1274
+ ypos 1411
+ bdwidth 566
+ bdheight 213
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode7
+ tile_color 0x35847eff
+ label "4. LUTRecover here"
+ note_font_size 42
+ xpos -1888
+ ypos 2362
+ bdwidth 566
+ bdheight 213
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode8
+ tile_color 0x8e388e00
+ label "2. Put Raw and Graded \nimages here"
+ note_font_size 42
+ xpos -1882
+ ypos 230
+ bdwidth 569
+ bdheight 303
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode9
+ tile_color 0xa4a4a4ff
+ label "LUT Recovery example"
+ note_font_size 42
+ xpos -2375
+ ypos -284
+ bdwidth 2040
+ bdheight 142
+}
+ColorWheel {
+ inputs 0
+ format "256 256 0 0 256 256 1 square_256"
+ edgeValue 0.5
+ name ColorWheel2
+ xpos -1872
+ ypos 337
+}
+Dot {
+ name Dot12
+ xpos -1757
+ ypos 392
+}
+set N280600 [stack 0]
+OCIOFileTransform {
+ file /Volumes/BOOTCAMP/work/client/hpd/code/public/general/blink/scripts/LUTApply_exampleGrade.3dl
+ interpolation tetrahedral
+ working_space raw
+ name OCIOFileTransform2
+ xpos -1526
+ ypos 397
+}
+set C223563d0 [stack 0]
+Dot {
+ name Dot14
+ label Graded
+ note_font_size 36
+ xpos -1492
+ ypos 436
+}
+set N2244c130 [stack 0]
+Dot {
+ name Dot16
+ label Graded
+ note_font_size 36
+ xpos -784
+ ypos 576
+}
+push $N2244c130
+Dot {
+ name Dot2
+ xpos -1492
+ ypos 613
+}
+push $N280600
+Dot {
+ name Dot13
+ label Raw
+ note_font_size 36
+ xpos -1757
+ ypos 439
+}
+set N2245b450 [stack 0]
+Dot {
+ name Dot3
+ xpos -1757
+ ypos 615
+}
+CMSTestPattern {
+ inputs 0
+ cube_size 17
+ name CMSTestPattern6
+ xpos -1355
+ ypos -48
+}
+Dot {
+ name Dot10
+ xpos -1321
+ ypos 188
+}
+Dot {
+ name Dot11
+ xpos -1629
+ ypos 188
+}
+set N224661e0 [stack 0]
+Dot {
+ name Dot15
+ xpos -1629
+ ypos 622
+}
+BlinkScript {
+ inputs 3
+ kernelSourceFile /Volumes/BOOTCAMP/work/client/hpd/code/public/general/blink/LUTRecover.blink
+ KernelDescription "1 \"LUTRecoverKernel\" iterate pixelWise 4f956b9d9736d20701f2b88dd927db1bfe27059b84f954e62b36ce130a727a89 4 \"cmsPattern\" Read Random \"before\" Read Random \"after\" Read Random \"dst\" Write Point 2 \"cutoff\" Float 1 AAAAPw== \"falloff\" Float 1 AACgQA=="
+ kernelSource "//\n// Copyright (c) 2014-2015 Haarm-Pieter Duiker <hpd1@duikerresearch.com>\n//\n\n//\n// A kernel that will recover a 3d LUT by comparing two images\n//\n\n//\n// A distance-based weighting function\n//\nfloat falloffFilter(float d, float f) \{\n  return exp(-d * f);\n\}\n\n//\n// Map from the 2D position in the CMSTestPattern image to a 3D LUT position\n//\nint4 nukePosition2dToPosition3d(int2 pos, int width, int height, int nukeBlockSize, int lutResolution) \{\n    int4 position;\n\n    int pixel = pos.y/nukeBlockSize*width/nukeBlockSize + pos.x/nukeBlockSize;\n    position.w = pixel;\n\n    position.x = pixel % lutResolution;\n    position.y = (pixel / lutResolution) % lutResolution;\n    position.z = (pixel / (lutResolution*lutResolution)) % lutResolution;\n\n    return position;\n\}\n\n//\n// kernel\n//\nkernel LUTRecoverKernel : public ImageComputationKernel<ePixelWise>\n\{\n  Image<eRead, eAccessRandom, eEdgeClamped> cmsPattern;\n  Image<eRead, eAccessRandom, eEdgeClamped> before;\n  Image<eRead, eAccessRandom, eEdgeClamped> after;\n  Image<eWrite> dst;\n\n  param:\n    float cutoff;\n    float falloff;\n\n  local:\n    int lutResolution;\n    int nukeBlockSize;\n\n  void define() \{\n    defineParam(cutoff, \"cutoff\", 0.5f);\n    defineParam(falloff, \"falloff\", 5.f);\n  \}\n\n  void init() \{\n    // The Nuke CMSTestPattern node generates 7x7 pixel blocks for each LUT entry\n    nukeBlockSize = 7;\n    float pixels = cmsPattern.bounds.width() * cmsPattern.bounds.height() / (nukeBlockSize * nukeBlockSize);\n    lutResolution = int(floor(pow(pixels, 0.333333333334f)));\n  \}\n\n  void process(int2 pos) \{\n    float3 value;\n    float highDistance;\n\n    //\n    // Information for the input pixel position\n    //\n    int4 cmsPosition;\n    cmsPosition = nukePosition2dToPosition3d(pos, \n      cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n\n    float3 cmsSample;\n    cmsSample = float3(cmsPosition.x, cmsPosition.y, cmsPosition.z) / (lutResolution-1.f);\n\n    //\n    // Skip the extra pixels at the top of the image\n    //\n    if( cmsPosition.w >= lutResolution*lutResolution*lutResolution ) \{\n      value = float3(0.f);\n      highDistance = 0.f;\n    \}\n    else \{\n\n      //\n      // Brute force scattered data interpolation\n      // Each pixel in the input cmsTestPattern corresponds to a LUT entry\n      // For each pixel in the input cmsTestPattern\n      // - Step through each pixel location in the before and after images\n      // --- Compute a weight based on the before pixel color's proximity to the cms pixel\n      // --- Multiply the after pixel's color by the weight\n      // --- Add the weight and the weighted after pixel's color to running sum\n      // - Divide by the sum of the weights \n      //\n      float3 weightedValueSum;\n      float weightSum;\n\n      float weight, distance;\n\n      int2 highPosition;\n      float3 highSample, highValue;\n\n      SampleType(before) beforePixel;\n      float3 beforeSample;\n      SampleType(after) afterPixel;\n      float3 afterSample;\n\n      weightedValueSum = float3(0.f);\n      weightSum = 0.f;\n      highDistance = 1000.f;\n\n      // Step through each of the before and after input pixels\n      for(int inX = 0; inX<before.bounds.width(); inX += 1) \{\n        for(int inY = 0; inY<before.bounds.height(); inY += 1) \{\n\n          // Get sample values\n          beforePixel = before(inX, inY);\n          beforeSample = float3(beforePixel.x, beforePixel.y, beforePixel.z);\n          afterPixel = after(inX, inY);\n          afterSample = float3(afterPixel.x, afterPixel.y, afterPixel.z);\n\n          // Compute weight for this sample\n          // How close is the 'before' value to the current cmsPattern value\n          distance = length(beforeSample - cmsSample);\n          if( distance < cutoff )\n            weight = falloffFilter(distance*lutResolution, falloff);\n          else\n            weight = 0.f;\n\n          // Keep track of the closest sample, just in case\n          if( distance < highDistance ) \{\n            highDistance = distance;\n            highValue = afterSample;\n            highPosition = int2(inX, inY);\n          \}\n\n          // Add into interpolation sum\n          weightedValueSum += weight * afterSample;\n          weightSum += weight;\n        \}\n      \}\n\n      // Divide out weighting\n      if( weightSum > 0.f ) \{\n        value = weightedValueSum / weightSum;\n        highDistance = weightSum;\n\n      // Use the nearest sample if there were no weighted values\n      \} else \{\n        value = highValue;\n        highDistance = 1000.f;\n      \}\n    \}\n\n    //\n    // Diagnostics\n    // \n    /*\n    value.x = lutResolution;\n    value.y = inputPosition.w;\n\n    value.x = inputSample.x;\n    value.y = inputSample.y;\n    value.z = inputSample.z;\n    */\n\n    //\n    // Copy to output\n    //\n    SampleType(cmsPattern) t;\n    t.x = value.x;\n    t.y = value.y;\n    t.z = value.z;\n    t.w = highDistance;\n\n    dst() = t;\n  \}\n\};\n"
+ rebuild ""
+ maxTileLines 1
+ name BlinkScript2
+ xpos -1663
+ ypos 671
+}
+set N2235b960 [stack 0]
+CMSTestPattern {
+ inputs 0
+ cube_size 11
+ name CMSTestPattern7
+ xpos -1194
+ ypos 509
+}
+Dot {
+ name Dot17
+ label Raw
+ note_font_size 36
+ xpos -1060
+ ypos 573
+}
+set N6dcf250 [stack 0]
+BlinkScript {
+ inputs 2
+ kernelSourceFile /Volumes/BOOTCAMP/work/client/hpd/code/public/general/blink/LUTApply.blink
+ KernelDescription "1 \"LUTApplyKernel\" iterate pixelWise b9b9b75f844d32a217ac98b2629aaee332a5ac1102535c30004a41d380e5f8fd 3 \"src\" Read Random \"cmsPattern\" Read Random \"dst\" Write Point 1 \"interpolation\" Int 1 AgAAAA=="
+ kernelSource "//\n// Copyright (c) 2014-2015 Haarm-Pieter Duiker <hpd1@duikerresearch.com>\n//\n\n//\n// A kernel that will apply 3d LUT to an image. The 3d LUT is represented as the Nuke cmsTestPattern\n//\n\n//\n// Map from a 3D LUT position to 2D pixel coordinate in the CMSTestPattern image\n//\nint2 position3dToNukePosition(int3 pos, int width, int height, int nukeBlockSize, int lutResolution) \{\n    int2 position;\n\n    int pixel = (pos.z*lutResolution*lutResolution + pos.y*lutResolution + pos.x);\n\n    position.x = (pixel%(width/nukeBlockSize))*nukeBlockSize;\n    position.y = (pixel/(width/nukeBlockSize))*nukeBlockSize;\n\n    // Put the position in the middle of the nukeBlockSize x nukeBlockSize block\n    position += nukeBlockSize/2;\n\n    return position;\n\}\n\n// Utility\nfloat4 mix(float4 a, float4 b, float f) \{\n  float4 mixed;\n  mixed.x = a.x*(1.f - f) + b.x*f;\n  mixed.y = a.y*(1.f - f) + b.y*f;\n  mixed.z = a.z*(1.f - f) + b.z*f;\n  mixed.w = a.w*(1.f - f) + b.w*f;\n  return mixed;  \n\}\n\n//\n// kernel\n//\nkernel LUTApplyKernel : public ImageComputationKernel<ePixelWise>\n\{\n  Image<eRead, eAccessRandom, eEdgeClamped> src;\n  Image<eRead, eAccessRandom, eEdgeClamped> cmsPattern;\n  Image<eWrite> dst;\n\n  param:\n    int interpolation;\n\n  local:\n    int lutResolution;\n    int nukeBlockSize;\n\n  void define() \{\n    // unused for now. \n    defineParam(interpolation, \"interpolation\", 2);\n  \}\n\n  void init() \{\n    // The Nuke CMSTestPattern node generates 7x7 pixel blocks for each LUT entry\n    nukeBlockSize = 7;\n    float pixels = cmsPattern.bounds.width() * cmsPattern.bounds.height() / (nukeBlockSize * nukeBlockSize);\n    lutResolution = int(floor(pow(pixels, 0.333333333334f)));\n  \}\n\n  void process(int2 pos) \{\n    SampleType(cmsPattern) cmsSample;\n\n    // Sample the src image\n    SampleType(src) srcSample;\n    srcSample = src(pos.x, pos.y);\n\n    // Use the 3D LUT to find the new value\n    \n    // Nearest point\n    if( interpolation == 0 ) \{\n      int3 srcLUTPosition;\n      srcLUTPosition.x = round(clamp(srcSample.x, 0.0f, 1.0f) * (lutResolution-1));\n      srcLUTPosition.y = round(clamp(srcSample.y, 0.0f, 1.0f) * (lutResolution-1));\n      srcLUTPosition.z = round(clamp(srcSample.z, 0.0f, 1.0f) * (lutResolution-1));\n\n      int2 cmsSamplePosition;\n      cmsSamplePosition = position3dToNukePosition(srcLUTPosition, \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n\n      cmsSample = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n    \} // nearest\n\n    // Tri-linear interpolation \n    else if( interpolation == 1 ) \{\n      float3 srcSample3;\n      srcSample3.x = srcSample.x;\n      srcSample3.y = srcSample.y;\n      srcSample3.z = srcSample.z;\n\n      srcSample3 = clamp(srcSample3, float3(0.f), float3(1.f));\n\n      // index values interpolation factor for RGB\n      float indexRf = (srcSample3.x * (lutResolution-1));\n      int indexR    = int(floor(indexRf));\n      float interpR = indexRf - indexR;\n      float indexRfb = floor(indexRf) / (lutResolution-1);\n\n      float indexGf = (srcSample3.y * (lutResolution-1));\n      int indexG    = int(floor(indexGf));\n      float interpG = indexGf - indexG;\n      float indexGfb = floor(indexGf) / (lutResolution-1);\n\n      float indexBf = (srcSample3.z * (lutResolution-1));\n      int indexB    = int(floor(indexBf));\n      float interpB = indexBf - indexB;\n      float indexBfb = floor(indexBf) / (lutResolution-1);\n\n      SampleType(cmsPattern) cmsSamples\[8];\n      int2 cmsSamplePosition;\n\n      // sample r, g, b\n      cmsSamplePosition = position3dToNukePosition(int3(indexR    , indexG    , indexB    ), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[0] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r, g, b+1\n      cmsSamplePosition = position3dToNukePosition(int3(indexR    , indexG    , indexB + 1), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[1] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r, g+1, b\n      cmsSamplePosition = position3dToNukePosition(int3(indexR    , indexG + 1, indexB    ), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[2] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r, g+1, b+1\n      cmsSamplePosition = position3dToNukePosition(int3(indexR    , indexG + 1, indexB + 1), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[3] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r+1, g, b\n      cmsSamplePosition = position3dToNukePosition(int3(indexR + 1, indexG    , indexB    ), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[4] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r+1, g, b+1\n      cmsSamplePosition = position3dToNukePosition(int3(indexR + 1, indexG    , indexB + 1), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[5] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r+1, g+1, b\n      cmsSamplePosition = position3dToNukePosition(int3(indexR + 1, indexG + 1, indexB    ), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[6] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r+1, g+1, b+1\n      cmsSamplePosition = position3dToNukePosition(int3(indexR + 1, indexG + 1, indexB + 1), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[7] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // Interpolate along the 4 lines in B\n      cmsSamples\[0] = mix(cmsSamples\[0], cmsSamples\[1], interpB);\n      cmsSamples\[2] = mix(cmsSamples\[2], cmsSamples\[3], interpB);\n      cmsSamples\[4] = mix(cmsSamples\[4], cmsSamples\[5], interpB);\n      cmsSamples\[6] = mix(cmsSamples\[6], cmsSamples\[7], interpB);\n      \n      // Interpolate along the 2 lines in G\n      cmsSamples\[0] = mix(cmsSamples\[0], cmsSamples\[2], interpG);\n      cmsSamples\[4] = mix(cmsSamples\[4], cmsSamples\[6], interpG);\n\n      // Interpolate along the 1 line in R\n      cmsSamples\[0] = mix(cmsSamples\[0], cmsSamples\[4], interpR);\n\n      cmsSample = cmsSamples\[0];\n    \} // tri-linear\n\n    // Tetrahedral interpolation\n    else if( interpolation == 2 ) \{\n      float3 srcSample3;\n      srcSample3.x = srcSample.x;\n      srcSample3.y = srcSample.y;\n      srcSample3.z = srcSample.z;\n\n      srcSample3 = clamp(srcSample3, float3(0.f), float3(1.f));\n\n      // index values interpolation factor for RGB\n      float indexRf = (srcSample3.x * (lutResolution-1));\n      int indexR    = int(floor(indexRf));\n      float interpR = indexRf - indexR;\n      float indexRfb = floor(indexRf) / (lutResolution-1);\n\n      float indexGf = (srcSample3.y * (lutResolution-1));\n      int indexG    = int(floor(indexGf));\n      float interpG = indexGf - indexG;\n      float indexGfb = floor(indexGf) / (lutResolution-1);\n\n      float indexBf = (srcSample3.z * (lutResolution-1));\n      int indexB    = int(floor(indexBf));\n      float interpB = indexBf - indexB;\n      float indexBfb = floor(indexBf) / (lutResolution-1);\n\n      SampleType(cmsPattern) cmsSamples\[8];\n      int2 cmsSamplePosition;\n\n      // sample r, g, b\n      cmsSamplePosition = position3dToNukePosition(int3(indexR    , indexG    , indexB    ), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[0] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r, g, b+1\n      cmsSamplePosition = position3dToNukePosition(int3(indexR    , indexG    , indexB + 1), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[1] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r, g+1, b\n      cmsSamplePosition = position3dToNukePosition(int3(indexR    , indexG + 1, indexB    ), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[2] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r, g+1, b+1\n      cmsSamplePosition = position3dToNukePosition(int3(indexR    , indexG + 1, indexB + 1), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[3] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r+1, g, b\n      cmsSamplePosition = position3dToNukePosition(int3(indexR + 1, indexG    , indexB    ), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[4] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r+1, g, b+1\n      cmsSamplePosition = position3dToNukePosition(int3(indexR + 1, indexG    , indexB + 1), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[5] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r+1, g+1, b\n      cmsSamplePosition = position3dToNukePosition(int3(indexR + 1, indexG + 1, indexB    ), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[6] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r+1, g+1, b+1\n      cmsSamplePosition = position3dToNukePosition(int3(indexR + 1, indexG + 1, indexB + 1), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[7] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // Tetrahedral interoplation, as described by:\n      // http://www.filmlight.ltd.uk/pdf/whitepapers/FL-TL-TN-0057-SoftwareLib.pdf\n      // http://blogs.mathworks.com/steve/2006/11/24/tetrahedral-interpolation-for-colorspace-conversion/\n      // http://www.hpl.hp.com/techreports/98/HPL-98-95.html\n      // Reference implementation from OCIO\n      // https://github.com/imageworks/OpenColorIO/blob/master/src/core/Lut3DOp.cpp#L294\n\n      // Rebind for consistency with Truelight paper\n      float fx = interpR;\n      float fy = interpG;\n      float fz = interpB;\n\n      SampleType(cmsPattern) startPos\[8];\n      startPos\[0] = cmsSamples\[0];\n      startPos\[1] = cmsSamples\[1];\n      startPos\[2] = cmsSamples\[2];\n      startPos\[3] = cmsSamples\[3];\n      startPos\[4] = cmsSamples\[4];\n      startPos\[5] = cmsSamples\[5];\n      startPos\[6] = cmsSamples\[6];\n      startPos\[7] = cmsSamples\[7];\n\n      SampleType(cmsPattern) rgbaBuffer;\n\n      // Compute index into LUT for surrounding corners\n      const int n000 = 0;\n      const int n100 = 4;\n      const int n010 = 2;\n      const int n001 = 1;\n      const int n110 = 6;\n      const int n101 = 5;\n      const int n011 = 3;\n      const int n111 = 7;\n\n      if (fx > fy) \{\n          if (fy > fz) \{\n             rgbaBuffer.x =\n                 (1-fx)  * startPos\[n000].x +\n                 (fx-fy) * startPos\[n100].x +\n                 (fy-fz) * startPos\[n110].x +\n                 (fz)    * startPos\[n111].x;\n\n             rgbaBuffer.y =\n                 (1-fx)  * startPos\[n000].y +\n                 (fx-fy) * startPos\[n100].y +\n                 (fy-fz) * startPos\[n110].y +\n                 (fz)    * startPos\[n111].y;\n\n             rgbaBuffer.z =\n                 (1-fx)  * startPos\[n000].z +\n                 (fx-fy) * startPos\[n100].z +\n                 (fy-fz) * startPos\[n110].z +\n                 (fz)    * startPos\[n111].z;\n          \}\n          else if (fx > fz)\n          \{\n              rgbaBuffer.x =\n                  (1-fx)  * startPos\[n000].x +\n                  (fx-fz) * startPos\[n100].x +\n                  (fz-fy) * startPos\[n101].x +\n                  (fy)    * startPos\[n111].x;\n\n              rgbaBuffer.y =\n                  (1-fx)  * startPos\[n000].y +\n                  (fx-fz) * startPos\[n100].y +\n                  (fz-fy) * startPos\[n101].y +\n                  (fy)    * startPos\[n111].y;\n\n              rgbaBuffer.z =\n                  (1-fx)  * startPos\[n000].z +\n                  (fx-fz) * startPos\[n100].z +\n                  (fz-fy) * startPos\[n101].z +\n                  (fy)    * startPos\[n111].z;\n          \}\n          else\n          \{\n              rgbaBuffer.x =\n                  (1-fz)  * startPos\[n000].x +\n                  (fz-fx) * startPos\[n001].x +\n                  (fx-fy) * startPos\[n101].x +\n                  (fy)    * startPos\[n111].x;\n\n              rgbaBuffer.y =\n                  (1-fz)  * startPos\[n000].y +\n                  (fz-fx) * startPos\[n001].y +\n                  (fx-fy) * startPos\[n101].y +\n                  (fy)    * startPos\[n111].y;\n\n              rgbaBuffer.z =\n                  (1-fz)  * startPos\[n000].z +\n                  (fz-fx) * startPos\[n001].z +\n                  (fx-fy) * startPos\[n101].z +\n                  (fy)    * startPos\[n111].z;\n          \}\n      \}\n      else\n      \{\n          if (fz > fy)\n          \{\n              rgbaBuffer.x =\n                  (1-fz)  * startPos\[n000].x +\n                  (fz-fy) * startPos\[n001].x +\n                  (fy-fx) * startPos\[n011].x +\n                  (fx)    * startPos\[n111].x;\n\n              rgbaBuffer.y =\n                  (1-fz)  * startPos\[n000].y +\n                  (fz-fy) * startPos\[n001].y +\n                  (fy-fx) * startPos\[n011].y +\n                  (fx)    * startPos\[n111].y;\n\n              rgbaBuffer.z =\n                  (1-fz)  * startPos\[n000].z +\n                  (fz-fy) * startPos\[n001].z +\n                  (fy-fx) * startPos\[n011].z +\n                  (fx)    * startPos\[n111].z;\n          \}\n          else if (fz > fx)\n          \{\n              rgbaBuffer.x =\n                  (1-fy)  * startPos\[n000].x +\n                  (fy-fz) * startPos\[n010].x +\n                  (fz-fx) * startPos\[n011].x +\n                  (fx)    * startPos\[n111].x;\n\n              rgbaBuffer.y =\n                  (1-fy)  * startPos\[n000].y +\n                  (fy-fz) * startPos\[n010].y +\n                  (fz-fx) * startPos\[n011].y +\n                  (fx)    * startPos\[n111].y;\n\n              rgbaBuffer.z =\n                  (1-fy)  * startPos\[n000].z +\n                  (fy-fz) * startPos\[n010].z +\n                  (fz-fx) * startPos\[n011].z +\n                  (fx)    * startPos\[n111].z;\n          \}\n          else\n          \{\n              rgbaBuffer.x =\n                  (1-fy)  * startPos\[n000].x +\n                  (fy-fx) * startPos\[n010].x +\n                  (fx-fz) * startPos\[n110].x +\n                  (fz)    * startPos\[n111].x;\n\n              rgbaBuffer.y =\n                  (1-fy)  * startPos\[n000].y +\n                  (fy-fx) * startPos\[n010].y +\n                  (fx-fz) * startPos\[n110].y +\n                  (fz)    * startPos\[n111].y;\n\n              rgbaBuffer.z =\n                  (1-fy)  * startPos\[n000].z +\n                  (fy-fx) * startPos\[n010].z +\n                  (fx-fz) * startPos\[n110].z +\n                  (fz)    * startPos\[n111].z;\n          \}\n      \}\n\n      cmsSample = rgbaBuffer;\n\n    \} // tetrahedral\n\n    // Write the new value to dst\n    SampleType(dst) t;\n    t.x = cmsSample.x;\n    t.y = cmsSample.y;\n    t.z = cmsSample.z;\n\n    dst() = t;\n  \}\n\};\n"
+ rebuild ""
+ maxTileLines 100
+ name BlinkScript1
+ xpos -1094
+ ypos 671
+}
+set N6dce5f0 [stack 0]
+Difference {
+ inputs 2
+ output rgba.red
+ name Difference8
+ xpos -818
+ ypos 797
+}
+Shuffle {
+ green red
+ blue red
+ name Shuffle2
+ xpos -818
+ ypos 829
+}
+push $N224661e0
+Reformat {
+ format "512 512 0 0 512 512 1 square_512"
+ name Reformat5
+ xpos -2197
+ ypos 63
+}
+Write {
+ file /Volumes/BOOTCAMP/work/client/hpd/code/public/general/blink/scripts/LUTRecover_identity.jpg
+ raw true
+ file_type jpeg
+ _jpeg_quality 1
+ _jpeg_sub_sampling 4:4:4
+ checkHashOnRead false
+ version 2
+ name Write4
+ xpos -2197
+ ypos 95
+}
+push $N2245b450
+Reformat {
+ format "512 512 0 0 512 512 1 square_512"
+ name Reformat1
+ xpos -2208
+ ypos 314
+}
+Write {
+ file /Volumes/BOOTCAMP/work/client/hpd/code/public/general/blink/scripts/LUTRecover_rawImage.jpg
+ raw true
+ file_type jpeg
+ _jpeg_quality 1
+ _jpeg_sub_sampling 4:4:4
+ checkHashOnRead false
+ version 3
+ name Write1
+ xpos -2208
+ ypos 346
+}
+push $N2244c130
+Reformat {
+ format "512 512 0 0 512 512 1 square_512"
+ name Reformat2
+ xpos -2207
+ ypos 429
+}
+Write {
+ file /Volumes/BOOTCAMP/work/client/hpd/code/public/general/blink/scripts/LUTRecover_gradedImage.jpg
+ raw true
+ file_type jpeg
+ _jpeg_quality 1
+ _jpeg_sub_sampling 4:4:4
+ checkHashOnRead false
+ version 3
+ name Write2
+ xpos -2207
+ ypos 461
+}
+push $N6dce5f0
+Reformat {
+ format "512 512 0 0 512 512 1 square_512"
+ name Reformat3
+ xpos -535
+ ypos 671
+}
+Write {
+ file /Volumes/BOOTCAMP/work/client/hpd/code/public/general/blink/scripts/LUTRecover_comparisonGradedImage.jpg
+ raw true
+ file_type jpeg
+ _jpeg_quality 1
+ _jpeg_sub_sampling 4:4:4
+ checkHashOnRead false
+ version 4
+ name Write3
+ xpos -535
+ ypos 703
+}
+CMSTestPattern {
+ inputs 0
+ cube_size 11
+ name CMSTestPattern1
+ xpos -1859
+ ypos 1293
+}
+CMSTestPattern {
+ inputs 0
+ cube_size 11
+ name CMSTestPattern2
+ xpos -1857
+ ypos 2243
+}
+push $N224661e0
+Dot {
+ name Dot31
+ xpos -1700
+ ypos 350
+}
+Dot {
+ name Dot30
+ xpos -1706
+ ypos 1477
+}
+set N2249fc90 [stack 0]
+clone $C223563d0 {
+ xpos -917
+ ypos 1474
+ selected false
+}
+push $N2235b960
+Dot {
+ name Dot1
+ xpos -1629
+ ypos 851
+}
+GenerateLUT {
+ file /Volumes/BOOTCAMP/work/client/hpd/code/public/general/blink/scripts/LUTRecoverMerge_recoveredGrade1.3dl
+ file_type .3dl
+ name GenerateLUT13
+ xpos -1792
+ ypos 848
+}
+ColorWheel {
+ inputs 0
+ format "256 256 0 0 256 256 1 square_256"
+ edgeSaturation 0
+ edgeValue 0
+ name ColorWheel1
+ xpos -1865
+ ypos 1192
+}
+Dot {
+ name Dot18
+ xpos -1766
+ ypos 1249
+}
+set N2b81a5d0 [stack 0]
+OCIOFileTransform {
+ file /Volumes/BOOTCAMP/work/client/hpd/code/public/general/blink/scripts/LUTApply_exampleGrade.3dl
+ interpolation tetrahedral
+ working_space raw
+ name OCIOFileTransform1
+ xpos -1535
+ ypos 1265
+}
+Dot {
+ name Dot4
+ label Graded
+ note_font_size 36
+ xpos -1501
+ ypos 1304
+}
+Dot {
+ name Dot5
+ xpos -1501
+ ypos 1481
+}
+push $N2b81a5d0
+Dot {
+ name Dot6
+ label Raw
+ note_font_size 36
+ xpos -1766
+ ypos 1307
+}
+Dot {
+ name Dot7
+ xpos -1766
+ ypos 1483
+}
+push $N2249fc90
+Dot {
+ name Dot8
+ xpos -1638
+ ypos 1490
+}
+BlinkScript {
+ inputs 3
+ kernelSourceFile /Volumes/BOOTCAMP/work/client/hpd/code/public/general/blink/LUTRecover.blink
+ KernelDescription "1 \"LUTRecoverKernel\" iterate pixelWise 4f956b9d9736d20701f2b88dd927db1bfe27059b84f954e62b36ce130a727a89 4 \"cmsPattern\" Read Random \"before\" Read Random \"after\" Read Random \"dst\" Write Point 2 \"cutoff\" Float 1 AAAAPw== \"falloff\" Float 1 AACgQA=="
+ kernelSource "//\n// Copyright (c) 2014-2015 Haarm-Pieter Duiker <hpd1@duikerresearch.com>\n//\n\n//\n// A kernel that will recover a 3d LUT by comparing two images\n//\n\n//\n// A distance-based weighting function\n//\nfloat falloffFilter(float d, float f) \{\n  return exp(-d * f);\n\}\n\n//\n// Map from the 2D position in the CMSTestPattern image to a 3D LUT position\n//\nint4 nukePosition2dToPosition3d(int2 pos, int width, int height, int nukeBlockSize, int lutResolution) \{\n    int4 position;\n\n    int pixel = pos.y/nukeBlockSize*width/nukeBlockSize + pos.x/nukeBlockSize;\n    position.w = pixel;\n\n    position.x = pixel % lutResolution;\n    position.y = (pixel / lutResolution) % lutResolution;\n    position.z = (pixel / (lutResolution*lutResolution)) % lutResolution;\n\n    return position;\n\}\n\n//\n// kernel\n//\nkernel LUTRecoverKernel : public ImageComputationKernel<ePixelWise>\n\{\n  Image<eRead, eAccessRandom, eEdgeClamped> cmsPattern;\n  Image<eRead, eAccessRandom, eEdgeClamped> before;\n  Image<eRead, eAccessRandom, eEdgeClamped> after;\n  Image<eWrite> dst;\n\n  param:\n    float cutoff;\n    float falloff;\n\n  local:\n    int lutResolution;\n    int nukeBlockSize;\n\n  void define() \{\n    defineParam(cutoff, \"cutoff\", 0.5f);\n    defineParam(falloff, \"falloff\", 5.f);\n  \}\n\n  void init() \{\n    // The Nuke CMSTestPattern node generates 7x7 pixel blocks for each LUT entry\n    nukeBlockSize = 7;\n    float pixels = cmsPattern.bounds.width() * cmsPattern.bounds.height() / (nukeBlockSize * nukeBlockSize);\n    lutResolution = int(floor(pow(pixels, 0.333333333334f)));\n  \}\n\n  void process(int2 pos) \{\n    float3 value;\n    float highDistance;\n\n    //\n    // Information for the input pixel position\n    //\n    int4 cmsPosition;\n    cmsPosition = nukePosition2dToPosition3d(pos, \n      cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n\n    float3 cmsSample;\n    cmsSample = float3(cmsPosition.x, cmsPosition.y, cmsPosition.z) / (lutResolution-1.f);\n\n    //\n    // Skip the extra pixels at the top of the image\n    //\n    if( cmsPosition.w >= lutResolution*lutResolution*lutResolution ) \{\n      value = float3(0.f);\n      highDistance = 0.f;\n    \}\n    else \{\n\n      //\n      // Brute force scattered data interpolation\n      // Each pixel in the input cmsTestPattern corresponds to a LUT entry\n      // For each pixel in the input cmsTestPattern\n      // - Step through each pixel location in the before and after images\n      // --- Compute a weight based on the before pixel color's proximity to the cms pixel\n      // --- Multiply the after pixel's color by the weight\n      // --- Add the weight and the weighted after pixel's color to running sum\n      // - Divide by the sum of the weights \n      //\n      float3 weightedValueSum;\n      float weightSum;\n\n      float weight, distance;\n\n      int2 highPosition;\n      float3 highSample, highValue;\n\n      SampleType(before) beforePixel;\n      float3 beforeSample;\n      SampleType(after) afterPixel;\n      float3 afterSample;\n\n      weightedValueSum = float3(0.f);\n      weightSum = 0.f;\n      highDistance = 1000.f;\n\n      // Step through each of the before and after input pixels\n      for(int inX = 0; inX<before.bounds.width(); inX += 1) \{\n        for(int inY = 0; inY<before.bounds.height(); inY += 1) \{\n\n          // Get sample values\n          beforePixel = before(inX, inY);\n          beforeSample = float3(beforePixel.x, beforePixel.y, beforePixel.z);\n          afterPixel = after(inX, inY);\n          afterSample = float3(afterPixel.x, afterPixel.y, afterPixel.z);\n\n          // Compute weight for this sample\n          // How close is the 'before' value to the current cmsPattern value\n          distance = length(beforeSample - cmsSample);\n          if( distance < cutoff )\n            weight = falloffFilter(distance*lutResolution, falloff);\n          else\n            weight = 0.f;\n\n          // Keep track of the closest sample, just in case\n          if( distance < highDistance ) \{\n            highDistance = distance;\n            highValue = afterSample;\n            highPosition = int2(inX, inY);\n          \}\n\n          // Add into interpolation sum\n          weightedValueSum += weight * afterSample;\n          weightSum += weight;\n        \}\n      \}\n\n      // Divide out weighting\n      if( weightSum > 0.f ) \{\n        value = weightedValueSum / weightSum;\n        highDistance = weightSum;\n\n      // Use the nearest sample if there were no weighted values\n      \} else \{\n        value = highValue;\n        highDistance = 1000.f;\n      \}\n    \}\n\n    //\n    // Diagnostics\n    // \n    /*\n    value.x = lutResolution;\n    value.y = inputPosition.w;\n\n    value.x = inputSample.x;\n    value.y = inputSample.y;\n    value.z = inputSample.z;\n    */\n\n    //\n    // Copy to output\n    //\n    SampleType(cmsPattern) t;\n    t.x = value.x;\n    t.y = value.y;\n    t.z = value.z;\n    t.w = highDistance;\n\n    dst() = t;\n  \}\n\};\n"
+ rebuild ""
+ maxTileLines 1
+ name BlinkScript3
+ xpos -1672
+ ypos 1535
+}
+set N26d960 [stack 0]
+Dot {
+ name Dot9
+ xpos -1638
+ ypos 1726
+}
+GenerateLUT {
+ file /Volumes/BOOTCAMP/work/client/hpd/code/public/general/blink/scripts/LUTRecoverMerge_recoveredGrade2.3dl
+ file_type .3dl
+ name GenerateLUT1
+ xpos -1802
+ ypos 1723
+}
+ColorWheel {
+ inputs 0
+ format "256 256 0 0 256 256 1 square_256"
+ edgeValue 0
+ name ColorWheel3
+ xpos -1864
+ ypos 2140
+}
+Dot {
+ name Dot19
+ xpos -1764
+ ypos 2198
+}
+set N3cc05bc0 [stack 0]
+OCIOFileTransform {
+ file /Volumes/BOOTCAMP/work/client/hpd/code/public/general/blink/scripts/LUTApply_exampleGrade.3dl
+ interpolation tetrahedral
+ working_space raw
+ name OCIOFileTransform3
+ xpos -1533
+ ypos 2216
+}
+Dot {
+ name Dot22
+ label Graded
+ note_font_size 36
+ xpos -1499
+ ypos 2254
+}
+Dot {
+ name Dot23
+ xpos -1499
+ ypos 2431
+}
+push $N3cc05bc0
+Dot {
+ name Dot24
+ label Raw
+ note_font_size 36
+ xpos -1764
+ ypos 2257
+}
+Dot {
+ name Dot25
+ xpos -1764
+ ypos 2433
+}
+push $N2249fc90
+Dot {
+ name Dot32
+ xpos -1706
+ ypos 2419
+}
+set N2b850e80 [stack 0]
+Dot {
+ name Dot26
+ xpos -1636
+ ypos 2440
+}
+BlinkScript {
+ inputs 3
+ kernelSourceFile /Volumes/BOOTCAMP/work/client/hpd/code/public/general/blink/LUTRecover.blink
+ KernelDescription "1 \"LUTRecoverKernel\" iterate pixelWise 4f956b9d9736d20701f2b88dd927db1bfe27059b84f954e62b36ce130a727a89 4 \"cmsPattern\" Read Random \"before\" Read Random \"after\" Read Random \"dst\" Write Point 2 \"cutoff\" Float 1 AAAAPw== \"falloff\" Float 1 AACgQA=="
+ kernelSource "//\n// Copyright (c) 2014-2015 Haarm-Pieter Duiker <hpd1@duikerresearch.com>\n//\n\n//\n// A kernel that will recover a 3d LUT by comparing two images\n//\n\n//\n// A distance-based weighting function\n//\nfloat falloffFilter(float d, float f) \{\n  return exp(-d * f);\n\}\n\n//\n// Map from the 2D position in the CMSTestPattern image to a 3D LUT position\n//\nint4 nukePosition2dToPosition3d(int2 pos, int width, int height, int nukeBlockSize, int lutResolution) \{\n    int4 position;\n\n    int pixel = pos.y/nukeBlockSize*width/nukeBlockSize + pos.x/nukeBlockSize;\n    position.w = pixel;\n\n    position.x = pixel % lutResolution;\n    position.y = (pixel / lutResolution) % lutResolution;\n    position.z = (pixel / (lutResolution*lutResolution)) % lutResolution;\n\n    return position;\n\}\n\n//\n// kernel\n//\nkernel LUTRecoverKernel : public ImageComputationKernel<ePixelWise>\n\{\n  Image<eRead, eAccessRandom, eEdgeClamped> cmsPattern;\n  Image<eRead, eAccessRandom, eEdgeClamped> before;\n  Image<eRead, eAccessRandom, eEdgeClamped> after;\n  Image<eWrite> dst;\n\n  param:\n    float cutoff;\n    float falloff;\n\n  local:\n    int lutResolution;\n    int nukeBlockSize;\n\n  void define() \{\n    defineParam(cutoff, \"cutoff\", 0.5f);\n    defineParam(falloff, \"falloff\", 5.f);\n  \}\n\n  void init() \{\n    // The Nuke CMSTestPattern node generates 7x7 pixel blocks for each LUT entry\n    nukeBlockSize = 7;\n    float pixels = cmsPattern.bounds.width() * cmsPattern.bounds.height() / (nukeBlockSize * nukeBlockSize);\n    lutResolution = int(floor(pow(pixels, 0.333333333334f)));\n  \}\n\n  void process(int2 pos) \{\n    float3 value;\n    float highDistance;\n\n    //\n    // Information for the input pixel position\n    //\n    int4 cmsPosition;\n    cmsPosition = nukePosition2dToPosition3d(pos, \n      cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n\n    float3 cmsSample;\n    cmsSample = float3(cmsPosition.x, cmsPosition.y, cmsPosition.z) / (lutResolution-1.f);\n\n    //\n    // Skip the extra pixels at the top of the image\n    //\n    if( cmsPosition.w >= lutResolution*lutResolution*lutResolution ) \{\n      value = float3(0.f);\n      highDistance = 0.f;\n    \}\n    else \{\n\n      //\n      // Brute force scattered data interpolation\n      // Each pixel in the input cmsTestPattern corresponds to a LUT entry\n      // For each pixel in the input cmsTestPattern\n      // - Step through each pixel location in the before and after images\n      // --- Compute a weight based on the before pixel color's proximity to the cms pixel\n      // --- Multiply the after pixel's color by the weight\n      // --- Add the weight and the weighted after pixel's color to running sum\n      // - Divide by the sum of the weights \n      //\n      float3 weightedValueSum;\n      float weightSum;\n\n      float weight, distance;\n\n      int2 highPosition;\n      float3 highSample, highValue;\n\n      SampleType(before) beforePixel;\n      float3 beforeSample;\n      SampleType(after) afterPixel;\n      float3 afterSample;\n\n      weightedValueSum = float3(0.f);\n      weightSum = 0.f;\n      highDistance = 1000.f;\n\n      // Step through each of the before and after input pixels\n      for(int inX = 0; inX<before.bounds.width(); inX += 1) \{\n        for(int inY = 0; inY<before.bounds.height(); inY += 1) \{\n\n          // Get sample values\n          beforePixel = before(inX, inY);\n          beforeSample = float3(beforePixel.x, beforePixel.y, beforePixel.z);\n          afterPixel = after(inX, inY);\n          afterSample = float3(afterPixel.x, afterPixel.y, afterPixel.z);\n\n          // Compute weight for this sample\n          // How close is the 'before' value to the current cmsPattern value\n          distance = length(beforeSample - cmsSample);\n          if( distance < cutoff )\n            weight = falloffFilter(distance*lutResolution, falloff);\n          else\n            weight = 0.f;\n\n          // Keep track of the closest sample, just in case\n          if( distance < highDistance ) \{\n            highDistance = distance;\n            highValue = afterSample;\n            highPosition = int2(inX, inY);\n          \}\n\n          // Add into interpolation sum\n          weightedValueSum += weight * afterSample;\n          weightSum += weight;\n        \}\n      \}\n\n      // Divide out weighting\n      if( weightSum > 0.f ) \{\n        value = weightedValueSum / weightSum;\n        highDistance = weightSum;\n\n      // Use the nearest sample if there were no weighted values\n      \} else \{\n        value = highValue;\n        highDistance = 1000.f;\n      \}\n    \}\n\n    //\n    // Diagnostics\n    // \n    /*\n    value.x = lutResolution;\n    value.y = inputPosition.w;\n\n    value.x = inputSample.x;\n    value.y = inputSample.y;\n    value.z = inputSample.z;\n    */\n\n    //\n    // Copy to output\n    //\n    SampleType(cmsPattern) t;\n    t.x = value.x;\n    t.y = value.y;\n    t.z = value.z;\n    t.w = highDistance;\n\n    dst() = t;\n  \}\n\};\n"
+ rebuild ""
+ maxTileLines 1
+ name BlinkScript5
+ xpos -1670
+ ypos 2485
+}
+set N3cc198d0 [stack 0]
+Dot {
+ name Dot27
+ xpos -1636
+ ypos 2676
+}
+GenerateLUT {
+ file /Volumes/BOOTCAMP/work/client/hpd/code/public/general/blink/scripts/LUTRecoverMerge_recoveredGrade3.3dl
+ file_type .3dl
+ name GenerateLUT2
+ xpos -1800
+ ypos 2673
+}
+push $N6dcf250
+push $N6dce5f0
+push $N6dce5f0
+Reformat {
+ format "512 512 0 0 512 512 1 square_512"
+ name Reformat7
+ xpos -2197
+ ypos 844
+}
+set N2973fc10 [stack 0]
+push $N2b850e80
+clone $C223563d0 {
+ xpos -886
+ ypos 2416
+ selected false
+}
+push $N3cc198d0
+Dot {
+ name Dot28
+ xpos -1141
+ ypos 2492
+}
+push $N26d960
+Dot {
+ name Dot20
+ xpos -1140
+ ypos 1476
+}
+push $N2235b960
+Dot {
+ name Dot21
+ xpos -1022
+ ypos 1488
+}
+BlinkScript {
+ inputs 2
+ kernelSourceFile /Volumes/BOOTCAMP/work/client/hpd/code/public/general/blink/LUTRecoverMerge.blink
+ ProgramGroup 1
+ KernelDescription "1 \"LUTRecoverMergeKernel\" iterate pixelWise 45986579bfae112a25c3623cd00070e2a43c8d819fb9d9f614947c7bee930a95 3 \"recover1\" Read Random \"recover2\" Read Random \"dst\" Write Point 0"
+ kernelSource "//\n// Copyright (c) 2014-2015 Haarm-Pieter Duiker <hpd1@duikerresearch.com>\n//\n\n//\n// A kernel that will merge two recovered 3d LUTs images\n//\n\n//\n// Map from the 2D position in the CMSTestPattern image to a 3D LUT position\n//\nint4 nukePosition2dToPosition3d(int2 pos, int width, int height, int nukeBlockSize, int lutResolution) \{\n    int4 position;\n\n    int pixel = pos.y/nukeBlockSize*width/nukeBlockSize + pos.x/nukeBlockSize;\n    position.w = pixel;\n\n    position.x = pixel % lutResolution;\n    position.y = (pixel / lutResolution) % lutResolution;\n    position.z = (pixel / (lutResolution*lutResolution)) % lutResolution;\n\n    return position;\n\}\n\n//\n// kernel\n//\nkernel LUTRecoverMergeKernel : public ImageComputationKernel<ePixelWise>\n\{\n  Image<eRead, eAccessRandom, eEdgeClamped> recover1;\n  Image<eRead, eAccessRandom, eEdgeClamped> recover2;\n  Image<eWrite> dst;\n\n  param:\n\n  local:\n    int lutResolution;\n    int nukeBlockSize;\n\n  void define() \{\n  \}\n\n  void init() \{\n    // The Nuke CMSTestPattern node generates 7x7 pixel blocks for each LUT entry\n    nukeBlockSize = 7;\n    float pixels = recover1.bounds.width() * recover1.bounds.height() / (nukeBlockSize * nukeBlockSize);\n    lutResolution = int(floor(pow(pixels, 0.333333333334f)));\n  \}\n\n  void process(int2 pos) \{\n    float3 value;\n    float highDistance;\n\n    //\n    // Information for the input pixel position\n    //\n    int4 cmsPosition;\n    cmsPosition = nukePosition2dToPosition3d(pos, \n      recover1.bounds.width(), recover1.bounds.height(), nukeBlockSize, lutResolution);\n\n    float3 cmsSample;\n    cmsSample = float3(cmsPosition.x, cmsPosition.y, cmsPosition.z) / (lutResolution-1.f);\n\n    //\n    // Skip the extra pixels at the top of the image\n    //\n    if( cmsPosition.w >= lutResolution*lutResolution*lutResolution ) \{\n      value = float3(0.f);\n      highDistance = 0.f;\n    \}\n    else \{\n      //\n      // The alpha value for each recovered LUT is the weight of the recovered\n      // sample. Divide each sample by the weight, sum the divided samples, sum\n      // the weights and multiple out the weight once more.\n      //\n\n      float3 weightedValueSum;\n      float weightSum;\n\n      SampleType(recover1) recover1Pixel;\n      float3 recover1Sample;\n      float  recover1Weight;\n      SampleType(recover2) recover2Pixel;\n      float3 recover2Sample;\n      float  recover2Weight;\n\n      weightedValueSum = float3(0.f);\n      weightSum = 0.f;\n      highDistance = 1000.f;\n\n      // Get sample values\n      recover1Pixel = recover1(pos.x, pos.y);\n      recover1Sample = float3(recover1Pixel.x, recover1Pixel.y, \n        recover1Pixel.z);\n      recover1Weight = recover1Pixel.w;\n\n      recover2Pixel = recover2(pos.x, pos.y);\n      recover2Sample = float3(recover2Pixel.x, recover2Pixel.y, \n        recover2Pixel.z);\n      recover2Weight = recover2Pixel.w;\n\n      // Add samples into weighted sums\n      if( recover1Weight > 0.f ) \{\n        weightedValueSum += recover1Sample * recover1Weight;\n        weightSum += recover1Weight;\n      \}\n\n      if( recover2Weight > 0.f ) \{\n        weightedValueSum += recover2Sample * recover2Weight;\n        weightSum += recover2Weight;\n      \}\n\n      // Divide out weighting\n      if( weightSum > 0.f ) \{\n        value = weightedValueSum / weightSum;\n        highDistance = weightSum;\n\n      // Use the nearest sample if there were no weighted values\n      \} else \{\n        value = float3(1.0f, 0.f, 0.f);\n        highDistance = 0.f;\n      \}\n    \}\n\n    //\n    // Copy to output\n    //\n    SampleType(dst) t;\n    t.x = value.x;\n    t.y = value.y;\n    t.z = value.z;\n    t.w = highDistance;\n\n    dst() = t;\n  \}\n\};\n"
+ rebuild ""
+ maxTileLines 1
+ name BlinkScript4
+ xpos -1056
+ ypos 1538
+}
+set N297926f0 [stack 0]
+Dot {
+ name Dot29
+ xpos -1020
+ ypos 2438
+}
+BlinkScript {
+ inputs 2
+ kernelSourceFile /Volumes/BOOTCAMP/work/client/hpd/code/public/general/blink/LUTRecoverMerge.blink
+ ProgramGroup 1
+ KernelDescription "1 \"LUTRecoverMergeKernel\" iterate pixelWise 45986579bfae112a25c3623cd00070e2a43c8d819fb9d9f614947c7bee930a95 3 \"recover1\" Read Random \"recover2\" Read Random \"dst\" Write Point 0"
+ kernelSource "//\n// Copyright (c) 2014-2015 Haarm-Pieter Duiker <hpd1@duikerresearch.com>\n//\n\n//\n// A kernel that will merge two recovered 3d LUTs images\n//\n\n//\n// Map from the 2D position in the CMSTestPattern image to a 3D LUT position\n//\nint4 nukePosition2dToPosition3d(int2 pos, int width, int height, int nukeBlockSize, int lutResolution) \{\n    int4 position;\n\n    int pixel = pos.y/nukeBlockSize*width/nukeBlockSize + pos.x/nukeBlockSize;\n    position.w = pixel;\n\n    position.x = pixel % lutResolution;\n    position.y = (pixel / lutResolution) % lutResolution;\n    position.z = (pixel / (lutResolution*lutResolution)) % lutResolution;\n\n    return position;\n\}\n\n//\n// kernel\n//\nkernel LUTRecoverMergeKernel : public ImageComputationKernel<ePixelWise>\n\{\n  Image<eRead, eAccessRandom, eEdgeClamped> recover1;\n  Image<eRead, eAccessRandom, eEdgeClamped> recover2;\n  Image<eWrite> dst;\n\n  param:\n\n  local:\n    int lutResolution;\n    int nukeBlockSize;\n\n  void define() \{\n  \}\n\n  void init() \{\n    // The Nuke CMSTestPattern node generates 7x7 pixel blocks for each LUT entry\n    nukeBlockSize = 7;\n    float pixels = recover1.bounds.width() * recover1.bounds.height() / (nukeBlockSize * nukeBlockSize);\n    lutResolution = int(floor(pow(pixels, 0.333333333334f)));\n  \}\n\n  void process(int2 pos) \{\n    float3 value;\n    float highDistance;\n\n    //\n    // Information for the input pixel position\n    //\n    int4 cmsPosition;\n    cmsPosition = nukePosition2dToPosition3d(pos, \n      recover1.bounds.width(), recover1.bounds.height(), nukeBlockSize, lutResolution);\n\n    float3 cmsSample;\n    cmsSample = float3(cmsPosition.x, cmsPosition.y, cmsPosition.z) / (lutResolution-1.f);\n\n    //\n    // Skip the extra pixels at the top of the image\n    //\n    if( cmsPosition.w >= lutResolution*lutResolution*lutResolution ) \{\n      value = float3(0.f);\n      highDistance = 0.f;\n    \}\n    else \{\n      //\n      // The alpha value for each recovered LUT is the weight of the recovered\n      // sample. Divide each sample by the weight, sum the divided samples, sum\n      // the weights and multiple out the weight once more.\n      //\n\n      float3 weightedValueSum;\n      float weightSum;\n\n      SampleType(recover1) recover1Pixel;\n      float3 recover1Sample;\n      float  recover1Weight;\n      SampleType(recover2) recover2Pixel;\n      float3 recover2Sample;\n      float  recover2Weight;\n\n      weightedValueSum = float3(0.f);\n      weightSum = 0.f;\n      highDistance = 1000.f;\n\n      // Get sample values\n      recover1Pixel = recover1(pos.x, pos.y);\n      recover1Sample = float3(recover1Pixel.x, recover1Pixel.y, \n        recover1Pixel.z);\n      recover1Weight = recover1Pixel.w;\n\n      recover2Pixel = recover2(pos.x, pos.y);\n      recover2Sample = float3(recover2Pixel.x, recover2Pixel.y, \n        recover2Pixel.z);\n      recover2Weight = recover2Pixel.w;\n\n      // Add samples into weighted sums\n      if( recover1Weight > 0.f ) \{\n        weightedValueSum += recover1Sample * recover1Weight;\n        weightSum += recover1Weight;\n      \}\n\n      if( recover2Weight > 0.f ) \{\n        weightedValueSum += recover2Sample * recover2Weight;\n        weightSum += recover2Weight;\n      \}\n\n      // Divide out weighting\n      if( weightSum > 0.f ) \{\n        value = weightedValueSum / weightSum;\n        highDistance = weightSum;\n\n      // Use the nearest sample if there were no weighted values\n      \} else \{\n        value = float3(1.0f, 0.f, 0.f);\n        highDistance = 0.f;\n      \}\n    \}\n\n    //\n    // Copy to output\n    //\n    SampleType(dst) t;\n    t.x = value.x;\n    t.y = value.y;\n    t.z = value.z;\n    t.w = highDistance;\n\n    dst() = t;\n  \}\n\};\n"
+ rebuild ""
+ maxTileLines 1
+ name BlinkScript6
+ xpos -1054
+ ypos 2485
+}
+CMSTestPattern {
+ inputs 0
+ cube_size 11
+ name CMSTestPattern4
+ xpos -968
+ ypos 2660
+}
+BlinkScript {
+ inputs 2
+ kernelSourceFile /Volumes/BOOTCAMP/work/client/hpd/code/public/general/blink/LUTApply.blink
+ KernelDescription "1 \"LUTApplyKernel\" iterate pixelWise b9b9b75f844d32a217ac98b2629aaee332a5ac1102535c30004a41d380e5f8fd 3 \"src\" Read Random \"cmsPattern\" Read Random \"dst\" Write Point 1 \"interpolation\" Int 1 AgAAAA=="
+ kernelSource "//\n// Copyright (c) 2014-2015 Haarm-Pieter Duiker <hpd1@duikerresearch.com>\n//\n\n//\n// A kernel that will apply 3d LUT to an image. The 3d LUT is represented as the Nuke cmsTestPattern\n//\n\n//\n// Map from a 3D LUT position to 2D pixel coordinate in the CMSTestPattern image\n//\nint2 position3dToNukePosition(int3 pos, int width, int height, int nukeBlockSize, int lutResolution) \{\n    int2 position;\n\n    int pixel = (pos.z*lutResolution*lutResolution + pos.y*lutResolution + pos.x);\n\n    position.x = (pixel%(width/nukeBlockSize))*nukeBlockSize;\n    position.y = (pixel/(width/nukeBlockSize))*nukeBlockSize;\n\n    // Put the position in the middle of the nukeBlockSize x nukeBlockSize block\n    position += nukeBlockSize/2;\n\n    return position;\n\}\n\n// Utility\nfloat4 mix(float4 a, float4 b, float f) \{\n  float4 mixed;\n  mixed.x = a.x*(1.f - f) + b.x*f;\n  mixed.y = a.y*(1.f - f) + b.y*f;\n  mixed.z = a.z*(1.f - f) + b.z*f;\n  mixed.w = a.w*(1.f - f) + b.w*f;\n  return mixed;  \n\}\n\n//\n// kernel\n//\nkernel LUTApplyKernel : public ImageComputationKernel<ePixelWise>\n\{\n  Image<eRead, eAccessRandom, eEdgeClamped> src;\n  Image<eRead, eAccessRandom, eEdgeClamped> cmsPattern;\n  Image<eWrite> dst;\n\n  param:\n    int interpolation;\n\n  local:\n    int lutResolution;\n    int nukeBlockSize;\n\n  void define() \{\n    // unused for now. \n    defineParam(interpolation, \"interpolation\", 2);\n  \}\n\n  void init() \{\n    // The Nuke CMSTestPattern node generates 7x7 pixel blocks for each LUT entry\n    nukeBlockSize = 7;\n    float pixels = cmsPattern.bounds.width() * cmsPattern.bounds.height() / (nukeBlockSize * nukeBlockSize);\n    lutResolution = int(floor(pow(pixels, 0.333333333334f)));\n  \}\n\n  void process(int2 pos) \{\n    SampleType(cmsPattern) cmsSample;\n\n    // Sample the src image\n    SampleType(src) srcSample;\n    srcSample = src(pos.x, pos.y);\n\n    // Use the 3D LUT to find the new value\n    \n    // Nearest point\n    if( interpolation == 0 ) \{\n      int3 srcLUTPosition;\n      srcLUTPosition.x = round(clamp(srcSample.x, 0.0f, 1.0f) * (lutResolution-1));\n      srcLUTPosition.y = round(clamp(srcSample.y, 0.0f, 1.0f) * (lutResolution-1));\n      srcLUTPosition.z = round(clamp(srcSample.z, 0.0f, 1.0f) * (lutResolution-1));\n\n      int2 cmsSamplePosition;\n      cmsSamplePosition = position3dToNukePosition(srcLUTPosition, \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n\n      cmsSample = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n    \} // nearest\n\n    // Tri-linear interpolation \n    else if( interpolation == 1 ) \{\n      float3 srcSample3;\n      srcSample3.x = srcSample.x;\n      srcSample3.y = srcSample.y;\n      srcSample3.z = srcSample.z;\n\n      srcSample3 = clamp(srcSample3, float3(0.f), float3(1.f));\n\n      // index values interpolation factor for RGB\n      float indexRf = (srcSample3.x * (lutResolution-1));\n      int indexR    = int(floor(indexRf));\n      float interpR = indexRf - indexR;\n      float indexRfb = floor(indexRf) / (lutResolution-1);\n\n      float indexGf = (srcSample3.y * (lutResolution-1));\n      int indexG    = int(floor(indexGf));\n      float interpG = indexGf - indexG;\n      float indexGfb = floor(indexGf) / (lutResolution-1);\n\n      float indexBf = (srcSample3.z * (lutResolution-1));\n      int indexB    = int(floor(indexBf));\n      float interpB = indexBf - indexB;\n      float indexBfb = floor(indexBf) / (lutResolution-1);\n\n      SampleType(cmsPattern) cmsSamples\[8];\n      int2 cmsSamplePosition;\n\n      // sample r, g, b\n      cmsSamplePosition = position3dToNukePosition(int3(indexR    , indexG    , indexB    ), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[0] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r, g, b+1\n      cmsSamplePosition = position3dToNukePosition(int3(indexR    , indexG    , indexB + 1), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[1] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r, g+1, b\n      cmsSamplePosition = position3dToNukePosition(int3(indexR    , indexG + 1, indexB    ), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[2] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r, g+1, b+1\n      cmsSamplePosition = position3dToNukePosition(int3(indexR    , indexG + 1, indexB + 1), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[3] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r+1, g, b\n      cmsSamplePosition = position3dToNukePosition(int3(indexR + 1, indexG    , indexB    ), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[4] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r+1, g, b+1\n      cmsSamplePosition = position3dToNukePosition(int3(indexR + 1, indexG    , indexB + 1), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[5] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r+1, g+1, b\n      cmsSamplePosition = position3dToNukePosition(int3(indexR + 1, indexG + 1, indexB    ), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[6] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r+1, g+1, b+1\n      cmsSamplePosition = position3dToNukePosition(int3(indexR + 1, indexG + 1, indexB + 1), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[7] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // Interpolate along the 4 lines in B\n      cmsSamples\[0] = mix(cmsSamples\[0], cmsSamples\[1], interpB);\n      cmsSamples\[2] = mix(cmsSamples\[2], cmsSamples\[3], interpB);\n      cmsSamples\[4] = mix(cmsSamples\[4], cmsSamples\[5], interpB);\n      cmsSamples\[6] = mix(cmsSamples\[6], cmsSamples\[7], interpB);\n      \n      // Interpolate along the 2 lines in G\n      cmsSamples\[0] = mix(cmsSamples\[0], cmsSamples\[2], interpG);\n      cmsSamples\[4] = mix(cmsSamples\[4], cmsSamples\[6], interpG);\n\n      // Interpolate along the 1 line in R\n      cmsSamples\[0] = mix(cmsSamples\[0], cmsSamples\[4], interpR);\n\n      cmsSample = cmsSamples\[0];\n    \} // tri-linear\n\n    // Tetrahedral interpolation\n    else if( interpolation == 2 ) \{\n      float3 srcSample3;\n      srcSample3.x = srcSample.x;\n      srcSample3.y = srcSample.y;\n      srcSample3.z = srcSample.z;\n\n      srcSample3 = clamp(srcSample3, float3(0.f), float3(1.f));\n\n      // index values interpolation factor for RGB\n      float indexRf = (srcSample3.x * (lutResolution-1));\n      int indexR    = int(floor(indexRf));\n      float interpR = indexRf - indexR;\n      float indexRfb = floor(indexRf) / (lutResolution-1);\n\n      float indexGf = (srcSample3.y * (lutResolution-1));\n      int indexG    = int(floor(indexGf));\n      float interpG = indexGf - indexG;\n      float indexGfb = floor(indexGf) / (lutResolution-1);\n\n      float indexBf = (srcSample3.z * (lutResolution-1));\n      int indexB    = int(floor(indexBf));\n      float interpB = indexBf - indexB;\n      float indexBfb = floor(indexBf) / (lutResolution-1);\n\n      SampleType(cmsPattern) cmsSamples\[8];\n      int2 cmsSamplePosition;\n\n      // sample r, g, b\n      cmsSamplePosition = position3dToNukePosition(int3(indexR    , indexG    , indexB    ), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[0] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r, g, b+1\n      cmsSamplePosition = position3dToNukePosition(int3(indexR    , indexG    , indexB + 1), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[1] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r, g+1, b\n      cmsSamplePosition = position3dToNukePosition(int3(indexR    , indexG + 1, indexB    ), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[2] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r, g+1, b+1\n      cmsSamplePosition = position3dToNukePosition(int3(indexR    , indexG + 1, indexB + 1), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[3] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r+1, g, b\n      cmsSamplePosition = position3dToNukePosition(int3(indexR + 1, indexG    , indexB    ), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[4] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r+1, g, b+1\n      cmsSamplePosition = position3dToNukePosition(int3(indexR + 1, indexG    , indexB + 1), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[5] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r+1, g+1, b\n      cmsSamplePosition = position3dToNukePosition(int3(indexR + 1, indexG + 1, indexB    ), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[6] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r+1, g+1, b+1\n      cmsSamplePosition = position3dToNukePosition(int3(indexR + 1, indexG + 1, indexB + 1), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[7] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // Tetrahedral interoplation, as described by:\n      // http://www.filmlight.ltd.uk/pdf/whitepapers/FL-TL-TN-0057-SoftwareLib.pdf\n      // http://blogs.mathworks.com/steve/2006/11/24/tetrahedral-interpolation-for-colorspace-conversion/\n      // http://www.hpl.hp.com/techreports/98/HPL-98-95.html\n      // Reference implementation from OCIO\n      // https://github.com/imageworks/OpenColorIO/blob/master/src/core/Lut3DOp.cpp#L294\n\n      // Rebind for consistency with Truelight paper\n      float fx = interpR;\n      float fy = interpG;\n      float fz = interpB;\n\n      SampleType(cmsPattern) startPos\[8];\n      startPos\[0] = cmsSamples\[0];\n      startPos\[1] = cmsSamples\[1];\n      startPos\[2] = cmsSamples\[2];\n      startPos\[3] = cmsSamples\[3];\n      startPos\[4] = cmsSamples\[4];\n      startPos\[5] = cmsSamples\[5];\n      startPos\[6] = cmsSamples\[6];\n      startPos\[7] = cmsSamples\[7];\n\n      SampleType(cmsPattern) rgbaBuffer;\n\n      // Compute index into LUT for surrounding corners\n      const int n000 = 0;\n      const int n100 = 4;\n      const int n010 = 2;\n      const int n001 = 1;\n      const int n110 = 6;\n      const int n101 = 5;\n      const int n011 = 3;\n      const int n111 = 7;\n\n      if (fx > fy) \{\n          if (fy > fz) \{\n             rgbaBuffer.x =\n                 (1-fx)  * startPos\[n000].x +\n                 (fx-fy) * startPos\[n100].x +\n                 (fy-fz) * startPos\[n110].x +\n                 (fz)    * startPos\[n111].x;\n\n             rgbaBuffer.y =\n                 (1-fx)  * startPos\[n000].y +\n                 (fx-fy) * startPos\[n100].y +\n                 (fy-fz) * startPos\[n110].y +\n                 (fz)    * startPos\[n111].y;\n\n             rgbaBuffer.z =\n                 (1-fx)  * startPos\[n000].z +\n                 (fx-fy) * startPos\[n100].z +\n                 (fy-fz) * startPos\[n110].z +\n                 (fz)    * startPos\[n111].z;\n          \}\n          else if (fx > fz)\n          \{\n              rgbaBuffer.x =\n                  (1-fx)  * startPos\[n000].x +\n                  (fx-fz) * startPos\[n100].x +\n                  (fz-fy) * startPos\[n101].x +\n                  (fy)    * startPos\[n111].x;\n\n              rgbaBuffer.y =\n                  (1-fx)  * startPos\[n000].y +\n                  (fx-fz) * startPos\[n100].y +\n                  (fz-fy) * startPos\[n101].y +\n                  (fy)    * startPos\[n111].y;\n\n              rgbaBuffer.z =\n                  (1-fx)  * startPos\[n000].z +\n                  (fx-fz) * startPos\[n100].z +\n                  (fz-fy) * startPos\[n101].z +\n                  (fy)    * startPos\[n111].z;\n          \}\n          else\n          \{\n              rgbaBuffer.x =\n                  (1-fz)  * startPos\[n000].x +\n                  (fz-fx) * startPos\[n001].x +\n                  (fx-fy) * startPos\[n101].x +\n                  (fy)    * startPos\[n111].x;\n\n              rgbaBuffer.y =\n                  (1-fz)  * startPos\[n000].y +\n                  (fz-fx) * startPos\[n001].y +\n                  (fx-fy) * startPos\[n101].y +\n                  (fy)    * startPos\[n111].y;\n\n              rgbaBuffer.z =\n                  (1-fz)  * startPos\[n000].z +\n                  (fz-fx) * startPos\[n001].z +\n                  (fx-fy) * startPos\[n101].z +\n                  (fy)    * startPos\[n111].z;\n          \}\n      \}\n      else\n      \{\n          if (fz > fy)\n          \{\n              rgbaBuffer.x =\n                  (1-fz)  * startPos\[n000].x +\n                  (fz-fy) * startPos\[n001].x +\n                  (fy-fx) * startPos\[n011].x +\n                  (fx)    * startPos\[n111].x;\n\n              rgbaBuffer.y =\n                  (1-fz)  * startPos\[n000].y +\n                  (fz-fy) * startPos\[n001].y +\n                  (fy-fx) * startPos\[n011].y +\n                  (fx)    * startPos\[n111].y;\n\n              rgbaBuffer.z =\n                  (1-fz)  * startPos\[n000].z +\n                  (fz-fy) * startPos\[n001].z +\n                  (fy-fx) * startPos\[n011].z +\n                  (fx)    * startPos\[n111].z;\n          \}\n          else if (fz > fx)\n          \{\n              rgbaBuffer.x =\n                  (1-fy)  * startPos\[n000].x +\n                  (fy-fz) * startPos\[n010].x +\n                  (fz-fx) * startPos\[n011].x +\n                  (fx)    * startPos\[n111].x;\n\n              rgbaBuffer.y =\n                  (1-fy)  * startPos\[n000].y +\n                  (fy-fz) * startPos\[n010].y +\n                  (fz-fx) * startPos\[n011].y +\n                  (fx)    * startPos\[n111].y;\n\n              rgbaBuffer.z =\n                  (1-fy)  * startPos\[n000].z +\n                  (fy-fz) * startPos\[n010].z +\n                  (fz-fx) * startPos\[n011].z +\n                  (fx)    * startPos\[n111].z;\n          \}\n          else\n          \{\n              rgbaBuffer.x =\n                  (1-fy)  * startPos\[n000].x +\n                  (fy-fx) * startPos\[n010].x +\n                  (fx-fz) * startPos\[n110].x +\n                  (fz)    * startPos\[n111].x;\n\n              rgbaBuffer.y =\n                  (1-fy)  * startPos\[n000].y +\n                  (fy-fx) * startPos\[n010].y +\n                  (fx-fz) * startPos\[n110].y +\n                  (fz)    * startPos\[n111].y;\n\n              rgbaBuffer.z =\n                  (1-fy)  * startPos\[n000].z +\n                  (fy-fx) * startPos\[n010].z +\n                  (fx-fz) * startPos\[n110].z +\n                  (fz)    * startPos\[n111].z;\n          \}\n      \}\n\n      cmsSample = rgbaBuffer;\n\n    \} // tetrahedral\n\n    // Write the new value to dst\n    SampleType(dst) t;\n    t.x = cmsSample.x;\n    t.y = cmsSample.y;\n    t.z = cmsSample.z;\n\n    dst() = t;\n  \}\n\};\n"
+ rebuild ""
+ maxTileLines 100
+ name BlinkScript8
+ xpos -825
+ ypos 2680
+}
+Reformat {
+ format "512 512 0 0 512 512 1 square_512"
+ name Reformat4
+ xpos -2118
+ ypos 2680
+}
+Write {
+ file /Volumes/BOOTCAMP/work/client/hpd/code/public/general/blink/scripts/LUTRecoverMerge_recoveredGrade3.jpg
+ raw true
+ file_type jpeg
+ _jpeg_quality 1
+ _jpeg_sub_sampling 4:4:4
+ checkHashOnRead false
+ version 6
+ name Write5
+ selected true
+ xpos -2118
+ ypos 2712
+}
+push $N297926f0
+CMSTestPattern {
+ inputs 0
+ cube_size 11
+ name CMSTestPattern3
+ xpos -968
+ ypos 1711
+}
+BlinkScript {
+ inputs 2
+ kernelSourceFile /Volumes/BOOTCAMP/work/client/hpd/code/public/general/blink/LUTApply.blink
+ KernelDescription "1 \"LUTApplyKernel\" iterate pixelWise b9b9b75f844d32a217ac98b2629aaee332a5ac1102535c30004a41d380e5f8fd 3 \"src\" Read Random \"cmsPattern\" Read Random \"dst\" Write Point 1 \"interpolation\" Int 1 AgAAAA=="
+ kernelSource "//\n// Copyright (c) 2014-2015 Haarm-Pieter Duiker <hpd1@duikerresearch.com>\n//\n\n//\n// A kernel that will apply 3d LUT to an image. The 3d LUT is represented as the Nuke cmsTestPattern\n//\n\n//\n// Map from a 3D LUT position to 2D pixel coordinate in the CMSTestPattern image\n//\nint2 position3dToNukePosition(int3 pos, int width, int height, int nukeBlockSize, int lutResolution) \{\n    int2 position;\n\n    int pixel = (pos.z*lutResolution*lutResolution + pos.y*lutResolution + pos.x);\n\n    position.x = (pixel%(width/nukeBlockSize))*nukeBlockSize;\n    position.y = (pixel/(width/nukeBlockSize))*nukeBlockSize;\n\n    // Put the position in the middle of the nukeBlockSize x nukeBlockSize block\n    position += nukeBlockSize/2;\n\n    return position;\n\}\n\n// Utility\nfloat4 mix(float4 a, float4 b, float f) \{\n  float4 mixed;\n  mixed.x = a.x*(1.f - f) + b.x*f;\n  mixed.y = a.y*(1.f - f) + b.y*f;\n  mixed.z = a.z*(1.f - f) + b.z*f;\n  mixed.w = a.w*(1.f - f) + b.w*f;\n  return mixed;  \n\}\n\n//\n// kernel\n//\nkernel LUTApplyKernel : public ImageComputationKernel<ePixelWise>\n\{\n  Image<eRead, eAccessRandom, eEdgeClamped> src;\n  Image<eRead, eAccessRandom, eEdgeClamped> cmsPattern;\n  Image<eWrite> dst;\n\n  param:\n    int interpolation;\n\n  local:\n    int lutResolution;\n    int nukeBlockSize;\n\n  void define() \{\n    // unused for now. \n    defineParam(interpolation, \"interpolation\", 2);\n  \}\n\n  void init() \{\n    // The Nuke CMSTestPattern node generates 7x7 pixel blocks for each LUT entry\n    nukeBlockSize = 7;\n    float pixels = cmsPattern.bounds.width() * cmsPattern.bounds.height() / (nukeBlockSize * nukeBlockSize);\n    lutResolution = int(floor(pow(pixels, 0.333333333334f)));\n  \}\n\n  void process(int2 pos) \{\n    SampleType(cmsPattern) cmsSample;\n\n    // Sample the src image\n    SampleType(src) srcSample;\n    srcSample = src(pos.x, pos.y);\n\n    // Use the 3D LUT to find the new value\n    \n    // Nearest point\n    if( interpolation == 0 ) \{\n      int3 srcLUTPosition;\n      srcLUTPosition.x = round(clamp(srcSample.x, 0.0f, 1.0f) * (lutResolution-1));\n      srcLUTPosition.y = round(clamp(srcSample.y, 0.0f, 1.0f) * (lutResolution-1));\n      srcLUTPosition.z = round(clamp(srcSample.z, 0.0f, 1.0f) * (lutResolution-1));\n\n      int2 cmsSamplePosition;\n      cmsSamplePosition = position3dToNukePosition(srcLUTPosition, \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n\n      cmsSample = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n    \} // nearest\n\n    // Tri-linear interpolation \n    else if( interpolation == 1 ) \{\n      float3 srcSample3;\n      srcSample3.x = srcSample.x;\n      srcSample3.y = srcSample.y;\n      srcSample3.z = srcSample.z;\n\n      srcSample3 = clamp(srcSample3, float3(0.f), float3(1.f));\n\n      // index values interpolation factor for RGB\n      float indexRf = (srcSample3.x * (lutResolution-1));\n      int indexR    = int(floor(indexRf));\n      float interpR = indexRf - indexR;\n      float indexRfb = floor(indexRf) / (lutResolution-1);\n\n      float indexGf = (srcSample3.y * (lutResolution-1));\n      int indexG    = int(floor(indexGf));\n      float interpG = indexGf - indexG;\n      float indexGfb = floor(indexGf) / (lutResolution-1);\n\n      float indexBf = (srcSample3.z * (lutResolution-1));\n      int indexB    = int(floor(indexBf));\n      float interpB = indexBf - indexB;\n      float indexBfb = floor(indexBf) / (lutResolution-1);\n\n      SampleType(cmsPattern) cmsSamples\[8];\n      int2 cmsSamplePosition;\n\n      // sample r, g, b\n      cmsSamplePosition = position3dToNukePosition(int3(indexR    , indexG    , indexB    ), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[0] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r, g, b+1\n      cmsSamplePosition = position3dToNukePosition(int3(indexR    , indexG    , indexB + 1), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[1] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r, g+1, b\n      cmsSamplePosition = position3dToNukePosition(int3(indexR    , indexG + 1, indexB    ), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[2] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r, g+1, b+1\n      cmsSamplePosition = position3dToNukePosition(int3(indexR    , indexG + 1, indexB + 1), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[3] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r+1, g, b\n      cmsSamplePosition = position3dToNukePosition(int3(indexR + 1, indexG    , indexB    ), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[4] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r+1, g, b+1\n      cmsSamplePosition = position3dToNukePosition(int3(indexR + 1, indexG    , indexB + 1), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[5] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r+1, g+1, b\n      cmsSamplePosition = position3dToNukePosition(int3(indexR + 1, indexG + 1, indexB    ), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[6] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r+1, g+1, b+1\n      cmsSamplePosition = position3dToNukePosition(int3(indexR + 1, indexG + 1, indexB + 1), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[7] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // Interpolate along the 4 lines in B\n      cmsSamples\[0] = mix(cmsSamples\[0], cmsSamples\[1], interpB);\n      cmsSamples\[2] = mix(cmsSamples\[2], cmsSamples\[3], interpB);\n      cmsSamples\[4] = mix(cmsSamples\[4], cmsSamples\[5], interpB);\n      cmsSamples\[6] = mix(cmsSamples\[6], cmsSamples\[7], interpB);\n      \n      // Interpolate along the 2 lines in G\n      cmsSamples\[0] = mix(cmsSamples\[0], cmsSamples\[2], interpG);\n      cmsSamples\[4] = mix(cmsSamples\[4], cmsSamples\[6], interpG);\n\n      // Interpolate along the 1 line in R\n      cmsSamples\[0] = mix(cmsSamples\[0], cmsSamples\[4], interpR);\n\n      cmsSample = cmsSamples\[0];\n    \} // tri-linear\n\n    // Tetrahedral interpolation\n    else if( interpolation == 2 ) \{\n      float3 srcSample3;\n      srcSample3.x = srcSample.x;\n      srcSample3.y = srcSample.y;\n      srcSample3.z = srcSample.z;\n\n      srcSample3 = clamp(srcSample3, float3(0.f), float3(1.f));\n\n      // index values interpolation factor for RGB\n      float indexRf = (srcSample3.x * (lutResolution-1));\n      int indexR    = int(floor(indexRf));\n      float interpR = indexRf - indexR;\n      float indexRfb = floor(indexRf) / (lutResolution-1);\n\n      float indexGf = (srcSample3.y * (lutResolution-1));\n      int indexG    = int(floor(indexGf));\n      float interpG = indexGf - indexG;\n      float indexGfb = floor(indexGf) / (lutResolution-1);\n\n      float indexBf = (srcSample3.z * (lutResolution-1));\n      int indexB    = int(floor(indexBf));\n      float interpB = indexBf - indexB;\n      float indexBfb = floor(indexBf) / (lutResolution-1);\n\n      SampleType(cmsPattern) cmsSamples\[8];\n      int2 cmsSamplePosition;\n\n      // sample r, g, b\n      cmsSamplePosition = position3dToNukePosition(int3(indexR    , indexG    , indexB    ), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[0] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r, g, b+1\n      cmsSamplePosition = position3dToNukePosition(int3(indexR    , indexG    , indexB + 1), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[1] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r, g+1, b\n      cmsSamplePosition = position3dToNukePosition(int3(indexR    , indexG + 1, indexB    ), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[2] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r, g+1, b+1\n      cmsSamplePosition = position3dToNukePosition(int3(indexR    , indexG + 1, indexB + 1), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[3] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r+1, g, b\n      cmsSamplePosition = position3dToNukePosition(int3(indexR + 1, indexG    , indexB    ), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[4] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r+1, g, b+1\n      cmsSamplePosition = position3dToNukePosition(int3(indexR + 1, indexG    , indexB + 1), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[5] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r+1, g+1, b\n      cmsSamplePosition = position3dToNukePosition(int3(indexR + 1, indexG + 1, indexB    ), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[6] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // sample r+1, g+1, b+1\n      cmsSamplePosition = position3dToNukePosition(int3(indexR + 1, indexG + 1, indexB + 1), \n        cmsPattern.bounds.width(), cmsPattern.bounds.height(), nukeBlockSize, lutResolution);\n      cmsSamples\[7] = cmsPattern(cmsSamplePosition.x, cmsSamplePosition.y);\n\n      // Tetrahedral interoplation, as described by:\n      // http://www.filmlight.ltd.uk/pdf/whitepapers/FL-TL-TN-0057-SoftwareLib.pdf\n      // http://blogs.mathworks.com/steve/2006/11/24/tetrahedral-interpolation-for-colorspace-conversion/\n      // http://www.hpl.hp.com/techreports/98/HPL-98-95.html\n      // Reference implementation from OCIO\n      // https://github.com/imageworks/OpenColorIO/blob/master/src/core/Lut3DOp.cpp#L294\n\n      // Rebind for consistency with Truelight paper\n      float fx = interpR;\n      float fy = interpG;\n      float fz = interpB;\n\n      SampleType(cmsPattern) startPos\[8];\n      startPos\[0] = cmsSamples\[0];\n      startPos\[1] = cmsSamples\[1];\n      startPos\[2] = cmsSamples\[2];\n      startPos\[3] = cmsSamples\[3];\n      startPos\[4] = cmsSamples\[4];\n      startPos\[5] = cmsSamples\[5];\n      startPos\[6] = cmsSamples\[6];\n      startPos\[7] = cmsSamples\[7];\n\n      SampleType(cmsPattern) rgbaBuffer;\n\n      // Compute index into LUT for surrounding corners\n      const int n000 = 0;\n      const int n100 = 4;\n      const int n010 = 2;\n      const int n001 = 1;\n      const int n110 = 6;\n      const int n101 = 5;\n      const int n011 = 3;\n      const int n111 = 7;\n\n      if (fx > fy) \{\n          if (fy > fz) \{\n             rgbaBuffer.x =\n                 (1-fx)  * startPos\[n000].x +\n                 (fx-fy) * startPos\[n100].x +\n                 (fy-fz) * startPos\[n110].x +\n                 (fz)    * startPos\[n111].x;\n\n             rgbaBuffer.y =\n                 (1-fx)  * startPos\[n000].y +\n                 (fx-fy) * startPos\[n100].y +\n                 (fy-fz) * startPos\[n110].y +\n                 (fz)    * startPos\[n111].y;\n\n             rgbaBuffer.z =\n                 (1-fx)  * startPos\[n000].z +\n                 (fx-fy) * startPos\[n100].z +\n                 (fy-fz) * startPos\[n110].z +\n                 (fz)    * startPos\[n111].z;\n          \}\n          else if (fx > fz)\n          \{\n              rgbaBuffer.x =\n                  (1-fx)  * startPos\[n000].x +\n                  (fx-fz) * startPos\[n100].x +\n                  (fz-fy) * startPos\[n101].x +\n                  (fy)    * startPos\[n111].x;\n\n              rgbaBuffer.y =\n                  (1-fx)  * startPos\[n000].y +\n                  (fx-fz) * startPos\[n100].y +\n                  (fz-fy) * startPos\[n101].y +\n                  (fy)    * startPos\[n111].y;\n\n              rgbaBuffer.z =\n                  (1-fx)  * startPos\[n000].z +\n                  (fx-fz) * startPos\[n100].z +\n                  (fz-fy) * startPos\[n101].z +\n                  (fy)    * startPos\[n111].z;\n          \}\n          else\n          \{\n              rgbaBuffer.x =\n                  (1-fz)  * startPos\[n000].x +\n                  (fz-fx) * startPos\[n001].x +\n                  (fx-fy) * startPos\[n101].x +\n                  (fy)    * startPos\[n111].x;\n\n              rgbaBuffer.y =\n                  (1-fz)  * startPos\[n000].y +\n                  (fz-fx) * startPos\[n001].y +\n                  (fx-fy) * startPos\[n101].y +\n                  (fy)    * startPos\[n111].y;\n\n              rgbaBuffer.z =\n                  (1-fz)  * startPos\[n000].z +\n                  (fz-fx) * startPos\[n001].z +\n                  (fx-fy) * startPos\[n101].z +\n                  (fy)    * startPos\[n111].z;\n          \}\n      \}\n      else\n      \{\n          if (fz > fy)\n          \{\n              rgbaBuffer.x =\n                  (1-fz)  * startPos\[n000].x +\n                  (fz-fy) * startPos\[n001].x +\n                  (fy-fx) * startPos\[n011].x +\n                  (fx)    * startPos\[n111].x;\n\n              rgbaBuffer.y =\n                  (1-fz)  * startPos\[n000].y +\n                  (fz-fy) * startPos\[n001].y +\n                  (fy-fx) * startPos\[n011].y +\n                  (fx)    * startPos\[n111].y;\n\n              rgbaBuffer.z =\n                  (1-fz)  * startPos\[n000].z +\n                  (fz-fy) * startPos\[n001].z +\n                  (fy-fx) * startPos\[n011].z +\n                  (fx)    * startPos\[n111].z;\n          \}\n          else if (fz > fx)\n          \{\n              rgbaBuffer.x =\n                  (1-fy)  * startPos\[n000].x +\n                  (fy-fz) * startPos\[n010].x +\n                  (fz-fx) * startPos\[n011].x +\n                  (fx)    * startPos\[n111].x;\n\n              rgbaBuffer.y =\n                  (1-fy)  * startPos\[n000].y +\n                  (fy-fz) * startPos\[n010].y +\n                  (fz-fx) * startPos\[n011].y +\n                  (fx)    * startPos\[n111].y;\n\n              rgbaBuffer.z =\n                  (1-fy)  * startPos\[n000].z +\n                  (fy-fz) * startPos\[n010].z +\n                  (fz-fx) * startPos\[n011].z +\n                  (fx)    * startPos\[n111].z;\n          \}\n          else\n          \{\n              rgbaBuffer.x =\n                  (1-fy)  * startPos\[n000].x +\n                  (fy-fx) * startPos\[n010].x +\n                  (fx-fz) * startPos\[n110].x +\n                  (fz)    * startPos\[n111].x;\n\n              rgbaBuffer.y =\n                  (1-fy)  * startPos\[n000].y +\n                  (fy-fx) * startPos\[n010].y +\n                  (fx-fz) * startPos\[n110].y +\n                  (fz)    * startPos\[n111].y;\n\n              rgbaBuffer.z =\n                  (1-fy)  * startPos\[n000].z +\n                  (fy-fx) * startPos\[n010].z +\n                  (fx-fz) * startPos\[n110].z +\n                  (fz)    * startPos\[n111].z;\n          \}\n      \}\n\n      cmsSample = rgbaBuffer;\n\n    \} // tetrahedral\n\n    // Write the new value to dst\n    SampleType(dst) t;\n    t.x = cmsSample.x;\n    t.y = cmsSample.y;\n    t.z = cmsSample.z;\n\n    dst() = t;\n  \}\n\};\n"
+ rebuild ""
+ maxTileLines 100
+ name BlinkScript7
+ xpos -825
+ ypos 1731
+}
+Reformat {
+ format "512 512 0 0 512 512 1 square_512"
+ name Reformat6
+ xpos -2127
+ ypos 1731
+}
+Write {
+ file /Volumes/BOOTCAMP/work/client/hpd/code/public/general/blink/scripts/LUTRecoverMerge_recoveredGrade2.jpg
+ raw true
+ file_type jpeg
+ _jpeg_quality 1
+ _jpeg_sub_sampling 4:4:4
+ checkHashOnRead false
+ version 6
+ name Write7
+ xpos -2127
+ ypos 1763
+}
+push $N2973fc10
+Write {
+ file /Volumes/BOOTCAMP/work/client/hpd/code/public/general/blink/scripts/LUTRecoverMerge_recoveredGrade1.jpg
+ raw true
+ file_type jpeg
+ _jpeg_quality 1
+ _jpeg_sub_sampling 4:4:4
+ checkHashOnRead false
+ version 7
+ name Write6
+ xpos -2197
+ ypos 876
+}
+Viewer {
+ inputs 7
+ frame_range 1-100
+ input_number 2
+ colour_sample_bbox {0.7826961875 -0.3903420568 0.7867203355 -0.3863179088}
+ samplepoints {{0.7585512996 -0.3863179088}
+   }
+ viewerProcess None
+ name Viewer1
+ xpos -2369
+ ypos 452
+}

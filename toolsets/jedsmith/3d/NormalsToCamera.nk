@@ -1,0 +1,283 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name NormalsToCamera
+ addUserKnob {20 ConvertNormals}
+ addUserKnob {41 NWorld T _SHUFFLE_WORLD_NORMALS_.in}
+ addUserKnob {41 NCamera t "Layer to output camera space normals" T _SHUFFLE_CAMERA_NORMALS_.out}
+ addUserKnob {26 facing_ratio_label l " " T "<b><font color=#ddd>Facing Ratio</b> is the dot product of the camera rotation and the world normals. <br/>\nThis is the Camera Normals.blue channel.\n"}
+ addUserKnob {26 ""}
+ addUserKnob {6 use_angle_of_view l "Calculate Angle of View" t "Computer the camera normals taking into account angle of view. Camera Normals will not be correct without enabling this." +STARTLINE}
+ use_angle_of_view true
+}
+ Input {
+  inputs 0
+  name InputCamera
+  label "\[value number]\n"
+  xpos -308
+  ypos -736
+  number 1
+ }
+set N599f2530 [stack 0]
+ Camera2 {
+  focal {{"\[topnode input1].focal"}}
+  haperture {{"\[topnode input1].haperture"}}
+  vaperture {{"\[topnode input1].vaperture"}}
+  name INPUT_CAMERA1
+  xpos -700
+  ypos -510
+ }
+ Sphere {
+  inputs 0
+  display off
+  rows 180
+  columns 180
+  translate {{parent.INPUT_CAMERA.world_matrix.3} {parent.INPUT_CAMERA.world_matrix.7} {parent.INPUT_CAMERA.world_matrix.11}}
+  uniform_scale 100
+  name Sphere2
+  xpos -1112
+  ypos -410
+ }
+set N3d500cf0 [stack 0]
+ Input {
+  inputs 0
+  name Input
+  label "\[value number]"
+  xpos -40
+  ypos -736
+ }
+ Dot {
+  name Dot1
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos -6
+  ypos -566
+ }
+set N1bad5f80 [stack 0]
+ Shuffle {
+  in Nworld_filtered
+  name _SHUFFLE_WORLD_NORMALS_
+  label "\[value in] -> \[value out]"
+  xpos -174
+  ypos -576
+ }
+set N81ca11f0 [stack 0]
+ Dot {
+  name Dot10
+  xpos -408
+  ypos -566
+ }
+set N555f1640 [stack 0]
+add_layer {N N.red N.green N.blue N.alpha}
+ ScanlineRender {
+  inputs 3
+  ztest_enabled false
+  projection_mode perspective
+  samples 0
+  shutter 0
+  shutteroffset centred
+  motion_vectors_type off
+  MB_channel none
+  output_shader_vectors true
+  N_channel N
+  name ScanlineRender2
+  xpos -710
+  ypos -250
+ }
+ Shuffle {
+  in N
+  name Shuffle1
+  xpos -710
+  ypos -208
+ }
+ Multiply {
+  channels rgba
+  value -1
+  name Multiply1
+  xpos -710
+  ypos -130
+ }
+push $N555f1640
+ Dot {
+  name Dot5
+  xpos -408
+  ypos -86
+ }
+set N47066070 [stack 0]
+ MergeExpression {
+  inputs 2
+  channel0 {rgba.red -rgba.green -rgba.blue -rgba.alpha}
+  expr0 0
+  channel1 {-rgba.red rgba.green -rgba.blue -rgba.alpha}
+  expr1 0
+  channel2 {-rgba.red -rgba.green rgba.blue -rgba.alpha}
+  expr2 Ar*Br+Ag*Bg+Ab*Bb
+  name MergeExpression6
+  xpos -710
+  ypos 30
+ }
+push 0
+push $N599f2530
+ Camera2 {
+  haperture 6
+  vaperture 2.25
+  name INPUT_CAMERA
+  xpos -298
+  ypos -670
+ }
+ Dot {
+  name Dot2
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos -676
+  ypos -646
+ }
+set N817ae680 [stack 0]
+ Camera2 {
+  rotate {0 -90 0}
+  useMatrix true
+  matrix {
+      {0 0 -1 0}
+      {0 1 0 0}
+      {1 0 0 0}
+      {0 0 0 1}
+    }
+  focal {{parent.INPUT_CAMERA1.focal}}
+  haperture {{parent.INPUT_CAMERA1.haperture}}
+  vaperture {{parent.INPUT_CAMERA1.vaperture}}
+  name Camera2
+  xpos -834
+  ypos -510
+ }
+push $N3d500cf0
+push $N555f1640
+ ScanlineRender {
+  inputs 3
+  ztest_enabled false
+  projection_mode perspective
+  samples 0
+  shutter 0
+  shutteroffset centred
+  motion_vectors_type off
+  MB_channel none
+  output_shader_vectors true
+  N_channel N
+  name ScanlineRender3
+  xpos -844
+  ypos -250
+ }
+ Shuffle {
+  in N
+  name Shuffle3
+  xpos -844
+  ypos -210
+ }
+push $N47066070
+ MergeExpression {
+  inputs 2
+  expr0 Ar*Br+Ag*Bg+Ab*Bb
+  expr1 0
+  expr2 0
+  name MergeExpression5
+  xpos -844
+  ypos 30
+ }
+push $N817ae680
+ Camera2 {
+  rotate {90 0 0}
+  useMatrix true
+  matrix {
+      {1 0 0 0}
+      {0 0 -1 0}
+      {0 1 0 0}
+      {0 0 0 1}
+    }
+  focal {{parent.INPUT_CAMERA1.focal}}
+  haperture {{parent.INPUT_CAMERA1.haperture}}
+  vaperture {{parent.INPUT_CAMERA1.vaperture}}
+  name Camera3
+  xpos -968
+  ypos -590
+ }
+push $N3d500cf0
+push $N555f1640
+ ScanlineRender {
+  inputs 3
+  ztest_enabled false
+  projection_mode perspective
+  samples 0
+  shutter 0
+  shutteroffset centred
+  motion_vectors_type off
+  MB_channel none
+  output_shader_vectors true
+  N_channel N
+  name ScanlineRender4
+  xpos -978
+  ypos -250
+ }
+ Shuffle {
+  in N
+  name Shuffle4
+  xpos -978
+  ypos -208
+ }
+push $N47066070
+ MergeExpression {
+  inputs 2
+  expr0 0
+  expr1 Ar*Br+Ag*Bg+Ab*Bb
+  expr2 0
+  name MergeExpression4
+  xpos -978
+  ypos 30
+ }
+ Merge2 {
+  inputs 3+1
+  operation plus
+  output rgb
+  name Merge1
+  xpos -978
+  ypos 150
+ }
+push $N81ca11f0
+ ColorMatrix {
+  matrix {
+      {{INPUT_CAMERA.world_matrix.0} {INPUT_CAMERA.world_matrix.1} {INPUT_CAMERA.world_matrix.2}}
+      {{INPUT_CAMERA.world_matrix.4} {INPUT_CAMERA.world_matrix.5} {INPUT_CAMERA.world_matrix.6}}
+      {{INPUT_CAMERA.world_matrix.8} {INPUT_CAMERA.world_matrix.9} {INPUT_CAMERA.world_matrix.10}}
+    }
+  invert true
+  name _ROTATE_WORLD_NORMALS_TO_CAMERA__
+  xpos -174
+  ypos -490
+ }
+ Switch {
+  inputs 2
+  which {{parent.use_angle_of_view}}
+  name USE_FOV
+  xpos -174
+  ypos 150
+ }
+push $N1bad5f80
+ ShuffleCopy {
+  inputs 2
+  red red
+  green green
+  blue blue
+  alpha black
+  out NCamera
+  name _SHUFFLE_CAMERA_NORMALS_
+  xpos -40
+  ypos 150
+ }
+ Output {
+  name Output
+  xpos -40
+  ypos 270
+ }
+end_group

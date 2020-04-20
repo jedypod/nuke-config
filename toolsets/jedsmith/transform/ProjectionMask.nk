@@ -1,0 +1,60 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name ProjectionMask
+ addUserKnob {20 ProjectionMask}
+ addUserKnob {7 mask_aspect l "output aspect ratio" R 0.5 3}
+ mask_aspect 2.4
+ addUserKnob {7 mask_opacity l "mask opacity"}
+ mask_opacity 0.5
+ addUserKnob {7 edge_crop_percent l "edge crop percent" R 0 0.1}
+ edge_crop_percent 5
+ addUserKnob {26 ""}
+ addUserKnob {26 calculations_label l "@b; calculations" T ""}
+ addUserKnob {14 input_size l "input size" R 0 100}
+ input_size {{input.width} {input.height}}
+ addUserKnob {7 input_par l par -STARTLINE R 1 2}
+ input_par {{input.pixel_aspect}}
+ addUserKnob {7 input_ar l "input aspect ratio" R 0.5 3}
+ input_ar {{input.width/input.height}}
+ addUserKnob {14 box_size l "box size" t "the size of the box in the center of frame " R 0 100}
+ box_size {{rint(input_size.w*(1-edge_crop_percent))} {ceil(box_size.w/mask_aspect*input_par)}}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos -40
+  ypos -274
+ }
+ Dot {
+  name Dot1
+  label " "
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos -6
+  ypos -222
+ }
+set N6a9fa700 [stack 0]
+ Rectangle {
+  replace true
+  invert true
+  area {{rint((width-box_size.w)/2)} {rint((height-box_size.h)/2)} {rint(width-area.x)} {rint(height-area.y)}}
+  name _BOX_
+  xpos -146
+  ypos -225
+ }
+push $N6a9fa700
+ Multiply {
+  inputs 1+1
+  channels rgba
+  value {{1-parent.mask_opacity} {1-parent.mask_opacity} {1-parent.mask_opacity} 1}
+  name _MULTIPLY_
+  xpos -40
+  ypos -177
+ }
+ Output {
+  name Output
+  xpos -40
+  ypos -106
+ }
+end_group

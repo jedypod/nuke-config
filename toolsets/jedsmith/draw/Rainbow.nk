@@ -1,0 +1,61 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name Rainbow
+ addUserKnob {20 Rainbow}
+ addUserKnob {7 distribution R -4 4}
+ addUserKnob {41 p0 l "point 0" T Ramp8.p0}
+ addUserKnob {41 p1 l "point 1" T Ramp8.p1}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos -442
+  ypos -810
+ }
+ Multiply {
+  channels rgba
+  value 0
+  name BLACK
+  tile_color 0x212121ff
+  xpos -442
+  ypos -730
+ }
+ Ramp {
+  cliptype none
+  p0 {41 233}
+  p1 {671 245}
+  type plinear
+  color {{1+distribution}}
+  name Ramp8
+  xpos -442
+  ypos -650
+ }
+ Colorspace {
+  colorspace_out HSV
+  name Colorspace16
+  xpos -442
+  ypos -570
+ }
+ Shuffle {
+  red blue
+  green white
+  blue white
+  alpha black
+  name Shuffle181
+  label "\[value in]"
+  xpos -442
+  ypos -536
+ }
+ Colorspace {
+  colorspace_in HSV
+  name Colorspace17
+  xpos -442
+  ypos -490
+ }
+ Output {
+  name Output1
+  xpos -442
+  ypos -370
+ }
+end_group

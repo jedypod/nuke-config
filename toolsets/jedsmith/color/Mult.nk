@@ -1,0 +1,41 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+name Mult
+tile_color 0x7aa9ffff
+addUserKnob {20 Mult}
+addUserKnob {41 channels T _MULTIPLY_.channels}
+addUserKnob {18 exposure R -4 4}
+exposure 0
+addUserKnob {6 exposure_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+addUserKnob {18 multiply R 0 4}
+multiply 1
+addUserKnob {6 multiply_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+}
+Input {
+inputs 0
+name InputMask
+xpos 94
+ypos -170
+number 1
+}
+Input {
+inputs 0
+name Input
+xpos -40
+ypos -250
+}
+Multiply {
+inputs 1+1
+channels rgb
+value {{"pow(2, parent.exposure)*parent.multiply"} {"pow(2, parent.exposure)*parent.multiply"} {"pow(2, parent.exposure)*parent.multiply"} 1}
+name _MULTIPLY_
+xpos -40
+ypos -170
+}
+Output {
+name Output
+xpos -40
+ypos -90
+}
+end_group

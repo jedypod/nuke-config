@@ -1,0 +1,701 @@
+Group {
+ EnvConvolve
+ help "A fast (FFT-based) approximation of brute force environment map convolution a la HDR Shop, using a Phong BRDF.  The output image is seamless and can be diffuse or specular.\n\nFor a diffuse surface, a 512*256 map will hold enough detail.  Higher resolution is required depending on how specular the surface is."
+ addUserKnob {20 EnvConvolve l "Env Convolve"}
+ addUserKnob {7 phexp l exponent t "Set to 1 is a diffuse surface.  Anything higher exponentially increases glossiness/specularity." R 1 200}
+ phexp 1
+}
+ BackdropNode {
+  inputs 0
+  name BackdropNode18
+  tile_color 0x7171c600
+  label "Phong BRDF"
+  note_font_size 24
+  xpos -1331
+  ypos -177
+  bdwidth 197
+  bdheight 176
+ }
+ BackdropNode {
+  inputs 0
+  name BackdropNode4
+  tile_color 0x8e8e3800
+  label -Z
+  note_font_size 24
+  xpos -925
+  ypos -494
+  bdwidth 216
+  bdheight 142
+ }
+ BackdropNode {
+  inputs 0
+  name BackdropNode12
+  tile_color 0x8e8e3800
+  label +Z
+  note_font_size 24
+  xpos -586
+  ypos -495
+  bdwidth 216
+  bdheight 142
+ }
+ Input {
+  inputs 0
+  name Input
+  xpos -1033
+  ypos -1072
+ }
+set N2cc8f80 [stack 0]
+ Dot {
+  name Dot4
+  xpos -1492
+  ypos -958
+ }
+ Dot {
+  name Dot6
+  xpos -1492
+  ypos 856
+ }
+push $N2cc8f80
+ Shuffle {
+  red black
+  green black
+  blue black
+  alpha white
+  name Shuffle1
+  xpos -1033
+  ypos -763
+ }
+set N2ccd9f0 [stack 0]
+ Expression {
+  expr0 cos(2*PI*x/size.w+PI/2)*sin(PI*(y/size.h))
+  expr1 cos(PI*(1-y/size.h))
+  expr2 cos(2*PI*x/size.w)*sin(PI*(y/size.h))
+  name Expression2
+  label "latlong unit sphere"
+  selected true
+  xpos -723
+  ypos -700
+  postage_stamp true
+  addUserKnob {20 User}
+  addUserKnob {14 size R 0 100}
+  size {{!proxy?input.width:(input.width/proxy_scale) i} {!proxy?input.height:(input.height/proxy_scale) i}}
+ }
+set N2cd2ed0 [stack 0]
+ Dot {
+  name Dot3
+  xpos -262
+  ypos -666
+ }
+ Dot {
+  name Dot2
+  xpos -276
+  ypos 397
+ }
+ Dot {
+  name Dot1
+  xpos -809
+  ypos 397
+ }
+set N2cda460 [stack 0]
+ Shuffle {
+  alpha blue
+  name Shuffle4
+  label "Z direction to alpha"
+  xpos -843
+  ypos 704
+ }
+ Grade {
+  channels alpha
+  whitepoint 0.98
+  gamma 0.8
+  white_clamp true
+  name Grade1
+  xpos -843
+  ypos 744
+ }
+push $N2cda460
+ Group {
+  name RotationMatrix3
+  help "Use this for rotating xyz vector data such as P and N."
+  xpos -776
+  ypos 476
+  addUserKnob {20 RotationMatrix}
+  addUserKnob {13 rot l rotation t "Link to say axis' or camera's rotate.\nYaw = y axis.\nPitch = x axis.\nRoll = z axis."}
+  rot {0 180 0}
+ }
+  Input {
+   inputs 0
+   name Input
+   xpos -304
+   ypos -17
+  }
+  ColorMatrix {
+   matrix {
+       {{cos(radians(yrot)) i} 0 {-sin(radians(yrot)) i}}
+       {0 1 0}
+       {{sin(radians(yrot)) i} 0 {cos(radians(yrot)) i}}
+     }
+   name ColorMatrix14
+   label "yrot (yaw)"
+   xpos -304
+   ypos 89
+   addUserKnob {20 "" l User}
+   addUserKnob {7 yrot l "y rotation" R -90 90}
+   yrot {{parent.rot.y i}}
+  }
+  ColorMatrix {
+   matrix {
+       {1 0 0}
+       {0 {cos(radians(xrot)) i} {sin(radians(xrot)) i}}
+       {0 {-sin(radians(xrot)) i} {cos(radians(xrot)) i}}
+     }
+   name ColorMatrix15
+   label "xrot (pitch)\n"
+   xpos -304
+   ypos 127
+   addUserKnob {20 "" l User}
+   addUserKnob {7 xrot l "x rotation" R -90 90}
+   xrot {{parent.rot.x i}}
+  }
+  ColorMatrix {
+   matrix {
+       {{cos(radians(zrot)) i} {sin(radians(zrot)) i} 0}
+       {{-sin(radians(zrot)) i} {cos(radians(zrot)) i} 0}
+       {0 0 1}
+     }
+   name ColorMatrix13
+   label "zrot (roll)"
+   xpos -304
+   ypos 165
+   addUserKnob {20 "" l User}
+   addUserKnob {7 zrot l "z rotation" R -90 90}
+   zrot {{parent.rot.z i}}
+  }
+  Output {
+   name Output1
+   xpos -304
+   ypos 280
+  }
+ end_group
+ Expression {
+  temp_name0 radius
+  temp_expr0 ".5/pi*acos(-b)/sqrt(r*r + g*g)"
+  expr0 "0.5 + (r*radius)"
+  expr1 "0.5 + (g*radius)"
+  expr2 0
+  name AngularMapProjection3
+  xpos -776
+  ypos 502
+ }
+push $N2ccd9f0
+ Reformat {
+  type scale
+  scale {1 2}
+  resize none
+  name Reformat2
+  xpos -1033
+  ypos -335
+ }
+ Expression {
+  expr0 (pi+atan(cx,cy))/(2*pi)
+  expr1 sqrt((cx**2)+(cy**2))
+  expr2 0
+  name st2polar1
+  xpos -1033
+  ypos -291
+ }
+set N29eb380 [stack 0]
+push $N29eb380
+push $N2ccd9f0
+ Reformat {
+  type scale
+  scale 2
+  name Reformat1
+  xpos -1230
+  ypos -523
+ }
+ Expression {
+  expr0 cos(2*PI*x/size.w+PI/2)*sin(PI*(y/size.h))
+  expr1 cos(PI*(1-y/size.h))
+  expr2 cos(2*PI*x/size.w)*sin(PI*(y/size.h))
+  name Expression1
+  label "latlong unit sphere"
+  xpos -1230
+  ypos -497
+  postage_stamp true
+  addUserKnob {20 User}
+  addUserKnob {14 size R 0 100}
+  size {{!proxy?input.width:(input.width/proxy_scale) i} {!proxy?input.height:(input.height/proxy_scale) i}}
+ }
+ Group {
+  name RotationMatrix1
+  help "Use this for rotating xyz vector data such as P and N."
+  label identity
+  xpos -1230
+  ypos -409
+  addUserKnob {20 RotationMatrix}
+  addUserKnob {13 rot l rotation t "Link to say axis' or camera's rotate.\nYaw = y axis.\nPitch = x axis.\nRoll = z axis."}
+  rot {0 90 -90}
+ }
+  Input {
+   inputs 0
+   name Input
+   xpos -304
+   ypos -17
+  }
+  ColorMatrix {
+   matrix {
+       {{cos(radians(yrot)) i} 0 {-sin(radians(yrot)) i}}
+       {0 1 0}
+       {{sin(radians(yrot)) i} 0 {cos(radians(yrot)) i}}
+     }
+   name ColorMatrix14
+   label "yrot (yaw)"
+   xpos -304
+   ypos 89
+   addUserKnob {20 "" l User}
+   addUserKnob {7 yrot l "y rotation" R -90 90}
+   yrot {{parent.rot.y i}}
+  }
+  ColorMatrix {
+   matrix {
+       {1 0 0}
+       {0 {cos(radians(xrot)) i} {sin(radians(xrot)) i}}
+       {0 {-sin(radians(xrot)) i} {cos(radians(xrot)) i}}
+     }
+   name ColorMatrix15
+   label "xrot (pitch)\n"
+   xpos -304
+   ypos 127
+   addUserKnob {20 "" l User}
+   addUserKnob {7 xrot l "x rotation" R -90 90}
+   xrot {{parent.rot.x i}}
+  }
+  ColorMatrix {
+   matrix {
+       {{cos(radians(zrot)) i} {sin(radians(zrot)) i} 0}
+       {{-sin(radians(zrot)) i} {cos(radians(zrot)) i} 0}
+       {0 0 1}
+     }
+   name ColorMatrix13
+   label "zrot (roll)"
+   xpos -304
+   ypos 165
+   addUserKnob {20 "" l User}
+   addUserKnob {7 zrot l "z rotation" R -90 90}
+   zrot {{parent.rot.z i}}
+  }
+  Output {
+   name Output1
+   xpos -304
+   ypos 280
+  }
+ end_group
+ Shuffle {
+  red blue
+  blue red
+  name Shuffle3
+  xpos -1230
+  ypos -351
+ }
+ STMap {
+  inputs 2
+  channels rgb
+  uv rgb
+  name STMap25
+  label "latlong to angular"
+  xpos -1230
+  ypos -298
+ }
+ CopyBBox {
+  inputs 2
+  name CopyBBox1
+  xpos -1230
+  ypos -260
+ }
+ Dot {
+  name Dot9
+  xpos -1196
+  ypos -131
+ }
+set N2ce32a0 [stack 0]
+ Shuffle {
+  red black
+  green black
+  blue white
+  name Shuffle2
+  label "Make +z vector"
+  xpos -1313
+  ypos -121
+ }
+push $N2ce32a0
+ MergeExpression {
+  inputs 2
+  temp_name0 DotProduct
+  temp_expr0 (Ar*Br)+(Ag*Bg)+(Ab*Bb)
+  channel0 rgb
+  expr0 max(0,DotProduct)
+  name MergeExpression2
+  label "dot product (N.L)"
+  xpos -1230
+  ypos -74
+ }
+ Expression {
+  channel0 rgb
+  expr0 pow(r,phexp)
+  channel1 none
+  channel2 {-rgba.red -rgba.green -rgba.blue}
+  channel3 {none none none -rgba.alpha}
+  name PhongExponent1
+  xpos -1230
+  ypos -34
+  addUserKnob {20 User}
+  addUserKnob {7 phexp l "phong exponent" R 1 200}
+  phexp {{parent.phexp.main i}}
+ }
+ FFT {
+  channels rgb
+  normalize_input true
+  center_kernel true
+  name FFT3
+  xpos -863
+  ypos 208
+ }
+set N1e79e80 [stack 0]
+push $N29eb380
+push $N2cd2ed0
+ Group {
+  name RotationMatrix4
+  help "Use this for rotating xyz vector data such as P and N."
+  label identity
+  xpos -723
+  ypos -613
+  addUserKnob {20 RotationMatrix}
+  addUserKnob {13 rot l rotation t "Link to say axis' or camera's rotate.\nYaw = y axis.\nPitch = x axis.\nRoll = z axis."}
+  rot {0 90 -90}
+ }
+  Input {
+   inputs 0
+   name Input
+   xpos -304
+   ypos -17
+  }
+  ColorMatrix {
+   matrix {
+       {{cos(radians(yrot)) i} 0 {-sin(radians(yrot)) i}}
+       {0 1 0}
+       {{sin(radians(yrot)) i} 0 {cos(radians(yrot)) i}}
+     }
+   name ColorMatrix14
+   label "yrot (yaw)"
+   xpos -304
+   ypos 89
+   addUserKnob {20 "" l User}
+   addUserKnob {7 yrot l "y rotation" R -90 90}
+   yrot {{parent.rot.y i}}
+  }
+  ColorMatrix {
+   matrix {
+       {1 0 0}
+       {0 {cos(radians(xrot)) i} {sin(radians(xrot)) i}}
+       {0 {-sin(radians(xrot)) i} {cos(radians(xrot)) i}}
+     }
+   name ColorMatrix15
+   label "xrot (pitch)\n"
+   xpos -304
+   ypos 127
+   addUserKnob {20 "" l User}
+   addUserKnob {7 xrot l "x rotation" R -90 90}
+   xrot {{parent.rot.x i}}
+  }
+  ColorMatrix {
+   matrix {
+       {{cos(radians(zrot)) i} {sin(radians(zrot)) i} 0}
+       {{-sin(radians(zrot)) i} {cos(radians(zrot)) i} 0}
+       {0 0 1}
+     }
+   name ColorMatrix13
+   label "zrot (roll)"
+   xpos -304
+   ypos 165
+   addUserKnob {20 "" l User}
+   addUserKnob {7 zrot l "z rotation" R -90 90}
+   zrot {{parent.rot.z i}}
+  }
+  Output {
+   name Output1
+   xpos -304
+   ypos 280
+  }
+ end_group
+set N1e85530 [stack 0]
+ Group {
+  name RotationMatrix2
+  help "Use this for rotating xyz vector data such as P and N."
+  xpos -575
+  ypos -440
+  addUserKnob {20 RotationMatrix}
+  addUserKnob {13 rot l rotation t "Link to say axis' or camera's rotate.\nYaw = y axis.\nPitch = x axis.\nRoll = z axis."}
+  rot {0 180 0}
+ }
+  Input {
+   inputs 0
+   name Input
+   xpos -304
+   ypos -17
+  }
+  ColorMatrix {
+   matrix {
+       {{cos(radians(yrot)) i} 0 {-sin(radians(yrot)) i}}
+       {0 1 0}
+       {{sin(radians(yrot)) i} 0 {cos(radians(yrot)) i}}
+     }
+   name ColorMatrix14
+   label "yrot (yaw)"
+   xpos -304
+   ypos 89
+   addUserKnob {20 "" l User}
+   addUserKnob {7 yrot l "y rotation" R -90 90}
+   yrot {{parent.rot.y i}}
+  }
+  ColorMatrix {
+   matrix {
+       {1 0 0}
+       {0 {cos(radians(xrot)) i} {sin(radians(xrot)) i}}
+       {0 {-sin(radians(xrot)) i} {cos(radians(xrot)) i}}
+     }
+   name ColorMatrix15
+   label "xrot (pitch)\n"
+   xpos -304
+   ypos 127
+   addUserKnob {20 "" l User}
+   addUserKnob {7 xrot l "x rotation" R -90 90}
+   xrot {{parent.rot.x i}}
+  }
+  ColorMatrix {
+   matrix {
+       {{cos(radians(zrot)) i} {sin(radians(zrot)) i} 0}
+       {{-sin(radians(zrot)) i} {cos(radians(zrot)) i} 0}
+       {0 0 1}
+     }
+   name ColorMatrix13
+   label "zrot (roll)"
+   xpos -304
+   ypos 165
+   addUserKnob {20 "" l User}
+   addUserKnob {7 zrot l "z rotation" R -90 90}
+   zrot {{parent.rot.z i}}
+  }
+  Output {
+   name Output1
+   xpos -304
+   ypos 280
+  }
+ end_group
+ Expression {
+  temp_name0 u
+  temp_expr0 0.5*(1+atan(b,r)/pi)
+  temp_name1 v
+  temp_expr1 acos(-g)/pi
+  expr0 u
+  expr1 v
+  expr2 0
+  channel3 {none none none -rgba.alpha}
+  name SphericalProjection6
+  label "Convert normals \nto latlong UV coords"
+  xpos -575
+  ypos -414
+ }
+push $N2cc8f80
+ Dot {
+  name Dot5
+  xpos -431
+  ypos -630
+ }
+set N1eabb60 [stack 0]
+ STMap {
+  inputs 2
+  channels rgb
+  uv rgb
+  name STMap14
+  xpos -465
+  ypos -400
+ }
+ STMap {
+  inputs 2
+  channels rgb
+  uv rgb
+  name STMap15
+  label "latlong to angular"
+  xpos -682
+  ypos 228
+ }
+ Group {
+  inputs 2
+  name FFTConvolve3
+  xpos -682
+  ypos 307
+ }
+  Input {
+   inputs 0
+   name brdf
+   xpos -768
+   ypos -542
+   number 1
+  }
+  Input {
+   inputs 0
+   name probe
+   xpos -592
+   ypos -543
+  }
+  FFT {
+   channels rgb
+   name FFT1
+   xpos -615
+   ypos -466
+  }
+  FFTMultiply {
+   inputs 2
+   channels rgb
+   name FFTMultiply4
+   xpos -669
+   ypos -404
+  }
+  InvFFT {
+   channels rgb
+   name InvFFT4
+   xpos -669
+   ypos -378
+  }
+  Output {
+   name Output1
+   xpos -669
+   ypos -278
+  }
+ end_group
+ STMap {
+  inputs 2
+  channels rgba
+  uv rgb
+  name STMap26
+  xpos -682
+  ypos 560
+ }
+push $N2cda460
+ Expression {
+  temp_name0 radius
+  temp_expr0 ".5/pi*acos(-b)/sqrt(r*r + g*g)"
+  expr0 "0.5 + (r*radius)"
+  expr1 "0.5 + (g*radius)"
+  expr2 0
+  name AngularMapProjection
+  xpos -964
+  ypos 500
+ }
+push $N1e79e80
+push $N29eb380
+push $N1e85530
+ Expression {
+  temp_name0 u
+  temp_expr0 0.5*(1+atan(b,r)/pi)
+  temp_name1 v
+  temp_expr1 acos(-g)/pi
+  expr0 u
+  expr1 v
+  expr2 0
+  channel3 {none none none -rgba.alpha}
+  name SphericalProjection5
+  label "Convert normals \nto latlong UV coords"
+  xpos -914
+  ypos -413
+ }
+push $N1eabb60
+ STMap {
+  inputs 2
+  channels rgb
+  uv rgb
+  name STMap13
+  xpos -804
+  ypos -399
+ }
+ STMap {
+  inputs 2
+  channels rgb
+  uv rgb
+  name STMap12
+  label "latlong to angular"
+  xpos -1033
+  ypos 209
+ }
+ Group {
+  inputs 2
+  name FFTConvolve1
+  xpos -1033
+  ypos 305
+ }
+  Input {
+   inputs 0
+   name brdf
+   xpos -768
+   ypos -542
+   number 1
+  }
+  Input {
+   inputs 0
+   name probe
+   xpos -592
+   ypos -543
+  }
+  FFT {
+   channels rgb
+   name FFT1
+   xpos -615
+   ypos -466
+  }
+  FFTMultiply {
+   inputs 2
+   channels rgb
+   name FFTMultiply4
+   xpos -669
+   ypos -404
+  }
+  InvFFT {
+   channels rgb
+   name InvFFT4
+   xpos -669
+   ypos -378
+  }
+  Output {
+   name Output1
+   xpos -669
+   ypos -278
+  }
+ end_group
+ STMap {
+  inputs 2
+  channels rgba
+  uv rgb
+  name STMap24
+  xpos -1033
+  ypos 566
+ }
+ Keymix {
+  inputs 3
+  channels rgb
+  name Keymix3
+  xpos -843
+  ypos 852
+ }
+ CopyBBox {
+  inputs 2
+  name CopyBBox2
+  xpos -843
+  ypos 897
+ }
+ Output {
+  name Output1
+  xpos -843
+  ypos 1015
+ }
+end_group

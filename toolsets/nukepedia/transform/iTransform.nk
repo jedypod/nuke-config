@@ -1,0 +1,216 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name iTransform
+ addUserKnob {20 "" l Transform}
+ addUserKnob {41 matrix T Transform1.matrix}
+ addUserKnob {41 translate T Transform1.translate}
+ addUserKnob {41 rotate T Transform1.rotate}
+ addUserKnob {41 scale T Transform1.scale}
+ addUserKnob {41 skewX l "skew X" T Transform1.skewX}
+ addUserKnob {41 skewY l "skew Y" T Transform1.skewY}
+ addUserKnob {41 skew_order l "skew order" T Transform1.skew_order}
+ addUserKnob {41 center T Transform1.center}
+ addUserKnob {41 filter T Transform1.filter}
+ addUserKnob {41 clamp T Transform1.clamp}
+ addUserKnob {41 crop l "black outside" +INVISIBLE T Transform1.crop}
+ addUserKnob {41 clip l "knob crop \$value" +INVISIBLE T Transform1.clip}
+ addUserKnob {6 crop_to_input l "crop to input format" -STARTLINE}
+ crop_to_input true
+ addUserKnob {14 AdjBBox1_numpixels l "Add Pixels" R 0 100}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos -370
+  ypos -466
+ }
+ Dot {
+  name Dot5
+  label " "
+  note_font "Helvetica Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos -336
+  ypos -318
+ }
+set N8f7fe90 [stack 0]
+ Dot {
+  name Dot6
+  label " "
+  note_font "Helvetica Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos -666
+  ypos -318
+ }
+ Dot {
+  name Dot7
+  label " "
+  note_font "Helvetica Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos -666
+  ypos 426
+ }
+ Input {
+  inputs 0
+  name Inputctrl
+  xpos 70
+  ypos -82
+  number 1
+ }
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  alpha black
+  name Shuffle1
+  xpos 70
+  ypos -34
+ }
+push $N8f7fe90
+ Remove {
+  name Remove1
+  xpos -150
+  ypos -328
+ }
+ AdjBBox {
+  numpixels {{parent.AdjBBox1_numpixels.w} {parent.AdjBBox1_numpixels.h}}
+  name AdjBBox1
+  xpos -150
+  ypos -250
+ }
+ Expression {
+  expr0 x
+  expr1 y
+  name Expression1
+  xpos -150
+  ypos -202
+ }
+set N2dfdb150 [stack 0]
+ Dot {
+  name Dot2
+  xpos -226
+  ypos -198
+ }
+ Transform {
+  translate {{parent.Transform1.translate} {parent.Transform1.translate}}
+  rotate {{parent.Transform1.rotate}}
+  scale {{parent.Transform1.scale} {parent.Transform1.scale}}
+  skewX {{parent.Transform1.skew}}
+  center {{parent.Transform1.center} {parent.Transform1.center}}
+  filter {{Transform1.filter}}
+  clamp {{parent.Transform1.clamp}}
+  black_outside {{parent.Transform1.black_outside}}
+  motionblur {{parent.Transform1.motionblur}}
+  shutter {{parent.Transform1.shutter}}
+  shutteroffset {{Transform1.shutteroffset}}
+  shuttercustomoffset {{parent.Transform1.shuttercustomoffset}}
+  name Transform2
+  xpos -260
+  ypos -130
+ }
+push $N2dfdb150
+ Merge2 {
+  inputs 2
+  operation minus
+  name Merge1
+  xpos -150
+  ypos -130
+ }
+ Merge2 {
+  inputs 2
+  operation multiply
+  name Merge2
+  xpos -150
+  ypos -34
+ }
+set N2e18dd10 [stack 0]
+ Dot {
+  name Dot1
+  xpos -226
+  ypos -30
+ }
+ Dot {
+  name Dot3
+  xpos -226
+  ypos 114
+ }
+push $N8f7fe90
+ Dot {
+  name Dot4
+  xpos -336
+  ypos 42
+ }
+set N20733650 [stack 0]
+ Copy {
+  inputs 2
+  from0 rgba.red
+  to0 rgba.red
+  from1 rgba.green
+  to1 rgba.green
+  name Copy2
+  xpos -370
+  ypos 98
+ }
+ IDistort {
+  channels none
+  name IDistort1
+  xpos -370
+  ypos 272
+ }
+push $N2e18dd10
+push $N20733650
+ Copy {
+  inputs 2
+  from0 rgba.red
+  to0 forward.u
+  from1 rgba.green
+  to1 forward.v
+  name Copy1
+  xpos -150
+  ypos 26
+ }
+ IDistort {
+  uv forward
+  name IDistort2
+  xpos -150
+  ypos 104
+ }
+ Remove {
+  channels none
+  name Remove2
+  xpos -150
+  ypos 176
+ }
+ Copy {
+  inputs 2
+  from0 -rgba.alpha
+  to0 -rgba.alpha
+  name Copy3
+  xpos -150
+  ypos 272
+ }
+ CopyBBox {
+  inputs 2
+  name CopyBBox1
+  xpos -150
+  ypos 422
+  disable {{!crop_to_input}}
+ }
+ Output {
+  name Output
+  xpos -150
+  ypos 542
+ }
+ Transform {
+  inputs 0
+  center {960 540}
+  black_outside false
+  name Transform1
+  label "expresison link this\nto avoid st map overlay"
+  xpos -462
+  ypos -142
+ }
+end_group

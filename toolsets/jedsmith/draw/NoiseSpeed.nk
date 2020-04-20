@@ -1,0 +1,17 @@
+Noise {
+replace true
+size 440
+zoffset {{(frame*speed+100)/100+z_offset}}
+lacunarity 1.46
+gain 0.65
+translate {{t*direction+dir_offset} {t*direction+dir_offset}}
+center {1024 540}
+addUserKnob {20 Controls}
+addUserKnob {7 z_offset}
+z_offset 666
+addUserKnob {7 speed R 0 20}
+speed 10
+addUserKnob {12 direction}
+direction {0 100}
+addUserKnob {12 dir_offset}
+}

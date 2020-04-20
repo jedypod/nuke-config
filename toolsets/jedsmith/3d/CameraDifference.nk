@@ -1,0 +1,60 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name CameraDifference
+ tile_color 0x8c0000ff
+ note_font_color 0xff
+ addUserKnob {20 CameraDifference}
+ addUserKnob {7 distance t "Distance of the card from camera." R 0 200}
+ distance 1000
+ addUserKnob {41 format t "The output resolution should be the layout resolution of your shot." T Card3D.format}
+ addUserKnob {41 filter -STARTLINE T Card3D.filter}
+ addUserKnob {26 ""}
+ addUserKnob {26 motionblur_label l " " T "<font color=#ddd><b>Motionblur Settings"}
+ addUserKnob {6 motionblur l "enable motionblur in gui" t "Assuming disable motionblur is false:\nIf disabled, motionblur will be off in GUI mode but enabled on the farm.\nIf enabled, motionblur will be enabled on the farm and in the gui." +STARTLINE}
+ motionblur true
+ addUserKnob {6 disable_motionblur l "disable motionblur" t "disables motionblur completely" -STARTLINE}
+}
+ Input {
+  inputs 0
+  name Inputcam_src
+  label "\[value number]\n"
+  xpos 630
+  ypos -656
+  number 1
+ }
+ Input {
+  inputs 0
+  name Inputcam_dst
+  label "\[value number]"
+  xpos 495
+  ypos -656
+  number 2
+ }
+ Input {
+  inputs 0
+  name Input
+  label "\[value number]"
+  xpos 764
+  ypos -656
+ }
+ Card3D {
+  inputs 3
+  scaling {{"\[topnode parent.input1].win_scale.u"} {"\[topnode parent.input1].win_scale.v"} 1}
+  uniform_scale {{parent.distance}}
+  pivot {0 0 1}
+  lens_in_focal {{"\[topnode parent.input1].focal"}}
+  lens_in_haperture {{"\[topnode parent.input1].haperture"}}
+  filter Keys
+  black_outside false
+  shutteroffset centred
+  name Card3D
+  xpos 764
+  ypos -530
+ }
+ Output {
+  name Output
+  xpos 764
+  ypos -418
+ }
+end_group

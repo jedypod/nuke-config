@@ -1,0 +1,120 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name ImageplaneFrustrumCard
+ tile_color 0x9c0000ff
+ addUserKnob {20 ImagePlane}
+ addUserKnob {7 distance t "Distance of the card from camera." R 0 500}
+ distance 200
+ addUserKnob {7 shutter_angle l "shutter angle" R 0 2}
+ shutter_angle 0.5
+ addUserKnob {4 shutter_offset l "shutter offset" -STARTLINE M {center start end "" ""}}
+ addUserKnob {7 mblur_samples l "mblur samples" t "motion blur samples" R 0 50}
+ mblur_samples 1
+}
+ Input {
+  inputs 0
+  name Inputcam
+  label "\[value number]\n"
+  xpos -442
+  ypos -56
+  number 1
+ }
+ Dot {
+  name Dot1
+  label " "
+  note_font "Helvetica Bold"
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos -408
+  ypos 74
+ }
+set Na448200 [stack 0]
+ Dot {
+  name Dot3
+  label " "
+  note_font "Helvetica Bold"
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos -408
+  ypos 194
+ }
+set Na44a230 [stack 0]
+ Dot {
+  name Dot2
+  label " "
+  note_font "Helvetica Bold"
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos -408
+  ypos 354
+ }
+push $Na44a230
+push $Na448200
+ Input {
+  inputs 0
+  name Input
+  label "\[value number]"
+  xpos -174
+  ypos -56
+ }
+ Project3D2 {
+  inputs 2
+  crop false
+  name Project3D1
+  xpos -174
+  ypos 70
+ }
+ Card2 {
+  rows 20
+  columns 20
+  z {{parent.distance}}
+  lens_in_focal {{"\[topnode input1]knob.focal"}}
+  lens_in_haperture {{"\[topnode input1]knob.haperture"}}
+  control_points {3 3 3 6 
+
+1 {-0.5 -0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0 0 0} 
+1 {0 -0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0.5 0 0} 
+1 {0.5 -0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {1 0 0} 
+1 {-0.5 0 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0 0.5 0} 
+1 {0 0 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0.5 0.5 0} 
+1 {0.5 0 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {1 0.5 0} 
+1 {-0.5 0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0 1 0} 
+1 {0 0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0.5 1 0} 
+1 {0.5 0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {1 1 0} }
+  name CARD_MM
+  xpos -174
+  ypos 150
+ }
+ TransformGeo {
+  inputs 2
+  name TransformGeo1
+  xpos -174
+  ypos 190
+ }
+ Input {
+  inputs 0
+  name Inputbg
+  xpos -40
+  ypos 350
+  number 2
+ }
+ ScanlineRender {
+  inputs 3
+  ambient 1
+  samples {{parent.mblur_samples}}
+  shutter {{parent.shutter_angle}}
+  shutteroffset {{parent.shutter_offset}}
+  stochastic_samples {{parent.stochsamples}}
+  motion_vectors_type distance
+  name ScanlineRender_MATCHMOVE
+  selected true
+  xpos -174
+  ypos 350
+ }
+ Output {
+  name Output
+  xpos -174
+  ypos 478
+ }
+end_group

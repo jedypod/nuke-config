@@ -1,0 +1,303 @@
+Group {
+ name GradeAOV
+ help "<b>GradeAOV</b>\nGrade a single AOV channel to adjust it's contribution. No need to shuffle out the AOV, just choose the AOV channel in the dropdown.\n\nShow AOV will pass through the AOV channel. Optional mask input will mask the operation. Optional internal mask will mask the operation by the selected channel, and blend that mask with the external mask with the selected operation, if the external mask exists."
+ tile_color 0x828b98ff
+ label "\[value SELECT_AOV.in]"
+ addUserKnob {20 GradeAOV}
+ addUserKnob {41 AOV T SELECT_AOV.in}
+ addUserKnob {6 show_aov l "<b><font size=4>&nbsp;Show AOV</b>" t "Display the selected AOV layer" -STARTLINE}
+ addUserKnob {6 replace_aov l "<b><font size=4>&nbsp;Replace AOV</b>" t "If this is checked, the graded AOV will replace the original AOV from the input of this node. \n\nFor example, if you are stacking 3 different GradeAOV nodes all affecting specular, having this enabled will result in the correct math, otherwise there will be a difference between the specular AOV and the specular present in the Beauty." -STARTLINE}
+ replace_aov true
+ addUserKnob {6 unpremultiply_aovs l "<b><font size=4>&nbsp;Unpremultiply" t "Unpremult cg by the alpha if this box is checked." +STARTLINE}
+ unpremultiply_aovs true
+ addUserKnob {26 ""}
+ addUserKnob {41 saturation T Saturation1.saturation}
+ addUserKnob {41 mode l "" -STARTLINE T Saturation1.mode}
+ addUserKnob {41 blackpoint T Grade.blackpoint}
+ addUserKnob {41 whitepoint T Grade.whitepoint}
+ addUserKnob {41 black l lift T Grade.black}
+ addUserKnob {41 white l gain T Grade.white}
+ addUserKnob {41 multiply T Grade.multiply}
+ addUserKnob {41 add l offset T Grade.add}
+ addUserKnob {41 gamma T Grade.gamma}
+ addUserKnob {41 reverse T Grade.reverse}
+ addUserKnob {41 black_clamp l "black clamp" -STARTLINE T Grade.black_clamp}
+ addUserKnob {41 white_clamp l "white clamp" -STARTLINE T Grade.white_clamp}
+ addUserKnob {26 huecorrect l "<b><font size=4>&nbsp;HueCorrect</b>" T " "}
+ addUserKnob {20 HueCorrect l "" +STARTLINE n 1}
+ HueCorrect 0
+ addUserKnob {41 hue l "" -STARTLINE T HueCorrect1.hue}
+ addUserKnob {20 endGroup n -1}
+ addUserKnob {26 hueshiftlabel l <b>HueShift T " "}
+ addUserKnob {41 color l "color axis" T HueShift1.color}
+ addUserKnob {41 color_saturation l "axis saturation" T HueShift1.color_saturation}
+ addUserKnob {41 hue_rotation l "hue rotation" T HueShift1.hue_rotation}
+ addUserKnob {26 div l " " T " "}
+ addUserKnob {26 ""}
+ addUserKnob {7 mix}
+ mix 1
+}
+ Input {
+  inputs 0
+  name Input
+  label "\[value number]"
+  xpos 400
+  ypos -1936
+ }
+ Dot {
+  name Dot3
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos 434
+  ypos -1734
+ }
+set N15de7180 [stack 0]
+ Dot {
+  name Dot2
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos -226
+  ypos -1734
+ }
+set N10031380 [stack 0]
+ Shuffle {
+  in none
+  in2 rgba
+  alpha alpha2
+  name SELECT_AOV
+  label "\[value in]"
+  xpos -260
+  ypos -1696
+ }
+ Remove {
+  operation keep
+  channels rgba
+  name Remove1
+  xpos -260
+  ypos -1618
+ }
+ Unpremult {
+  name Unpremult2
+  xpos -260
+  ypos -1546
+  disable {{!parent.unpremultiply_aovs}}
+ }
+ Dot {
+  name Dot9
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos -226
+  ypos -1086
+ }
+set N84b15e90 [stack 0]
+ Dot {
+  name Dot17
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos -116
+  ypos -1086
+ }
+set N46e92950 [stack 0]
+ Dot {
+  name Dot29
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos 104
+  ypos -1086
+ }
+set N7e1f7520 [stack 0]
+ Dot {
+  name Dot6
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos 104
+  ypos -150
+ }
+ Input {
+  inputs 0
+  name InputMask
+  xpos -1360
+  ypos -826
+  number 1
+ }
+push $N10031380
+ Dot {
+  name Dot21
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos -1106
+  ypos -1734
+ }
+ Shuffle {
+  red white
+  green white
+  blue white
+  alpha white
+  name WHITE
+  tile_color 0xedededff
+  xpos -1140
+  ypos -1018
+ }
+ Switch {
+  inputs 2
+  which {{"\[exists parent.input1]"}}
+  name MASK_SWITCHER
+  xpos -1140
+  ypos -826
+ }
+ Dot {
+  name Dot22
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos -1106
+  ypos -630
+ }
+push $N46e92950
+ Dot {
+  name Dot18
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos -116
+  ypos -630
+ }
+push $N84b15e90
+ HueShift {
+  name HueShift1
+  xpos -260
+  ypos -970
+ }
+ Grade {
+  black_clamp false
+  name Grade
+  xpos -260
+  ypos -898
+ }
+ Saturation {
+  mix {{parent.Grade.mix}}
+  name Saturation1
+  xpos -260
+  ypos -850
+ }
+ HueCorrect {
+  name HueCorrect1
+  xpos -260
+  ypos -802
+ }
+ Keymix {
+  inputs 3
+  channels rgba
+  invertMask true
+  bbox B
+  name INTERNAL_MASK
+  xpos -260
+  ypos -634
+ }
+ Dot {
+  name Dot11
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos -226
+  ypos -462
+ }
+set Nea68f540 [stack 0]
+ Premult {
+  name Premult3
+  xpos -260
+  ypos -370
+  disable {{!parent.unpremultiply_aovs}}
+ }
+ Dot {
+  name Dot7
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos -226
+  ypos -270
+ }
+push $Nea68f540
+push $N7e1f7520
+push $N15de7180
+ Unpremult {
+  name Unpremult3
+  xpos 400
+  ypos -1546
+  disable {{!parent.unpremultiply_aovs}}
+ }
+ Merge2 {
+  inputs 2
+  operation from
+  bbox B
+  name Merge3
+  xpos 400
+  ypos -1090
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  bbox B
+  name Merge4
+  xpos 400
+  ypos -466
+ }
+ Premult {
+  name Premult2
+  xpos 400
+  ypos -370
+  disable {{!parent.unpremultiply_aovs}}
+ }
+ ShuffleCopy {
+  inputs 2
+  red red
+  green green
+  blue blue
+  out {{{parent.SELECT_AOV.in}}}
+  name _REPLACE_AOV_
+  label "\[value in] | \[value in2] -> \[value out]"
+  xpos 400
+  ypos -280
+  disable {{!parent.replace_aov}}
+ }
+ Switch {
+  inputs 2
+  which {{parent.show_aov}}
+  name PREVIEW_AOV
+  xpos 400
+  ypos -154
+ }
+push $N15de7180
+ Dot {
+  name Dot10
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos 654
+  ypos -1734
+ }
+ Dot {
+  name Dot13
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos 654
+  ypos -30
+ }
+ Dissolve {
+  inputs 2
+  which {{parent.mix}}
+  name MIX
+  xpos 400
+  ypos -40
+ }
+ Output {
+  name Output1
+  xpos 400
+  ypos 206
+ }
+end_group

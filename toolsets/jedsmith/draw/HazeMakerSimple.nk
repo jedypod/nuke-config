@@ -1,0 +1,212 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+add_layer {depth_extra depth_extra.red depth_extra.green depth_extra.blue}
+Group {
+ name HazeMaker_simple
+ addUserKnob {20 HazeMaker}
+ addUserKnob {26 ""}
+ addUserKnob {26 haze_help_text l " " T "<font color=grey>\n1 - choose channel with z-depth.<br/>\n2 - sample or set haze color.<br/>\n3 - optionally, merge the haze unpremultiplied."}
+ addUserKnob {41 depth_channel l depth T Copy1.from0}
+ addUserKnob {6 unpremult_input l unpremultiply t "Apply haze within an unpremult" +STARTLINE}
+ addUserKnob {41 alpha l by -STARTLINE T Unpremult1.alpha}
+ addUserKnob {26 ""}
+ addUserKnob {18 haze_color}
+ haze_color {0.04151891172 0.06488467008 0.1000000089}
+ addUserKnob {6 haze_color_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {26 ""}
+ addUserKnob {26 opacity_label l "@b;Opacity" T " "}
+ addUserKnob {26 opacity_help l " " T "<font color=grey>\n1 - sample far distancef at pixel furthest from camera. <br/>\n2 - adjust the colorlookup to adjust opacity over distance. <br/>\n&nbsp; &nbsp; &nbsp; 0 = close, 1 = far distance.<br/>\n3 - mix is a global multiplier on the haze. "}
+ addUserKnob {41 far_distance l "far distance" T _WHITEPOINT_.whitepoint}
+ addUserKnob {7 zero_depth t "Set zero values in depth channel to this value." R 0 10000}
+ zero_depth 10000
+ addUserKnob {41 lut l "" +STARTLINE T _OPACITY_OVER_DEPTH_.lut}
+ addUserKnob {7 alpha_density t "alpha density multiplier - 0 will be a plus, 1 will be depth alpha. "}
+ alpha_density 0.8
+ addUserKnob {26 ""}
+ addUserKnob {6 output_haze_only l "output haze only" t "bypass the merge and just output the haze. Useful if you need to do rotos and adjustments on the haze." +STARTLINE}
+ output_haze_only true
+ addUserKnob {7 mix}
+ mix 1
+}
+ Input {
+  inputs 0
+  name Input
+  xpos -40
+  ypos -930
+ }
+ Dot {
+  name Dot57
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos -6
+  ypos -606
+ }
+set Nfcf82d20 [stack 0]
+ Dot {
+  name Dot75
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos -408
+  ypos -606
+ }
+set N225956e0 [stack 0]
+ Dot {
+  name Dot58
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos -676
+  ypos -606
+ }
+ AddChannels {
+  channels rgba
+  channels2 depth
+  channels3 depth_extra
+  name AddChannels1
+  xpos -710
+  ypos -570
+ }
+set N21905c60 [stack 0]
+push $N21905c60
+ Copy {
+  inputs 2
+  from0 depth_extra.red
+  to0 rgba.alpha
+  bbox B
+  name Copy1
+  xpos -710
+  ypos -536
+ }
+ Expression {
+  channel0 alpha
+  expr0 "a ==  0 ? zero_depth : a"
+  name _SET_ZERO_DEPTH_
+  xpos -710
+  ypos -490
+  addUserKnob {20 User}
+  addUserKnob {7 zero_depth R 0 10000}
+ }
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name Shuffle2
+  label alpha
+  xpos -710
+  ypos -448
+ }
+ Grade {
+  channels rgba
+  whitepoint 200
+  name _WHITEPOINT_
+  xpos -710
+  ypos -370
+ }
+ ColorLookup {
+  lut {master {curve C 0 0.9906862378}
+    red {}
+    green {}
+    blue {}
+    alpha {}}
+  name _OPACITY_OVER_DEPTH_
+  xpos -710
+  ypos -330
+ }
+ Clamp {
+  channels rgba
+  name Clamp1
+  xpos -710
+  ypos -290
+ }
+ Dot {
+  name Dot76
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos -676
+  ypos -246
+ }
+push $N225956e0
+ Shuffle {
+  alpha white
+  name Shuffle1
+  label "white alpha"
+  xpos -442
+  ypos -576
+ }
+ Grade {
+  channels rgba
+  white 0
+  add {{parent.haze_color} {parent.haze_color} {parent.haze_color} {parent.alpha_density}}
+  name CONSTANT
+  selected true
+  xpos -442
+  ypos -490
+ }
+ Merge2 {
+  inputs 2
+  operation mask
+  bbox B
+  name Merge39
+  xpos -442
+  ypos -250
+ }
+ Multiply {
+  channels rgba
+  value {{parent.mix}}
+  name _INTENSITY_
+  xpos -442
+  ypos -189
+ }
+ Dot {
+  name Dot77
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos -408
+  ypos -126
+ }
+set Ne9f9e90 [stack 0]
+push $Ne9f9e90
+push $Nfcf82d20
+ Unpremult {
+  name Unpremult1
+  xpos -40
+  ypos -170
+  disable {{!parent.unpremult_input}}
+ }
+ Merge2 {
+  inputs 2
+  bbox B
+  output rgb
+  name Merge40
+  label " Alpha not merged"
+  xpos -40
+  ypos -136
+ }
+ Premult {
+  alpha {{{parent.Unpremult1.alpha}}}
+  name Premult1
+  xpos -40
+  ypos -90
+  disable {{!parent.unpremult_input}}
+ }
+ Switch {
+  inputs 2
+  which {{parent.output_haze_only}}
+  name _OUTPUT_HAZE_ONLY_
+  xpos -40
+  ypos 30
+ }
+ Output {
+  name Output1
+  xpos -40
+  ypos 310
+ }
+end_group

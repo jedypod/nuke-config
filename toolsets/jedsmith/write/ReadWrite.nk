@@ -1,0 +1,26 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Write {
+ file "./\[value read_filename].%05d.exr"
+ raw true
+ file_type exr
+ compression "PIZ Wavelet (32 scanlines)"
+ version 4
+ name ReadWrite3
+ selected true
+ xpos -1000
+ ypos 250
+ addUserKnob {20 Naming}
+ addUserKnob {1 read_filepath}
+ read_filepath "\[value \[topnode].file]"
+ addUserKnob {1 read_dirname}
+ read_dirname "\[file dirname \[value read_filepath]]"
+ addUserKnob {1 read_absfilename}
+ read_absfilename "\[file rootname \[value read_filepath]]"
+ addUserKnob {1 read_parent_dirname}
+ read_parent_dirname "\[lrange \[file split \[value read_dirname]] end end]"
+ addUserKnob {1 read_filename}
+ read_filename "\[lrange \[file split \[value read_absfilename]] end end]"
+ addUserKnob {1 reelname}
+ reelname "\[lrange \[split \[value read_parent_dirname] \".\"] 0 0]"
+}

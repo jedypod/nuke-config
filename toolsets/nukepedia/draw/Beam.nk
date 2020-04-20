@@ -1,0 +1,44 @@
+Group {
+name BlinkBeam
+addUserKnob {20 BlinkBeam}
+addUserKnob {41 "Local GPU: " T BlinkScript2.gpuName}
+addUserKnob {41 "Use GPU if Available" T BlinkScript2.useGPUIfAvailable}
+addUserKnob {26 "" +STARTLINE}
+addUserKnob {41 Start T BlinkScript2.BlinkBeam_Start}
+addUserKnob {41 End T BlinkScript2.BlinkBeam_End}
+addUserKnob {41 "Start Width" T "BlinkScript2.BlinkBeam_Start Width"}
+addUserKnob {41 "End Width" T "BlinkScript2.BlinkBeam_End Width"}
+addUserKnob {41 Time T BlinkScript2.BlinkBeam_Time}
+addUserKnob {41 Length T BlinkScript2.BlinkBeam_Length}
+addUserKnob {41 Softness T BlinkScript2.BlinkBeam_Softness}
+addUserKnob {41 "3D Perspective" T "BlinkScript2.BlinkBeam_3D Perspective"}
+}
+Input {
+inputs 0
+name Input
+xpos -7080
+ypos 20966
+}
+BlinkScript {
+recompileCount 1
+ProgramGroup 1
+KernelDescription "2 \"BlinkBeam\" iterate pixelWise 257ffa730f1820b0d304695dacae3452474899ee29997d07bcf229bfd37786b9 2 \"src\" Read Point \"dst\" Write Point 8 \"Start\" Float 2 AAAWQwAAyEM= \"End\" Float 2 AAB6RACAO0Q= \"Start Width\" Float 1 AACgQA== \"End Width\" Float 1 AAAgQg== \"Time\" Float 1 AAAAPw== \"Length\" Float 1 AACAPg== \"Softness\" Float 1 AAAAPw== \"3D Perspective\" Bool 1 AQ== 8 \"start\" 2 1 \"end\" 2 1 \"start_width\" 1 1 \"end_width\" 1 1 \"start_time\" 1 1 \"len\" 1 1 \"softness\" 1 1 \"persp\" 1 1 14 \"direction\" Float 2 1 AAAAAAAAAAA= \"anim_end\" Float 2 1 AAAAAAAAAAA= \"anim_start\" Float 2 1 AAAAAAAAAAA= \"full_length\" Float 1 1 AAAAAA== \"slope\" Float 1 1 AAAAAA== \"y_intercept\" Float 1 1 AAAAAA== \"slope_perp\" Float 1 1 AAAAAA== \"min_x\" Float 1 1 AAAAAA== \"max_x\" Float 1 1 AAAAAA== \"min_width\" Float 1 1 AAAAAA== \"max_width\" Float 1 1 AAAAAA== \"_time\" Float 1 1 AAAAAA== \"horizontal\" Bool 1 1 AA== \"vertical\" Bool 1 1 AA=="
+kernelSource "kernel BlinkBeam : ImageComputationKernel<ePixelWise>\n\{\n  Image<eRead, eAccessPoint, eEdgeNone> src;  //the input image\n  Image<eWrite> dst;  //the output image\n\n\n  param:\n    float2 start;\n    float2 end;\n    float start_width;\n    float end_width;\n    float start_time;\n    float len;\n    float softness;\n    bool persp;\n\n\n  local:\n    float2 direction;\n    float2 anim_end;\n    float2 anim_start;\n    float full_length;\n    float slope;\n    float y_intercept;\n    float slope_perp;\n    float min_x;\n    float max_x;\n    float min_width;\n    float max_width;\n    float _time;\n    bool horizontal;\n    bool vertical;\n\n\n  void define() \{\n    defineParam( start, \"Start\", float2( 150.0f, 400.0f ) );\n    defineParam( end, \"End\", float2( 1000.0f, 750.0f ) );\n    defineParam( start_width, \"Start Width\", 5.0f );\n    defineParam( end_width, \"End Width\", 40.0f );\n    defineParam( start_time, \"Time\", 0.5f );\n    defineParam( len, \"Length\", 0.25f );\n    defineParam( softness, \"Softness\", 0.5f );\n    defineParam( persp, \"3D Perspective\", true );\n  \}\n\n\n  void init() \{\n\n    // Basic initialisation\n    direction = end - start;\n    full_length = length( start - end );\n    min_width = min( start_width, end_width );\n    max_width = max( start_width, end_width );\n\n    if ( direction.y == 0 )\n      horizontal = true;\n    else if ( direction.x == 0 )\n      vertical = true;\n    else \{\n      vertical = false;\n      horizontal = false;\n      slope = direction.y / direction.x;\n      y_intercept = end.y - slope * end.x;\n      slope_perp = -( 1 / slope );\n    \}\n\n\n    // ---------- Beam location ----------\n\n    // Fit time to allow for length to disappear from both ends\n    float current_length = ( full_length * len ) / full_length;\n    float range = clamp( start_time, 0.0f, 1.0f) * ( 1 + current_length );\n    float start_dist = clamp( range - current_length, 0.0f, 1.0f );\n    float end_dist = clamp( range, 0.0f, 1.0f );\n\n    if ( persp ) \{\n      start_dist = linear_to_perspective( start_dist );\n      end_dist = linear_to_perspective( end_dist );\n    \}\n\n    anim_start = start + direction * start_dist;\n    anim_end = start + direction * end_dist;\n\n  \}\n\n\n  float linear_to_perspective( float linear ) \{\n    // Perspective Deformation\n    int depth = -1;\n    float last_low = 0.0f;\n    float last_high = 1.0f;\n    float tolerance = 0.00001f;\n    float distance_to_high = fabs( last_high - linear );\n    float distance_to_low = fabs( last_low - linear );\n\n    // Find the amount of times to halve 1 to get to time\n    while ( distance_to_high > tolerance && distance_to_low > tolerance) \{\n      depth++;\n      float difference = ( last_high - last_low ) / 2.0f;\n      if ( distance_to_high < distance_to_low )\n        last_low += difference;\n      else\n        last_high -= difference;\n      distance_to_high = fabs( last_high - linear );\n      distance_to_low = fabs( last_low - linear );\n    \}\n\n    // Calculate the multiplier values for the trapezoid midpoint equation\n    float options = pow( 2, depth );\n    float factor = options * linear;\n\n    float min_mult = factor * 2;\n    float max_mult = ( options - factor ) * 2;\n\n    // Calculate perspective using midpoint equation with multipliers\n    float perspective;\n    if ( start_width < end_width )\n      perspective = ( ( min_mult * min_width * full_length ) / ( min_mult * min_width + max_mult * max_width ) / full_length );\n    else\n      perspective = 1 - ( ( max_mult * min_width * full_length ) / ( max_mult * min_width + min_mult * max_width ) / full_length );\n\n    return perspective;\n  \}\n\n\n  void process( int2 pos ) \{\n    \n    // -------- Beam appearance ---------\n\n    float intersect_x;\n    float intersect_y;\n\n    if ( vertical ) \{\n      intersect_x = start.x;\n      intersect_y = pos.y;\n    \}\n    else if ( horizontal ) \{\n      intersect_x = pos.x;\n      intersect_y = start.y;\n    \}\n    else \{\n      // Line 1 Equation : y = slope * x + y_intercept\n      // Line 2 Equation : y = slope_perp * (x - pos.x) + pos.y\n      // Intersection @ x where y = y :\n      //    slope * x + y_intercept = slope_perp * (x - pos.x) + pos.y\n      //    slope * x = slope_perp * x - (slope_perp * pos.x) + pos.y - y_intercept\n      //    slope * x - slope_perp * x = pos.y - y_intercept - (slope_perp * pos.x)\n      //    x * (slope - slope_perp) = pos.y - y_intercept - (slope_perp * pos.x)\n      //    x = (pos.y - y_intercept - (slope_perp * pos.x)) / (slope - slope_perp)\n      intersect_x = ( pos.y - y_intercept - ( slope_perp * pos.x ) ) / ( slope - slope_perp );\n\n      // Intersection @ y using Line 1 equation\n      intersect_y = intersect_x * slope + y_intercept;\n    \}\n\n    // If intersection is out of bounds, use the closest end point\n    float dist = 0.0f;\n    if ( intersect_x < min( anim_start.x, anim_end.x ) || max( anim_start.x, anim_end.x ) < intersect_x ||\n          intersect_y < min( anim_start.y, anim_end.y ) || max( anim_start.y, anim_end.y ) < intersect_y ) \{\n      float dist_to_start = length( float2( anim_start.x - pos.x, anim_start.y - pos.y ) );\n      float dist_to_end = length( float2( anim_end.x - pos.x, anim_end.y - pos.y ) );\n      dist = min( dist_to_start, dist_to_end );\n    \}\n    else \{\n      float2 perp_vec = float2( pos.x - intersect_x, pos.y - intersect_y );\n      dist = length( perp_vec );\n    \}\n\n    // Percentage along path fit to the width range\n    float width_extra;\n    if ( vertical )\n      width_extra = ( ( intersect_y - start.y ) / direction.y ) * fabs( start_width - end_width );\n    else\n      width_extra = ( ( intersect_x - start.x ) / direction.x ) * fabs( start_width - end_width );\n\n    float width;\n    if ( start_width < end_width)\n      width = start_width + width_extra;\n    else\n      width = start_width - width_extra;\n\n\n    float result = 0.0f;\n    if ( dist <= width ) \{\n      result = min( ( width - dist ) / ( width * softness ), 1.0f );\n    \}\n\n\n    // ----------- Set result -----------\n\n    for ( int component = 0; component <= 3; component++ ) \{\n      dst( component ) = result;\n    \}\n  \}\n\};"
+rebuild ""
+BlinkBeam_End {1364 504}
+"BlinkBeam_Start Width" 1
+"BlinkBeam_End Width" 100
+BlinkBeam_Time 0
+BlinkBeam_Length 0.285
+BlinkBeam_Softness 1
+rebuild_finalise ""
+name BlinkScript2
+xpos -7080
+ypos 21080
+}
+Output {
+name Output1
+xpos -7080
+ypos 21206
+}
+end_group

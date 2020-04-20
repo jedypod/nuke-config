@@ -1,0 +1,129 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+push 0
+Group {
+inputs 2
+name AOVCut
+tile_color 0x3e55afff
+addUserKnob {20 AOVCut}
+addUserKnob {4 operation M {mask stencil}}
+operation stencil
+}
+Input {
+inputs 0
+name InputA
+label "\[value number]"
+xpos 180
+ypos -760
+number 1
+}
+Dot {
+name Dot17
+label " "
+note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 24
+note_font_color 0xff000000
+xpos 214
+ypos -534
+}
+set Ncc6861e0 [stack 0]
+Input {
+inputs 0
+name InputB
+label "\[value number]"
+xpos 400
+ypos -760
+}
+Dot {
+name Dot16
+label " "
+note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 24
+note_font_color 0xff000000
+xpos 434
+ypos -630
+}
+set Nc5e01740 [stack 0]
+Dot {
+name Dot18
+label " "
+note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 24
+note_font_color 0xff000000
+xpos 544
+ypos -630
+}
+set Nd6ec99a0 [stack 0]
+Merge2 {
+inputs 2
+operation stencil
+bbox B
+name Merge1
+xpos 510
+ypos -538
+}
+push $Ncc6861e0
+push $Nd6ec99a0
+Merge2 {
+inputs 2
+operation mask
+bbox B
+name Merge2
+xpos 620
+ypos -538
+}
+Switch {
+inputs 2
+which {{parent.operation}}
+name Switch1
+xpos 510
+ypos -442
+}
+Dot {
+name Dot19
+label " "
+note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 24
+note_font_color 0xff000000
+xpos 544
+ypos -270
+}
+push $Ncc6861e0
+Invert {
+channels alpha
+name Invert1
+xpos 180
+ypos -472
+disable {{!parent.operation}}
+}
+push $Nc5e01740
+Copy {
+inputs 2
+from0 rgba.alpha
+to0 rgba.alpha
+bbox B
+name Copy1
+xpos 400
+ypos -472
+}
+Premult {
+channels all
+name Premult2
+xpos 400
+ypos -400
+}
+Copy {
+inputs 2
+from0 rgba.alpha
+to0 rgba.alpha
+bbox B
+name Copy2
+xpos 400
+ypos -280
+}
+Output {
+name Output
+xpos 400
+ypos -58
+}
+end_group

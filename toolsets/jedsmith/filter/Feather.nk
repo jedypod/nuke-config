@@ -1,0 +1,89 @@
+Group {
+name Feather
+tile_color 0xff802bff
+addUserKnob {20 Feather}
+addUserKnob {41 from0 l channel T Copy2.from0}
+addUserKnob {26 spacer01 l "&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; " -STARTLINE T " "}
+addUserKnob {7 threshold R 1 2}
+threshold 2
+addUserKnob {7 feather R -50 50}
+}
+Input {
+inputs 0
+name Input
+xpos 400
+ypos 391
+}
+Dot {
+name Dot51
+label " "
+note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 24
+note_font_color 0xff000000
+xpos 434
+ypos 546
+}
+set Ne22e0970 [stack 0]
+push $Ne22e0970
+Copy {
+inputs 2
+from0 rgba.alpha
+to0 rgba.red
+bbox B
+name Copy2
+xpos 510
+ypos 536
+}
+Invert {
+channels {rgba.red -rgba.green -rgba.blue -rgba.alpha}
+name Invert1
+xpos 510
+ypos 590
+disable {{"parent.feather >  0"}}
+}
+EdgeBlur {
+channels rgba
+size {{parent.feather}}
+edge_mult 10
+brightness {{parent.threshold}}
+name EdgeBlur1
+xpos 510
+ypos 632
+}
+Invert {
+channels {rgba.red -rgba.green -rgba.blue -rgba.alpha}
+name Invert2
+xpos 510
+ypos 710
+disable {{"parent.feather >  0"}}
+}
+Clamp {
+channels rgba
+name Clamp1
+xpos 510
+ypos 758
+}
+set Nf4cf3110 [stack 0]
+push $Nf4cf3110
+push $Ne22e0970
+CopyBBox {
+inputs 2
+name CopyBBox1
+xpos 400
+ypos 758
+}
+Copy {
+inputs 2
+from0 rgba.red
+to0 {{{parent.Copy2.from0}}}
+bbox B
+name Copy1
+xpos 400
+ypos 848
+}
+Output {
+name Output
+xpos 400
+ypos 950
+}
+end_group

@@ -1,0 +1,31 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Expression {
+ expr0 (x+0.5)/(width)
+ expr1 (y+0.5)/(height)
+ expr2 0
+ name UVMAP
+ selected true
+ xpos -19336
+ ypos -730
+}
+Expression {
+ inputs 0
+ expr0 (r*width-0.5-x)*pixel_aspect
+ expr1 g*height-0.5-y
+ expr2 0
+ name UVMap_To_Vectors
+ selected true
+ xpos -19336
+ ypos -690
+}
+Expression {
+ inputs 0
+ expr0 ((r/pixel_aspect)+x+0.5)/(width)
+ expr1 (g+y+0.5)/(height)
+ expr2 0
+ name Vectors_To_UVMap
+ selected true
+ xpos -19336
+ ypos -650
+}

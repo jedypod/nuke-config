@@ -1,0 +1,278 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+add_layer {Pworld Pworld.red Pworld.green Pworld.blue}
+Group {
+ name PNoise
+ addUserKnob {20 PNoise}
+ addUserKnob {41 p_channel l "position data" T _POSITION_DATA_.in}
+ addUserKnob {41 output_channel l output -STARTLINE T _NOISE_OUT_.out}
+ addUserKnob {6 unpremultiply l "unpremultiply p" +STARTLINE}
+ unpremultiply true
+ addUserKnob {6 alpha_masking -STARTLINE}
+ alpha_masking true
+ addUserKnob {6 clamp_output -STARTLINE}
+ addUserKnob {26 ""}
+ addUserKnob {41 rot_order l "rotation order" T _ROTATE_CTRL_.rot_order}
+ addUserKnob {6 pivot_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {41 translate T _ROTATE_CTRL_.translate}
+ addUserKnob {41 rotate T _ROTATE_CTRL_.rotate}
+ addUserKnob {41 scaling l scale T _ROTATE_CTRL_.scaling}
+ addUserKnob {41 uniform_scale l "uniform scale" T _ROTATE_CTRL_.uniform_scale}
+ addUserKnob {41 skew T _ROTATE_CTRL_.skew}
+ addUserKnob {18 pivot R -1000 1000}
+ pivot {0 0 0}
+ addUserKnob {6 pivot_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {26 ""}
+ addUserKnob {4 noise_type l "noise type" M {fBm turbulence random "sin wave" checkerboard ""}}
+ noise_type turbulence
+ addUserKnob {3 octaves}
+ octaves 10
+ addUserKnob {7 lucanarity R 0 10}
+ lucanarity 2
+ addUserKnob {7 gain}
+ gain 0.5
+ addUserKnob {7 gamma R 0.01 1}
+ gamma 0.5
+ addUserKnob {7 offset R -1 1}
+ addUserKnob {13 checker_size}
+ checker_size {5 5 5}
+}
+ Axis2 {
+  inputs 0
+  xform_order STR
+  uniform_scale 0.125
+  pivot {{parent.pivot.r} {parent.pivot.g} {parent.pivot.b}}
+  name _ROTATE_CTRL_
+  xpos 410
+  ypos -6
+ }
+ Input {
+  inputs 0
+  name Input
+  label "\[value number]"
+  xpos -40
+  ypos -256
+ }
+ Dot {
+  name Dot1
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos -6
+  ypos -126
+ }
+set Nc23c6c10 [stack 0]
+ Dot {
+  name Dot2
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos 324
+  ypos -126
+ }
+ Shuffle {
+  in Pworld
+  in2 rgba
+  alpha alpha2
+  name _POSITION_DATA_
+  xpos 290
+  ypos -89
+ }
+ Unpremult {
+  name Unpremult
+  xpos 290
+  ypos -34
+  disable {{!parent.unpremultiply}}
+ }
+ Add {
+  channels rgb
+  value {{-_ROTATE_CTRL_.world_matrix.3} {-_ROTATE_CTRL_.world_matrix.7} {-_ROTATE_CTRL_.world_matrix.11} 0}
+  name Translate_Pivot
+  xpos 290
+  ypos 14
+ }
+ ColorMatrix {
+  matrix {
+      {{_ROTATE_CTRL_.world_matrix.0} {_ROTATE_CTRL_.world_matrix.1} {_ROTATE_CTRL_.world_matrix.2}}
+      {{_ROTATE_CTRL_.world_matrix.4} {_ROTATE_CTRL_.world_matrix.5} {_ROTATE_CTRL_.world_matrix.6}}
+      {{_ROTATE_CTRL_.world_matrix.8} {_ROTATE_CTRL_.world_matrix.9} {_ROTATE_CTRL_.world_matrix.10}}
+    }
+  invert true
+  name Rotate_Scale_Skew
+  xpos 290
+  ypos 62
+  disable {{hasError x200 1}}
+ }
+set Nc23a1b20 [stack 0]
+ Expression {
+  temp_name0 LinesR
+  temp_expr0 "abs(fmod(r, CheckerSize.x)) > 0.5 ? 1 : 0"
+  temp_name1 LinesG
+  temp_expr1 "abs(fmod(g, CheckerSize.y)) > 0.5 ? 1 : 0"
+  temp_name2 LinesB
+  temp_expr2 "abs(fmod(b, CheckerSize.z)) > 0.5 ? 1 : 0"
+  temp_name3 Checker
+  temp_expr3 "LinesR ^^ LinesG ^^ LinesB"
+  channel0 rgb
+  expr0 Checker
+  channel1 none
+  channel2 none
+  expr3 a
+  name CHECKERBOARD
+  xpos 730
+  ypos 206
+  addUserKnob {20 User}
+  addUserKnob {13 CheckerSize}
+  CheckerSize {{parent.checker_size} {parent.checker_size} {parent.checker_size}}
+ }
+push $Nc23a1b20
+ Expression {
+  temp_name0 sine
+  temp_expr0 (sin(g)+1)/2*gain
+  channel0 {rgba.red rgba.green rgba.blue none}
+  expr0 sine
+  channel1 {rgba.red rgba.green -rgba.blue none}
+  expr3 a
+  name SIN_WAVES
+  xpos 620
+  ypos 206
+  addUserKnob {20 CTRL}
+  addUserKnob {7 gain}
+  gain 1
+ }
+push $Nc23a1b20
+ Expression {
+  temp_name0 rand
+  temp_expr0 random(r,g,b)
+  channel0 {rgba.red rgba.green rgba.blue none}
+  expr0 rand
+  channel1 none
+  channel2 none
+  expr3 a
+  name NoiseRandom
+  xpos 510
+  ypos 206
+  addUserKnob {20 CTRL}
+  addUserKnob {3 octaves}
+  octaves {{parent.octaves}}
+  addUserKnob {7 lucanarity}
+  lucanarity {{parent.lucanarity}}
+  addUserKnob {7 gain}
+  gain {{parent.gain}}
+ }
+push $Nc23a1b20
+ Expression {
+  temp_name0 turb
+  temp_expr0 "turbulence(r,g,b, octaves, lucanarity, gain)"
+  channel0 {rgba.red rgba.green rgba.blue none}
+  expr0 turb
+  channel1 none
+  channel2 none
+  expr3 a
+  name NoiseTurbulence
+  xpos 400
+  ypos 206
+  addUserKnob {20 CTRL}
+  addUserKnob {3 octaves}
+  octaves {{parent.octaves}}
+  addUserKnob {7 lucanarity}
+  lucanarity {{parent.lucanarity}}
+  addUserKnob {7 gain}
+  gain {{parent.gain}}
+ }
+push $Nc23a1b20
+ Expression {
+  temp_name0 fbm
+  temp_expr0 "fBm(r, g , b, octaves, lucanarity, gain)*.5+0.5"
+  channel0 {rgba.red rgba.green rgba.blue none}
+  expr0 fbm
+  channel1 none
+  channel2 none
+  expr3 a
+  name NoiseFBM
+  xpos 290
+  ypos 206
+  addUserKnob {20 CTRL}
+  addUserKnob {3 octaves}
+  octaves {{parent.octaves}}
+  addUserKnob {7 lucanarity}
+  lucanarity {{parent.lucanarity}}
+  addUserKnob {7 gain}
+  gain {{parent.gain}}
+ }
+ Switch {
+  inputs 5
+  which {{parent.noise_type}}
+  name NOISE_TYPE
+  xpos 290
+  ypos 302
+ }
+ Add {
+  channels rgb
+  value {{parent.offset}}
+  name _OFFSET_
+  xpos 290
+  ypos 398
+ }
+ Gamma {
+  channels rgb
+  value {{parent.gamma}}
+  name _GAMMA_
+  xpos 290
+  ypos 446
+ }
+ Premult {
+  name Premult1
+  xpos 290
+  ypos 494
+  disable {{!parent.alpha_masking}}
+ }
+ Unpremult {
+  name Unpremult1
+  xpos 290
+  ypos 542
+  disable {{!parent.alpha_masking}}
+ }
+ Clamp {
+  channels rgba
+  name Clamp1
+  xpos 290
+  ypos 590
+  disable {{!parent.clamp_output}}
+ }
+ Shuffle {
+  green red
+  blue red
+  alpha red
+  name USE_RED
+  xpos 290
+  ypos 638
+ }
+ Dot {
+  name Dot3
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos 324
+  ypos 666
+ }
+push $Nc23c6c10
+ ShuffleCopy {
+  inputs 2
+  in2 none
+  red red
+  green green
+  blue blue
+  name _NOISE_OUT_
+  xpos -40
+  ypos 662
+ }
+ Output {
+  name Output1
+  xpos -40
+  ypos 734
+ }
+end_group

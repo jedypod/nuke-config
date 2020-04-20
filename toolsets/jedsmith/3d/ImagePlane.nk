@@ -1,0 +1,307 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name ImagePlane
+ tile_color 0x9c0000ff
+ addUserKnob {20 ImagePlane}
+ addUserKnob {6 stabilize l "<b><font color=#ddd size=4>&nbsp; Stabilize" t "If stabilize is enabled, the incoming image is stabilized through the camera on the reference frame." +STARTLINE}
+ addUserKnob {3 ref_frame l "ref frame" t "This is the frame that will be used as the projection frame, in both matchmove and stabilize mode." -STARTLINE}
+ ref_frame 1001
+ addUserKnob {22 set_current l Current t "Set the ref frame to the current frame." -STARTLINE T "nuke.thisNode()\['ref_frame'].setValue(nuke.frame())"}
+ addUserKnob {26 ""}
+ addUserKnob {22 sample_depth l "Sample Depth" t "Choose the channel in the input image to sample, in order to set the distance. This should most likely be your Z-depth channel, rendered in absolute world units from camera.\n\n<b>NOTE</b>:\nThis samples the selected channel from the viewer input, so make sure you're looking at the thing with the channel specified, in order for it to sample correctly." T "# Sample Z\nfrom __future__ import with_statement\n\nn = nuke.thisNode()\ns = n\['distance']\nz_coord = n\['sample_pos']\nviewer = nuke.activeViewer()\nainput = viewer.activeInput()\nconnected = viewer.node().input(ainput)\n\nwith n:\n    channel = n\['sample_channel'].value()\n    ds = nuke.toNode('DepthSampler')\n    zsample = connected.sample(channel, z_coord.getValue(0), z_coord.getValue(1))\n\nif s.isAnimated():\n    s.setValueAt(zsample, nuke.frame())\nelse:\n    s.setValue(zsample)" +STARTLINE}
+ addUserKnob {41 sample_channel l "" t "Choose the channel in the input image to sample, in order to set the distance. This should most likely be your Z-depth channel, which is rendered in absolute world units from camera." -STARTLINE T SamplerChannel.from0}
+ addUserKnob {12 sample_pos l "" t "The X/Y coordinate to sample the depth" -STARTLINE}
+ sample_pos {120 120}
+ addUserKnob {7 distance t "Distance of the card from camera." R 0 200}
+ distance 100
+ addUserKnob {7 overscan_percentage l overscan t "a 15% overscan would be 1.15" R 1 2}
+ overscan_percentage 1
+ addUserKnob {41 format t "The output resolution should be the resolution that matches your cg camera." T Card3D.format}
+ addUserKnob {41 filter -STARTLINE T Card3D.filter}
+ addUserKnob {6 keep_depthz l "keep depth.z" t "Preserves depth.Z from the input" +STARTLINE}
+ keep_depthz true
+ addUserKnob {26 ""}
+ addUserKnob {26 motionblur_label l " " T "<font color=#ddd><b>Motionblur Settings"}
+ addUserKnob {6 motionblur l "enable motionblur in gui" t "Assuming disable motionblur is false:\nIf disabled, motionblur will be off in GUI mode but enabled on the farm.\nIf enabled, motionblur will be enabled on the farm and in the gui." +STARTLINE}
+ motionblur true
+ addUserKnob {6 disable_motionblur l "disable motionblur" t "disables motionblur completely" -STARTLINE}
+}
+ Input {
+  inputs 0
+  name Input
+  label "\[value number]"
+  xpos 764
+  ypos -656
+ }
+ Dot {
+  name Dot4
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos 798
+  ypos -566
+ }
+set Nbc9db40 [stack 0]
+ Dot {
+  name Dot9
+  label " "
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos 664
+  ypos -566
+ }
+set Nbcb5ef0 [stack 0]
+push $Nbcb5ef0
+ Copy {
+  inputs 2
+  from0 depth.Z
+  to0 rgba.red
+  bbox B
+  name SamplerChannel
+  xpos 630
+  ypos -536
+  disable {{"\[string first \".a\" \[channels \[input this 0]]] < 0"}}
+ }
+ NoOp {
+  name DepthSampler
+  xpos 630
+  ypos -490
+ }
+ Camera2 {
+  inputs 0
+  xform_order {{"\[topnode input1].knob.xform_order"}}
+  rot_order {{"\[topnode input1].knob.rot_order"}}
+  useMatrix true
+  matrix {
+      {{"\[topnode input1].matrix(ref_frame)"} {"\[topnode input1].matrix(ref_frame)"} {"\[topnode input1].matrix(ref_frame)"} {"\[topnode input1].matrix(ref_frame)"}}
+      {{"\[topnode input1].matrix(ref_frame)"} {"\[topnode input1].matrix(ref_frame)"} {"\[topnode input1].matrix(ref_frame)"} {"\[topnode input1].matrix(ref_frame)"}}
+      {{"\[topnode input1].matrix(ref_frame)"} {"\[topnode input1].matrix(ref_frame)"} {"\[topnode input1].matrix(ref_frame)"} {"\[topnode input1].matrix(ref_frame)"}}
+      {{"\[topnode input1].matrix(ref_frame)"} {"\[topnode input1].matrix(ref_frame)"} {"\[topnode input1].matrix(ref_frame)"} {"\[topnode input1].matrix(ref_frame)"}}
+    }
+  projection_mode {{"\[topnode input1].knob.projection_mode"}}
+  focal {{"\[topnode input1]knob.focal(ref_frame)"}}
+  haperture {{"\[topnode input1].haperture(ref_frame)"}}
+  vaperture {{"\[topnode input1].haperture*parent.input0.height/parent.input0.width"}}
+  near {{"\[topnode input1].knob.near(ref_frame)"}}
+  far {{"\[topnode input1].knob.far(ref_frame)"}}
+  win_scale {{"parent.stabilize == 1 ? parent.overscan_percentage : 1"} {win_scale.u}}
+  name PROJECTION_CAMERA
+  xpos 238
+  ypos -110
+ }
+ Dot {
+  name Dot5
+  label " "
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos 396
+  ypos -86
+ }
+set Nbc814a0 [stack 0]
+ Dot {
+  name Dot2
+  label " "
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos 396
+  ypos 34
+ }
+ Input {
+  inputs 0
+  name Inputcam
+  label "\[value number]\n"
+  xpos 362
+  ypos -656
+  number 1
+ }
+ Dot {
+  name Dot3
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos 396
+  ypos -286
+ }
+ Dot {
+  name Dot10
+  label " "
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos 530
+  ypos -286
+ }
+set Na3b9b60 [stack 0]
+ Switch {
+  inputs 2
+  which {{parent.stabilize}}
+  name MM_Stab_Switcher1
+  xpos 496
+  ypos 30
+ }
+set Nbc6eb00 [stack 0]
+ Dot {
+  name Dot11
+  label " "
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos 530
+  ypos 154
+ }
+push $Na3b9b60
+ Dot {
+  name Dot8
+  label " "
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos 664
+  ypos -286
+ }
+push $Nbc814a0
+ Switch {
+  inputs 2
+  which {{parent.stabilize}}
+  name MM_Stab_Switcher2
+  xpos 630
+  ypos -90
+ }
+push $Nbc6eb00
+push $Nbc9db40
+add_layer {depth_temp depth_temp.Z}
+ AddChannels {
+  channels depth_temp
+  channels2 depth
+  name AddChannels1
+  xpos 764
+  ypos -176
+ }
+ Shuffle {
+  in depth
+  green red
+  blue red
+  alpha red
+  out depth_temp
+  name Shuffle1
+  xpos 764
+  ypos -130
+ }
+ Card3D {
+  inputs 3
+  scaling {{"\[topnode parent.input1].win_scale.u"} {"\[topnode parent.input1].win_scale.v"} 1}
+  uniform_scale {{parent.distance}}
+  pivot {0 0 1}
+  lens_in_focal {{"\[topnode parent.input1].focal"}}
+  lens_in_haperture {{"\[topnode parent.input1].haperture"}}
+  shutteroffset centred
+  name Card3D
+  xpos 764
+  ypos 30
+ }
+add_layer {imageplane_motion imageplane_motion.u imageplane_motion.v}
+ AddChannels {
+  channels imageplane_motion
+  channels2 rgba
+  name AddChannels2
+  xpos 764
+  ypos 88
+ }
+ MotionBlur3D {
+  inputs 2
+  uv imageplane_motion
+  distance {{parent.distance}}
+  shutteroffset centred
+  name MotionBlur3D1
+  xpos 764
+  ypos 150
+  disable {{"parent.disable_motionblur ? 1 : parent.motionblur ? 0 : \$gui"}}
+ }
+ Dot {
+  name Dot12
+  label " Vectorblur2 Destroys Bounding box :("
+  note_font_size 12
+  note_font_color 0xa5a5a501
+  xpos 798
+  ypos 234
+ }
+ NoOp {
+  name _DF_
+  xpos 764
+  ypos 270
+  addUserKnob {20 User}
+  addUserKnob {15 bbdiff l format_bbox_diff}
+  bbdiff {{bbox.x} {bbox.y} {"bbox.r - input.width"} {"bbox.t - input.height"}}
+ }
+ Position {
+  translate {{"ceil(\[value translate_float.x])"} {"ceil(\[value translate_float.y])"}}
+  name _RECENTER_1
+  xpos 764
+  ypos 310
+  addUserKnob {20 User}
+  addUserKnob {12 translate_float}
+  translate_float {{"-(((( input.bbox.r - input.bbox.x)-(input.width))/2) + _DF_.bbdiff.x)"} {"-(((( input.bbox.t - input.bbox.y)-(input.height))/2) + _DF_.bbdiff.y)"}}
+ }
+ Crop {
+  box {{input.bbox.x} {input.bbox.y} {input.bbox.r} {input.bbox.t}}
+  reformat true
+  crop false
+  name CropBBox
+  xpos 764
+  ypos 350
+ }
+ VectorBlur2 {
+  uv imageplane_motion
+  scale 1
+  motion_falloff 1
+  name VectorBlur2_1
+  xpos 764
+  ypos 384
+  disable {{parent.MotionBlur3D1.disable x1 1 x7 1}}
+ }
+ Reformat {
+  format {{{parent.Card3D.format}}}
+  box_width 2356
+  box_height 1790
+  box_fixed true
+  box_pixel_aspect 2
+  resize none
+  pbb true
+  name Reformat2
+  xpos 764
+  ypos 438
+ }
+ Position {
+  translate {{-parent._RECENTER_1.translate} {-parent._RECENTER_1.translate}}
+  name _UNCENTER_
+  xpos 764
+  ypos 483
+ }
+ Dot {
+  name Dot13
+  label " "
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos 798
+  ypos 554
+ }
+set Nbe614c0 [stack 0]
+push $Nbe614c0
+ Copy {
+  inputs 2
+  from0 depth_temp.Z
+  to0 depth.Z
+  name _KEEP_ZDEPTH_
+  xpos 764
+  ypos 584
+  disable {{!parent.keep_depthz x7 1}}
+ }
+ Remove {
+  channels imageplane_motion
+  channels2 depth_temp
+  name Remove1
+  xpos 764
+  ypos 638
+ }
+ Output {
+  name Output
+  xpos 764
+  ypos 757
+ }
+end_group

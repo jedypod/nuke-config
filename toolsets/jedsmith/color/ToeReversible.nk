@@ -1,0 +1,213 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name Toe
+ tile_color 0x7aa9ffff
+ addUserKnob {20 Toe}
+ addUserKnob {18 lift}
+ addUserKnob {18 pivot}
+ pivot 0.18
+ addUserKnob {7 soften}
+ addUserKnob {6 pivot_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {6 lift_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {7 pre_offset t "if soften != 0, negative values will be clipped. This adds a value to the pixels before processing and then reverses to counteract it" R 0 0.1}
+ addUserKnob {6 invert +STARTLINE}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos -576
+  ypos 39
+ }
+ Dot {
+  name Dot2
+  label " "
+  note_font "Helvetica Bold Bold"
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos -542
+  ypos 83
+ }
+set N5229c370 [stack 0]
+ Dot {
+  name Dot3
+  label " "
+  note_font "Helvetica Bold Bold"
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos -810
+  ypos 83
+ }
+ Expression {
+  temp_name0 t_g
+  temp_expr0 pow(r/pivot.r,1/soften)*pivot.r
+  temp_name1 t_l
+  temp_expr1 "(r-pivot.r)*(1-lift.r) + pivot.r"
+  temp_name2 ti_l
+  temp_expr2 "(r-pivot.r)/(1-lift.r) + pivot.r"
+  temp_name3 ti_g
+  temp_expr3 pow(ti_l/pivot.r,1/(1/soften))*pivot.r
+  expr0 "r > pivot.r ? r : invert ? ((r-pivot.r)/(1-lift.r) + pivot.r) : ((r-pivot.r)*(1-lift.r) + pivot.r)"
+  expr1 "g > pivot.g ? g : invert ? ((g-pivot.g)/(1-lift.g) + pivot.g) : ((g-pivot.g)*(1-lift.g) + pivot.g)"
+  expr2 "b > pivot.b ? b : invert ? ((b-pivot.b)/(1-lift.b) + pivot.b) : ((b-pivot.b)*(1-lift.b) + pivot.b)"
+  expr3 a
+  name Toe_NoSoft
+  xpos -844
+  ypos 238
+  addUserKnob {20 User}
+  addUserKnob {6 pivot_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {18 lift}
+  lift {{parent.lift} {parent.lift} {parent.lift}}
+  addUserKnob {6 lift_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {18 pivot}
+  pivot {{parent.pivot}}
+  addUserKnob {6 pivot_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {6 invert +STARTLINE}
+  invert {{parent.invert}}
+ }
+ Dot {
+  name Dot4
+  label " "
+  note_font "Helvetica Bold Bold"
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos -810
+  ypos 474
+ }
+push $N5229c370
+ Add {
+  channels rgb
+  value {{parent.pre_offset}}
+  name PRE_OFFSET
+  xpos -576
+  ypos 119
+ }
+ Dot {
+  name Dot1
+  label " "
+  note_font "Helvetica Bold Bold"
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos -542
+  ypos 163
+ }
+set Nd11c9990 [stack 0]
+ Expression {
+  temp_name0 t_g
+  temp_expr0 pow(r/pivot.r,1/soften)*pivot.r
+  temp_name1 t_l
+  temp_expr1 "(t_g-pivot.r)*(1-lift.r) + pivot.r"
+  temp_name2 ti_l
+  temp_expr2 "(r-pivot.r)/(1-lift.r) + pivot.r"
+  temp_name3 ti_g
+  temp_expr3 pow(ti_l/pivot.r,1/(1/soften))*pivot.r
+  expr0 "r > pivot.r ? r : invert ? ti_g : t_l"
+  expr1 0
+  expr2 0
+  expr3 a
+  name Toe_R
+  xpos -710
+  ypos 240
+  addUserKnob {20 User}
+  addUserKnob {6 pivot_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {18 lift}
+  lift {{parent.lift} {parent.lift} {parent.lift}}
+  addUserKnob {6 lift_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {18 pivot}
+  pivot {{parent.pivot+parent.pre_offset}}
+  addUserKnob {6 pivot_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {7 soften}
+  soften {{(1-(parent.soften*parent.lift.r))}}
+  addUserKnob {6 invert +STARTLINE}
+  invert {{parent.invert}}
+ }
+push 0
+push $Nd11c9990
+ Expression {
+  temp_name0 t_g
+  temp_expr0 pow(b/pivot.b,1/soften)*pivot.b
+  temp_name1 t_l
+  temp_expr1 "(t_g-pivot.b)*(1-lift.b) + pivot.b"
+  temp_name2 ti_l
+  temp_expr2 "(b-pivot.b)/(1-lift.b) + pivot.b"
+  temp_name3 ti_g
+  temp_expr3 pow(ti_l/pivot.b,1/(1/soften))*pivot.b
+  expr0 0
+  expr1 0
+  expr2 "b > pivot.b ? b : invert ? ti_g : t_l"
+  expr3 a
+  name Toe_B
+  xpos -442
+  ypos 239
+  addUserKnob {20 User}
+  addUserKnob {6 pivot_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {18 lift}
+  lift {{parent.lift} {parent.lift} {parent.lift}}
+  addUserKnob {6 lift_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {18 pivot}
+  pivot {{parent.pivot+parent.pre_offset} {parent.pivot+parent.pre_offset} {parent.pivot+parent.pre_offset}}
+  addUserKnob {6 pivot_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {7 soften}
+  soften {{(1-(parent.soften*parent.lift.b))}}
+  addUserKnob {6 invert +STARTLINE}
+  invert {{parent.invert}}
+ }
+push $Nd11c9990
+ Expression {
+  temp_name0 t_g
+  temp_expr0 pow(g/pivot.g,1/soften)*pivot.g
+  temp_name1 t_l
+  temp_expr1 "(t_g-pivot.g)*(1-lift.g) + pivot.g"
+  temp_name2 ti_l
+  temp_expr2 "(g-pivot.g)/(1-lift.g) + pivot.g"
+  temp_name3 ti_g
+  temp_expr3 pow(ti_l/pivot.g,1/(1/soften))*pivot.g
+  expr0 0
+  expr1 "g > pivot.g ? g : invert ? ti_g : t_l"
+  expr2 0
+  expr3 a
+  name Toe_G
+  xpos -576
+  ypos 239
+  addUserKnob {20 User}
+  addUserKnob {6 pivot_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {18 lift}
+  lift {{parent.lift} {parent.lift} {parent.lift}}
+  addUserKnob {6 lift_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {18 pivot}
+  pivot {{parent.pivot+parent.pre_offset} {parent.pivot+parent.pre_offset} {parent.pivot+parent.pre_offset}}
+  addUserKnob {6 pivot_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {7 soften}
+  soften {{(1-(parent.soften*parent.lift.g))}}
+  addUserKnob {6 invert +STARTLINE}
+  invert {{parent.invert}}
+ }
+ Merge2 {
+  inputs 3+1
+  operation plus
+  bbox B
+  output rgb
+  name Merge1
+  xpos -576
+  ypos 319
+ }
+ Add {
+  channels rgb
+  value {{-parent.pre_offset}}
+  name PRE_OFFSET_REVERSE
+  xpos -576
+  ypos 399
+ }
+ Switch {
+  inputs 2
+  which {{parent.soften==0}}
+  name NO_SOFT
+  xpos -576
+  ypos 470
+ }
+ Output {
+  name Output
+  xpos -576
+  ypos 590
+ }
+end_group

@@ -1,0 +1,767 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+push 0
+Group {
+ inputs 2
+ name MergeAOV
+ tile_color 0x3e55afff
+ addUserKnob {20 MergeAOV}
+ addUserKnob {41 renderer T _KNOBCHANGED_.renderer}
+ addUserKnob {26 ""}
+ addUserKnob {4 operation M {atop average color-burn color-dodge conjoint-over copy difference disjoint-over divide exclusion from geometric hard-light hypot in mask matte max min minus multiply out over overlay plus screen soft-light stencil under xor}}
+ operation over
+ addUserKnob {3 layer_mode l INVISIBLE +INVISIBLE}
+ layer_mode 1
+ addUserKnob {22 set_layers l INVISIBLE -STARTLINE +INVISIBLE T "## MergeAOV - Set Layers\nfrom __future__ import with_statement\nimport nuke, re, collections\n\n\ndef get_layers(filters=None):\n    channels = node.input(1).channels()\n    layers = list( set(\[channel.split('.')\[0] for channel in channels]) )\n    layers.sort()\n    # move rgba to front if it exists\n    layers.insert(0, layers.pop(layers.index('rgba')))\n    # Keep only layers with filters if there is any\n    if filters:\n        new_layer_list = \[]\n        for layer in layers:\n            for filter_string in filters:\n                if filter_string.startswith('*'):\n                    # fuzzy search\n                    if filter_string\[1:] in layer:\n                        new_layer_list.append(layer)\n                else:\n                    if filter_string == layer:\n                        new_layer_list.append(layer)\n        layers = new_layer_list\n    return layers\n\nnode = nuke.thisNode()\n\n# Select renderer\nrenderer = node\['renderer'].value()\nlayer_mode = node\['layer_mode'].getValue()\n\nif layer_mode == 0:\n    lightselect_layers = node\['lightselect_layers'].getValue().split(' ')\n    layers = get_layers(filters=lightselect_layers)\nelif layer_mode == 1:\n    # Beauty AOVS\n    beauty_layers = node\['beauty_layers'].getValue().split(' ')\n    layers = get_layers(filters=beauty_layers)\n\nelif layer_mode == 2:\n    # Data AOVs\n    data_layers = node\['data_layers'].getValue().split(' ')\n    layers = get_layers(filters=data_layers)\nelif layer_mode == 3:\n    # Puzzle AOVs\n    puzz_layers = node\['puzz_layers'].getValue().split(' ')\n    layers = get_layers(filters=puzz_layers)\n\nwith node:\n    merges = \{n.name(): n for n in nuke.allNodes(\"Merge2\")\}\n    merges = collections.OrderedDict(sorted(merges.items()))\n    smerges = \[]\n    for mergename, merge in merges.items():\n        smerges.append(merge)\n    i = 0\n    length = len(layers)\n    for layer in layers:\n        # find first merge that is set to none\n        for merge in smerges:\n            achannels = smerges\[i]\['Achannels']\n            if achannels.value() != \"none\":\n                print \"skipping:\", i, achannels.value()\n                i += 1\n            else:\n                break\n        channel_knobnames = \['Achannels', 'Bchannels', 'output']\n        for channel_knobname in channel_knobnames:\n            if renderer == 'prman' and 'channels' in channel_knobname:\n                channel_string = '\{0\}.red \{0\}.green \{0\}.blue rgba.alpha'.format(layer)\n            else:\n                channel_string = layer\n            smerges\[i]\[channel_knobname].setValue(channel_string)\n        i += 1"}
+ addUserKnob {22 clear_layers l "Clear Layers" T "## Clear Layers\nfrom __future__ import with_statement\nimport nuke\n\nnode = nuke.thisNode()\nwith node:\n    merges = nuke.allNodes(\"Merge2\")\n    channel_knobnames = \['Achannels', 'Bchannels', 'output']\n    for merge in merges:\n        for channel_knobname in channel_knobnames:\n            merge\[channel_knobname].setValue('none')" +STARTLINE}
+ addUserKnob {22 set_beauty_layers l "Set Beauty AOVs" T "node = nuke.thisNode()\nnode\['layer_mode'].setValue(1)\nnode\['set_layers'].execute()" +STARTLINE}
+ addUserKnob {22 set_data_aovs l "Set Data AOVs" -STARTLINE T "node = nuke.thisNode()\nnode\['layer_mode'].setValue(2)\nnode\['set_layers'].execute()"}
+ addUserKnob {22 set_lightselect_aovs l "Set Lightselect AOVs" -STARTLINE T "node = nuke.thisNode()\nnode\['layer_mode'].setValue(0)\nnode\['set_layers'].execute()"}
+ addUserKnob {22 set_puzz_aovs l "Set Puzz AOVs" -STARTLINE T "node = nuke.thisNode()\nnode\['layer_mode'].setValue(3)\nnode\['set_layers'].execute()"}
+ addUserKnob {1 beauty_layers l "Beauty AOVS" t "space separated list of AOV names to include in the Beauty AOVs set."}
+ beauty_layers "rgba diffuseColor directDiffuse directSpecular indirectDiffuse indirectSpecular emissive subsurface transmissive"
+ addUserKnob {1 data_layers l "Data AOVS"}
+ data_layers "Nworld Pref Pworld Pworld_filtered Nworld_filtered WPref depth_extra"
+ addUserKnob {1 lightselect_layers l "LightSelect AOVs"}
+ lightselect_layers "*_diff *_spec"
+ addUserKnob {1 puzz_layers l "Puzz AOVS"}
+ puzz_layers "*matte_tex *matte_obj"
+ addUserKnob {26 ""}
+ addUserKnob {41 Achannels l beauty T Merge00.Achannels}
+ addUserKnob {41 Achannels_1 l Merge1 T Merge01.Achannels}
+ addUserKnob {41 Achannels_2 l Merge2 T Merge02.Achannels}
+ addUserKnob {41 Achannels_3 l Merge3 T Merge03.Achannels}
+ addUserKnob {41 Achannels_4 l Merge4 T Merge04.Achannels}
+ addUserKnob {41 Achannels_5 l Merge5 T Merge05.Achannels}
+ addUserKnob {41 Achannels_6 l Merge6 T Merge06.Achannels}
+ addUserKnob {41 Achannels_7 l Merge7 T Merge07.Achannels}
+ addUserKnob {41 Achannels_8 l Merge8 T Merge08.Achannels}
+ addUserKnob {41 Achannels_9 l Merge9 T Merge09.Achannels}
+ addUserKnob {41 Achannels_10 l Merge10 T Merge10.Achannels}
+ addUserKnob {41 Achannels_11 l Merge11 T Merge11.Achannels}
+ addUserKnob {41 Achannels_12 l Merge12 T Merge12.Achannels}
+ addUserKnob {41 Achannels_13 l Merge13 T Merge13.Achannels}
+ addUserKnob {41 Achannels_14 l Merge14 T Merge14.Achannels}
+ addUserKnob {41 Achannels_15 l Merge15 T Merge15.Achannels}
+ addUserKnob {41 Achannels_16 l Merge16 T Merge16.Achannels}
+ addUserKnob {41 Achannels_17 l Merge17 T Merge17.Achannels}
+ addUserKnob {41 Achannels_18 l Merge18 T Merge18.Achannels}
+ addUserKnob {41 Achannels_19 l Merge19 T Merge19.Achannels}
+ addUserKnob {41 Achannels_20 l Merge20 T Merge20.Achannels}
+ addUserKnob {41 Achannels_21 l Merge21 T Merge21.Achannels}
+ addUserKnob {41 Achannels_22 l Merge22 T Merge22.Achannels}
+ addUserKnob {41 Achannels_23 l Merge23 T Merge23.Achannels}
+ addUserKnob {41 Achannels_24 l Merge24 T Merge24.Achannels}
+ addUserKnob {41 Achannels_25 l Merge25 T Merge25.Achannels}
+ addUserKnob {41 Achannels_26 l Merge26 T Merge26.Achannels}
+ addUserKnob {41 Achannels_27 l Merge27 T Merge27.Achannels}
+ addUserKnob {41 Achannels_28 l Merge28 T Merge28.Achannels}
+ addUserKnob {41 Achannels_29 l Merge29 T Merge29.Achannels}
+ addUserKnob {41 Achannels_30 l Merge30 T Merge30.Achannels}
+}
+ Input {
+  inputs 0
+  name InputA
+  label "\[value number]"
+  xpos 400
+  ypos -664
+  number 1
+ }
+ Dot {
+  name Dot26
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos 434
+  ypos -558
+ }
+set N114b2b30 [stack 0]
+ Dot {
+  name Dot9
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos 434
+  ypos -486
+ }
+set N11b4e7c0 [stack 0]
+ Dot {
+  name Dot8
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos 434
+  ypos -414
+ }
+set Nf5a33e0 [stack 0]
+ Dot {
+  name Dot7
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos 434
+  ypos -342
+ }
+set N108ab6e0 [stack 0]
+ Dot {
+  name Dot6
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos 434
+  ypos -270
+ }
+set N8611900 [stack 0]
+ Dot {
+  name Dot5
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos 434
+  ypos -198
+ }
+set N10d00b90 [stack 0]
+ Dot {
+  name Dot4
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos 434
+  ypos -126
+ }
+set N10d71060 [stack 0]
+ Dot {
+  name Dot3
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos 434
+  ypos -54
+ }
+set N11bee5a0 [stack 0]
+ Dot {
+  name Dot2
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos 434
+  ypos 18
+ }
+set N10cc16c0 [stack 0]
+ Dot {
+  name Dot1
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos 434
+  ypos 90
+ }
+set Nfbecd00 [stack 0]
+ Dot {
+  name Dot10
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos 434
+  ypos 162
+ }
+set Nf354550 [stack 0]
+ Dot {
+  name Dot11
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos 434
+  ypos 234
+ }
+set Nf783130 [stack 0]
+ Dot {
+  name Dot12
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos 434
+  ypos 306
+ }
+set N11bbc2e0 [stack 0]
+ Dot {
+  name Dot13
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos 434
+  ypos 378
+ }
+set N441e990 [stack 0]
+ Dot {
+  name Dot14
+  note_font_size 42
+  note_font_color 0x7f7f7f01
+  xpos 434
+  ypos 450
+ }
+set N4443ac0 [stack 0]
+ Dot {
+  name Dot15
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos 434
+  ypos 522
+ }
+set Nd505d30 [stack 0]
+ Dot {
+  name Dot16
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos 434
+  ypos 594
+ }
+set N113990c0 [stack 0]
+ Dot {
+  name Dot17
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos 434
+  ypos 666
+ }
+set N10264fa0 [stack 0]
+ Dot {
+  name Dot18
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos 434
+  ypos 762
+ }
+set N107de100 [stack 0]
+ Dot {
+  name Dot19
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos 434
+  ypos 858
+ }
+set Nfd2e9e0 [stack 0]
+ Dot {
+  name Dot20
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos 434
+  ypos 954
+ }
+set N10144440 [stack 0]
+ Dot {
+  name Dot21
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos 434
+  ypos 1050
+ }
+set N1162c140 [stack 0]
+ Dot {
+  name Dot22
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos 434
+  ypos 1146
+ }
+set N109894b0 [stack 0]
+ Dot {
+  name Dot23
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos 434
+  ypos 1242
+ }
+set N10b6d580 [stack 0]
+ Dot {
+  name Dot24
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos 434
+  ypos 1338
+ }
+set Nf809fc0 [stack 0]
+ Dot {
+  name Dot25
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos 434
+  ypos 1434
+ }
+set N1041d7b0 [stack 0]
+ Dot {
+  name Dot27
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos 434
+  ypos 1530
+ }
+set N11157490 [stack 0]
+ Dot {
+  name Dot28
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos 434
+  ypos 1626
+ }
+set Nf82c280 [stack 0]
+ Dot {
+  name Dot29
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos 434
+  ypos 1722
+ }
+set Nfc70a90 [stack 0]
+ Dot {
+  name Dot30
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos 434
+  ypos 1818
+ }
+set N1109e600 [stack 0]
+ Dot {
+  name Dot31
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos 434
+  ypos 1914
+ }
+push $N1109e600
+push $Nfc70a90
+push $Nf82c280
+push $N11157490
+push $N1041d7b0
+push $Nf809fc0
+push $N10b6d580
+push $N109894b0
+push $N1162c140
+push $N10144440
+push $Nfd2e9e0
+push $N107de100
+push $N10264fa0
+push $N113990c0
+push $Nd505d30
+push $N4443ac0
+push $N441e990
+push $N11bbc2e0
+push $Nf783130
+push $Nf354550
+push $Nfbecd00
+push $N10cc16c0
+push $N11bee5a0
+push $N10d71060
+push $N10d00b90
+push $N8611900
+push $N108ab6e0
+push $Nf5a33e0
+push $N11b4e7c0
+push $N114b2b30
+ Input {
+  inputs 0
+  name InputB
+  label "\[value number]"
+  xpos 620
+  ypos -664
+ }
+ Merge2 {
+  inputs 2
+  operation {{parent.operation x1047 22}}
+  bbox B
+  Achannels none
+  Bchannels none
+  output none
+  name Merge00
+  xpos 620
+  ypos -568
+ }
+ Merge2 {
+  inputs 2
+  operation {{parent.operation x1047 5}}
+  bbox B
+  Achannels none
+  Bchannels none
+  output none
+  name Merge01
+  xpos 620
+  ypos -496
+ }
+ Merge2 {
+  inputs 2
+  operation {{parent.operation}}
+  bbox B
+  Achannels none
+  Bchannels none
+  output none
+  name Merge02
+  xpos 620
+  ypos -424
+ }
+ Merge2 {
+  inputs 2
+  operation {{parent.operation}}
+  bbox B
+  Achannels none
+  Bchannels none
+  output none
+  name Merge03
+  xpos 620
+  ypos -352
+ }
+ Merge2 {
+  inputs 2
+  operation {{parent.operation}}
+  bbox B
+  Achannels none
+  Bchannels none
+  output none
+  name Merge04
+  xpos 620
+  ypos -280
+ }
+ Merge2 {
+  inputs 2
+  operation {{parent.operation x1047 28}}
+  bbox B
+  Achannels none
+  Bchannels none
+  output none
+  name Merge05
+  xpos 620
+  ypos -208
+ }
+ Merge2 {
+  inputs 2
+  operation {{parent.operation}}
+  bbox B
+  Achannels none
+  Bchannels none
+  output none
+  name Merge06
+  xpos 620
+  ypos -136
+ }
+ Merge2 {
+  inputs 2
+  operation {{parent.operation}}
+  bbox B
+  Achannels none
+  Bchannels none
+  output none
+  name Merge07
+  xpos 620
+  ypos -64
+ }
+ Merge2 {
+  inputs 2
+  operation {{parent.operation}}
+  bbox B
+  Achannels none
+  Bchannels none
+  output none
+  name Merge08
+  xpos 620
+  ypos 8
+ }
+ Merge2 {
+  inputs 2
+  operation {{parent.operation}}
+  bbox B
+  Achannels none
+  Bchannels none
+  output none
+  name Merge09
+  xpos 620
+  ypos 80
+ }
+ Merge2 {
+  inputs 2
+  operation {{parent.operation}}
+  bbox B
+  Achannels none
+  Bchannels none
+  output none
+  name Merge10
+  xpos 620
+  ypos 152
+ }
+ Merge2 {
+  inputs 2
+  operation {{parent.operation}}
+  bbox B
+  Achannels none
+  Bchannels none
+  output none
+  name Merge11
+  xpos 620
+  ypos 224
+ }
+ Merge2 {
+  inputs 2
+  operation {{parent.operation}}
+  bbox B
+  Achannels none
+  Bchannels none
+  output none
+  name Merge12
+  xpos 620
+  ypos 296
+ }
+ Merge2 {
+  inputs 2
+  operation {{parent.operation}}
+  bbox B
+  Achannels none
+  Bchannels none
+  output none
+  name Merge13
+  xpos 620
+  ypos 368
+ }
+ Merge2 {
+  inputs 2
+  operation {{parent.operation}}
+  bbox B
+  Achannels none
+  Bchannels none
+  output none
+  name Merge14
+  xpos 620
+  ypos 440
+ }
+ Merge2 {
+  inputs 2
+  operation {{parent.operation}}
+  bbox B
+  Achannels none
+  Bchannels none
+  output none
+  name Merge15
+  xpos 620
+  ypos 512
+ }
+ Merge2 {
+  inputs 2
+  operation {{parent.operation}}
+  bbox B
+  Achannels none
+  Bchannels none
+  output none
+  name Merge16
+  xpos 620
+  ypos 584
+ }
+ Merge2 {
+  inputs 2
+  operation {{parent.operation}}
+  bbox B
+  Achannels none
+  Bchannels none
+  output none
+  name Merge17
+  xpos 620
+  ypos 656
+ }
+ Merge2 {
+  inputs 2
+  operation {{parent.operation}}
+  bbox B
+  Achannels none
+  Bchannels none
+  output none
+  name Merge18
+  xpos 620
+  ypos 752
+ }
+ Merge2 {
+  inputs 2
+  operation {{parent.operation}}
+  bbox B
+  Achannels none
+  Bchannels none
+  output none
+  name Merge19
+  xpos 620
+  ypos 848
+ }
+ Merge2 {
+  inputs 2
+  operation {{parent.operation}}
+  bbox B
+  Achannels none
+  Bchannels none
+  output none
+  name Merge20
+  xpos 620
+  ypos 944
+ }
+ Merge2 {
+  inputs 2
+  operation {{parent.operation}}
+  bbox B
+  Achannels none
+  Bchannels none
+  output none
+  name Merge21
+  xpos 620
+  ypos 1040
+ }
+ Merge2 {
+  inputs 2
+  operation {{parent.operation}}
+  bbox B
+  Achannels none
+  Bchannels none
+  output none
+  name Merge22
+  xpos 620
+  ypos 1136
+ }
+ Merge2 {
+  inputs 2
+  operation {{parent.operation}}
+  bbox B
+  Achannels none
+  Bchannels none
+  output none
+  name Merge23
+  xpos 620
+  ypos 1232
+ }
+set N11a45d80 [stack 0]
+ Merge2 {
+  inputs 2
+  operation {{parent.operation}}
+  bbox B
+  Achannels none
+  Bchannels none
+  output none
+  name Merge24
+  xpos 620
+  ypos 1328
+ }
+ Merge2 {
+  inputs 2
+  operation {{parent.operation}}
+  bbox B
+  Achannels none
+  Bchannels none
+  output none
+  name Merge25
+  xpos 620
+  ypos 1424
+ }
+ Merge2 {
+  inputs 2
+  operation {{parent.operation}}
+  bbox B
+  Achannels none
+  Bchannels none
+  output none
+  name Merge26
+  xpos 620
+  ypos 1520
+ }
+ Merge2 {
+  inputs 2
+  operation {{parent.operation}}
+  bbox B
+  Achannels none
+  Bchannels none
+  output none
+  name Merge27
+  xpos 620
+  ypos 1616
+ }
+ Merge2 {
+  inputs 2
+  operation {{parent.operation}}
+  bbox B
+  Achannels none
+  Bchannels none
+  output none
+  name Merge28
+  xpos 620
+  ypos 1712
+ }
+ Merge2 {
+  inputs 2
+  operation {{parent.operation}}
+  bbox B
+  Achannels none
+  Bchannels none
+  output none
+  name Merge29
+  xpos 620
+  ypos 1808
+ }
+ Merge2 {
+  inputs 2
+  operation {{parent.operation}}
+  bbox B
+  Achannels none
+  Bchannels none
+  output none
+  name Merge30
+  xpos 620
+  ypos 1904
+ }
+ Output {
+  name Output1
+  xpos 620
+  ypos 2102
+ }
+push $N11a45d80
+add_layer {subsurface subsurface.red subsurface.green subsurface.blue}
+ Viewer {
+  frame_range 1001-1101
+  channels subsurface
+  name Viewer1
+  xpos 1128
+  ypos 1328
+ }
+ NoOp {
+  inputs 0
+  name _KNOBCHANGED_
+  knobChanged "knob = nuke.thisKnob()\nif knob.name() == 'renderer':\n    thisnode = nuke.thisNode()\n    node = nuke.toNode('.'.join(thisnode.fullName().split('.')\[:-1]))\n    if knob.value() == 'vray':\n        node\['beauty_layers'].setValue(thisnode\['vray_beauty'].getValue())\n        node\['data_layers'].setValue(thisnode\['vray_data'].getValue())\n        node\['lightselect_layers'].setValue(thisnode\['vray_ls'].getValue())\n        node\['puzz_layers'].setValue(thisnode\['vray_puzz'].getValue())\n    elif knob.value() == 'prman':\n        node\['beauty_layers'].setValue(thisnode\['prman_beauty'].getValue())\n        node\['data_layers'].setValue(thisnode\['prman_data'].getValue())\n        node\['lightselect_layers'].setValue(thisnode\['prman_ls'].getValue())\n        node\['puzz_layers'].setValue(thisnode\['prman_puzz'].getValue())"
+  xpos 840
+  ypos -634
+  addUserKnob {20 User}
+  addUserKnob {4 renderer M {prman vray}}
+  addUserKnob {1 vray_beauty}
+  vray_beauty "rgba GI LGT SSS diffuse rawGI rawLGT reflection refraction selfIllumination specular"
+  addUserKnob {1 prman_beauty}
+  prman_beauty "rgba diffuseColor directDiffuse directSpecular indirectDiffuse indirectSpecular emissive subsurface transmissive"
+  addUserKnob {1 vray_data}
+  vray_data "NW PW Pref Z facingRatio"
+  addUserKnob {1 prman_data}
+  prman_data "Nworld Pref Pworld WPref depth_extra"
+  addUserKnob {1 vray_ls}
+  vray_ls "*_diff *_spec"
+  addUserKnob {1 prman_ls}
+  prman_ls "*_diff *_spec"
+  addUserKnob {1 vray_puzz}
+  vray_puzz *puzz
+  addUserKnob {1 prman_puzz}
+  prman_puzz *matte_tex
+ }
+end_group

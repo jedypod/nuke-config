@@ -1,0 +1,16 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Radial {
+ replace true
+ area {{center.x-(box_size.w/2)} {center.y-(box_size.h/2*input.pixel_aspect)} {center.x+(box_size.w/2)} {center.y+(box_size.h/2*input.pixel_aspect)}}
+ softness 1.2
+ name RadialSize
+ selected true
+ xpos -844
+ ypos 110
+ addUserKnob {20 Size}
+ addUserKnob {12 center}
+ center {1090 1052}
+ addUserKnob {14 box_size R 0 100}
+ box_size 500
+}

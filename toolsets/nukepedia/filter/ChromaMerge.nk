@@ -1,0 +1,199 @@
+add_layer {apChroma apChroma.red apChroma.green apChroma.blue apChroma.alpha}
+Group {
+ inputs 2
+ name apChromaMerge
+ tile_color 0x736efdff
+ addUserKnob {20 apChromaMerge}
+ addUserKnob {26 info l " " T "<p>Merges premultiplied image with a multi-alpha, onto a background.</p>\n<b>chroma</b> = image with chroma channels\n<br/>\n<i>(If using apChroma, make sure you\nactivate \"calculate per-channel alpha\")</i>\n<br/><br/>\n<b>BG</b> = background image\n<br/><br/>"}
+ addUserKnob {41 chroma l multi-alpha T MergeCopyChroma.Achannels}
+ addUserKnob {26 ""}
+ addUserKnob {6 process_alpha l "process single alpha from" t "If activated, the per-channel alphas will get combined into a regular alpha that you can use for normal operations after this node." +STARTLINE}
+ addUserKnob {41 process_mode l "" -STARTLINE T apJoinChannels.output}
+ addUserKnob {6 keepchannels l "keep multi-alpha" +STARTLINE}
+ addUserKnob {26 ""}
+ addUserKnob {41 maskChannelMask l "mask " -STARTLINE T MergeChroma.maskChannelMask}
+ addUserKnob {41 inject -STARTLINE T MergeChroma.inject}
+ addUserKnob {41 invert_mask l invert -STARTLINE T MergeChroma.invert_mask}
+ addUserKnob {41 fringe -STARTLINE T MergeChroma.fringe}
+ addUserKnob {41 mix T MergeChroma.mix}
+ addUserKnob {26 version_author l "" t "apChromaMerge v0.1\n2019" +STARTLINE T "<span style=\"color:#666\"><br/><b>apChromaMerge v0.1</b> - <a href=\"http://www.adrianpueyo.com\" style=\"color:#666;text-decoration: none;\">adrianpueyo.com</a>, 2019</span>"}
+}
+ Input {
+  inputs 0
+  name Inputmask
+  xpos 429
+  ypos 513
+  number 2
+ }
+set N124f0250 [stack 0]
+ Input {
+  inputs 0
+  name Inputchroma
+  xpos -110
+  ypos 339
+  number 1
+ }
+set N124f4e10 [stack 0]
+push $N124f4e10
+ Merge2 {
+  inputs 2
+  operation copy
+  Achannels {{{parent.MergeCopyChroma.Achannels}}}
+  Bchannels none
+  name MergeGetChroma
+  xpos 0
+  ypos 339
+ }
+set N285f92a0 [stack 0]
+ Dot {
+  name Dot4
+  note_font_size 41
+  xpos 34
+  ypos 555
+ }
+set N12512d30 [stack 0]
+ Group {
+  name apJoinChannels
+  help "Little tool to merge several channels into one in the right way, nice for combining multi-channel mattes into one without spreading a bunch of ChannelMerge nodes.\n\napJoinChannels v0.1 by Adrian Pueyo.\nadrianpueyo.com, 2016."
+  tile_color 0x4b60c3ff
+  xpos 0
+  ypos 595
+  addUserKnob {20 apJoinChannels}
+  addUserKnob {41 in T ShuffleIn.in}
+  addUserKnob {4 output l operation t "union: use for combining most mattes.\nmax: use for combining mattes that belong to a same thing.\nplus: use for combining mattes that already stencil each other." M {union max plus "" "" "" "" ""}}
+  addUserKnob {6 red +STARTLINE}
+  red true
+  addUserKnob {6 green +STARTLINE}
+  green true
+  addUserKnob {6 blue +STARTLINE}
+  blue true
+  addUserKnob {6 alpha +STARTLINE}
+  addUserKnob {26 copyright l " " T "\nadrianpueyo.com 2015"}
+ }
+  Input {
+   inputs 0
+   name Input
+   xpos 0
+   ypos 17
+  }
+  Shuffle {
+   name ShuffleIn
+   xpos 0
+   ypos 41
+  }
+  Expression {
+   temp_name0 rc
+   temp_expr0 r*parent.red
+   temp_name1 gc
+   temp_expr1 g*parent.green
+   temp_name2 bc
+   temp_expr2 b*parent.blue
+   temp_name3 ac
+   temp_expr3 a*parent.alpha
+   expr3 parent.output!=2?parent.output!=1?rc+gc+bc+ac-rc*gc-rc*bc-rc*ac-gc*bc-gc*ac-bc*ac+rc*gc*bc+rc*gc*ac+rc*bc*ac+gc*bc*ac-rc*gc*bc*ac:max(rc,gc,bc,ac):rc+gc+bc+ac
+   name apJoinChanExp
+   xpos 0
+   ypos 67
+  }
+  Shuffle {
+   red alpha
+   green alpha
+   blue alpha
+   name ShuffleOut
+   xpos 0
+   ypos 89
+  }
+  Output {
+   name Output1
+   xpos 0
+   ypos 113
+  }
+ end_group
+push $N124f0250
+push $N12512d30
+push $N124f0250
+push $N285f92a0
+ Invert {
+  channels rgba
+  name Invert
+  xpos 110
+  ypos 339
+ }
+ Input {
+  inputs 0
+  name InputBG
+  xpos 319
+  ypos 300
+ }
+set N125655e0 [stack 0]
+ Dot {
+  name Dot1
+  note_font_size 41
+  xpos 254
+  ypos 304
+ }
+ Merge2 {
+  inputs 2
+  operation multiply
+  name Merge1
+  xpos 220
+  ypos 339
+ }
+ Dot {
+  name Dot2
+  note_font_size 41
+  xpos 254
+  ypos 449
+ }
+push $N124f4e10
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge2
+  xpos -110
+  ypos 445
+ }
+ Dot {
+  name Dot3
+  note_font_size 41
+  xpos -76
+  ypos 517
+ }
+push $N125655e0
+ Merge2 {
+  inputs 2+1
+  operation copy
+  name MergeChroma
+  xpos 319
+  ypos 513
+ }
+ Merge2 {
+  inputs 2+1
+  operation copy
+  Achannels apChroma
+  Bchannels none
+  output {{{Achannels}}}
+  mix {{parent.MergeChroma.mix}}
+  name MergeCopyChroma
+  xpos 319
+  ypos 545
+  disable {{!parent.keepchannels}}
+ }
+ ChannelMerge {
+  inputs 2+1
+  maskChannelMask {{{parent.MergeChroma.maskChannelMask}}}
+  inject {{parent.MergeChroma.inject}}
+  invert_mask {{parent.MergeChroma.invert_mask}}
+  fringe {{parent.MergeChroma.fringe}}
+  mix {{parent.MergeChroma.mix}}
+  name CMAlpha
+  xpos 319
+  ypos 589
+  disable {{!parent.process_alpha}}
+ }
+ Output {
+  name Output1
+  xpos 319
+  ypos 727
+ }
+end_group

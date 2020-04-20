@@ -1,0 +1,101 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name SmartVector_
+ addUserKnob {20 SmartVector}
+ addUserKnob {41 useGPUIfAvailable l "Use GPU If Available" T SmartVectorCTRL.useGPUIfAvailable}
+ addUserKnob {26 ""}
+ addUserKnob {22 set_framerange l "Set Framerange" T "n = nuke.thisNode()\nfr = nuke.root().frameRange()\nn\['_first_frame'].setValue(fr.first())\nn\['_last_frame'].setValue(fr.last())\nn\['_root_frame'].setValue(fr.first())" +STARTLINE}
+ addUserKnob {41 _first_frame l first_frame T SmartVectorCTRL._first_frame}
+ addUserKnob {41 _last_frame l last_frame -STARTLINE T SmartVectorCTRL._last_frame}
+ addUserKnob {41 _root_frame l root_frame -STARTLINE T SmartVectorCTRL._root_frame}
+ addUserKnob {26 ""}
+ addUserKnob {41 renderMaxFrameDistance T SmartVectorCTRL.renderMaxFrameDistance}
+ addUserKnob {41 vectorDetailReg T SmartVectorCTRL.vectorDetailReg}
+ addUserKnob {41 strengthReg T SmartVectorCTRL.strengthReg}
+ addUserKnob {41 matteChannel l matte T SmartVectorCTRL.matteChannel}
+ addUserKnob {41 inpainting l "Inpaint Matte Region" T SmartVectorCTRL.inpainting}
+ addUserKnob {41 matteDilation T SmartVectorCTRL.matteDilation}
+ addUserKnob {41 flickerCompensation T SmartVectorCTRL.flickerCompensation}
+ addUserKnob {20 Tolerances n 1}
+ addUserKnob {41 weightRed T SmartVectorCTRL.weightRed}
+ addUserKnob {41 weightGreen T SmartVectorCTRL.weightGreen}
+ addUserKnob {41 weightBlue T SmartVectorCTRL.weightBlue}
+ addUserKnob {20 endGroup n -1}
+}
+ Input {
+  inputs 0
+  name InputMatte
+  xpos 120
+  ypos -9
+  number 1
+ }
+ Input {
+  inputs 0
+  name Input
+  xpos -40
+  ypos -153
+ }
+ SmartVector {
+  inputs 2
+  useGPUIfAvailable {{parent.SmartVectorCTRL.useGPUIfAvailable}}
+  renderMaxFrameDistance {{parent.SmartVectorCTRL.renderMaxFrameDistance}}
+  vectorDetailReg {{parent.SmartVectorCTRL.vectorDetailReg}}
+  strengthReg {{parent.SmartVectorCTRL.strengthReg}}
+  matteChannel {{parent.SmartVectorCTRL.matteChannel}}
+  inpainting {{parent.SmartVectorCTRL.inpainting}}
+  matteDilation {{parent.SmartVectorCTRL.matteDilation}}
+  Advanced 1
+  flickerCompensation {{parent.SmartVectorCTRL.flickerCompensation}}
+  Tolerances 1
+  weightRed {{parent.SmartVectorCTRL.weightRed}}
+  weightGreen {{parent.SmartVectorCTRL.weightGreen}}
+  weightBlue {{parent.SmartVectorCTRL.weightBlue}}
+  name _SmartVector_
+  xpos -40
+  ypos -15
+ }
+ Output {
+  name Output
+  xpos -40
+  ypos 99
+ }
+ NoOp {
+  inputs 0
+  name SmartVectorCTRL
+  xpos -200
+  ypos -9
+  addUserKnob {20 User}
+  addUserKnob {6 useGPUIfAvailable l "Use GPU If Available" +STARTLINE}
+  useGPUIfAvailable true
+  addUserKnob {26 ""}
+  addUserKnob {3 _first_frame}
+  _first_frame 1
+  addUserKnob {3 _last_frame -STARTLINE}
+  _last_frame 100
+  addUserKnob {3 _root_frame -STARTLINE}
+  _root_frame 1
+  addUserKnob {26 ""}
+  addUserKnob {7 renderMaxFrameDistance R 0 8}
+  renderMaxFrameDistance 5.8
+  addUserKnob {7 vectorDetailReg}
+  vectorDetailReg 0.695
+  addUserKnob {7 strengthReg R 0 1.5}
+  strengthReg 0.76
+  addUserKnob {4 matteChannel l "" +STARTLINE M {"None " "Source Alpha" "Source Inverted Alpha" "Matte Luminance" "Matte Inverted Luminance" "Matte Alpha" "Matte Inverted Alpha"}}
+  matteChannel "Source Alpha"
+  addUserKnob {6 inpainting l "Inpaint Matte Region" +STARTLINE}
+  inpainting true
+  addUserKnob {7 matteDilation R 0 100}
+  matteDilation 53
+  addUserKnob {6 flickerCompensation +STARTLINE}
+  addUserKnob {20 Tolerances n 1}
+  addUserKnob {7 weightRed}
+  weightRed 0.485
+  addUserKnob {7 weightGreen}
+  weightGreen 0.82
+  addUserKnob {7 weightBlue}
+  weightBlue 0.53
+  addUserKnob {20 endGroup n -1}
+ }
+end_group

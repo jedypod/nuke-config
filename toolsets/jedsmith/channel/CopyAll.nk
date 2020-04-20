@@ -1,0 +1,11 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+push 0
+Copy {
+inputs 2
+channels all
+name Copy25
+selected true
+xpos -230
+ypos -345
+}

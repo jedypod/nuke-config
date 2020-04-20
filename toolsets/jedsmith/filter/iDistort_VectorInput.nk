@@ -1,0 +1,52 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name iDistortVectorInput
+ addUserKnob {20 iDistort}
+ addUserKnob {41 channels T IDistort1.channels}
+ addUserKnob {41 vectorlayer l "vector layer" T VectorLayer.in}
+ addUserKnob {41 vector_multiply T VectorMultiplier.value}
+}
+ Input {
+  inputs 0
+  name InputVectors
+  xpos -308
+  ypos 110
+  number 1
+ }
+ Input {
+  inputs 0
+  name Input
+  xpos -40
+  ypos -10
+ }
+ ShuffleCopy {
+  inputs 2
+  red red
+  green green
+  out forward
+  name VectorLayer
+  xpos -40
+  ypos 110
+ }
+ Multiply {
+  channels forward
+  value {1 1 1 1}
+  name VectorMultiplier
+  xpos -40
+  ypos 144
+ }
+ IDistort {
+  channels rgba
+  uv forward
+  name IDistort1
+  selected true
+  xpos -40
+  ypos 190
+ }
+ Output {
+  name Output
+  xpos -40
+  ypos 430
+ }
+end_group

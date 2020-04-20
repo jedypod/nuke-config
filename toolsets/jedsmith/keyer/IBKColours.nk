@@ -1,0 +1,243 @@
+Group {
+ name IBKColours
+ tile_color 0x9900ff
+ addUserKnob {20 Parameters}
+ addUserKnob {4 screen_type l "screen type" M {green blue ""}}
+ screen_type green
+ addUserKnob {26 ""}
+ addUserKnob {20 traditional_ibk_threshold_label l " " n 1}
+ traditional_ibk_threshold_label 0
+ addUserKnob {26 ibk_threshold_label l " " T "<font color=#ddd><b>traditional ibk threshold </b><br/>\nadjust darks then lights: remove all fg <br/>but keep backing screen unchanged."}
+ addUserKnob {20 endGroup_1 l endGroup n -1}
+ addUserKnob {18 off l darks t "adjust the colour values to get the best separation between black and the screen type colour.\nYou want to be left with only shades of the screen colour and black. \nIf a green screen is selected start by bringing down darks->green\nIf a blue screen is selected start by bringing down darks->blue"}
+ off {0 0 0}
+ addUserKnob {6 off_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {18 mult l lights t "adjust the colour values to get the best separation between black and the screen type colour.\nYou want to be left with only shades of the screen colour and black. \nIf a green screen is selected start by bringing down darks->green\nIf a blue screen is selected start by bringing down darks->blue"}
+ mult {1 1 1}
+ addUserKnob {6 mult_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {26 ""}
+ addUserKnob {20 input_keyer_label l "" +STARTLINE n 1}
+ input_keyer_label 0
+ addUserKnob {26 input_key_label l " " T "<font color=#ddd><b>input keyer</b><br/>\nif using input keyer, increase clamp whites<br/>\nuntil fg is removed. increase clamp blacks <br/> \nif contamination of backing screen"}
+ addUserKnob {20 endGroup n -1}
+ addUserKnob {7 clamp_whites R 0 3}
+ clamp_whites 1
+ addUserKnob {7 clamp_blacks R 0 3}
+ addUserKnob {26 ""}
+ addUserKnob {7 Sizes l size t "size of color expansion: keep size as low as possible. The higher this is increased, the more the backing screen will be softened and the more garbage will be in your key around screen inconsistencies." R 0.1 15}
+ Sizes 1
+ addUserKnob {7 erode t "increase if you see traces of the foreground edge colour in the output. \n\nbe warned that this will also introduce garbage around your fg in areas of backing screen inconsistency." R 0 25}
+ addUserKnob {26 ""}
+ addUserKnob {7 multi l "patch black" t "use only once you have set up your key.\nthis fills in the black areas that should represent your foreground." R 0 5}
+ multi 5
+ addUserKnob {6 custom_edge l INVISIBLE t "custom edge detail switch" +INVISIBLE +STARTLINE}
+ custom_edge true
+ addUserKnob {26 ""}
+ addUserKnob {26 patchblack_layers_label l " " T "<font color=#ddd><b>patch black layers"}
+ addUserKnob {3 evertime l quantity t "the number of layers to change each time"}
+ evertime 1
+ addUserKnob {22 append_patch l add t "add a number of patch layers" -STARTLINE T "index = int(nuke.thisNode().knob('layer_number').value())\nevertime = int(nuke.thisNode().knob('evertime').value())\n\nclassList = \['Input', 'Expression', 'Dot', 'Dot', 'Invert', 'FilterErode', 'Copy', 'Keymix', 'Copy', 'Output', 'Blur', 'Unpremult', 'Expression', 'Dot']\nnodeInfo = \[\[0,0], \[0,100], \[384,104], \[559,104], \[525,200], \[525,400], \[350,400], \[0,400], \[0,500], \[0,600], \[350,200], \[350,300], \[175,300], \[209,510]]\n\n\nfor time in range(evertime):\n    index = index + 1\n    nodeList = \[]\n\n    g = nuke.createNode('Group', 'name Layer1 tile_color 65535', inpanel=False)\n    g.begin()\n    \n    for n in range(14):\n        no = nuke.createNode(classList\[n], inpanel=False)\n        no.setXYpos(nodeInfo\[n]\[0], nodeInfo\[n]\[1])\n        no = no.knob\n    \n        if classList\[1] in no('name').value():\n            no('expr3').setValue('a>0?1:0')\n    \n            for i in range(3):\n                no('channel'+str(i)).setValue('None')\n    \n        if n == 10:\n            no('size').setExpression('Sizes*2*multi*(patch_index**%d)' % index)\n    \n        if n == 5:\n            no('size').setExpression('-Sizes*(custom_edge==0?multi:edge_detail)/15*4*(patch_index**%d)' % index)\n            no('filter').setValue(3)\n\n        nodeList.append(no('name').value())\n    \n    to = nuke.toNode\n    nuke.toNode(nodeList\[10]).setInput(0, to(nodeList\[2]))\n    nuke.toNode(nodeList\[6]).setInput(0, to(nodeList\[11]))\n    nuke.toNode(nodeList\[6]).setInput(1, to(nodeList\[5]))\n    nuke.toNode(nodeList\[7]).setInput(0, to(nodeList\[1]))\n    nuke.toNode(nodeList\[7]).setInput(1, to(nodeList\[6]))\n    nuke.toNode(nodeList\[7]).setInput(2, to(nodeList\[6]))\n    nuke.toNode(nodeList\[8]).setInput(0, to(nodeList\[7]))\n    nuke.toNode(nodeList\[8]).setInput(1, to(nodeList\[13]))\n    \n    g.end()\n    \n    last = nuke.toNode('Copy2').input(0)\n    gxy = \[int(last\['xpos'].value()), int(last\['ypos'].value()+26)]\n\n    g.setXYpos(gxy\[0], gxy\[1])\n    g.setInput(0, last)\n\n    nuke.toNode('Copy2').setInput(0, g)\n\ng.knob('selected').setValue(False)\n\n# Display layer\nnuke.thisNode().knob('layer_number').setValue(index)"}
+ addUserKnob {22 reduce_patch l remove t "remove a number of patch black layers" -STARTLINE T "node = nuke.thisNode()\nevertime = int(node.knob('evertime').value())\nextent = int(node.knob('layer_number').getValue())\n\nfor time in range(evertime):\n    if extent > 0:\n        target = nuke.toNode('Copy2').input(0)\n        nuke.delete(target)\n    else:\n        break\n    extent = extent - 1\n\nnode.knob('layer_number').setValue(extent)"}
+ addUserKnob {22 clear_all l clear t "clear all patch black layers" -STARTLINE T "end = 'Unpremult2'\n\nwhile True:\n    target = nuke.toNode('Copy2').input(0)\n\n    if target.knob('name').value() == end:\n        break\n    else:\n        nuke.delete(target)\n\n# Display layer\nnuke.thisNode().knob('layer_number').setValue(0)"}
+ addUserKnob {3 layer_number l " " t "Number of current layers." -STARTLINE +DISABLED}
+ addUserKnob {7 patch_index l "patch index" t "the relative index of each patch\nthe higher this is, the more each patch black layer will fill the black area.\n\nThe higher this is, the more danger there is of the non-black areas being contaminated though." R 0 8}
+ patch_index 2
+ addUserKnob {7 edge_detail l "path layer blend" t "The higher this is the softer the blend between each patch layer will be.\n\nToo much and the backing screen can start to become contaminated." R 3 30}
+ edge_detail 5
+}
+ Input {
+  inputs 0
+  name InputKeyer
+  label "\[value number]"
+  xpos 898
+  ypos -536
+  number 1
+ }
+ Expression {
+  temp_name0 cl_blacks
+  temp_expr0 (1-((1-a)*(1+clamp_blacks)))
+  temp_name1 cl_whites
+  temp_expr1 "cl_blacks*(1+clamp_whites) "
+  temp_name2 clamped_alpha
+  temp_expr2 clamp(cl_whites)
+  channel0 alpha
+  expr0 "clamped_alpha < 1 ? 1 : 0"
+  name Threshold_Input_Key
+  xpos 898
+  ypos -210
+ }
+ Dot {
+  name Dot9
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos 932
+  ypos -126
+ }
+ Input {
+  inputs 0
+  name Input
+  label "\[value number]"
+  xpos 362
+  ypos -536
+ }
+ Dot {
+  name Dot7
+  label " "
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos 396
+  ypos -286
+ }
+set Nb7aa2f10 [stack 0]
+ Grade {
+  multiply {{mult.r} {mult.g} {mult.b} 0}
+  add {{off.r} {off.g} {off.b} 0}
+  name Grade1
+  xpos 630
+  ypos -290
+ }
+ Expression {
+  temp_name0 green
+  temp_expr0 g>r+b?1:0
+  temp_name1 blue
+  temp_expr1 b>r+g?1:0
+  channel0 none
+  channel1 none
+  channel2 none
+  expr3 screen_type==0?green:blue
+  name Expression1
+  xpos 630
+  ypos -210
+ }
+ Switch {
+  inputs 2
+  which {{"\[exists parent.input1]"}}
+  name _INPUT_KEYER_SWITCH
+  xpos 630
+  ypos -130
+ }
+ Erode {
+  size {{erode}}
+  name Erode1
+  xpos 630
+  ypos -16
+ }
+set N9d1fd4a0 [stack 0]
+ Dot {
+  name Dot1
+  xpos 1602
+  ypos -6
+ }
+ Dot {
+  name Dot2
+  xpos 1602
+  ypos 1594
+ }
+push $N9d1fd4a0
+push $Nb7aa2f10
+ Copy {
+  inputs 2
+  from0 rgba.alpha
+  to0 rgba.alpha
+  name Copy1
+  xpos 362
+  ypos -16
+ }
+ Premult {
+  name Premult1
+  xpos 362
+  ypos 70
+ }
+ Blur {
+  channels rgba
+  size {{Sizes}}
+  name Blur1
+  xpos 362
+  ypos 150
+ }
+ Unpremult {
+  name Unpremult1
+  xpos 362
+  ypos 350
+ }
+set N546f7b0 [stack 0]
+ Expression {
+  channel0 none
+  channel1 none
+  channel2 none
+  expr3 a>0?1:0
+  name Expression2
+  xpos 630
+  ypos 350
+ }
+set N54779a0 [stack 0]
+ Dot {
+  name Dot3
+  xpos 1468
+  ypos 354
+ }
+ Dot {
+  name Dot4
+  xpos 1468
+  ypos 1314
+ }
+push $N54779a0
+ Blur {
+  channels rgba
+  size {{Sizes*2*multi}}
+  name Blur2
+  xpos 630
+  ypos 390
+ }
+ Unpremult {
+  name Unpremult2
+  xpos 630
+  ypos 470
+ }
+ Copy {
+  inputs 2
+  from0 rgba.alpha
+  to0 rgba.alpha
+  name Copy2
+  xpos 630
+  ypos 1304
+ }
+ Invert {
+  channels alpha
+  name Invert1
+  xpos 630
+  ypos 1384
+ }
+ FilterErode {
+  size {{-Sizes*(custom_edge==0?multi:edge_detail)/15*4}}
+  filter gaussian
+  name FilterErode1
+  xpos 630
+  ypos 1464
+ }
+set N956f2b40 [stack 0]
+push $N956f2b40
+push $N546f7b0
+ Keymix {
+  inputs 3
+  channels rgb
+  name Keymix1
+  xpos 362
+  ypos 1470
+ }
+ Copy {
+  inputs 2
+  from0 rgba.alpha
+  to0 rgba.alpha
+  name Copy3
+  xpos 362
+  ypos 1584
+ }
+ Output {
+  name Output1
+  xpos 362
+  ypos 1870
+ }
+end_group

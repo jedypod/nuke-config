@@ -1,0 +1,89 @@
+set cut_paste_input [stack 0]
+version 10.5 v5
+push $cut_paste_input
+add_layer {Nworld_filtered Nworld_filtered.red Nworld_filtered.green Nworld_filtered.blue}
+add_layer {Pworld Pworld.red Pworld.green Pworld.blue Pworld.alpha}
+Group {
+ name EnvReflection
+ selected true
+ xpos -576
+ ypos -2970
+ addUserKnob {20 EnvReflection}
+ addUserKnob {41 N T _SHUFFLE_N_.in}
+ addUserKnob {41 P l "&nbsp; &nbsp;&nbsp; &nbsp;  &nbsp; P" -STARTLINE T _SHUFFLE_P_.in}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 transform T EnvReflection1.transform}
+ addUserKnob {26 env_rotation_label l " " T "<font color=#ddd><b> Environment Rotation"}
+ addUserKnob {41 samples T EnvReflection1.samples}
+ addUserKnob {41 filter l "&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; filter" -STARTLINE T EnvReflection1.filter}
+ addUserKnob {41 xform_order l "transform order" T EnvReflection1.xform_order}
+ addUserKnob {41 rot_order l "rotation order" -STARTLINE T EnvReflection1.rot_order}
+ addUserKnob {41 translate T EnvReflection1.translate}
+ addUserKnob {41 rotate T EnvReflection1.rotate}
+ addUserKnob {41 scaling l scale T EnvReflection1.scaling}
+ addUserKnob {41 uniform_scale l "uniform scale" T EnvReflection1.uniform_scale}
+ addUserKnob {41 skew T EnvReflection1.skew}
+ addUserKnob {41 pivot T EnvReflection1.pivot}
+ addUserKnob {20 Matrix}
+ addUserKnob {41 useMatrix l "specify matrix" T EnvReflection1.useMatrix}
+ addUserKnob {41 matrix l "" +STARTLINE T EnvReflection1.matrix}
+}
+ Input {
+  inputs 0
+  name Inputenv
+  label "\[value number]"
+  xpos -174
+  ypos -616
+  number 1
+ }
+ Input {
+  inputs 0
+  name Input
+  label "\[value number]"
+  xpos -308
+  ypos -896
+ }
+ Dot {
+  name Dot2
+  label " "
+  note_font "Helvetica Bold Bold"
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos -274
+  ypos -806
+ }
+set N6a7e030 [stack 0]
+ Dot {
+  name Dot1
+  label " "
+  note_font "Helvetica Bold Bold"
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos -140
+  ypos -806
+ }
+ Shuffle {
+  in Pworld
+  name _SHUFFLE_P_
+  xpos -174
+  ypos -730
+ }
+push $N6a7e030
+ Shuffle {
+  in Nworld_filtered
+  name _SHUFFLE_N_
+  xpos -308
+  ypos -730
+ }
+ EnvReflection {
+  inputs 3
+  name EnvReflection1
+  xpos -308
+  ypos -610
+ }
+ Output {
+  name Output
+  xpos -308
+  ypos -530
+ }
+end_group

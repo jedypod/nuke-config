@@ -1,0 +1,12 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Reformat {
+ type "to box"
+ box_width {{"\[exists input] ? input.width : root.width"}}
+ box_height {{"\[exists input] ? input.height : root.height"}}
+ box_fixed true
+ box_pixel_aspect {{"\[exists input] ? input.pixel_aspect : root.pixel_aspect"}}
+ resize none
+ black_outside true
+ name BboxRemove
+}

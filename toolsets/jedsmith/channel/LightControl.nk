@@ -1,0 +1,423 @@
+Group {
+name LightControl
+tile_color 0x828b98ff
+addUserKnob {20 LightControl}
+addUserKnob {22 ChooseLight l "Choose Light" t "Choose a diffuse or specular channel of a Lighting Pass!" T "from __future__ import with_statement \ndef choose_light():\n\t# Returns a list of the layers in the incoming pipe\n\tlctrl = nuke.thisNode()\n\tchannels = lctrl.channels()\n\tlayers = list(set(\[c.split('.')\[0] for c in channels]))\n\tlayers.sort()\n\n\tlayer_list = ' '.join(layers)\n\tdiff_name_ending = '_diff'\n\tspec_name_ending = '_spec'\n\n\tp = nuke.Panel( 'Select Light' )\n\tp.addEnumerationPulldown( 'Choose Diffuse Light Layer:', layer_list )\n\tp.addSingleLineInput('diff layer ending:', diff_name_ending)\n\tp.addSingleLineInput('spec layer ending:', spec_name_ending)\n\n\tif not p.show():\n\t\treturn\n\tlight_layer = p.value('Choose Diffuse Light Layer:')\n\tdiff_name_ending = p.value('diff layer ending:')\n\tspec_name_ending = p.value('spec layer ending:')\n\tif diff_name_ending in light_layer:\n\t\tlight_layer_basename = light_layer.split(diff_name_ending)\[0]\n\telif spec_name_ending in light_layer:\n\t\tlight_layer_basename = light_layer.split(spec_name_ending)\[0]\n\telse:\n\t\tnuke.message('Selected channel is not a lighting pass! No diffuse and spec pair.')\n\t\treturn\n\tdiff_light_layer = light_layer_basename+diff_name_ending\n\tspec_light_layer = light_layer_basename+spec_name_ending\n\tlctrl\['label'].setValue(light_layer_basename)\n\t\n\twith lctrl:\n\t\tdiff_shuffle = nuke.toNode('select_diffuse')\n\t\tspec_shuffle = nuke.toNode('select_specular')\n\t\tdiff_shuffle\['in'].setValue(diff_light_layer)\n\t\tspec_shuffle\['in'].setValue(spec_light_layer)\nif __name__==\"__main__\":\n\tchoose_light()" +STARTLINE}
+addUserKnob {6 show_light l "<b><font size=4>&nbsp;Solo Light</b>" t "Show only this lighting pass." -STARTLINE}
+addUserKnob {6 disable_light l "<b><font size=4>&nbsp;Disable Light</b>" t "Removes the contribution of this light." -STARTLINE}
+addUserKnob {6 replace_aovs l "<b><font size=4>&nbsp;Replace AOVs</b>" t "If this is checked, the graded AOVs are also replaced in the main data stream. This allows you to stack multiple LightControl gizmos without breaking the image math." -STARTLINE}
+replace_aovs true
+addUserKnob {41 inDiffuse l diff t "Render layer to use as the diffuse element of the light." T select_diffuse.in}
+addUserKnob {41 inSpec l spec t "Render layer to use as the specular element of the light." T select_specular.in}
+addUserKnob {26 Master l "<b><font color='#ccc' size='4'>Master</b>"}
+addUserKnob {18 master_gain l gain R 0 4}
+master_gain 1
+addUserKnob {6 master_gain_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+addUserKnob {18 master_multiply l multiply R 0 4}
+master_multiply 1
+addUserKnob {6 master_multiply_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+addUserKnob {18 master_gamma l gamma R 0 4}
+master_gamma 1
+addUserKnob {6 master_gamma_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+addUserKnob {26 Diffuse l "<b><font color='#ccc' size='4'>Diffuse</b>"}
+addUserKnob {18 diff_gain l gain R 0 4}
+diff_gain 1
+addUserKnob {6 diff_gain_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+addUserKnob {18 diff_multiply l multiply R 0 4}
+diff_multiply 1
+addUserKnob {6 diff_multiply_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+addUserKnob {18 diff_gamma l gamma R 0 4}
+diff_gamma 1
+addUserKnob {6 diff_gamma_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+addUserKnob {18 diff_offset l offset R -1 1}
+diff_offset {0 0 0}
+addUserKnob {6 diff_offset_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+addUserKnob {26 Specular l "<b><font color='#ccc' size='4'>Specular</b>"}
+addUserKnob {18 spec_gain l gain R 0 4}
+spec_gain 1
+addUserKnob {6 spec_gain_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+addUserKnob {18 spec_multiply l multiply R 0 4}
+spec_multiply 1
+addUserKnob {6 spec_multiply_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+addUserKnob {18 spec_gamma l gamma R 0 4}
+spec_gamma 1
+addUserKnob {6 spec_gamma_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+addUserKnob {18 spec_offset l offset R -1 1}
+spec_offset {0 0 0}
+addUserKnob {6 spec_offset_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+addUserKnob {26 ""}
+addUserKnob {7 mix}
+mix 1
+}
+Input {
+inputs 0
+name InputMask
+label "\[value number]"
+xpos 180
+ypos 1352
+number 1
+}
+Input {
+inputs 0
+name Input
+label "\[value number]"
+xpos 1610
+ypos 272
+}
+Dot {
+name Dot10
+label " Beauty Input"
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos 1644
+ypos 354
+}
+Dot {
+name Dot46
+xpos 1644
+ypos 474
+}
+set N5abb87b0 [stack 0]
+Dot {
+name Dot47
+xpos 1314
+ypos 474
+}
+set N3015de20 [stack 0]
+Dot {
+name Dot48
+xpos 984
+ypos 474
+}
+set Nc2718bb0 [stack 0]
+Dot {
+name Dot18
+label " "
+note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 24
+note_font_color 0xff000000
+xpos 544
+ypos 474
+}
+Dot {
+name Dot12
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos 544
+ypos 834
+}
+Shuffle {
+red white
+green white
+blue white
+alpha white
+name WHITE3
+tile_color 0xfefefeff
+xpos 510
+ypos 1094
+disable {{"clamp(parent.Internal_Mask_ALPHA.from0) && parent.enable_internal_mask"}}
+}
+Switch {
+inputs 2
+which {{"\[exists parent.input1]"}}
+name Switch2
+xpos 510
+ypos 1358
+}
+Dot {
+name Dot22
+label " "
+note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 24
+note_font_color 0xff000000
+xpos 544
+ypos 1482
+}
+set Nc26b6700 [stack 0]
+Dot {
+name Dot4
+label " "
+note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 24
+note_font_color 0xff000000
+xpos 544
+ypos 1554
+}
+push $N3015de20
+Shuffle {
+in none
+in2 rgba
+alpha alpha2
+name select_specular
+label "\[value in]"
+xpos 1280
+ypos 512
+}
+Remove {
+operation keep
+channels rgba
+name Remove1
+xpos 1280
+ypos 566
+}
+Unpremult {
+name Unpremult2
+xpos 1280
+ypos 710
+}
+Dot {
+name Dot2
+xpos 1314
+ypos 1338
+}
+set Nf9317c20 [stack 0]
+Grade {
+inputs 1+1
+white {{parent.spec_gain*parent.master_gain} {parent.spec_gain*parent.master_gain} {parent.spec_gain*parent.master_gain} 1}
+multiply {{parent.spec_multiply.r*parent.master_multiply} {parent.spec_multiply.r*parent.master_multiply} {parent.spec_multiply.r*parent.master_multiply} 1}
+add {{parent.spec_offset} {parent.spec_offset} {parent.spec_offset} 0}
+gamma {{parent.spec_gamma*parent.master_gamma} {parent.spec_gamma*parent.master_gamma} {parent.spec_gamma*parent.master_gamma} 1}
+black_clamp false
+unpremult rgba.alpha
+name Grade_Spec
+xpos 1280
+ypos 1544
+}
+Dot {
+name Dot3
+xpos 1314
+ypos 1818
+}
+set Nf9341560 [stack 0]
+Dot {
+name Dot15
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos 1314
+ypos 2058
+}
+set N559f14c0 [stack 0]
+Dot {
+name Dot9
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos 1314
+ypos 2250
+}
+push $Nc26b6700
+push $Nc2718bb0
+Shuffle {
+in none
+in2 rgba
+alpha alpha2
+name select_diffuse
+label "\[value in]"
+xpos 950
+ypos 512
+}
+Remove {
+operation keep
+channels rgba
+name Remove2
+xpos 950
+ypos 566
+}
+Unpremult {
+name Unpremult3
+xpos 950
+ypos 710
+}
+Dot {
+name Dot1
+xpos 984
+ypos 1386
+}
+set N344595c0 [stack 0]
+Grade {
+inputs 1+1
+white {{parent.diff_gain.r*parent.master_gain} {parent.diff_gain.g*parent.master_gain} {parent.diff_gain.b*parent.master_gain} 1}
+multiply {{parent.diff_multiply.r*parent.master_multiply} {parent.diff_multiply.g*parent.master_multiply} {parent.diff_multiply.b*parent.master_multiply} 1}
+add {{parent.diff_offset} {parent.diff_offset} {parent.diff_offset} 0}
+gamma {{parent.diff_gamma*parent.master_gamma} {parent.diff_gamma*parent.master_gamma} {parent.diff_gamma*parent.master_gamma} 1}
+black_clamp false
+unpremult rgba.alpha
+name Grade_Diffuse
+xpos 950
+ypos 1472
+}
+Dot {
+name Dot49
+xpos 984
+ypos 1986
+}
+set Na83d5ab0 [stack 0]
+Dot {
+name Dot16
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos 984
+ypos 2154
+}
+set N247e7b90 [stack 0]
+Merge2 {
+inputs 2
+operation plus
+bbox B
+output {rgba.red rgba.green rgba.blue -rgba.alpha}
+name Merge3
+xpos 950
+ypos 2246
+}
+Premult {
+name Premult2
+xpos 950
+ypos 2318
+}
+Dot {
+name Dot11
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos 984
+ypos 2490
+}
+push $N247e7b90
+Premult {
+name Premult4
+xpos 1500
+ypos 2150
+}
+push $N559f14c0
+Premult {
+name Premult3
+xpos 1500
+ypos 2054
+}
+push $Na83d5ab0
+push $N344595c0
+Dot {
+name Dot21
+label " "
+note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 24
+note_font_color 0xff000000
+xpos 1424
+ypos 1386
+}
+Dot {
+name Dot24
+label " "
+note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 24
+note_font_color 0xff000000
+xpos 1424
+ypos 1890
+}
+push $Nf9341560
+push $Nf9317c20
+push $N5abb87b0
+Unpremult {
+name Unpremult1
+xpos 1610
+ypos 710
+}
+Merge2 {
+inputs 2
+operation from
+output {rgba.red rgba.green rgba.blue -rgba.alpha}
+name Merge28
+xpos 1610
+ypos 1334
+}
+Merge2 {
+inputs 2
+operation plus
+output {rgba.red rgba.green rgba.blue -rgba.alpha}
+name Merge27
+label Specular
+xpos 1610
+ypos 1808
+disable {{parent.disable_light}}
+}
+Merge2 {
+inputs 2
+operation from
+output {rgba.red rgba.green rgba.blue -rgba.alpha}
+name Merge1
+xpos 1610
+ypos 1886
+}
+Merge2 {
+inputs 2
+operation plus
+output {rgba.red rgba.green rgba.blue -rgba.alpha}
+name Merge2
+label Diffuse
+xpos 1610
+ypos 1976
+disable {{parent.disable_light}}
+}
+ShuffleCopy {
+inputs 2
+red red
+green green
+blue blue
+out {{{parent.select_specular.in}}}
+name _REPLACE_SPEC_
+label "\[value in] | \[value in2] -> \[value out]"
+xpos 1610
+ypos 2048
+disable {{!parent.replace_aovs}}
+}
+ShuffleCopy {
+inputs 2
+red red
+green green
+blue blue
+out {{{parent.select_diffuse.in}}}
+name _REPLACE_DIFF_
+label "\[value in] | \[value in2] -> \[value out]"
+xpos 1610
+ypos 2144
+disable {{!parent.replace_aovs}}
+}
+Premult {
+name Premult1
+xpos 1610
+ypos 2342
+}
+Switch {
+inputs 2
+which {{parent.show_light}}
+name Switch3
+label "view just selected light"
+xpos 1610
+ypos 2480
+}
+push $N5abb87b0
+Dot {
+name Dot17
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos 2084
+ypos 474
+}
+Dot {
+name Dot13
+note_font_size 42
+note_font_color 0x7f7f7f01
+xpos 2084
+ypos 2658
+}
+Dissolve {
+inputs 2
+which {{parent.mix}}
+name Dissolve1
+xpos 1610
+ypos 2648
+}
+Output {
+name Output1
+xpos 1610
+ypos 2894
+}
+end_group

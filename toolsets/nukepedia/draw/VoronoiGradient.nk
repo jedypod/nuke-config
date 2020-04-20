@@ -1,0 +1,462 @@
+set cut_paste_input [stack 0]
+version 11.3 v4
+push $cut_paste_input
+Group {
+ name VoronoiGradient1
+ knobChanged "\n\nimport random\nfrom math import sqrt\n\n################\n##Script Start##\n################    \n        \nn = nuke.thisNode() #the node\nk = nuke.thisKnob() #the knob\nkn = k.name() #the knob name\n\nprint (\"Knob name: \"+kn)\n\nif kn == \"type\":\n    if n\['type'].getValue() == 0: #generate\n        n\['sample_radius'].setVisible(False)\n        n\['generate_format'].setVisible(True)\n    else: #sample\n        n\['generate_format'].setVisible(False)\n        n\['sample_radius'].setVisible(True)\n        \nif kn == \"method\":\n    if n\['method'].getValue() == 0: #voronoi\n        n\['speedup'].setVisible(False)\n        n\['aa'].setVisible(True)\n    else: #NNI\n        n\['aa'].setVisible(False)\n        n\['speedup'].setVisible(True)\n\n#############\n##Add Point##\n#############\n\nif kn == \"add_point\":\n    count = 0\n    found = False\n    i = 1\n\n    #Find the earliest available knob\n    while found == False:\n        try:\n            n\[\"pos_\"+str(i)]\n        except NameError:\n            found = True\n            count = i\n        else:\n            i += 1\n\n    divider = nuke.Text_Knob('divider_'+str(count), ' ')\n    position = nuke.XY_Knob('pos_'+str(count), 'Position')\n    remove = nuke.PyScript_Knob('remove_'+str(count), 'Remove this Point', '')\n    color = nuke.AColor_Knob('color_'+str(count), 'Color')\n    #weight = nuke.Double_Knob('weight_'+str(count), 'Weight')\n\n    remove.setFlag(0x00002000) #no new line\n\n    n.addKnob(divider)\n    n.addKnob(position)\n    n.addKnob(remove)\n    n.addKnob(color)\n    \n    #Set a random color at point creation\n    randomColor = \[random.uniform(0, 1),random.uniform(0, 1),random.uniform(0, 1),0]\n    randomColor\[random.randint(0, 2)] = 1\n    color.setValue(randomColor)\n\n    #n.addKnob(weight)\n    #weight.setRange(0,5)\n    #weight.setValue(1)\n    \n    \n################\n##Remove Point##\n################\n\nif kn\[0:7] == \"remove_\":\n    id = str(kn\[7:])\n    \n    n.removeKnob(knobs\['divider_'+id])\n    n.removeKnob(knobs\['pos_'+id])\n    n.removeKnob(knobs\['remove_'+id])\n    n.removeKnob(knobs\['color_'+id])\n    #n.removeKnob(knobs\['weight_'+id])\n    \n    #Removing a point does not rename/reorder the pointlist.\n    #This is for consistency reasons.\n    \n####################\n##Update Pointlist##\n####################\n\nknobs = n.knobs() #knoblist\n\n#Calculate the triangulation only when a point is moved, added or removed\nif kn\[0:7] == \"remove_\" or kn == \"add_point\":\n    points_orig = \[]\n    \n    #iterate through all knobs. If a position knob is found, append to pointlist\n    for knob in knobs:\n        if knob\[0:4] == \"pos_\":\n            id = int(knob\[4:])\n            points_orig.append(id)\n    \n    \n    points_orig.sort()\n    \n    points = ','.join(str(i) for i in points_orig)\n    n\['points'].setValue(points)\n"
+ tile_color 0xaaaaaaff
+ selected true
+ xpos -1164
+ ypos -1572
+ addUserKnob {20 User}
+ addUserKnob {26 title l "" +STARTLINE T "<font color=#ff8300 size=\"7\">Voronoi Gradient</font><font color=#ff8300 size=\"2\"> v1.2</font>"}
+ addUserKnob {26 description l "" +STARTLINE T "<font color=#ff8300 size=\"2\">by Nikolai Wüstemann</font>"}
+ addUserKnob {26 spacer_00 l "" +STARTLINE T " "}
+ addUserKnob {26 divider_general l "<b><font color=#ffd228>General</font><b>"}
+ addUserKnob {4 type l Type M {Generate Sample}}
+ addUserKnob {17 generate_format l Format}
+ generate_format "1920 1080 0 0 1920 1080 1 HD_1080"
+ addUserKnob {3 sample_radius l "Sample Radius" t "When Type is set to \"Sample\".\nBlurs the input image by this amount and samples the pixel at given position." +HIDDEN}
+ sample_radius 5
+ addUserKnob {14 boundingbox l "Add Bounding Box" R 0 100}
+ addUserKnob {26 spacer_01 l "" +STARTLINE T " "}
+ addUserKnob {26 divider_method l "<b><font color=#ffd228>Method</font><b>"}
+ addUserKnob {4 method l Output M {"Voronoi Diagram" "Natural Neighbor Interpolation"}}
+ method "Natural Neighbor Interpolation"
+ addUserKnob {7 aa l Anti-Aliasing t "Anti-Aliasing Levels. The image ist scaled up by this amount, the calculation is done, and the image is scaled down to original size again." +HIDDEN R 1 4}
+ aa 2
+ addUserKnob {7 speedup l Optimization t "Reduces the image scale by the selected amount and scales up afterwards. For smooth gradients this is a great optimization that comes at hardly no cost." R 1 10}
+ speedup 5
+ addUserKnob {41 colorspace l Colorspace t "Linear: Mathematical way\nsRGB: More natural falloff\nL*a*b*: Less grey areas\nHSV: Interpolate over spectrum" T ColorspaceForth.colorspace_out}
+ addUserKnob {26 spacer_02 l "" +STARTLINE T " "}
+ addUserKnob {26 divider_points l "<b><font color=#ffd228>Points</font><b>"}
+ addUserKnob {22 add_point l "Add Point" +STARTLINE}
+ addUserKnob {1 points l INVISIBLE +INVISIBLE}
+ points 1,2,3,4
+ addUserKnob {26 divider_1 l " "}
+ addUserKnob {12 pos_1 l Position}
+ pos_1 {82 320}
+ addUserKnob {22 remove_1 l "Remove this Point" -STARTLINE}
+ addUserKnob {19 color_1 l Color}
+ color_1 {1 0 0 0}
+ addUserKnob {6 color_1_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {6 color_1_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {26 divider_2 l " "}
+ addUserKnob {12 pos_2 l Position}
+ pos_2 {1192 918}
+ addUserKnob {22 remove_2 l "Remove this Point" -STARTLINE}
+ addUserKnob {19 color_2 l Color}
+ color_2 {0 0 1 0}
+ addUserKnob {6 color_2_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {6 color_2_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {26 divider_3 l " "}
+ addUserKnob {12 pos_3 l Position}
+ pos_3 {1048 78}
+ addUserKnob {22 remove_3 l "Remove this Point" -STARTLINE}
+ addUserKnob {19 color_3 l Color}
+ color_3 {0 1 0 0}
+ addUserKnob {6 color_3_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {6 color_3_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {26 divider_4 l " "}
+ addUserKnob {12 pos_4 l Position}
+ pos_4 {300 828}
+ addUserKnob {22 remove_4 l "Remove this Point" -STARTLINE}
+ addUserKnob {19 color_4 l Color}
+ color_4 {1 1 0 0}
+ addUserKnob {6 color_4_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {6 color_4_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
+}
+ StickyNote {
+  inputs 0
+  name StickyNote1
+  label "Generate a Format"
+  xpos -120
+  ypos -1
+ }
+ StickyNote {
+  inputs 0
+  name StickyNote2
+  label "Use Input Format"
+  xpos 19
+  ypos -3
+ }
+ StickyNote {
+  inputs 0
+  name StickyNote3
+  label "Sample Input Colors"
+  xpos -366
+  ypos 4
+ }
+ StickyNote {
+  inputs 0
+  name StickyNote10
+  label "Copy Input Colors"
+  xpos -533
+  ypos 6
+ }
+ Crop {
+  inputs 0
+  box {0 0 2 {"\[llength \[split \[value this.parent.points] ,]]"}}
+  reformat true
+  crop false
+  name Crop_points_orig_1
+  xpos -443
+  ypos -39
+ }
+set N3cc91420 [stack 0]
+ Expression {
+  temp_name0 col_r
+  temp_expr0 "\[sample \[node sample_image] red \[value this.parent.pos_\[lindex \[split \[value this.parent.points] ,] \[frame]].x] \[value this.parent.pos_\[lindex \[split \[value this.parent.points] ,] \[frame]].y]] "
+  temp_name1 col_g
+  temp_expr1 "\[sample \[node sample_image] green \[value this.parent.pos_\[lindex \[split \[value this.parent.points] ,] \[frame]].x] \[value this.parent.pos_\[lindex \[split \[value this.parent.points] ,] \[frame]].y]] "
+  temp_name2 col_b
+  temp_expr2 "\[sample \[node sample_image] blue \[value this.parent.pos_\[lindex \[split \[value this.parent.points] ,] \[frame]].x] \[value this.parent.pos_\[lindex \[split \[value this.parent.points] ,] \[frame]].y]] "
+  temp_name3 col_a
+  temp_expr3 "\[sample \[node sample_image] alpha \[value this.parent.pos_\[lindex \[split \[value this.parent.points] ,] \[frame]].x] \[value this.parent.pos_\[lindex \[split \[value this.parent.points] ,] \[frame]].y]] "
+  expr0 "x==0 && y==0 ? col_r : r"
+  expr1 "x==0 && y==0 ? col_g : g"
+  expr2 "x==0 && y==0 ? col_b : b"
+  channel3 alpha
+  expr3 "x==0 && y==0 ? col_a : a"
+  name Expression_SampleColor
+  label "Sample Color\n"
+  xpos -356
+  ypos 49
+ }
+push $N3cc91420
+ Expression {
+  temp_name0 col_r
+  temp_expr0 "\[value this.parent.color_\[lindex \[split \[value this.parent.points] ,] \[frame]].r]"
+  temp_name1 col_g
+  temp_expr1 "\[value this.parent.color_\[lindex \[split \[value this.parent.points] ,] \[frame]].g]"
+  temp_name2 col_b
+  temp_expr2 "\[value this.parent.color_\[lindex \[split \[value this.parent.points] ,] \[frame]].b]"
+  temp_name3 col_a
+  temp_expr3 "\[value this.parent.color_\[lindex \[split \[value this.parent.points] ,] \[frame]].a]"
+  expr0 "x==0 && y==0 ? col_r : r"
+  expr1 "x==0 && y==0 ? col_g : g"
+  expr2 "x==0 && y==0 ? col_b : b"
+  channel3 alpha
+  expr3 "x==0 && y==0 ? col_a : a"
+  name Expression_GenerateColor
+  label "Generate Color"
+  xpos -526
+  ypos 48
+ }
+ Switch {
+  inputs 2
+  which {{type}}
+  name Switch_Mode
+  label "Python Sample Evaluation"
+  xpos -439
+  ypos 161
+ }
+ Colorspace {
+  name ColorspaceForth
+  knobChanged "id = nuke.thisNode().knob(\"colorspace_out\").getValue()\nnuke.toNode(\"ColorspaceBack\").knob(\"colorspace_in\").setValue(int(id))"
+  xpos -439
+  ypos 239
+ }
+ Expression {
+  temp_name0 scale
+  temp_expr0 method==0?(aa<1?1:aa):1/(speedup<1?1:speedup)
+  temp_name1 pos_x
+  temp_expr1 "\[value this.parent.pos_\[lindex \[split \[value this.parent.points] ,] \[frame]].x]"
+  temp_name2 pos_y
+  temp_expr2 "\[value this.parent.pos_\[lindex \[split \[value this.parent.points] ,] \[frame]].y]"
+  expr0 "x==1 && y==0 ? pos_x*scale : r"
+  expr1 "x==1 && y==0 ? pos_y*scale : g"
+  channel3 none
+  name Expression_Position
+  label "Set Position"
+  xpos -439
+  ypos 314
+ }
+ Transform {
+  translate {0 {"\[frame]"}}
+  center {1.5 1.5}
+  filter Impulse
+  name Transform_IteratePoints
+  xpos -439
+  ypos 499
+ }
+ TimeEcho {
+  mode Plus
+  framesbehind {{"\[llength \[split \[value this.parent.points] ,]]"}}
+  name TimeEcho_AddPoints
+  xpos -439
+  ypos 568
+ }
+ FrameHold {
+  first_frame {{"\[llength \[split \[value this.parent.points] ,]]-1"}}
+  name FrameHold_FetchPoints
+  xpos -439
+  ypos 638
+ }
+ Crop {
+  box {0 0 2 {"\[llength \[split \[value this.parent.points] ,]]"}}
+  name Crop_points_orig_2
+  xpos -439
+  ypos 717
+ }
+ PostageStamp {
+  name PostageStamp2
+  xpos -439
+  ypos 796
+  postage_stamp true
+ }
+ Dot {
+  name Dot9
+  xpos -64
+  ypos 823
+ }
+set N12ec1270 [stack 0]
+ Dot {
+  name Dot8
+  xpos 217
+  ypos 823
+ }
+ Input {
+  inputs 0
+  name Input
+  xpos 25
+  ypos -453
+ }
+ Dot {
+  name Dot4
+  xpos 59
+  ypos -287
+ }
+set N1f6e4840 [stack 0]
+ Dot {
+  name Dot2
+  xpos 59
+  ypos 70
+ }
+ Constant {
+  inputs 0
+  channels rgb
+  format {{{this.parent.generate_format}}}
+  name Constant_Base
+  xpos -112
+  ypos 40
+ }
+ Switch {
+  inputs 2
+  which {{type}}
+  name Switch_Mode1
+  label "Python Sample Evaluation"
+  xpos -41
+  ypos 161
+ }
+ AdjBBox {
+  numpixels {{boundingbox(0)} {boundingbox(1)}}
+  name AdjBBox
+  xpos -41
+  ypos 217
+ }
+set N1288a7a0 [stack 0]
+ Dot {
+  name Dot11
+  xpos 161
+  ypos 221
+ }
+ Reformat {
+  type scale
+  scale {{1/speedup}}
+  pbb true
+  name Downscale
+  xpos 127
+  ypos 282
+ }
+push $N1288a7a0
+ Reformat {
+  type scale
+  scale {{aa}}
+  pbb true
+  name AA_Upscale
+  xpos -41
+  ypos 284
+ }
+ Switch {
+  inputs 2
+  which {{method}}
+  name Display_Switch1
+  label "\[value this.parent.method]"
+  xpos 46
+  ypos 404
+ }
+ Dot {
+  name Dot3
+  xpos 80
+  ypos 876
+ }
+set N17dd5d80 [stack 0]
+ BlinkScript {
+  inputs 2
+  recompileCount 221
+  ProgramGroup 1
+  KernelDescription "2 \"VoronoiDistanceKernel\" iterate pixelWise 15d1c287562f8940cc17093cf47955af451b3301bfa723a622b751a936460589 3 \"src\" Read Point \"points\" Read Random \"dst\" Write Point 0 0 0"
+  kernelSource "float distance(int2 q, float2 p)\{\n\treturn sqrt(pow(q.x - p.x, 2) + pow(q.y - p.y, 2));\n\}\n\nkernel VoronoiDistanceKernel : public ImageComputationKernel<ePixelWise>\n\{\n\tImage<eRead, eAccessPoint, eEdgeClamped> src;\n\tImage<eRead, eAccessRandom, eEdgeClamped> points;\n\tImage<eWrite> dst;\n\t\n\tvoid process(int2 pos)\{\n\t\tfloat dist = 999999;\n\t\tfloat dist_temp;\n\t\tfloat2 pnt;\n\t\t\n\t\tfor (int p = 0; p < points.bounds.height()-2; p = p+1)\{\n\t\t\tpnt.x = points(1, p, 0);\n\t\t\tpnt.y = points(1, p, 1);\n\t\t\tdist_temp = distance(pos, pnt);\n\t\t\tif(dist_temp < dist)\{\n\t\t\t\tdist = dist_temp;\n\t\t\t\}\n\t\t\}\n\t\t\n\t\tdst() = dist;\n\n\t\}\n\};"
+  rebuild ""
+  rebuild_finalise ""
+  name Voronoi_Distances
+  xpos 183
+  ypos 950
+ }
+push $N12ec1270
+push $N17dd5d80
+ BlinkScript {
+  inputs 2
+  recompileCount 226
+  ProgramGroup 1
+  KernelDescription "2 \"VoronoiKernel\" iterate pixelWise 8f93ca828d1e7eff617bbde89024638eccbd4d8a7ddca1d2a48549f3965171fa 3 \"src\" Read Point \"points\" Read Random \"dst\" Write Point 0 0 0"
+  kernelSource "float distance(int2 q, float2 p)\{\n\treturn sqrt(pow(q.x - p.x, 2) + pow(q.y - p.y, 2));\n\}\n\nkernel VoronoiKernel : public ImageComputationKernel<ePixelWise>\n\{\n\tImage<eRead, eAccessPoint, eEdgeClamped> src;\n\tImage<eRead, eAccessRandom, eEdgeClamped> points;\n\tImage<eWrite> dst;\n\n\tvoid process(int2 pos)\{\n\t\tint shortest = 0;\n\t\tfloat dist = 999999;\n\t\tfloat dist_temp;\n\t\tfloat2 pnt;\n\t\t\n\t\tfor (int p = 0; p < points.bounds.height()-2; p = p+1)\{\n\t\t\tpnt.x = points(1, p, 0);\n\t\t\tpnt.y = points(1, p, 1);\n\t\t\tdist_temp = distance(pos, pnt);\n\t\t\tif(dist_temp < dist)\{\n\t\t\t\tdist = dist_temp;\n\t\t\t\tshortest = p;\n\t\t\t\}\n\t\t\}\n\t\t\n\t\tdst() = points(0, shortest);\n\n\t\}\n\};"
+  rebuild ""
+  rebuild_finalise ""
+  name Voronoi_Diagram
+  xpos -98
+  ypos 950
+ }
+set Nf1a1e1c0 [stack 0]
+ BlinkScript {
+  inputs 2
+  recompileCount 256
+  ProgramGroup 1
+  KernelDescription "2 \"NNIKernel\" iterate pixelWise 84fc76da964c772bb539a89199ff299d702a7a2b0c7989aaf6f79ff0502b5e50 3 \"diagram\" Read Random \"distances\" Read Random \"dst\" Write Point 0 0 0"
+  kernelSource "float distance(int2 q, float2 p)\{\n\treturn sqrt(pow(q.x - p.x, 2) + pow(q.y - p.y, 2));\n\}\n\nkernel NNIKernel : public ImageComputationKernel<ePixelWise>\{\n\tImage<eRead, eAccessRandom, eEdgeClamped> diagram;\n\tImage<eRead, eAccessRandom, eEdgeClamped> distances;\n\tImage<eWrite> dst;\n\t\n\tvoid process(int2 pos)\{\n\t\tint x,y,dx,dy;\n\t\tfloat4 rgba = 0;\n\t\tint c = 0;\n\t\tbool found = true;\n\t\tfloat dist;\n\n\t\tfor(int i = diagram.bounds.x1; i < diagram.bounds.x2; i+=1)\{\n\t\t\tfor(int j = diagram.bounds.y1; j < diagram.bounds.y2; j+=1)\{\n\t\t\t\tif(distance(pos, float2(i,j)) <= distances(i, j, 0))\{\n\t\t\t\t\trgba += diagram(i, j);\n\t\t\t\t\tc += 1;\n\t\t\t\t\}\n\t\t\t\}\n\t\t\}\n\t\tdst() = rgba/c;\n\t\}\n\};"
+  rebuild ""
+  rebuild_finalise ""
+  name Natural_Neighbor_Interpolation
+  xpos 48
+  ypos 1100
+  disable {{method!=1?1:0}}
+ }
+ Colorspace {
+  name ColorspaceBack1
+  label "\[value colorspace_in] -> \[value colorspace_out]"
+  xpos 48
+  ypos 1293
+ }
+ Reformat {
+  type scale
+  scale {{speedup}}
+  filter Notch
+  pbb true
+  name Upscale
+  xpos 48
+  ypos 1350
+ }
+push $Nf1a1e1c0
+ Dot {
+  name Dot6
+  xpos -219
+  ypos 1108
+ }
+ Colorspace {
+  name ColorspaceBack
+  xpos -253
+  ypos 1296
+ }
+ Reformat {
+  type scale
+  scale {{1/aa}}
+  pbb true
+  name AA_Downscale
+  xpos -253
+  ypos 1345
+ }
+ Switch {
+  inputs 2
+  which {{method}}
+  name Display_Switch
+  label "\[value this.parent.method]"
+  xpos -100
+  ypos 1478
+ }
+ Output {
+  name Output1
+  xpos -100
+  ypos 1658
+ }
+ StickyNote {
+  inputs 0
+  name StickyNote6
+  label "Stores the distance to the nex input point in each pixel. This will be used by the NNI"
+  xpos 340
+  ypos 956
+ }
+ StickyNote {
+  inputs 0
+  name StickyNote7
+  label "Stores the voronoi diagram"
+  xpos -264
+  ypos 954
+ }
+ StickyNote {
+  inputs 0
+  name StickyNote5
+  label "Natural Neighbor Interpolation\n\nThe algorithm scales exponentially with the image scale, so we try to keep the input as small as possible and scale up the result instead.\nThe node is disabled, when the Voronoi Diagram is shown. This prevents Nuke from executing the Natural Neighbor Interpolation algorithm in the background and crashing."
+  xpos 168
+  ypos 1097
+ }
+ StickyNote {
+  inputs 0
+  name StickyNote11
+  label "A little bit of Blinkscript magic!"
+  xpos 15
+  ypos 899
+ }
+ StickyNote {
+  inputs 0
+  name StickyNote4
+  label "Transform Sample data vertically,\nadd them up and framehold to\nfeed them into one image.\n(See Postage Stamp)\n\nWith this little hack we can add as many \ninput samples to the blinkscripts as we want."
+  xpos -677
+  ypos 796
+ }
+ StickyNote {
+  inputs 0
+  name StickyNote8
+  label "Restore original scaling"
+  xpos -112
+  ypos 1348
+ }
+ StickyNote {
+  inputs 0
+  name StickyNote12
+  label "Upscaling the interpolated result with the Notch filter \npreserves the smooth look and feel we want to achieve."
+  xpos 169
+  ypos 1344
+ }
+ StickyNote {
+  inputs 0
+  name StickyNote13
+  label "Upscale (for Voronoi Diaram Anti-Aliasing) or \nDownscale (for speed improvement on the Natural Neighbor Interpolation algorithm) \naccording to user inputs."
+  xpos 267
+  ypos 284
+ }
+push $N1f6e4840
+ Dot {
+  name Dot1
+  xpos -323
+  ypos -287
+ }
+ Blur {
+  size {{"\[value this.parent.sample_radius]-1"}}
+  name SampleBlur
+  xpos -357
+  ypos -200
+ }
+ NoOp {
+  name sample_image
+  xpos -357
+  ypos -120
+ }
+ StickyNote {
+  inputs 0
+  name StickyNote9
+  label "Restore original colorspace"
+  xpos -120
+  ypos 1289
+ }
+end_group

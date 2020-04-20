@@ -1,0 +1,323 @@
+Group {
+ name Mosaic
+ help "<b>Mosaic</b>\nCreates a mosaic pixelation effect, emulating the After Effects filter.\n\nIncludes options for masking and block size and aspect ratio. Block size is number of blocks in width and in height.\n\nTile gaps and tile gradient darkening was inspired / stolen from the Mosaic gizmo on Nukepedia written by Donald Strubler. This one is much faster because it does not use Blocky."
+ knobChanged "from __future__ import with_statement\n# Callback code for gang blocksize sliders\nn = nuke.thisNode()\nk = nuke.thisKnob()\n# If gang blocksize knob is checked, move both blocksize knobs in tandem\nif n.knob('gang_blocksize').value() == True:\n  if k.name() == 'blocks_x':\n    n.knob('blocks_y').setValue(k.value())\n  elif k.name() == 'blocks_y':\n    n.knob('blocks_x').setValue(k.value())\n\n# Enable mask input checkbox, which destroys or creates the mask input, and hides or unhides related knobs\nif k.name() == 'enable_mask':\n  if k.value() == True:\n    with n:\n      inmask = nuke.nodes.Input(name='InputMask')\n      inmask.setXpos( -590 )\n      inmask.setYpos( -225 )\n      blurmask = nuke.toNode( 'BlurMask' )\n      blurmask.setInput(0, inmask )\n    n\['mosaic_only'].setVisible(True)\n    n\['invert_mask'].setVisible(True)\n    n\['mask_blur_size'].setVisible(True)\n  \n  if k.value() == False:\n    with n:\n      inmask = nuke.toNode('InputMask')\n      nuke.delete(inmask)\n    n\['mosaic_only'].setVisible(False)\n    n\['invert_mask'].setVisible(False)\n    n\['mask_blur_size'].setVisible(False)"
+ tile_color 0xe07536ff
+ selected true
+ xpos -1834
+ ypos 2463
+ addUserKnob {20 Mosaic}
+ addUserKnob {6 squareblocks l "Square Blocks" t "Sets the blocks to be square despite input aspect ratio" -STARTLINE}
+ squareblocks true
+ addUserKnob {6 gang_blocksize l "Gang Blocksize" t "Link X and Y blocksize together" -STARTLINE}
+ gang_blocksize true
+ addUserKnob {7 blocks_x l "Blocks X" t "Set number of horizontal blocks" R 1 200}
+ blocks_x 24
+ addUserKnob {7 blocks_y l "Blocks Y" t "Set number of vertical blocks." R 1 200}
+ blocks_y 24
+ addUserKnob {26 spacer00 l " " T " "}
+ addUserKnob {26 tile_gaps l "<b> Tile Gaps</b>" T ""}
+ addUserKnob {26 ""}
+ addUserKnob {7 block_gap l "Block Gap" t "Gap between tiles in the mosaic." R 0 100}
+ addUserKnob {7 edge_sharpness l "Edge Sharpness" t "Erode gap" R -10 10}
+ addUserKnob {26 spacer01 l "" +STARTLINE T " "}
+ addUserKnob {26 treatedgegradient l "<B>Edge Gradient</b>"}
+ addUserKnob {7 edge_gradient_amount l Amount t "Darken the edges of all tiles through a gradient." R 0 100}
+ addUserKnob {7 edge_multiply l Multiply t "Amount to darken through edge gradient." R 0 4}
+ addUserKnob {7 edge_gamma l INVISIBLE +INVISIBLE R 0 4}
+ edge_gamma 1
+ addUserKnob {26 ""}
+ addUserKnob {6 enable_mask l "<b><font size=4>&nbsp;Enable Mask Input</b>" t "Creates a mask input if enabled." +STARTLINE}
+ addUserKnob {6 mosaic_only l "Output Mosaic Only" t "Output only the mosaic effect, without the incoming plate, if using a mask input." +HIDDEN +STARTLINE}
+ mosaic_only true
+ addUserKnob {6 invert_mask l "Invert Mask" -STARTLINE +HIDDEN}
+ addUserKnob {14 mask_blur_size l "Mask Blur" +HIDDEN R 0 100}
+}
+ Input {
+  inputs 0
+  name Input
+  label "\[value number]"
+  xpos -370
+  ypos -422
+ }
+ Dot {
+  name Dot1
+  label "  "
+  note_font_size 18
+  xpos -336
+  ypos -342
+ }
+set N2e1e1e70 [stack 0]
+ Dot {
+  name Dot2
+  xpos -226
+  ypos -342
+ }
+set N6c06d130 [stack 0]
+ Crop {
+  box {{"input.bbox.x > 0 ? 0 : input.bbox.x"} {"input.bbox.y > 0 ? 0 : input.bbox.y"} {"input.bbox.r < input.width ? input.width : input.bbox.r"} {"input.bbox.t > input.height ? input.bbox.t : input.height"}}
+  crop false
+  name CropBBox
+  label "crop to greater of bbox or format"
+  xpos -260
+  ypos -206
+ }
+push $N6c06d130
+ Dot {
+  name Dot3
+  label "  "
+  note_font_size 18
+  xpos -116
+  ypos -342
+ }
+push $N2e1e1e70
+ Dot {
+  name Dot7
+  xpos -666
+  ypos -342
+ }
+set N6c0274b0 [stack 0]
+ Dot {
+  name Dot4
+  label "  "
+  note_font_size 18
+  xpos -666
+  ypos 642
+ }
+set N6c02aea0 [stack 0]
+ Dot {
+  name Dot8
+  xpos -666
+  ypos 810
+ }
+ Blur {
+  inputs 0
+  size {{parent.mask_blur_size}}
+  name BlurMask
+  xpos -590
+  ypos -158
+ }
+push $N6c0274b0
+ Shuffle {
+  red white
+  green white
+  blue white
+  alpha white
+  name WHITE
+  tile_color 0xfefefeff
+  xpos -810
+  ypos -345
+ }
+ Dot {
+  name Dot12
+  xpos -776
+  ypos -102
+ }
+ Switch {
+  inputs 2
+  which {{"\[exists parent.input1]"}}
+  name Switch3
+  xpos -590
+  ypos -105
+ }
+set N6c057690 [stack 0]
+push $N6c057690
+ Copy {
+  inputs 2
+  from0 rgba.alpha
+  to0 rgba.alpha
+  name MaskChannel
+  xpos -590
+  ypos -62
+  disable {{"!\[exists parent.input1]"}}
+ }
+ Invert {
+  channels alpha
+  name Invert1
+  xpos -590
+  ypos 586
+  disable {{!parent.invert_mask}}
+ }
+set N6c066dc0 [stack 0]
+push $N6c02aea0
+ Merge2 {
+  inputs 2
+  operation stencil
+  bbox B
+  name Merge1
+  xpos -590
+  ypos 639
+ }
+ Dot {
+  name Dot5
+  xpos -556
+  ypos 690
+ }
+push $N6c066dc0
+push $N2e1e1e70
+ Transform {
+  scale {{parent.blocks_x/input.width} {"parent.squareblocks == 0 ? parent.blocks_y/input.height : scale.w"}}
+  center {{input.width/2} {input.height/2}}
+  filter Impulse
+  black_outside false
+  name Scale_Down
+  xpos -370
+  ypos -321
+ }
+ Blur {
+  channels rgba
+  name Break_Concatenation
+  xpos -370
+  ypos -297
+ }
+ Transform {
+  scale {{1/parent.Scale_Down.scale} {1/parent.Scale_Down.scale}}
+  center {{parent.Scale_Down.center} {parent.Scale_Down.center}}
+  filter Impulse
+  black_outside false
+  name Scale_Up
+  xpos -370
+  ypos -273
+ }
+ Crop {
+  box {{parent.CropBBox.box} {parent.CropBBox.box} {parent.CropBBox.box} {parent.CropBBox.box}}
+  crop false
+  name Crop1
+  label "Crop to Original Format \\nor Bounding Box"
+  xpos -370
+  ypos -212
+ }
+ Dot {
+  name Dot6
+  label "  "
+  note_font_size 18
+  xpos -336
+  ypos -78
+ }
+set N6c0a7470 [stack 0]
+ Transform {
+  scale 0.9994
+  center {{width/2} {height/2}}
+  name Transform1
+  xpos -150
+  ypos -81
+  disable {{"parent.block_gap == 0 ? 1 : 0"}}
+ }
+ Blur {
+  size {{parent.block_gap}}
+  filter box
+  name Blur15
+  label "\[value size]"
+  xpos -150
+  ypos -44
+ }
+push $N6c0a7470
+ Merge2 {
+  inputs 2
+  operation difference
+  name Merge26
+  xpos -150
+  ypos 15
+ }
+ Grade {
+  blackpoint 6e-07
+  gamma 5
+  name Grade20
+  xpos -150
+  ypos 63
+ }
+ Expression {
+  expr0 r>0?1:0
+  expr1 g>0?1:0
+  expr2 b>0?1:0
+  expr3 r>0?1:0
+  name Expression1
+  xpos -150
+  ypos 87
+ }
+ Expression {
+  channel0 {rgba.red rgba.green rgba.blue rgba.alpha}
+  expr0 max(r,g,b,a)
+  name Expression2
+  xpos -150
+  ypos 113
+ }
+ Erode {
+  size {{parent.edge_sharpness}}
+  name Erode1
+  label "\[value size]"
+  xpos -150
+  ypos 172
+ }
+ Erode {
+  size {{parent.Erode1.size*-1}}
+  blur 1
+  name Erode2
+  label "\[value size]"
+  xpos -150
+  ypos 244
+ }
+set N6c0f1cd0 [stack 0]
+ Invert {
+  name Invert4
+  xpos -150
+  ypos 298
+ }
+ Blur {
+  size {{"parent.edge_gradient_amount/50*(parent.input.width / parent.blocks_x / 2)"}}
+  name Blur16
+  label "\[value size]"
+  xpos -150
+  ypos 340
+ }
+push $N6c0f1cd0
+push $N6c0a7470
+ Merge2 {
+  inputs 2
+  operation stencil
+  name Merge27
+  label "bbox \[value bbox]"
+  xpos -370
+  ypos 250
+ }
+ Grade {
+  inputs 1+1
+  multiply {{parent.edge_multiply x1009 0.5}}
+  gamma {{parent.edge_gamma}}
+  invert_mask true
+  name Grade1
+  xpos -370
+  ypos 351
+ }
+ Merge2 {
+  inputs 2
+  operation mask
+  bbox B
+  Achannels {-rgba.red -rgba.green -rgba.blue rgba.alpha}
+  Bchannels {rgba.red rgba.green rgba.blue rgba.alpha}
+  output {rgba.red rgba.green rgba.blue rgba.alpha}
+  name Mask
+  xpos -370
+  ypos 591
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  bbox B
+  name Merge2
+  xpos -370
+  ypos 687
+  disable {{parent.mosaic_only}}
+ }
+ CopyBBox {
+  inputs 2
+  name CopyBBox1
+  xpos -370
+  ypos 807
+ }
+ Output {
+  name Output1
+  xpos -370
+  ypos 879
+ }
+end_group

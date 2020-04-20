@@ -1,0 +1,439 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name LogBlur
+ tile_color 0xcc804eff
+ addUserKnob {20 LogBlur}
+ addUserKnob {7 bias t "Multiplier on the logarithmic series of blurs. \n\nFor example with a bias of 1, the blur series will be:\n1 2 4 8 16 32 64 etc.\nWith a bias of 2 it will be \n1 4 " R 0 5}
+ bias 1.76
+ addUserKnob {7 blur_mult l size}
+ blur_mult 0.25
+ addUserKnob {14 size l INVISIBLE t "Multiplier on the blur size." +INVISIBLE R 0 100}
+ size {{blur_mult} {blur_mult/aspect_ratio}}
+ addUserKnob {7 iterations t "How many steps of the logarithmic series to use." R 0 8}
+ iterations 8
+ addUserKnob {3 quality t "Blur quality - gain some efficiency."}
+ quality 15
+ addUserKnob {7 aspect_ratio -STARTLINE R 0 2}
+ aspect_ratio 1
+ addUserKnob {26 ""}
+ addUserKnob {7 mix t "Dissolve back to the input image"}
+ mix 1
+}
+ Input {
+  inputs 0
+  name Inputmask
+  xpos 448
+  ypos 123
+  number 1
+ }
+ Input {
+  inputs 0
+  name Input
+  xpos 280
+  ypos -297
+ }
+ Dot {
+  name Dot188
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xff000000
+  xpos 314
+  ypos -222
+ }
+set Nb5a0fe00 [stack 0]
+ Dot {
+  name Dot2
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos 154
+  ypos -222
+ }
+ Dot {
+  name Dot1
+  label " "
+  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold"
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos 154
+  ypos 66
+ }
+set Na8250560 [stack 0]
+push $Nb5a0fe00
+ Group {
+  name BlurPercent7
+  tile_color 0xcc804eff
+  xpos 1400
+  ypos -117
+  addUserKnob {20 percentBlur l "Percent Blur"}
+  addUserKnob {7 blurnum R 0 100}
+  blurnum 128
+  addUserKnob {41 channels T _BLUR_.channels}
+  addUserKnob {14 percent R 0 100}
+  percent {{parent.BlurPercent.percent*blurnum*(bias)} {parent.BlurPercent.percent*blurnum*(bias) x1064 inf}}
+  addUserKnob {41 filter T _BLUR_.filter}
+  addUserKnob {41 quality l "" -STARTLINE T _BLUR_.quality}
+  addUserKnob {41 crop l "crop to format" -STARTLINE T _BLUR_.crop}
+  addUserKnob {41 mix T _BLUR_.mix}
+ }
+  Input {
+   inputs 0
+   name Input
+   xpos 514
+   ypos -229
+  }
+  Blur {
+   channels rgba
+   size {{width/3*(percent/100) x1001 6.826666667e+10} {width/3*(percent/100)*(1/pixel_aspect)}}
+   quality {{parent.parent.quality}}
+   name _BLUR_
+   xpos 514
+   ypos -154
+   addUserKnob {20 User}
+   addUserKnob {7 xpercent l xPercent R 0 100}
+   xpercent 25.5
+   addUserKnob {7 ypercent l yPercent R 0 100}
+   ypercent {{xpercent}}
+  }
+  Output {
+   name Output1
+   xpos 514
+   ypos -89
+  }
+ end_group
+push $Nb5a0fe00
+ Group {
+  name BlurPercent6
+  tile_color 0xcc804eff
+  xpos 1240
+  ypos -117
+  addUserKnob {20 percentBlur l "Percent Blur"}
+  addUserKnob {7 blurnum R 0 100}
+  blurnum 64
+  addUserKnob {41 channels T _BLUR_.channels}
+  addUserKnob {14 percent R 0 100}
+  percent {{parent.BlurPercent.percent*blurnum*(bias)} {parent.BlurPercent.percent*blurnum*(bias)}}
+  addUserKnob {41 filter T _BLUR_.filter}
+  addUserKnob {41 quality l "" -STARTLINE T _BLUR_.quality}
+  addUserKnob {41 crop l "crop to format" -STARTLINE T _BLUR_.crop}
+  addUserKnob {41 mix T _BLUR_.mix}
+ }
+  Input {
+   inputs 0
+   name Input
+   xpos 514
+   ypos -229
+  }
+  Blur {
+   channels rgba
+   size {{width/3*(percent/100) x1001 6.826666667e+10} {width/3*(percent/100)*(1/pixel_aspect)}}
+   quality {{parent.parent.quality}}
+   name _BLUR_
+   xpos 514
+   ypos -154
+   addUserKnob {20 User}
+   addUserKnob {7 xpercent l xPercent R 0 100}
+   xpercent 25.5
+   addUserKnob {7 ypercent l yPercent R 0 100}
+   ypercent {{xpercent}}
+  }
+  Output {
+   name Output1
+   xpos 514
+   ypos -89
+  }
+ end_group
+push $Nb5a0fe00
+ Group {
+  name BlurPercent5
+  tile_color 0xcc804eff
+  xpos 1080
+  ypos -117
+  addUserKnob {20 percentBlur l "Percent Blur"}
+  addUserKnob {7 blurnum R 0 100}
+  blurnum 32
+  addUserKnob {41 channels T _BLUR_.channels}
+  addUserKnob {14 percent R 0 100}
+  percent {{parent.BlurPercent.percent*blurnum*(bias)} {parent.BlurPercent.percent*blurnum*(bias)}}
+  addUserKnob {41 filter T _BLUR_.filter}
+  addUserKnob {41 quality l "" -STARTLINE T _BLUR_.quality}
+  addUserKnob {41 crop l "crop to format" -STARTLINE T _BLUR_.crop}
+  addUserKnob {41 mix T _BLUR_.mix}
+ }
+  Input {
+   inputs 0
+   name Input
+   xpos 514
+   ypos -229
+  }
+  Blur {
+   channels rgba
+   size {{width/3*(percent/100) x1001 6.826666667e+10} {width/3*(percent/100)*(1/pixel_aspect)}}
+   quality {{parent.parent.quality}}
+   name _BLUR_
+   xpos 514
+   ypos -154
+   addUserKnob {20 User}
+   addUserKnob {7 xpercent l xPercent R 0 100}
+   xpercent 25.5
+   addUserKnob {7 ypercent l yPercent R 0 100}
+   ypercent {{xpercent}}
+  }
+  Output {
+   name Output1
+   xpos 514
+   ypos -89
+  }
+ end_group
+push $Nb5a0fe00
+ Group {
+  name BlurPercent4
+  tile_color 0xcc804eff
+  xpos 920
+  ypos -117
+  addUserKnob {20 percentBlur l "Percent Blur"}
+  addUserKnob {7 blurnum R 0 100}
+  blurnum 16
+  addUserKnob {41 channels T _BLUR_.channels}
+  addUserKnob {14 percent R 0 100}
+  percent {{parent.BlurPercent.percent*blurnum*(bias)} {parent.BlurPercent.percent*blurnum*(bias)}}
+  addUserKnob {41 filter T _BLUR_.filter}
+  addUserKnob {41 quality l "" -STARTLINE T _BLUR_.quality}
+  addUserKnob {41 crop l "crop to format" -STARTLINE T _BLUR_.crop}
+  addUserKnob {41 mix T _BLUR_.mix}
+ }
+  Input {
+   inputs 0
+   name Input
+   xpos 514
+   ypos -229
+  }
+  Blur {
+   channels rgba
+   size {{width/3*(percent/100) x1001 6.826666667e+10} {width/3*(percent/100)*(1/pixel_aspect)}}
+   quality {{parent.parent.quality}}
+   name _BLUR_
+   xpos 514
+   ypos -154
+   addUserKnob {20 User}
+   addUserKnob {7 xpercent l xPercent R 0 100}
+   xpercent 25.5
+   addUserKnob {7 ypercent l yPercent R 0 100}
+   ypercent {{xpercent}}
+  }
+  Output {
+   name Output1
+   xpos 514
+   ypos -89
+  }
+ end_group
+push $Nb5a0fe00
+ Group {
+  name BlurPercent3
+  tile_color 0xcc804eff
+  xpos 760
+  ypos -117
+  addUserKnob {20 percentBlur l "Percent Blur"}
+  addUserKnob {7 blurnum R 0 100}
+  blurnum 8
+  addUserKnob {41 channels T _BLUR_.channels}
+  addUserKnob {14 percent R 0 100}
+  percent {{parent.BlurPercent.percent*blurnum*(bias)} {parent.BlurPercent.percent*blurnum*(bias)}}
+  addUserKnob {41 filter T _BLUR_.filter}
+  addUserKnob {41 quality l "" -STARTLINE T _BLUR_.quality}
+  addUserKnob {41 crop l "crop to format" -STARTLINE T _BLUR_.crop}
+  addUserKnob {41 mix T _BLUR_.mix}
+ }
+  Input {
+   inputs 0
+   name Input
+   xpos 514
+   ypos -229
+  }
+  Blur {
+   channels rgba
+   size {{width/3*(percent/100) x1001 6.826666667e+10} {width/3*(percent/100)*(1/pixel_aspect)}}
+   quality {{parent.parent.quality}}
+   name _BLUR_
+   xpos 514
+   ypos -154
+   addUserKnob {20 User}
+   addUserKnob {7 xpercent l xPercent R 0 100}
+   xpercent 25.5
+   addUserKnob {7 ypercent l yPercent R 0 100}
+   ypercent {{xpercent}}
+  }
+  Output {
+   name Output1
+   xpos 514
+   ypos -89
+  }
+ end_group
+push $Nb5a0fe00
+ Group {
+  name BlurPercent1
+  tile_color 0xcc804eff
+  xpos 600
+  ypos -117
+  addUserKnob {20 percentBlur l "Percent Blur"}
+  addUserKnob {7 blurnum R 0 100}
+  blurnum 4
+  addUserKnob {41 channels T _BLUR_.channels}
+  addUserKnob {14 percent R 0 100}
+  percent {{parent.BlurPercent.percent*blurnum*(bias)} {parent.BlurPercent.percent*blurnum*(bias)}}
+  addUserKnob {41 filter T _BLUR_.filter}
+  addUserKnob {41 quality l "" -STARTLINE T _BLUR_.quality}
+  addUserKnob {41 crop l "crop to format" -STARTLINE T _BLUR_.crop}
+  addUserKnob {41 mix T _BLUR_.mix}
+ }
+  Input {
+   inputs 0
+   name Input
+   xpos 514
+   ypos -229
+  }
+  Blur {
+   channels rgba
+   size {{width/3*(percent/100) x1001 6.826666667e+10} {width/3*(percent/100)*(1/pixel_aspect)}}
+   quality {{parent.parent.quality}}
+   name _BLUR_
+   xpos 514
+   ypos -154
+   addUserKnob {20 User}
+   addUserKnob {7 xpercent l xPercent R 0 100}
+   xpercent 25.5
+   addUserKnob {7 ypercent l yPercent R 0 100}
+   ypercent {{xpercent}}
+  }
+  Output {
+   name Output1
+   xpos 514
+   ypos -89
+  }
+ end_group
+push 0
+push $Nb5a0fe00
+ Group {
+  name BlurPercent2
+  tile_color 0xcc804eff
+  xpos 440
+  ypos -117
+  addUserKnob {20 percentBlur l "Percent Blur"}
+  addUserKnob {7 blurnum R 0 100}
+  blurnum 2
+  addUserKnob {41 channels T _BLUR_.channels}
+  addUserKnob {14 percent R 0 100}
+  percent {{parent.BlurPercent.percent*blurnum*(bias)} {parent.BlurPercent.percent*blurnum*(bias)}}
+  addUserKnob {41 filter T _BLUR_.filter}
+  addUserKnob {41 quality l "" -STARTLINE T _BLUR_.quality}
+  addUserKnob {41 crop l "crop to format" -STARTLINE T _BLUR_.crop}
+  addUserKnob {41 mix T _BLUR_.mix}
+ }
+  Input {
+   inputs 0
+   name Input
+   xpos 514
+   ypos -229
+  }
+  Blur {
+   channels rgba
+   size {{width/3*(percent/100) x1001 6.826666667e+10} {width/3*(percent/100)*(1/pixel_aspect)}}
+   quality {{parent.parent.quality}}
+   name _BLUR_
+   xpos 514
+   ypos -154
+   addUserKnob {20 User}
+   addUserKnob {7 xpercent l xPercent R 0 100}
+   xpercent 25.5
+   addUserKnob {7 ypercent l yPercent R 0 100}
+   ypercent {{xpercent}}
+  }
+  Output {
+   name Output1
+   xpos 514
+   ypos -89
+  }
+ end_group
+push $Nb5a0fe00
+ Group {
+  name BlurPercent
+  tile_color 0xc4814dff
+  xpos 280
+  ypos -117
+  addUserKnob {20 percentBlur l "Percent Blur"}
+  addUserKnob {41 channels T _BLUR_.channels}
+  addUserKnob {14 percent R 0 100}
+  percent {{parent.size*parent.bias} {parent.size*parent.bias*pixel_aspect}}
+  addUserKnob {41 filter T _BLUR_.filter}
+  addUserKnob {41 quality l "" -STARTLINE T _BLUR_.quality}
+  addUserKnob {41 crop l "crop to format" -STARTLINE T _BLUR_.crop}
+  addUserKnob {41 mix T _BLUR_.mix}
+ }
+  Input {
+   inputs 0
+   name Input
+   xpos 514
+   ypos -229
+  }
+  Blur {
+   channels rgba
+   size {{width/3*(percent/100) x1001 6.826666667e+10} {width/3*(percent/100)*(1/pixel_aspect)}}
+   quality {{parent.parent.quality}}
+   name _BLUR_
+   xpos 514
+   ypos -154
+   addUserKnob {20 User}
+   addUserKnob {7 xpercent l xPercent R 0 100}
+   xpercent 25.5
+   addUserKnob {7 ypercent l yPercent R 0 100}
+   ypercent {{xpercent}}
+  }
+  Output {
+   name Output1
+   xpos 514
+   ypos -89
+  }
+ end_group
+ Blend {
+  inputs 8+1
+  channels rgb
+  weight0 {{"iterations > 1? 1 : iterations"}}
+  weight1 {{"clamp((iterations < 1 ? 0 : iterations-1))"}}
+  weight2 {{"clamp((iterations < 2 ? 0 : iterations-2))"}}
+  weight3 {{"clamp((iterations < 3 ? 0 : iterations-3))"}}
+  weight4 {{"clamp((iterations < 4 ? 0 : iterations-4))"}}
+  weight5 {{"clamp((iterations < 5 ? 0 : iterations-5))"}}
+  weight6 {{"clamp((iterations < 6 ? 0 : iterations-6))"}}
+  weight7 {{"clamp((iterations < 7 ? 0 : iterations-7))"}}
+  name Blend1
+  xpos 280
+  ypos -9
+ }
+push $Na8250560
+ Dissolve {
+  inputs 2
+  channels {{{parent.BlurPercent._BLUR_.channels}}}
+  which {{parent.mix}}
+  name Dissolve1
+  xpos 280
+  ypos 63
+ }
+ Keymix {
+  inputs 3
+  channels rgba
+  invertMask true
+  bbox B
+  name Keymix1
+  xpos 280
+  ypos 135
+  disable {{"!\[exists parent.input1]"}}
+ }
+ Output {
+  name Output
+  xpos 277
+  ypos 204
+ }
+end_group

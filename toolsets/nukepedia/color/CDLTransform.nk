@@ -1,0 +1,49 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name CDLTransform
+ addUserKnob {20 CDLTransform}
+ addUserKnob {41 slope T OCIOCDLTransform.slope}
+ addUserKnob {41 offset T OCIOCDLTransform.offset}
+ addUserKnob {41 power T OCIOCDLTransform.power}
+ addUserKnob {41 saturation T OCIOCDLTransform.saturation}
+ addUserKnob {41 direction T OCIOCDLTransform.direction}
+ addUserKnob {20 info_tab l Info}
+ addUserKnob {26 info l " " T "ASC - CDL 1.2 Implementation \nUnlike the OCIOCDLTransform node this does \nnot clamp values when a power function is applied."}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos 950
+  ypos -106
+ }
+ BlinkScript {
+  recompileCount 27
+  ProgramGroup 1
+  KernelDescription "2 \"CDLTransformKernel\" iterate pixelWise 1cacede0781943a95a69ff89fa3ffe86897ebfbe8db00e21432df2f9b275e1af 2 \"src\" Read Point \"dst\" Write Point 6 \"slope\" Float 4 AACAPwAAgD8AAIA/AACAPw== \"offset\" Float 4 AAAAAAAAAAAAAAAAAAAAAA== \"power\" Float 4 AACAPwAAgD8AAIA/AACAPw== \"saturation\" Float 1 AACAPw== \"forward\" Bool 1 AQ== \"clamp\" Bool 1 AA== 6 \"slope\" 4 1 \"offset\" 4 1 \"power\" 4 1 \"saturation\" 1 1 \"forward\" 1 1 \"clamp\" 1 1 0"
+  kernelSource "\n\n//This is a implementation of the ASC-CDL 1.2 Specification\n//Unlike the OCIO CDL Transform it won't clip your blacks, or apply incorrect power functions. \n\nkernel CDLTransformKernel : ImageComputationKernel<ePixelWise>\n\{\n  Image<eRead, eAccessPoint, eEdgeClamped> src; // the input image\n  Image<eWrite> dst; // the output image\n\n  param:\n    float4 slope;  // This local variable is not exposed to the user.\n    float4 offset;  // This local variable is not exposed to the user.\n    float4 power;  // This local variable is not exposed to the user.\n    float saturation;  // This local variable is not exposed to the user.\n    bool forward;\n    bool clamp;\n\n\n  void define() \{\n    defineParam(slope, \"slope\", float4(1.0f));\n    defineParam(offset, \"offset\", float4(0.0f));\n    defineParam(power, \"power\", float4(1.0f));\n    defineParam(saturation, \"saturation\", 1.0f);\n    defineParam(forward, \"forward\", true);\n    defineParam(clamp, \"clamp\", false);\n  \}\n\n\n  void process() \{\n\n    SampleType(src) in = src();    \n\n    float4 outSOP;\n    float4 outSAT;    \n    float luma;\n    float4 out;\n    float4 spo;\n\n\n    if (forward)\{\n\n      spo = (in * slope) + offset;\n      outSOP.x = spo.x < 0.0f ? spo.x : pow(spo.x,power.x);\n      outSOP.y = spo.y < 0.0f ? spo.y : pow(spo.y,power.y);\n      outSOP.z = spo.z < 0.0f ? spo.z : pow(spo.z,power.z);\n      outSOP.w = spo.w < 0.0f ? spo.w : pow(spo.w,power.w);\n\n      luma = 0.2126f * outSOP.x + 0.7152f * outSOP.y + 0.0722f * outSOP.z;\n      out = luma + saturation * (outSOP-luma);\n    \}\n    else\n    \{\n\n      luma = 0.2126f * in.x + 0.7152f * in.y + 0.0722f * in.z;\n\n      outSAT = luma + ((in-luma)/saturation);\n\n      out = (pow(outSAT,1.0f/power)-offset) / slope;\n      out.x = outSAT.x < 0.0f ? (outSAT.x-offset.x) / slope.x : (pow(outSAT.x,1.0f/power.x)-offset.x) / slope.x;\n      out.y = outSAT.y < 0.0f ? (outSAT.y-offset.y) / slope.y : (pow(outSAT.y,1.0f/power.y)-offset.y) / slope.y;\n      out.z = outSAT.z < 0.0f ? (outSAT.z-offset.z) / slope.z : (pow(outSAT.z,1.0f/power.z)-offset.z) / slope.z;\n      out.w = outSAT.w < 0.0f ? (outSAT.w-offset.w) / slope.w : (pow(outSAT.w,1.0f/power.w)-offset.w) / slope.w;\n    \}\n\n    // Write the result to the output image\n    dst() = out;\n  \}\n\};\n"
+  rebuild ""
+  CDLTransformKernel_slope {{parent.OCIOCDLTransform.slope} {parent.OCIOCDLTransform.slope} {parent.OCIOCDLTransform.slope} 1}
+  CDLTransformKernel_offset {{parent.OCIOCDLTransform.offset} {parent.OCIOCDLTransform.offset} {parent.OCIOCDLTransform.offset} 0}
+  CDLTransformKernel_power {{parent.OCIOCDLTransform.power} {parent.OCIOCDLTransform.power} {parent.OCIOCDLTransform.power} 1}
+  CDLTransformKernel_saturation {{parent.OCIOCDLTransform.saturation}}
+  CDLTransformKernel_forward {{!parent.OCIOCDLTransform.direction}}
+  rebuild_finalise ""
+  name BlinkScript3
+  selected true
+  xpos 950
+  ypos -64
+ }
+ Output {
+  name Output
+  xpos 950
+  ypos -10
+ }
+ OCIOCDLTransform {
+  inputs 0
+  working_space "ACES - ACEScg"
+  name OCIOCDLTransform
+  xpos 1060
+  ypos -58
+ }
+end_group

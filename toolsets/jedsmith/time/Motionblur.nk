@@ -1,0 +1,49 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name Motionblur
+ addUserKnob {20 Motionblur}
+ addUserKnob {41 samples T MBLUR_CTRL.samples}
+ addUserKnob {41 shuttertime T MBLUR_CTRL.shuttertime}
+ addUserKnob {41 Motion T MBLUR_CTRL.Motion}
+ addUserKnob {41 vector_detail T MBLUR_CTRL.vector_detail}
+ addUserKnob {41 matte_channel T MBLUR_CTRL.matte_channel}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos 620
+  ypos -810
+ }
+ MotionBlur {
+  useGPUIfAvailable false
+  shutterSamples {{parent.MBLUR_CTRL.samples}}
+  shutterTime {{parent.MBLUR_CTRL.shuttertime}}
+  motionEstimation {{parent.MBLUR_CTRL.Motion}}
+  vectorDetailReg {{parent.MBLUR_CTRL.vector_detail}}
+  matteChannel {{parent.MBLUR_CTRL.matte_channel}}
+  name MotionBlur
+  xpos 620
+  ypos -690
+ }
+ NoOp {
+  name MBLUR_CTRL
+  xpos 620
+  ypos -650
+  addUserKnob {20 User}
+  addUserKnob {3 samples}
+  samples 12
+  addUserKnob {7 shuttertime}
+  shuttertime 0.5
+  addUserKnob {4 Motion M {Regularized "Old and stupid"}}
+  addUserKnob {7 vector_detail}
+  vector_detail 0.3
+  addUserKnob {4 matte_channel M {1 2 3 4 5}}
+  matte_channel 3
+ }
+ Output {
+  name Output1
+  xpos 620
+  ypos -530
+ }
+end_group

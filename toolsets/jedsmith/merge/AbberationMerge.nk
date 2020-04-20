@@ -1,0 +1,211 @@
+Group {
+inputs 2
+name AbberationMerge
+tile_color 0x2f4da0ff
+addUserKnob {20 MergeAbberation l MergeAbbs}
+addUserKnob {35 presets l Presets t "Some different presets to help you out." M {"Presets/Wide 34mm" "knobs this \{red 1.55 green 0 blue -0.5\}" "Presets/Med 50mm" "knobs this \{red 1.2 green 0 blue 0\}"}}
+addUserKnob {7 red t "Adjust red abberation in pixels." R -4 4}
+red 1.2
+addUserKnob {7 green t "Adjust green abberation in pixels." R -4 4}
+addUserKnob {7 blue t "Adjust blue abberation in pixels." R -4 4}
+addUserKnob {41 filter t "Set the filter type for the transform. Useful if you want to do simon filtering in log space." T TransformR.filter}
+addUserKnob {41 colorspace_out l "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;colorspace" t "Set the colorspace that the scale is applied in. Useful if you want to do simon filtering in log space." -STARTLINE T Colorspace_IN.colorspace_out}
+addUserKnob {6 invert +STARTLINE}
+addUserKnob {6 disable_abb l disable -STARTLINE}
+addUserKnob {26 ""}
+addUserKnob {12 center_offset t "offset the optical center from which the abberation is calculated from. By default it is the center of the image."}
+addUserKnob {41 also_merge l "also merge" T MergeR.also_merge}
+}
+Input {
+inputs 0
+name InputA
+label "\[value number]"
+xpos 290
+ypos -40
+number 1
+}
+Dot {
+name Dot1
+label " "
+note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 24
+note_font_color 0xff000000
+xpos 324
+ypos 210
+}
+set N4ba36d60 [stack 0]
+Dot {
+name Dot2
+label " "
+note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 24
+note_font_color 0xff000000
+xpos 544
+ypos 210
+}
+set N44b7a210 [stack 0]
+Dot {
+name Dot8
+label " "
+note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 24
+note_font_color 0xff000000
+xpos 764
+ypos 210
+}
+Colorspace {
+colorspace_out {{Colorspace_IN.colorspace_out}}
+name Colorspace_IN2
+xpos 730
+ypos 230
+}
+Transform {
+scale {{1/width*(parent.blue+1)+1}}
+center {{width/2+center_offset} {height/2+center_offset}}
+invert_matrix {{parent.invert}}
+filter {{TransformR.filter}}
+shutteroffset centred
+name TransformB
+xpos 730
+ypos 278
+disable {{parent.disable_abb}}
+}
+Colorspace {
+colorspace_in {{Colorspace_IN2.colorspace_out}}
+name Colorspace_OUT2
+xpos 730
+ypos 326
+}
+Input {
+inputs 0
+name InputB
+label "\[value number]"
+xpos 400
+ypos -40
+}
+Dot {
+name Dot3
+label " "
+note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 24
+note_font_color 0xff000000
+xpos 434
+ypos 162
+}
+set N469a8100 [stack 0]
+Dot {
+name Dot4
+label " "
+note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 24
+note_font_color 0xff000000
+xpos 654
+ypos 162
+}
+set N4a2986c0 [stack 0]
+Dot {
+name Dot5
+label " "
+note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 24
+note_font_color 0xff000000
+xpos 874
+ypos 162
+}
+Merge2 {
+inputs 2
+bbox B
+also_merge {{{parent.MergeR.also_merge}}}
+name MergeB
+xpos 840
+ypos 350
+}
+push $N44b7a210
+Colorspace {
+colorspace_out {{Colorspace_IN.colorspace_out}}
+name Colorspace_IN1
+xpos 510
+ypos 230
+}
+Transform {
+scale {{1/width*(parent.green+1)+1}}
+center {{width/2+center_offset} {height/2+center_offset}}
+invert_matrix {{parent.invert}}
+filter {{TransformR.filter}}
+shutteroffset centred
+name TransformG
+xpos 510
+ypos 278
+disable {{parent.disable_abb}}
+}
+Colorspace {
+colorspace_in {{Colorspace_IN1.colorspace_out}}
+name Colorspace_OUT1
+xpos 510
+ypos 326
+}
+push $N4a2986c0
+Merge2 {
+inputs 2
+bbox B
+also_merge {{{parent.MergeR.also_merge}}}
+name MergeG
+xpos 620
+ypos 350
+}
+push $N4ba36d60
+Colorspace {
+colorspace_out Cineon
+name Colorspace_IN
+xpos 290
+ypos 230
+}
+Transform {
+scale {{1/width*(parent.red+1)+1}}
+center {{width/2+center_offset} {height/2+center_offset}}
+invert_matrix {{parent.invert}}
+filter Simon
+shutteroffset centred
+name TransformR
+xpos 290
+ypos 278
+disable {{parent.disable_abb}}
+}
+Colorspace {
+colorspace_in {{Colorspace_IN.colorspace_out}}
+name Colorspace_OUT
+xpos 290
+ypos 326
+}
+push $N469a8100
+Merge2 {
+inputs 2
+bbox B
+name MergeR
+xpos 400
+ypos 350
+}
+Copy {
+inputs 2
+from0 rgba.green
+to0 rgba.green
+bbox B
+name CopyG
+xpos 620
+ypos 440
+}
+Copy {
+inputs 2
+from0 rgba.blue
+to0 rgba.blue
+bbox B
+name CopyB
+xpos 840
+ypos 440
+}
+Output {
+name Output
+xpos 840
+ypos 566
+}
+end_group

@@ -1,0 +1,10 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Switch {
+ which {{"\[topnode input0].disable"}}
+ name _TOPNODE_SWITCH_
+ label "Switch to 1 if topnode is disabled"
+ selected true
+ xpos 10122
+ ypos 338
+}

@@ -1,0 +1,450 @@
+set cut_paste_input [stack 0]
+version 12.1 v2
+push $cut_paste_input
+Group {
+ name GuidedBlur
+ help "Description:\n\nThe guided filter is an edge-preserving blur,\nuseful to add details to the edges of a roto/matte\nusing a second image as a guide. \n\nHow to use:\n\nConnect the alpha to the 'matte' input\nand the 'guide' image to the 'img' input.\n\nControl the amount of detail using\nthe 'edge detail' slider.\n\n---\n\nThe filter is an implementation of the\n 'Guided Image Filtering', by Kaiming He. \nMore details at http://kaiminghe.com/eccv10/\n"
+ selected true
+ xpos 510
+ ypos -154
+ addUserKnob {20 GuidedBlur}
+ addUserKnob {41 useGPUIfAvailable l "Use GPU if available" T BlinkScript1.useGPUIfAvailable}
+ addUserKnob {7 blur_size l "blur size" R 0 100}
+ blur_size 46.5
+ addUserKnob {41 tolerance l "edge detail" t "Control the amount of detail that will be preserved. \n\nA value close to 0 makes the filter behave like a regular blur. \n\nValues close to 6 or 7 can introduce artifacts, identifying grain \"as edges\". \n\nRecommended values are between 2.5 and 4." T Constant3.multiplier}
+ addUserKnob {41 colorspace T Colorspace2.colorspace_in}
+ addUserKnob {41 filter T Blur1.filter}
+ addUserKnob {41 quality l "" -STARTLINE T Blur1.quality}
+ addUserKnob {20 info l Info}
+ addUserKnob {26 versionInfo l "" +STARTLINE T "\nCreated by Rafael Silva\nwww.rafael.ai\nrafael@rafael.ai\n\nVersion 1.0\nLast Updated: April 1st, 2020\n\nToronto, Canada\n"}
+ addUserKnob {26 ""}
+}
+ Input {
+  inputs 0
+  name Inputalpha
+  label "\[value number]"
+  xpos 1390
+  ypos 176
+  number 1
+ }
+ Dot {
+  name Dot3
+  note_font "Helvetica Bold"
+  note_font_size 24
+  note_font_color 0xff
+  xpos 1424
+  ypos 330
+ }
+set Nc6766f0 [stack 0]
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name Shuffle5
+  xpos 1390
+  ypos 375
+ }
+ NoOp {
+  name p
+  tile_color 0xdfff00ff
+  xpos 1390
+  ypos 447
+ }
+set Nbe7d600 [stack 0]
+ Input {
+  inputs 0
+  name Input
+  label "\[value number]"
+  xpos 510
+  ypos 183
+ }
+ NoOp {
+  name I
+  tile_color 0xdfff00ff
+  xpos 510
+  ypos 423
+ }
+set Nbe85880 [stack 0]
+ Merge {
+  inputs 2
+  operation mult
+  name Merge5
+  xpos 1610
+  ypos 532
+ }
+ Blur {
+  channels rgba
+  size {{parent.blur_size}}
+  filter box
+  name Blur6
+  note_font Helvetica
+  xpos 1610
+  ypos 687
+ }
+ NoOp {
+  name Ip_mean
+  tile_color 0xdfff00ff
+  xpos 1610
+  ypos 903
+ }
+push $Nbe85880
+ Dot {
+  name Dot13
+  xpos 544
+  ypos 522
+ }
+set Nbeab640 [stack 0]
+ Dot {
+  name Dot14
+  xpos 654
+  ypos 522
+ }
+set Nbeb03d0 [stack 0]
+ Blur {
+  channels rgba
+  size {{parent.blur_size}}
+  filter box
+  name Blur3
+  note_font Helvetica
+  xpos 620
+  ypos 687
+ }
+ NoOp {
+  name I_mean
+  tile_color 0xdfff00ff
+  xpos 620
+  ypos 927
+ }
+set Nbec2b10 [stack 0]
+push $Nbe7d600
+ Blur {
+  channels rgba
+  size {{parent.blur_size}}
+  filter box
+  name Blur5
+  note_font Helvetica
+  xpos 1390
+  ypos 695
+ }
+ NoOp {
+  name p_mean
+  tile_color 0xdfff00ff
+  xpos 1390
+  ypos 903
+ }
+set Nbed5220 [stack 0]
+ Merge {
+  inputs 2
+  operation mult
+  name Merge8
+  xpos 1280
+  ypos 1023
+ }
+ Merge {
+  inputs 2
+  operation minus
+  name Merge9
+  xpos 1610
+  ypos 1046
+ }
+ NoOp {
+  name Ip_cov
+  tile_color 0xdfff00ff
+  xpos 1610
+  ypos 1159
+ }
+push $Nbeb03d0
+ Dot {
+  name Dot15
+  xpos 764
+  ypos 522
+ }
+set Nbefd650 [stack 0]
+ Dot {
+  name Dot16
+  xpos 984
+  ypos 522
+ }
+ Expression {
+  expr0 r*g
+  expr1 r*b
+  expr2 g*b
+  name Expression2
+  label "rg, rb, gb"
+  xpos 950
+  ypos 584
+ }
+ Blur {
+  channels rgba
+  size {{parent.blur_size}}
+  filter box
+  name Blur4
+  note_font Helvetica
+  xpos 950
+  ypos 687
+ }
+push $Nbec2b10
+ Expression {
+  expr0 r*g
+  expr1 r*b
+  expr2 g*b
+  name Expression4
+  label "rg, rb, gb"
+  xpos 840
+  ypos 992
+ }
+ Merge {
+  inputs 2
+  operation minus
+  name Merge10
+  xpos 950
+  ypos 1095
+ }
+ NoOp {
+  name I____
+  tile_color 0xdfff00ff
+  label "rg, rb, gb"
+  xpos 950
+  ypos 1161
+ }
+ Constant {
+  inputs 0
+  channels rgb
+  color {{"1/pow(10, multiplier)"}}
+  name Constant3
+  xpos 602
+  ypos 1119
+  addUserKnob {20 User}
+  addUserKnob {7 multiplier R 1 6}
+  multiplier 2.5
+ }
+push $Nbefd650
+ Expression {
+  expr0 r*r
+  expr1 g*g
+  expr2 b*b
+  name Expression1
+  label "I*I\n"
+  xpos 730
+  ypos 584
+ }
+ Blur {
+  channels rgba
+  size {{parent.blur_size}}
+  filter box
+  name Blur2
+  note_font Helvetica
+  xpos 730
+  ypos 687
+ }
+push $Nbec2b10
+ Expression {
+  expr0 r*r
+  expr1 g*g
+  expr2 b*b
+  name Expression3
+  label "I*I\n"
+  xpos 620
+  ypos 992
+ }
+ Merge {
+  inputs 2
+  operation minus
+  name Merge11
+  xpos 730
+  ypos 1119
+ }
+ Merge {
+  inputs 2
+  operation plus
+  bbox B
+  name Merge12
+  xpos 730
+  ypos 1215
+ }
+ NoOp {
+  name I___
+  tile_color 0xdfff00ff
+  label "rr, gg, bb"
+  xpos 730
+  ypos 1281
+ }
+ BlinkScript {
+  inputs 3
+  recompileCount 78
+  ProgramGroup 1
+  KernelDescription "2 \"CopyKernel\" iterate pixelWise c9cb374e097a6e4dcebf1b00ec70e5e787510c423e8defa07542246d9fb219e6 4 \"srcA\" Read Point \"srcB\" Read Point \"srcC\" Read Point \"dst\" Write Point 0 0 0"
+  kernelSource "kernel CopyKernel : ImageComputationKernel<ePixelWise>\n\{\n  Image<eRead, eAccessPoint, eEdgeClamped> srcA;\n  Image<eRead, eAccessPoint, eEdgeClamped> srcB;\n  Image<eRead, eAccessPoint, eEdgeClamped> srcC;\n\n  Image<eWrite> dst;\n\n  void process()\n  \{\n\n    float Irr_var, Igg_var, Ibb_var, Irg_var, Irb_var, Igb_var, Ipr_cov, Ipg_cov, Ipb_cov;\n    float Irr_inv, Irg_inv, Irb_inv, Igg_inv, Igb_inv, Ibb_inv;\n    float I_cov;\n\n    Irr_var = srcA(0);\n    Igg_var = srcA(1);\n    Ibb_var = srcA(2);\n    Irg_var = srcB(0);\n    Irb_var = srcB(1);\n    Igb_var = srcB(2);\n    Ipr_cov = srcC(0);\n    Ipg_cov = srcC(1);\n    Ipb_cov = srcC(2);\n\n    Irr_inv = Igg_var * Ibb_var - Igb_var * Igb_var;\n    Irg_inv = Igb_var * Irb_var - Irg_var * Ibb_var;\n    Irb_inv = Irg_var * Igb_var - Igg_var * Irb_var;\n    Igg_inv = Irr_var * Ibb_var - Irb_var * Irb_var;\n    Igb_inv = Irb_var * Irg_var - Irr_var * Igb_var;\n    Ibb_inv = Irr_var * Igg_var - Irg_var * Irg_var;\n\n    I_cov = Irr_inv * Irr_var + Irg_inv * Irg_var + Irb_inv * Irb_var;\n\n    \n    Irr_inv = Irr_inv / I_cov;\n    Irg_inv = Irg_inv / I_cov;\n    Irb_inv = Irb_inv / I_cov;\n    Igg_inv = Igg_inv / I_cov;\n    Igb_inv = Igb_inv / I_cov;\n    Ibb_inv = Ibb_inv / I_cov;\n    \n    // dst() = srcA();\n    SampleType(dst) d;\n    d.x = Irr_inv * Ipr_cov + Irg_inv * Ipg_cov + Irb_inv * Ipb_cov;\n    d.y = Irg_inv * Ipr_cov + Igg_inv * Ipg_cov + Igb_inv * Ipb_cov;\n    d.z = Irb_inv * Ipr_cov + Igb_inv * Ipg_cov + Ibb_inv * Ipb_cov;\n\n    dst() = d;\n\n  \}\n\};"
+  rebuild ""
+  rebuild_finalise ""
+  name BlinkScript1
+  xpos 950
+  ypos 1376
+ }
+ NoOp {
+  name a
+  tile_color 0xdfff00ff
+  xpos 950
+  ypos 1599
+ }
+set Nbfa7fa0 [stack 0]
+ Blur {
+  channels rgba
+  size {{parent.blur_size}}
+  filter box
+  name Blur7
+  note_font Helvetica
+  xpos 950
+  ypos 1719
+ }
+ NoOp {
+  name a_mean
+  tile_color 0xdfff00ff
+  xpos 950
+  ypos 1815
+ }
+push $Nbeab640
+ Dot {
+  name Dot17
+  xpos 544
+  ypos 1554
+ }
+ Merge {
+  inputs 2
+  operation mult
+  name Merge13
+  xpos 950
+  ypos 1958
+ }
+ Expression {
+  expr0 r+g+b
+  expr1 r+g+b
+  expr2 r+g+b
+  name Expression5
+  xpos 950
+  ypos 2054
+ }
+push $Nbed5220
+push $Nbec2b10
+ Dot {
+  name Dot2
+  xpos 1314
+  ypos 1458
+ }
+push $Nbfa7fa0
+ Merge {
+  inputs 2
+  operation mult
+  name Merge14
+  xpos 1280
+  ypos 1599
+ }
+ Dot {
+  name Dot19
+  xpos 1534
+  ypos 1698
+ }
+set Nc002190 [stack 0]
+ Shuffle {
+  green red
+  blue red
+  alpha red
+  name ar
+  xpos 1280
+  ypos 1791
+ }
+ Merge {
+  inputs 2
+  operation minus
+  name Merge15
+  xpos 1390
+  ypos 1863
+ }
+push $Nc002190
+ Shuffle {
+  red green
+  blue green
+  alpha green
+  name ag
+  xpos 1500
+  ypos 1791
+ }
+ Merge {
+  inputs 2
+  operation minus
+  name Merge16
+  xpos 1500
+  ypos 1935
+ }
+push $Nc002190
+ Shuffle {
+  red blue
+  green blue
+  alpha blue
+  name ab
+  xpos 1610
+  ypos 1791
+ }
+ Merge {
+  inputs 2
+  operation minus
+  name Merge17
+  xpos 1610
+  ypos 1983
+ }
+ Blur {
+  channels rgba
+  size {{parent.blur_size}}
+  filter box
+  name Blur1
+  note_font Helvetica
+  xpos 1610
+  ypos 2055
+ }
+ NoOp {
+  name b_mean
+  tile_color 0xdfff00ff
+  xpos 1610
+  ypos 2127
+ }
+ Merge {
+  inputs 2
+  operation plus
+  name Merge18
+  xpos 1610
+  ypos 2223
+ }
+ Colorspace {
+  name Colorspace2
+  selected true
+  xpos 1610
+  ypos 2319
+ }
+ Shuffle {
+  green red
+  blue red
+  alpha red
+  name Shuffle7
+  xpos 1610
+  ypos 2415
+ }
+push $Nc6766f0
+ Dot {
+  name Dot1
+  xpos 1864
+  ypos 330
+ }
+ Copy {
+  inputs 2
+  from0 rgba.alpha
+  to0 rgba.alpha
+  name Copy1
+  xpos 1830
+  ypos 2529
+ }
+ Output {
+  name Output1
+  xpos 1830
+  ypos 2679
+ }
+end_group

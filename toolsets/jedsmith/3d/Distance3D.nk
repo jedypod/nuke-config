@@ -1,0 +1,45 @@
+Group {
+ name Distance3D_
+ addUserKnob {20 _ l "" +STARTLINE}
+ addUserKnob {41 distance T Distance3D.distance}
+ addUserKnob {1 publish_resource_layer l "Publish Resource Layer" +INVISIBLE}
+ addUserKnob {6 publish_node l "Publish Node" -STARTLINE +INVISIBLE}
+ publish_node true
+}
+ Input {
+  inputs 0
+  name Input1
+  label "\[value number]"
+  xpos -645
+  ypos 339
+  number 1
+ }
+ Input {
+  inputs 0
+  name Input0
+  label "\[value number]"
+  xpos -1015
+  ypos 339
+ }
+ Output {
+  inputs 0
+  name Output1
+  xpos -1015
+  ypos 825
+ }
+ NoOp {
+  inputs 0
+  name Distance3D
+  help "Enter the names of any two 3D nodes with translate position knobs. \nThe distance between the two will be calculated."
+  label "\[value \[topnode parent.__BOY_AXIS__].name]"
+  xpos -1015
+  ypos 577
+  addUserKnob {20 Distance3D}
+  addUserKnob {1 Node_A}
+  Node_A "\[value \[topnode \[value parent.input1.name]].name]"
+  addUserKnob {1 Node_B}
+  Node_B "\[value \[topnode \[value parent.input0.name]].name]"
+  addUserKnob {7 distance R 0 100}
+  distance {{"sqrt(  pow((\[value Node_A].translate.x-\[value Node_B].translate.x),2)+pow((\[value Node_A].translate.y-\[value Node_B].translate.y),2)+pow((\[value Node_A].translate.z-\[value Node_B].translate.z),2)  )"}}
+ }
+end_group

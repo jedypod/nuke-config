@@ -1,0 +1,52 @@
+Group {
+name FlareTransform
+tile_color 0x824f89ff
+selected true
+xpos -1800
+ypos 4383
+addUserKnob {20 Flare_Transform}
+addUserKnob {12 flare_source}
+flare_source {0 0}
+addUserKnob {12 flare_position}
+flare_position {{"flare_source * (1-flare_offset) + ( -flare_source + \[value root.width] ) * flare_offset"} {"flare_source * (1-flare_offset) + ( -flare_source + \[value root.height] ) * flare_offset"}}
+addUserKnob {7 flare_offset t "1 is opposite corner of screen, 0 is at flare source" R -1 1}
+flare_offset {1}
+addUserKnob {20 PositionElement}
+addUserKnob {41 translate T Position_Element.translate}
+addUserKnob {41 rotate T Position_Element.rotate}
+addUserKnob {41 scale T Position_Element.scale}
+addUserKnob {41 skewX l "skew X" T Position_Element.skewX}
+addUserKnob {41 skewY l "skew Y" T Position_Element.skewY}
+addUserKnob {41 center T Position_Element.center}
+}
+Input {
+inputs 0
+name Input1
+xpos -480
+ypos 447
+}
+Transform {
+translate {0 0}
+rotate {0}
+scale {1}
+skewX {0}
+skewY {0}
+center {0 0}
+shutteroffset centred
+name Position_Element
+xpos -480
+ypos 519
+}
+Transform {
+translate {{parent.flare_position} {parent.flare_position}}
+shutteroffset centred
+name Move_Flare
+xpos -480
+ypos 687
+}
+Output {
+name Output1
+xpos -480
+ypos 759
+}
+end_group

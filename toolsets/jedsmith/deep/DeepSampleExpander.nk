@@ -1,0 +1,479 @@
+set cut_paste_input [stack 0]
+Constant {
+ inputs 0
+ color {0 0 0 1e-07}
+ name Constant2
+ selected true
+ xpos -700
+ ypos -1066
+ postage_stamp false
+}
+Camera2 {
+ inputs 0
+ translate {0.01099007204 1.440955162 23.85664177}
+ rotate {-8.599999428 0.599999547 3.372978341e-08}
+ focal 35
+ name Camera1
+ selected true
+ xpos -800
+ ypos -894
+}
+Dot {
+ name Dot2
+ label " "
+ note_font "Helvetica Bold Bold"
+ note_font_size 24
+ note_font_color 0xa5a5a501
+ selected true
+ xpos -776
+ ypos -702
+}
+Dot {
+ name Dot3
+ label " "
+ note_font "Helvetica Bold Bold"
+ note_font_size 24
+ note_font_color 0xa5a5a501
+ selected true
+ xpos -336
+ ypos -702
+}
+set Nbd39960 [stack 0]
+push $Nbd39960
+Card2 {
+ inputs 0
+ z 1000
+ lens_in_focal {{parent.Camera1.focal}}
+ lens_in_haperture {{parent.Camera1.haperture}}
+ control_points {3 3 3 6 
+
+1 {-0.5 -0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0 0 0} 
+1 {0 -0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0.5 0 0} 
+1 {0.5 -0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {1 0 0} 
+1 {-0.5 0 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0 0.5 0} 
+1 {0 0 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0.5 0.5 0} 
+1 {0.5 0 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {1 0.5 0} 
+1 {-0.5 0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0 1 0} 
+1 {0 0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0.5 1 0} 
+1 {0.5 0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {1 1 0} }
+ name Card6
+ selected true
+ xpos -700
+ ypos -994
+ disable true
+}
+Noise {
+ inputs 0
+ size 1000
+ zoffset 826.1
+ lacunarity 1.6
+ gain 0.296
+ gamma 0.185
+ center {1024 778}
+ color {1 0.02344971895 0 1}
+ name Noise4
+ selected true
+ xpos -590
+ ypos -1066
+}
+Card2 {
+ z 20
+ lens_in_focal {{parent.Camera1.focal}}
+ lens_in_haperture {{parent.Camera1.haperture}}
+ control_points {3 3 3 6 
+
+1 {-0.5 -0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0 0 0} 
+1 {0 -0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0.5 0 0} 
+1 {0.5 -0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {1 0 0} 
+1 {-0.5 0 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0 0.5 0} 
+1 {0 0 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0.5 0.5 0} 
+1 {0.5 0 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {1 0.5 0} 
+1 {-0.5 0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0 1 0} 
+1 {0 0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0.5 1 0} 
+1 {0.5 0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {1 1 0} }
+ name Card5
+ selected true
+ xpos -590
+ ypos -994
+ disable true
+}
+Noise {
+ inputs 0
+ size 49
+ zoffset 645.1
+ gain 0.98
+ gamma 0.43
+ center {1024 778}
+ color {0.411426723 1 0.4767833948 1}
+ name Noise3
+ selected true
+ xpos -480
+ ypos -1066
+}
+Card2 {
+ z 15
+ lens_in_focal {{parent.Camera1.focal}}
+ lens_in_haperture {{parent.Camera1.haperture}}
+ control_points {3 3 3 6 
+
+1 {-0.5 -0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0 0 0} 
+1 {0 -0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0.5 0 0} 
+1 {0.5 -0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {1 0 0} 
+1 {-0.5 0 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0 0.5 0} 
+1 {0 0 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0.5 0.5 0} 
+1 {0.5 0 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {1 0.5 0} 
+1 {-0.5 0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0 1 0} 
+1 {0 0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0.5 1 0} 
+1 {0.5 0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {1 1 0} }
+ name Card4
+ selected true
+ xpos -480
+ ypos -994
+ disable true
+}
+Noise {
+ inputs 0
+ zoffset 297.45
+ gamma 0.28
+ center {1024 778}
+ color {1 0.3215928078 0.8016247749 1}
+ name Noise2
+ selected true
+ xpos -370
+ ypos -1066
+}
+Card2 {
+ z 10
+ lens_in_focal {{parent.Camera1.focal}}
+ lens_in_haperture {{parent.Camera1.haperture}}
+ control_points {3 3 3 6 
+
+1 {-0.5 -0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0 0 0} 
+1 {0 -0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0.5 0 0} 
+1 {0.5 -0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {1 0 0} 
+1 {-0.5 0 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0 0.5 0} 
+1 {0 0 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0.5 0.5 0} 
+1 {0.5 0 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {1 0.5 0} 
+1 {-0.5 0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0 1 0} 
+1 {0 0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0.5 1 0} 
+1 {0.5 0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {1 1 0} }
+ name Card3
+ selected true
+ xpos -370
+ ypos -994
+ disable true
+}
+push $cut_paste_input
+Noise {
+ size 42
+ zoffset 227.8
+ center {1024 778}
+ color {0.4678263068 0.5960755348 1 1}
+ name Noise1
+ selected true
+ xpos -260
+ ypos -1066
+}
+Card2 {
+ z 5
+ lens_in_focal {{parent.Camera1.focal}}
+ lens_in_haperture {{parent.Camera1.haperture}}
+ control_points {3 3 3 6 
+
+1 {-0.5 -0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0 0 0} 
+1 {0 -0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0.5 0 0} 
+1 {0.5 -0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {1 0 0} 
+1 {-0.5 0 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0 0.5 0} 
+1 {0 0 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0.5 0.5 0} 
+1 {0.5 0 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {1 0.5 0} 
+1 {-0.5 0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0 1 0} 
+1 {0 0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0.5 1 0} 
+1 {0.5 0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {1 1 0} }
+ name Card2
+ selected true
+ xpos -260
+ ypos -994
+}
+Scene {
+ inputs 5
+ name Scene2
+ selected true
+ xpos -250
+ ypos -918
+}
+TransformGeo {
+ inputs 2
+ name TransformGeo1
+ selected true
+ xpos -260
+ ypos -706
+}
+Constant {
+ inputs 0
+ format "1280 720 0 0 1280 720 1 HD_720"
+ name Constant1
+ selected true
+ xpos -150
+ ypos -706
+ postage_stamp false
+}
+set Ne8e2f10 [stack 0]
+ScanlineRender {
+ inputs 3
+ conservative_shader_sampling false
+ shutteroffset centred
+ motion_vectors_type distance
+ name ScanlineRender1
+ selected true
+ xpos -260
+ ypos -634
+}
+set Ne58b1a0 [stack 0]
+push $Ne58b1a0
+DeepExpression {
+ chans0 none
+ chans1 deep
+ deep.front 0
+ deep.back 0
+ name DeepExpression1
+ selected true
+ xpos -260
+ ypos -586
+ disable true
+}
+Group {
+ name DeepSampleExpander
+ tile_color 0x7184eff
+ selected true
+ xpos -260
+ ypos -538
+ addUserKnob {20 DeepSampleExpander}
+ addUserKnob {41 front_offset T DeepExpression.front_offset}
+ addUserKnob {41 back_offset T DeepExpression.back_offset}
+ addUserKnob {41 depth_offset T DeepExpression.depth_offset}
+}
+ Constant {
+  inputs 0
+  color {0 0 0 1e-07}
+  name Constant1
+  xpos 180
+  ypos -778
+  postage_stamp false
+ }
+ Reformat {
+  type "to box"
+  box_width 1
+  box_height 1
+  box_fixed true
+  name ReformatBox
+  xpos 180
+  ypos -754
+ }
+ Card2 {
+  z 10000
+  control_points {3 3 3 6 
+
+1 {-0.5 -0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0 0 0} 
+1 {0 -0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {0.5 0 0} 
+1 {0.5 -0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666865 0} 0 {0 0 0} 0 {1 0 0} 
+1 {-0.5 0 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0 0.5 0} 
+1 {0 0 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {0.5 0.5 0} 
+1 {0.5 0 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0.1666666716 0} 0 {0 -0.1666666716 0} 0 {1 0.5 0} 
+1 {-0.5 0.5 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0 1 0} 
+1 {0 0.5 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {0.5 1 0} 
+1 {0.5 0.5 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0 0} 0 {0 -0.1666666865 0} 0 {1 1 0} }
+  name Card6
+  xpos 180
+  ypos -706
+ }
+ Input {
+  inputs 0
+  name Input
+  xpos 400
+  ypos -874
+ }
+set Nf929f20 [stack 0]
+ Fill {
+  color {0 0 0 0}
+  name Fill1
+  xpos 290
+  ypos -730
+ }
+ ScanlineRender {
+  inputs 2
+  conservative_shader_sampling false
+  shutteroffset centred
+  motion_vectors_type distance
+  name ScanlineRender1
+  xpos 180
+  ypos -634
+ }
+push $Nf929f20
+ DeepMerge {
+  inputs 2
+  name DeepMerge1
+  selected true
+  xpos 400
+  ypos -634
+ }
+ DeepExpression {
+  chans1 deep
+  deep.front "deep.front-\[value front_offset]+\[value depth_offset]"
+  deep.back "deep.back+\[value back_offset]+\[value depth_offset]"
+  name DeepExpression
+  xpos 400
+  ypos -562
+  addUserKnob {20 User}
+  addUserKnob {7 front_offset R 0 5000}
+  addUserKnob {7 back_offset R 0 5000}
+  back_offset 6
+  addUserKnob {7 depth_offset R -1000 1000}
+ }
+ Output {
+  name Output1
+  xpos 400
+  ypos -418
+ }
+end_group
+set N10715170 [stack 0]
+Switch {
+ inputs 2
+ which 1
+ name Switch1
+ selected true
+ xpos -370
+ ypos -538
+ disable true
+}
+DeepSample {
+ pos {414 367}
+ accumulate true
+ name DeepSample1
+ selected true
+ xpos -370
+ ypos -490
+}
+push $Nbd39960
+ColorWheel {
+ inputs 0
+ edgeSaturation 0.535
+ gamma 0.29
+ rotate 131
+ name ColorWheel1
+ selected true
+ xpos 70
+ ypos -1090
+ postage_stamp false
+}
+Grade {
+ multiply 0.36
+ name Grade1
+ selected true
+ xpos 70
+ ypos -1042
+}
+Card2 {
+ orientation ZX
+ rows 100
+ columns 100
+ uniform_scale 100
+ control_points {3 3 3 6 
+
+1 {-0.5 0 -0.5} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0 0.1666666865} 0 {0 0 0} 0 {0 0 0} 
+1 {0 0 -0.5} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0 0.1666666865} 0 {0 0 0} 0 {0.5 0 0} 
+1 {0.5 0 -0.5} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0 0.1666666865} 0 {0 0 0} 0 {1 0 0} 
+1 {-0.5 0 0} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0 0.1666666716} 0 {0 0 -0.1666666716} 0 {0 0.5 0} 
+1 {0 0 0} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0 0.1666666716} 0 {0 0 -0.1666666716} 0 {0.5 0.5 0} 
+1 {0.5 0 0} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0 0.1666666716} 0 {0 0 -0.1666666716} 0 {1 0.5 0} 
+1 {-0.5 0 0.5} 0 {0.1666666865 0 0} 0 {0 0 0} 0 {0 0 0} 0 {0 0 -0.1666666865} 0 {0 1 0} 
+1 {0 0 0.5} 0 {0.1666666716 0 0} 0 {-0.1666666716 0 0} 0 {0 0 0} 0 {0 0 -0.1666666865} 0 {0.5 1 0} 
+1 {0.5 0 0.5} 0 {0 0 0} 0 {-0.1666666865 0 0} 0 {0 0 0} 0 {0 0 -0.1666666865} 0 {1 1 0} }
+ name Card1
+ selected true
+ xpos 70
+ ypos -970
+}
+Scene {
+ name Scene1
+ selected true
+ xpos 80
+ ypos -822
+}
+push $Ne8e2f10
+ScanlineRender {
+ inputs 3
+ conservative_shader_sampling false
+ shutteroffset centred
+ motion_vectors_type distance
+ name ScanlineRender2
+ selected true
+ xpos 70
+ ypos -634
+}
+Dot {
+ name Dot4
+ label " "
+ note_font "Helvetica Bold Bold"
+ note_font_size 24
+ note_font_color 0xa5a5a501
+ selected true
+ xpos 104
+ ypos -510
+}
+set N106f2d00 [stack 0]
+push $N10715170
+DeepMerge {
+ inputs 2
+ drop_zero_threshold 1e-05
+ computeOccludedSamples true
+ name DeepMerge1
+ selected true
+ xpos -260
+ ypos -442
+}
+push $N106f2d00
+push $N10715170
+DeepHoldout2 {
+ inputs 2
+ name DeepHoldout1
+ selected true
+ xpos -150
+ ypos -442
+}
+push $N106f2d00
+Merge2 {
+ inputs 2
+ bbox B
+ name Merge1
+ selected true
+ xpos -150
+ ypos -370
+}
+push $N106f2d00
+push $N10715170
+DeepMerge {
+ inputs 2
+ operation holdout
+ drop_zero_threshold 1e-05
+ metainput All
+ computeOccludedSamples true
+ name DeepMerge2
+ selected true
+ xpos -40
+ ypos -442
+}
+DeepToImage {
+ name DeepToImage1
+ selected true
+ xpos -40
+ ypos -394
+}
+push $N106f2d00
+Merge2 {
+ inputs 2
+ bbox B
+ name Merge2
+ selected true
+ xpos 70
+ ypos -370
+}

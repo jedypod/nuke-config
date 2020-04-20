@@ -1,0 +1,20 @@
+Transform {
+translate {{"(\[knob track1_x] -\[knob track2_x]) - (\[knob track1_x](ref_frame) - \[knob track2_x](ref_frame)) - manual_fix"} {"(\[knob track1_y] -\[knob track2_y]) - (\[knob track1_y](ref_frame) - \[knob track2_y](ref_frame)) - manual_fix"}}
+name DiffTracks
+help "The difference between the movement of track1 and track2 will be removed from the input.\n\nPut another way: \nTrack1 is the stable thing\nTrack2 is the wobbly thing.\nThe wobble will be removed from the input."
+addUserKnob {20 Tracks t "The difference between the movement of track1 and track2 will be removed from the input.\n\nPut another way: \nTrack1 is the stable thing\nTrack2 is the wobbly thing.\nThe wobble will be removed from the input."}
+addUserKnob {3 ref_frame}
+ref_frame 1001
+addUserKnob {26 dest_label l "" +STARTLINE T Destination}
+addUserKnob {1 track1_x}
+track1_x Track1.tracks.1.track_x
+addUserKnob {1 track1_y}
+track1_y Track1.tracks.1.track_y
+addUserKnob {26 src_label l "" +STARTLINE T Source}
+addUserKnob {1 track2_x}
+track2_x Track2.tracks.1.track_x
+addUserKnob {1 track2_y}
+track2_y Track2.tracks.1.track_y
+addUserKnob {26 ""}
+addUserKnob {12 manual_fix}
+}

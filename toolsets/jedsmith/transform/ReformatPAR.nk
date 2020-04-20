@@ -1,0 +1,10 @@
+Reformat {
+ type "to box"
+ box_width {{width}}
+ box_height {{height}}
+ box_fixed true
+ box_pixel_aspect 2
+ resize none
+ name ReformatPAR
+ label "par \[value box_pixel_aspect]"
+}

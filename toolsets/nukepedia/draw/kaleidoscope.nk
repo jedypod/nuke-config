@@ -1,0 +1,249 @@
+Group {
+ name kaleidoscope
+ addUserKnob {20 User}
+ addUserKnob {41 posA T NoOp1.posA}
+ addUserKnob {41 posB T NoOp1.posB}
+ addUserKnob {41 posC T NoOp1.posC}
+}
+ Input {
+  inputs 0
+  name image
+  xpos 70
+  ypos -178
+ }
+ Dot {
+  name Dot2
+  xpos 104
+  ypos -102
+ }
+set N192bffd0 [stack 0]
+ Expression {
+  expr0 x
+  expr1 y
+  name Expression7
+  xpos 180
+  ypos -106
+ }
+ Expression {
+  temp_name0 d
+  temp_expr0 "(r + (g - NoOp1.offsetAC) * NoOp1.slopeAC) / (1 + NoOp1.slopeAC * NoOp1.slopeAC)"
+  temp_name1 cond
+  temp_expr1 "NoOp1.condAC ? g > NoOp1.slopeAC * r + NoOp1.offsetAC : g < NoOp1.slopeAC * r + NoOp1.offsetAC"
+  expr0 "cond ? 2*d - r : r"
+  expr1 "cond ? 2*d*NoOp1.slopeAC - g + 2*NoOp1.offsetAC : g"
+  name flipAC
+  xpos 180
+  ypos -58
+ }
+ Expression {
+  temp_name0 d
+  temp_expr0 "(r + (g - NoOp1.offsetCB) * NoOp1.slopeCB) / (1 + NoOp1.slopeCB * NoOp1.slopeCB)"
+  temp_name1 cond
+  temp_expr1 "NoOp1.condCB ? g > NoOp1.slopeCB * r + NoOp1.offsetCB : g < NoOp1.slopeCB * r + NoOp1.offsetCB"
+  expr0 "cond ? 2*d - r : r"
+  expr1 "cond ? 2*d*NoOp1.slopeCB - g + 2*NoOp1.offsetCB : g"
+  name flipCB
+  xpos 180
+  ypos -34
+ }
+ Expression {
+  temp_name0 d
+  temp_expr0 "(r + (g - NoOp1.offsetBA) * NoOp1.slopeBA) / (1 + NoOp1.slopeBA * NoOp1.slopeBA)"
+  temp_name1 cond
+  temp_expr1 "NoOp1.condBA ? g > NoOp1.slopeBA * r + NoOp1.offsetBA : g < NoOp1.slopeBA * r + NoOp1.offsetBA"
+  expr0 "cond ? 2*d - r : r"
+  expr1 "cond ? 2*d*NoOp1.slopeBA - g + 2*NoOp1.offsetBA : g"
+  name flipBA
+  xpos 180
+  ypos -10
+ }
+ Expression {
+  temp_name0 d
+  temp_expr0 "(r + (g - NoOp1.offsetAC) * NoOp1.slopeAC) / (1 + NoOp1.slopeAC * NoOp1.slopeAC)"
+  temp_name1 cond
+  temp_expr1 "NoOp1.condAC ? g > NoOp1.slopeAC * r + NoOp1.offsetAC : g < NoOp1.slopeAC * r + NoOp1.offsetAC"
+  expr0 "cond ? 2*d - r : r"
+  expr1 "cond ? 2*d*NoOp1.slopeAC - g + 2*NoOp1.offsetAC : g"
+  name flipAC1
+  xpos 290
+  ypos 14
+ }
+ Expression {
+  temp_name0 d
+  temp_expr0 "(r + (g - NoOp1.offsetCB) * NoOp1.slopeCB) / (1 + NoOp1.slopeCB * NoOp1.slopeCB)"
+  temp_name1 cond
+  temp_expr1 "NoOp1.condCB ? g > NoOp1.slopeCB * r + NoOp1.offsetCB : g < NoOp1.slopeCB * r + NoOp1.offsetCB"
+  expr0 "cond ? 2*d - r : r"
+  expr1 "cond ? 2*d*NoOp1.slopeCB - g + 2*NoOp1.offsetCB : g"
+  name flipCB1
+  xpos 290
+  ypos 38
+ }
+ Expression {
+  temp_name0 d
+  temp_expr0 "(r + (g - NoOp1.offsetBA) * NoOp1.slopeBA) / (1 + NoOp1.slopeBA * NoOp1.slopeBA)"
+  temp_name1 cond
+  temp_expr1 "NoOp1.condBA ? g > NoOp1.slopeBA * r + NoOp1.offsetBA : g < NoOp1.slopeBA * r + NoOp1.offsetBA"
+  expr0 "cond ? 2*d - r : r"
+  expr1 "cond ? 2*d*NoOp1.slopeBA - g + 2*NoOp1.offsetBA : g"
+  name flipBA1
+  xpos 290
+  ypos 62
+ }
+ Expression {
+  temp_name0 d
+  temp_expr0 "(r + (g - NoOp1.offsetAC) * NoOp1.slopeAC) / (1 + NoOp1.slopeAC * NoOp1.slopeAC)"
+  temp_name1 cond
+  temp_expr1 "NoOp1.condAC ? g > NoOp1.slopeAC * r + NoOp1.offsetAC : g < NoOp1.slopeAC * r + NoOp1.offsetAC"
+  expr0 "cond ? 2*d - r : r"
+  expr1 "cond ? 2*d*NoOp1.slopeAC - g + 2*NoOp1.offsetAC : g"
+  name flipAC2
+  xpos 180
+  ypos 86
+ }
+ Expression {
+  temp_name0 d
+  temp_expr0 "(r + (g - NoOp1.offsetCB) * NoOp1.slopeCB) / (1 + NoOp1.slopeCB * NoOp1.slopeCB)"
+  temp_name1 cond
+  temp_expr1 "NoOp1.condCB ? g > NoOp1.slopeCB * r + NoOp1.offsetCB : g < NoOp1.slopeCB * r + NoOp1.offsetCB"
+  expr0 "cond ? 2*d - r : r"
+  expr1 "cond ? 2*d*NoOp1.slopeCB - g + 2*NoOp1.offsetCB : g"
+  name flipCB2
+  xpos 180
+  ypos 110
+ }
+ Expression {
+  temp_name0 d
+  temp_expr0 "(r + (g - NoOp1.offsetBA) * NoOp1.slopeBA) / (1 + NoOp1.slopeBA * NoOp1.slopeBA)"
+  temp_name1 cond
+  temp_expr1 "NoOp1.condBA ? g > NoOp1.slopeBA * r + NoOp1.offsetBA : g < NoOp1.slopeBA * r + NoOp1.offsetBA"
+  expr0 "cond ? 2*d - r : r"
+  expr1 "cond ? 2*d*NoOp1.slopeBA - g + 2*NoOp1.offsetBA : g"
+  name flipBA2
+  xpos 180
+  ypos 134
+ }
+ Expression {
+  temp_name0 d
+  temp_expr0 "(r + (g - NoOp1.offsetAC) * NoOp1.slopeAC) / (1 + NoOp1.slopeAC * NoOp1.slopeAC)"
+  temp_name1 cond
+  temp_expr1 "NoOp1.condAC ? g > NoOp1.slopeAC * r + NoOp1.offsetAC : g < NoOp1.slopeAC * r + NoOp1.offsetAC"
+  expr0 "cond ? 2*d - r : r"
+  expr1 "cond ? 2*d*NoOp1.slopeAC - g + 2*NoOp1.offsetAC : g"
+  name flipAC3
+  xpos 290
+  ypos 158
+ }
+ Expression {
+  temp_name0 d
+  temp_expr0 "(r + (g - NoOp1.offsetCB) * NoOp1.slopeCB) / (1 + NoOp1.slopeCB * NoOp1.slopeCB)"
+  temp_name1 cond
+  temp_expr1 "NoOp1.condCB ? g > NoOp1.slopeCB * r + NoOp1.offsetCB : g < NoOp1.slopeCB * r + NoOp1.offsetCB"
+  expr0 "cond ? 2*d - r : r"
+  expr1 "cond ? 2*d*NoOp1.slopeCB - g + 2*NoOp1.offsetCB : g"
+  name flipCB3
+  xpos 290
+  ypos 182
+ }
+ Expression {
+  temp_name0 d
+  temp_expr0 "(r + (g - NoOp1.offsetBA) * NoOp1.slopeBA) / (1 + NoOp1.slopeBA * NoOp1.slopeBA)"
+  temp_name1 cond
+  temp_expr1 "NoOp1.condBA ? g > NoOp1.slopeBA * r + NoOp1.offsetBA : g < NoOp1.slopeBA * r + NoOp1.offsetBA"
+  expr0 "cond ? 2*d - r : r"
+  expr1 "cond ? 2*d*NoOp1.slopeBA - g + 2*NoOp1.offsetBA : g"
+  name flipBA3
+  xpos 290
+  ypos 206
+ }
+ Expression {
+  temp_name0 d
+  temp_expr0 "(r + (g - NoOp1.offsetAC) * NoOp1.slopeAC) / (1 + NoOp1.slopeAC * NoOp1.slopeAC)"
+  temp_name1 cond
+  temp_expr1 "NoOp1.condAC ? g > NoOp1.slopeAC * r + NoOp1.offsetAC : g < NoOp1.slopeAC * r + NoOp1.offsetAC"
+  expr0 "cond ? 2*d - r : r"
+  expr1 "cond ? 2*d*NoOp1.slopeAC - g + 2*NoOp1.offsetAC : g"
+  name flipAC4
+  xpos 180
+  ypos 230
+ }
+ Expression {
+  temp_name0 d
+  temp_expr0 "(r + (g - NoOp1.offsetCB) * NoOp1.slopeCB) / (1 + NoOp1.slopeCB * NoOp1.slopeCB)"
+  temp_name1 cond
+  temp_expr1 "NoOp1.condCB ? g > NoOp1.slopeCB * r + NoOp1.offsetCB : g < NoOp1.slopeCB * r + NoOp1.offsetCB"
+  expr0 "cond ? 2*d - r : r"
+  expr1 "cond ? 2*d*NoOp1.slopeCB - g + 2*NoOp1.offsetCB : g"
+  name flipCB4
+  xpos 180
+  ypos 254
+ }
+ Expression {
+  temp_name0 d
+  temp_expr0 "(r + (g - NoOp1.offsetBA) * NoOp1.slopeBA) / (1 + NoOp1.slopeBA * NoOp1.slopeBA)"
+  temp_name1 cond
+  temp_expr1 "NoOp1.condBA ? g > NoOp1.slopeBA * r + NoOp1.offsetBA : g < NoOp1.slopeBA * r + NoOp1.offsetBA"
+  expr0 "cond ? 2*d - r : r"
+  expr1 "cond ? 2*d*NoOp1.slopeBA - g + 2*NoOp1.offsetBA : g"
+  name flipBA4
+  xpos 180
+  ypos 278
+ }
+push $N192bffd0
+ Dot {
+  name Dot1
+  xpos 104
+  ypos 330
+ }
+ MergeExpression {
+  inputs 2
+  expr0 "Br(Ar, Ag)"
+  expr1 "Bg(Ar, Ag)"
+  expr2 "Bb(Ar, Ag)"
+  name MergeExpression1
+  xpos 180
+  ypos 326
+ }
+ Output {
+  name Output1
+  xpos 180
+  ypos 374
+ }
+ NoOp {
+  inputs 0
+  name NoOp1
+  xpos -6
+  ypos -57
+  addUserKnob {20 User}
+  addUserKnob {7 condAC}
+  condAC {{"posB.y < slopeAC * posB.x + offsetAC"}}
+  addUserKnob {7 condCB}
+  condCB {{"posA.y < slopeCB * posA.x + offsetCB"}}
+  addUserKnob {7 condBA}
+  condBA {{"posC.y < slopeBA * posC.x + offsetBA"}}
+  addUserKnob {7 slopeAC}
+  slopeAC {{"v0.y / v0.x"}}
+  addUserKnob {7 slopeCB}
+  slopeCB {{"v2.y / v2.x"}}
+  addUserKnob {7 slopeBA}
+  slopeBA {{"v1.y / v1.x"}}
+  addUserKnob {7 offsetAC}
+  offsetAC {{"posA.y - slopeAC*posA.x"}}
+  addUserKnob {7 offsetCB}
+  offsetCB {{"posC.y - slopeCB*posC.x"}}
+  addUserKnob {7 offsetBA}
+  offsetBA {{"posA.y - slopeBA*posA.x"}}
+  addUserKnob {12 v0 l INVISIBLE t "C - A" +INVISIBLE}
+  v0 {{"posC - posA"} {"posC - posA"}}
+  addUserKnob {12 v1 l INVISIBLE t "B - A" +INVISIBLE}
+  v1 {{"posB - posA"} {"posB - posA"}}
+  addUserKnob {12 v2 l INVISIBLE +INVISIBLE}
+  v2 {{"posB - posC"} {"posB - posC"}}
+  addUserKnob {12 posC}
+  posC {1120 493}
+  addUserKnob {12 posB}
+  posB {970 579.7}
+  addUserKnob {12 posA}
+  posA {820 493}
+ }
+end_group

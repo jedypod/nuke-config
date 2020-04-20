@@ -1,0 +1,16 @@
+Transform {
+ translate {{(t-ref_frame)*direction x1001 360} {t*direction x1001 0}}
+ center {1110.5 715}
+ motionblur 1
+ shutteroffset custom
+ shuttercustomoffset -0.25
+ name TransformVector
+ selected true
+ xpos 6890
+ ypos 518
+ addUserKnob {20 User}
+ addUserKnob {3 ref_frame}
+ ref_frame 1028
+ addUserKnob {12 direction}
+ direction {-40 0}
+}

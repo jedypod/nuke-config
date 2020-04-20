@@ -1,0 +1,543 @@
+Group {
+name RotoOutput
+addUserKnob {20 RotoOutput}
+addUserKnob {1 existing_layers l INVISIBLE +INVISIBLE}
+addUserKnob {1 current_base_node l INVISIBLE +INVISIBLE}
+current_base_node _BASE_
+addUserKnob {7 color_overlay_mix}
+color_overlay_mix 0.25
+addUserKnob {22 add_layer l "Add Layer" t "Add output layer." T "import nuke, re\n\ndef unselect_all():\n    # Deselect all nodes\n    for n in nuke.allNodes(recurseGroups=True):\n        n.setSelected(False)\n\ndef make_node(nodeclass, pos_x, pos_y, nodeinput=None, nodename=None, knobvalues=''):\n    # Helper function to create a node with specified nodeclass, position, name and input\n    unselect_all()\n    node = nuke.createNode(nodeclass, knobvalues, inpanel=False)\n    node.setXYpos(pos_x, pos_y)\n    if nodeinput:\n        node.setInput(0, nodeinput)\n    if nodename:\n        node.setName(nodename)\n    nuke.autoplaceSnap(node)\n    return node\n\ndef add_destructor_knob(node, layername):\n    destructor_knob = node.addKnob(nuke.Text_Knob('destructor__\{0\}__'.format(layername), '', ' '))\n\n\ndef run():\n    node = nuke.thisNode()\n    nuke.root().begin()\n    # node = nuke.toNode('RotoOutput')\n\n    # Global options\n    color_options = \['Red', 'Green', 'Blue', 'Yellow', 'Magenta', 'Cyan']\n    grid_x = 110\n    grid_y = 24\n\n    # Get layername \n    panel = nuke.Panel('Enter Output Layername')\n    panel.addSingleLineInput('layername', '')\n    panel.addEnumerationPulldown('overlay_color', ' '.join(color_options))\n    panel.addBooleanCheckBox('overlay_replace', True)\n    if panel.show():\n        layername = panel.value('layername')\n        layername = layername.replace(' ', '_')\n        layername = re.sub('\[^0-9a-zA-Z_]+', '', layername)\n        overlay_color = panel.value('overlay_color')\n        overlay_replace = panel.value('overlay_replace')\n        if layername == '':\n            return\n        if '__' in layername:\n            return\n    else:\n        return\n\n    node.begin()\n    base_node_name = node\['current_base_node'].getValue()\n    existing_layers = node\['existing_layers'].getValue().split(\" \")\n    # Check for duplicate layernames\n    if layername in existing_layers:\n        nuke.message(\"Please choose a unique layer name.\")\n        return\n    existing_layers.append(layername)\n    node\['existing_layers'].setValue(\" \".join(existing_layers))\n\n    \n    base_plate_node = nuke.toNode('_BASE_PLATE_DOT_')\n    base_node = nuke.toNode(base_node_name)\n    if not base_node:\n        base_node = nuke.toNode('_BASE_')\n        node\['current_base_node'].setValue('_BASE_')\n    output_node = nuke.toNode('_OUTPUT_')\n    start_xpos = base_node.xpos()\n    start_ypos = base_node.ypos()+grid_y*4\n\n    # Create Input\n    inputnode = make_node('Input', start_xpos+grid_x*2, start_ypos, nodename='Input\{0\}'.format(layername), knobvalues='label \[value\\ number]')\n    add_destructor_knob(inputnode, layername)\n\n    # Create Grade for color overlay\n    color_overlay_template = nuke.toNode('_COLOR_OVERLAY_TEMPLATE_')\n    unselect_all()\n    color_overlay_template.setSelected(True)\n    nuke.nodeCopy('%clipboard%')\n    unselect_all()\n    if overlay_replace:\n        color_overlay_node = nuke.nodePaste('%clipboard%')\n        color_overlay_node.setInput(0, base_plate_node)\n        color_overlay_node.setXYpos(start_xpos-grid_x*1, start_ypos)\n        color_overlay_node\['parent_layername'].setValue(layername)\n\n        keymix_node = make_node('Keymix', start_xpos, start_ypos, nodeinput=base_node, knobvalues='channels rgb')\n        keymix_node.setInput(1, color_overlay_node)\n        keymix_node.setInput(2, inputnode)\n        add_destructor_knob(keymix_node, layername)\n        nuke.autoplaceSnap(keymix_node)\n    else:\n        base_node.setSelected(True)\n        color_overlay_node = nuke.nodePaste('%clipboard%')\n        color_overlay_node.setInput(1, inputnode)\n        color_overlay_node.setInput(0, base_node)\n        color_overlay_node\['parent_layername'].setValue(layername)\n        color_overlay_node.setXYpos(start_xpos, start_ypos)\n    nuke.autoplaceSnap(color_overlay_node)\n    add_destructor_knob(color_overlay_node, layername)\n\n    # Create copy node\n    newlayer_name = '\{0\}.a'.format(layername)\n    newlayer = nuke.Layer(layername, \[newlayer_name] )\n    copy_node = make_node('Copy', start_xpos, start_ypos+grid_y*2, nodeinput=color_overlay_node, nodename='Copy_\{0\}'.format(layername), knobvalues='to0 \{0\}'.format(newlayer_name))\n    copy_node.setInput(1, inputnode)\n    if overlay_replace:\n        copy_node.setInput(0, keymix_node)\n    add_destructor_knob(copy_node, layername)\n\n    # Create ChannelMerge for Alpha\n    channelmerge = make_node('ChannelMerge', start_xpos, start_ypos+grid_y*4, nodeinput=copy_node, nodename='ChannelMerge_\{0\}'.format(layername))\n    channelmerge.setInput(1, inputnode)\n    add_destructor_knob(channelmerge, layername)\n    \n    # Create new base node\n    new_base_node = make_node('Dot', start_xpos, start_ypos+grid_y*7, nodeinput=channelmerge, nodename='_BASE_')\n    node\['current_base_node'].setValue(new_base_node.name())\n    output_node.setInput(0, new_base_node)\n    add_destructor_knob(new_base_node, layername)\n\n    nuke.root().begin()\n    # Add parent node knobs for layer\n    layer_label_knob = node.addKnob(nuke.Text_Knob('layer_label__\{0\}'.format(layername), '<b>\{0\}'.format(layername), ' '))\n    \n    remove_layer_knob = node.addKnob(nuke.PyScript_Knob('remove_layer__\{0\}'.format(layername), 'Remove', \"import operator\\nlayername = nuke.thisKnob().name().split('__')\[-1]\\nnode = nuke.thisNode()\\nfor knobname, knob in node.knobs().iteritems():\\n    if knobname.endswith('__\{0\}'.format(layername)):\\n        node.removeKnob(knob)\\nnode.begin()\\nfor n in nuke.allNodes():\\n    if 'destructor__\{0\}__'.format(layername) in n.knobs():\\n        nuke.delete(n)\\n\\n# Set base again based on the bottom-most node position\\nd = \{node: node.ypos() for node in nuke.allNodes()\}\\nsorted_d = sorted(d.items(), key=operator.itemgetter(1))\\nsorted_no_outputs = \[item for item in sorted_d if 'no_base_output' not in item\[0].knobs()]\\nnew_base = sorted_no_outputs\[-1]\[0]\\nnode\['current_base_node'].setValue(new_base.name())\\nexisting_layers = node\['existing_layers'].getValue().split(' ')\\nif layername in existing_layers: \\n    existing_layers.remove(layername)\\n    node\['existing_layers'].setValue(' '.join(existing_layers))\"))\n    node\['remove_layer__\{0\}'.format(layername)].clearFlag(nuke.STARTLINE)\n    color_overlay_knob = node.addKnob(nuke.Enumeration_Knob('color_overlay__\{0\}'.format(layername), 'overlay color', color_options))\n    node\['color_overlay__\{0\}'.format(layername)].clearFlag(nuke.STARTLINE)\n    node\['color_overlay__\{0\}'.format(layername)].setValue(overlay_color)\n\nif __name__==\"__main__\":\n    run()" +STARTLINE}
+addUserKnob {26 ""}
+addUserKnob {26 composite_preview_label l "@b;Test Composite" T " "}
+addUserKnob {26 test_composite_instructions l "" +STARTLINE T "<b>Instructions</b>:<br>\nEnable \"preview_test_composite\" \nto set up your test composite.<br>\nYou can adjust the bg color, add a checkerboard\nand set the size.<br>\n<b><font color=red>Make sure you disable this before rendering!</b>\n"}
+addUserKnob {6 preview_test_composite +STARTLINE}
+addUserKnob {20 test_composite_settings l "Test Composite Settings" n 1}
+test_composite_settings 0
+addUserKnob {41 enable_hard_edge_overlay l "<b> &nbsp;&nbsp;&nbsp;hard edge overlay" T RotoChecker1.enable_hard_edge_overlay}
+addUserKnob {41 enable_soft_edge_overlay l "<b> &nbsp;&nbsp;  soft edge overlay" -STARTLINE T RotoChecker1.enable_soft_edge_overlay}
+addUserKnob {41 hard_edge_color T RotoChecker1.hard_edge_color}
+addUserKnob {41 hard_edge_color_panelDropped l "panel dropped state" T RotoChecker1.hard_edge_color_panelDropped}
+addUserKnob {41 soft_edge_color T RotoChecker1.soft_edge_color}
+addUserKnob {41 soft_edge_color_panelDropped l "panel dropped state" T RotoChecker1.soft_edge_color_panelDropped}
+addUserKnob {41 antialias_lines T RotoChecker1.antialias_lines}
+addUserKnob {41 opacity T RotoChecker1.opacity}
+addUserKnob {26 ""}
+addUserKnob {41 test_composite l "<b>&nbsp; &nbsp;Enable Test Composite" T RotoChecker1.test_composite}
+addUserKnob {41 constant_bg_color l "bg color" T RotoChecker1.constant_bg_color}
+addUserKnob {41 constant_bg_color_panelDropped l "panel dropped state" T RotoChecker1.constant_bg_color_panelDropped}
+addUserKnob {41 add_checkerboard T RotoChecker1.add_checkerboard}
+addUserKnob {41 checkerboard_intensity T RotoChecker1.checkerboard_intensity}
+addUserKnob {41 checkerboard_size T RotoChecker1.checkerboard_size}
+addUserKnob {41 invert_composite T RotoChecker1.invert_composite}
+addUserKnob {41 composite_mix T RotoChecker1.composite_mix}
+addUserKnob {20 endGroup n -1}
+addUserKnob {26 _START_LAYERS_ l "" +STARTLINE}
+}
+Input {
+inputs 0
+name Input
+label "\[value number]"
+xpos -40
+ypos -592
+}
+Shuffle {
+alpha black
+name _ALPHA_TO_BLACK_
+label "\[value in]"
+xpos -40
+ypos -520
+}
+set N4e6b0270 [stack 0]
+Dot {
+name _BASE_
+label " Base Dot"
+note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 24
+note_font_color 0xff000000
+xpos -6
+ypos -414
+}
+Dot {
+name _OUTPUT_
+label " _OUTPUT_"
+note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 24
+note_font_color 0xff000000
+xpos -6
+ypos 6450
+addUserKnob {20 User}
+addUserKnob {26 no_base_output l "" +STARTLINE}
+}
+Dot {
+name Dot1
+label " "
+note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 24
+note_font_color 0xff000000
+xpos -6
+ypos 6618
+addUserKnob {20 User}
+addUserKnob {26 no_base_output l "" +STARTLINE}
+}
+set N60d63c60 [stack 0]
+Dot {
+name Dot3
+label " "
+note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 24
+note_font_color 0xff000000
+xpos -116
+ypos 6786
+addUserKnob {20 User}
+addUserKnob {26 no_base_output l "" +STARTLINE}
+}
+set N6076ba60 [stack 0]
+push $N6076ba60
+Remove {
+channels rgba
+name Remove1
+xpos -370
+ypos 6782
+addUserKnob {20 User}
+addUserKnob {26 no_base_output l "" +STARTLINE}
+}
+push $N60d63c60
+push $N4e6b0270
+Dot {
+name _BASE_PLATE_DOT_
+label " Base Plate Dot"
+note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 24
+note_font_color 0xff000000
+xpos -226
+ypos -438
+}
+Copy {
+inputs 2
+from0 rgba.alpha
+to0 rgba.alpha
+bbox B
+name Copy1
+xpos -260
+ypos 6608
+addUserKnob {20 User}
+addUserKnob {26 no_base_output l "" +STARTLINE}
+}
+Group {
+name RotoChecker1
+xpos -260
+ypos 6710
+addUserKnob {20 RotoChecker l "" +STARTLINE}
+addUserKnob {6 enable_hard_edge_overlay l "<b> &nbsp;&nbsp;&nbsp;hard edge overlay" +STARTLINE}
+enable_hard_edge_overlay true
+addUserKnob {6 enable_soft_edge_overlay l "<b> &nbsp;&nbsp;  soft edge overlay" -STARTLINE}
+enable_soft_edge_overlay true
+addUserKnob {18 hard_edge_color R 0 2}
+hard_edge_color {0 1 0}
+addUserKnob {6 hard_edge_color_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+addUserKnob {18 soft_edge_color R 0 2}
+soft_edge_color {0 1 1}
+addUserKnob {6 soft_edge_color_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+addUserKnob {6 antialias_lines +STARTLINE}
+addUserKnob {7 opacity}
+opacity 0.5
+addUserKnob {26 ""}
+addUserKnob {6 test_composite l "<b>&nbsp; &nbsp;Enable Test Composite" t "Test your composite over a background" +STARTLINE}
+test_composite true
+addUserKnob {18 constant_bg_color l "bg color" R 0 2}
+constant_bg_color 0.18
+addUserKnob {6 constant_bg_color_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+addUserKnob {6 add_checkerboard +STARTLINE}
+add_checkerboard true
+addUserKnob {7 checkerboard_intensity}
+checkerboard_intensity 0.3
+addUserKnob {7 checkerboard_size R 0 100}
+checkerboard_size 60
+addUserKnob {6 invert_composite t "Invert the composite " +STARTLINE}
+addUserKnob {7 composite_mix t "Mix back the composite so you can see the plate and your roto at the same time."}
+composite_mix 1
+addUserKnob {26 no_base_output l "" +STARTLINE}
+}
+Input {
+inputs 0
+name Input
+label "\[value number]"
+xpos -40
+ypos -472
+}
+Dot {
+name Dot3
+label " "
+note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 24
+note_font_color 0xff000000
+xpos -6
+ypos -318
+}
+set N4e6858b0 [stack 0]
+Dot {
+name Dot7
+label " "
+note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 24
+note_font_color 0xff000000
+xpos -446
+ypos -318
+}
+Invert {
+channels alpha
+name _INVERT_
+xpos -480
+ypos -256
+disable {{!parent.invert_composite}}
+}
+Dot {
+name Dot1
+label " "
+note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 24
+note_font_color 0xff000000
+xpos -446
+ypos -198
+}
+set N60759df0 [stack 0]
+Dot {
+name Dot2
+label " "
+note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 24
+note_font_color 0xff000000
+xpos -886
+ypos -198
+}
+Grade {
+channels alpha
+whitepoint 0
+white_clamp true
+name _THRESHOLD_SOFT_
+xpos -920
+ypos -160
+}
+Dot {
+name Dot20
+xpos -886
+ypos -6
+}
+set N4e68b860 [stack 0]
+push $N4e68b860
+Dilate {
+channels alpha
+size -1
+name Dilate4
+xpos -810
+ypos -16
+}
+Merge2 {
+inputs 2
+operation xor
+name Merge7
+xpos -920
+ypos 62
+}
+Matrix {
+channels alpha
+matrix {
+    {0 1 0}
+    {1 1 1}
+    {0 1 0}
+  }
+normalize true
+name Matrix3
+xpos -920
+ypos 128
+disable {{!parent.antialias_lines}}
+}
+Grade {
+channels alpha
+whitepoint 0.6
+white_clamp true
+name _AA_CONTRAST_
+xpos -920
+ypos 200
+disable {{!parent.antialias_lines}}
+}
+Dot {
+name Dot9
+label " "
+note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 24
+note_font_color 0xff000000
+xpos -886
+ypos 402
+}
+push $N60759df0
+Grade {
+channels alpha
+blackpoint 0.99999
+white_clamp true
+name _THRESHOLD_HARD_
+xpos -480
+ypos -160
+}
+Dot {
+name Dot13
+xpos -446
+ypos -6
+}
+set N4fe08f50 [stack 0]
+push $N4fe08f50
+Dilate {
+channels alpha
+size -1
+name Dilate1
+xpos -370
+ypos -16
+}
+Merge2 {
+inputs 2
+operation xor
+bbox B
+name Merge6
+xpos -480
+ypos 62
+}
+Matrix {
+channels alpha
+matrix {
+    {0 1 0}
+    {1 1 1}
+    {0 1 0}
+  }
+normalize true
+name Matrix2
+xpos -480
+ypos 128
+disable {{!parent.antialias_lines}}
+}
+Grade {
+channels alpha
+whitepoint 0.6
+white_clamp true
+name _AA_CONTRAST_1
+xpos -480
+ypos 200
+disable {{!parent.antialias_lines}}
+}
+Dot {
+name Dot10
+label " "
+note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 24
+note_font_color 0xff000000
+xpos -446
+ypos 330
+}
+push $N60759df0
+push $N4e6858b0
+Copy {
+inputs 2
+from0 rgba.alpha
+to0 rgba.alpha
+bbox B
+name Copy2
+xpos -40
+ypos -208
+}
+set N4ec613a0 [stack 0]
+Dot {
+name Dot5
+label " "
+note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 24
+note_font_color 0xff000000
+xpos 324
+ypos -198
+}
+Grade {
+channels alpha
+multiply 0
+add 1
+mix {{1-parent.composite_mix}}
+name Grade2
+xpos 290
+ypos -180
+}
+Premult {
+name Premult1
+xpos 290
+ypos -130
+}
+CheckerBoard2 {
+inputs 0
+format "4096 2048 0 0 4096 2048 1 4K_LatLong"
+boxsize {{parent.checkerboard_size}}
+color0 {{1-parent.checkerboard_intensity}}
+color1 {{1+parent.checkerboard_intensity}}
+color2 {{1-parent.checkerboard_intensity}}
+color3 {{1+parent.checkerboard_intensity}}
+centerlinewidth 0
+name CheckerBoard1
+xpos 620
+ypos -274
+postage_stamp false
+}
+Reformat {
+type "to box"
+box_width {{"\[exists parent.input0] ? parent.input0.width : root.width"}}
+box_height {{"\[exists parent.input0] ? parent.input0.height : root.height"}}
+box_fixed true
+resize distort
+name Reformat1
+xpos 620
+ypos -202
+}
+push $N4e6858b0
+Dot {
+name Dot6
+label " "
+note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 24
+note_font_color 0xff000000
+xpos 434
+ypos -318
+}
+Grade {
+multiply 0
+add {{parent.constant_bg_color} {parent.constant_bg_color} {parent.constant_bg_color} 0}
+name _CONSTANT_COLOR_
+xpos 400
+ypos -297
+postage_stamp true
+}
+Merge2 {
+inputs 2
+operation multiply
+bbox B
+output rgb
+name Merge4
+xpos 400
+ypos -202
+disable {{!parent.add_checkerboard}}
+}
+Merge2 {
+inputs 2
+bbox B
+name Merge3
+xpos 400
+ypos -130
+}
+Dot {
+name Dot4
+label " "
+note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 24
+note_font_color 0xff000000
+xpos 434
+ypos 18
+}
+push $N4ec613a0
+Switch {
+inputs 2
+which {{parent.test_composite}}
+name _ENABLE_TEST_OVERLAY_COMPOSITE_
+xpos -40
+ypos 14
+}
+Grade {
+inputs 1+1
+multiply 0
+add {{parent.hard_edge_color} {parent.hard_edge_color} {parent.hard_edge_color} 0}
+mix {{parent.opacity}}
+name HARD_EDGE
+label "Hard Edge Color"
+xpos -40
+ypos 320
+disable {{!parent.enable_hard_edge_overlay}}
+}
+Grade {
+inputs 1+1
+multiply 0
+add {{parent.soft_edge_color} {parent.soft_edge_color} {parent.soft_edge_color} {curve}}
+mix {{parent.opacity}}
+name SOFT_EDGE
+label "Soft Edge Color"
+xpos -40
+ypos 392
+disable {{!parent.enable_soft_edge_overlay}}
+}
+Output {
+name Output1
+xpos -40
+ypos 614
+}
+end_group
+set N60d57860 [stack 0]
+Copy {
+inputs 2
+channels all
+bbox B
+name Copy2
+xpos -260
+ypos 6866
+addUserKnob {20 User}
+addUserKnob {26 no_base_output l "" +STARTLINE}
+}
+add_layer {_ROTO_OVERLAY_ _ROTO_OVERLAY_.red _ROTO_OVERLAY_.green _ROTO_OVERLAY_.blue _ROTO_OVERLAY_.alpha}
+ShuffleCopy {
+inputs 2
+red red
+green green
+blue blue
+out _ROTO_OVERLAY_
+name ShuffleCopy1
+label "\[value in] | \[value in2] -> \[value out]"
+xpos -150
+ypos 6872
+addUserKnob {20 User}
+addUserKnob {26 no_base_output l "" +STARTLINE}
+}
+push $N60d57860
+push $N60d63c60
+add_layer {_COMPOSITE_ _COMPOSITE_.red _COMPOSITE_.green _COMPOSITE_.blue _COMPOSITE_.alpha}
+ShuffleCopy {
+inputs 2
+red red
+green green
+blue blue
+out _COMPOSITE_
+name _SHUFFLECOPY_COMPOSITE_TEST_
+label "\[value in] | \[value in2] -> \[value out]"
+xpos -40
+ypos 6704
+addUserKnob {20 User}
+addUserKnob {26 no_base_output l " " T " "}
+}
+Switch {
+inputs 2
+which {{parent.preview_test_composite}}
+name _PREVIEW_TEST_COMPOSITE_
+xpos -40
+ypos 6878
+addUserKnob {20 User}
+addUserKnob {26 no_base_output l "" +STARTLINE}
+}
+Output {
+name Output
+xpos -40
+ypos 7094
+addUserKnob {20 User}
+addUserKnob {26 no_base_output l "" +STARTLINE}
+}
+Grade {
+inputs 0
+multiply 0
+add {{"\[numvalue parent.color_overlay__\[value parent_layername]] == 0 ? 1 : 0 || \[numvalue parent.color_overlay__\[value parent_layername]] == 3 ? 0.5 : 0 || \[numvalue parent.color_overlay__\[value parent_layername]] == 4 ? 0.5 : 0"} {"\[numvalue parent.color_overlay__\[value parent_layername]] == 1 ? 1 : 0 || \[numvalue parent.color_overlay__\[value parent_layername]] == 3 ? 0.5 : 0 || \[numvalue parent.color_overlay__\[value parent_layername]] == 5 ? 0.5 : 0"} {"\[numvalue parent.color_overlay__\[value parent_layername]] == 2 ? 1 : 0 || \[numvalue parent.color_overlay__\[value parent_layername]] == 4 ? 0.5 : 0 || \[numvalue parent.color_overlay__\[value parent_layername]] == 5 ? 0.5 : 0"} 0}
+mix {{parent.color_overlay_mix}}
+name _COLOR_OVERLAY_TEMPLATE_
+tile_color 0xbababaff
+xpos -150
+ypos -514
+addUserKnob {20 User}
+addUserKnob {1 parent_layername}
+}
+end_group
