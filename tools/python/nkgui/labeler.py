@@ -16,11 +16,11 @@ from QtUtils import CodeTextEdit
 nuke.menu('Nuke').addCommand('Edit/Node/Set Label', 'labeler.label()', 'shift+a')
 
 
-class LabelPanel(QtWidgets.QWidget):
+class LabelPanel(QtWidgets.QDialog):
     ''' Show a text entry interface for entering text for a node label
     '''
-    def __init__(self, nodes, _parent=None):
-        super(LabelPanel, self).__init__()
+    def __init__(self, nodes, _parent=QtWidgets.QApplication.activeWindow()):
+        super(LabelPanel, self).__init__(_parent)
         
         if not nodes:
             return
@@ -51,17 +51,18 @@ class LabelPanel(QtWidgets.QWidget):
         container.addLayout(buttonbox)
         
         self.setLayout(container)
-        # self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-        self.setWindowFlags(QtCore.Qt.X11BypassWindowManagerHint)
-        self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
-        self.setMinimumSize(self.sizeHint().width(), self.sizeHint().height())
         
         # Populate text with existing label
         self.get_label()
 
         # Invoke window
         self.setWindowTitle('Set Label')
-        self.under_cursor()
+        # self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+        # self.setWindowFlags(QtCore.Qt.X11BypassWindowManagerHint)
+        # self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
+        # self.setWindowFlags(QtCore.Qt.Tool)
+        self.setMinimumSize(self.sizeHint().width(), self.sizeHint().height())
+        self.move(QtGui.QCursor().pos() - QtCore.QPoint(32,74))
         self.show()
 
     def get_label(self):
@@ -80,21 +81,7 @@ class LabelPanel(QtWidgets.QWidget):
                 if not label.startswith(' '):
                     label = ' ' + label
             node['label'].setValue(label)
-        self.close()
-
-    def under_cursor(self):
-        def clamp(val, mini, maxi):
-            return max(min(val, maxi), mini)
-        # Get cursor position, and screen dimensions on active screen
-        cursor = QtGui.QCursor().pos()
-        screen = QtWidgets.QDesktopWidget().screenGeometry(cursor)
-        # Get window position so cursor is just over text input
-        xpos = cursor.x() - (self.width() / 2)
-        ypos = cursor.y() - 13
-        # Clamp window location to prevent it going offscreen
-        xpos = clamp(xpos, screen.left(), screen.right() - self.width())
-        ypos = clamp(ypos, screen.top(), screen.bottom() - (self.height() - 13))
-        self.move(xpos, ypos)
+        
 
     def keyPressEvent(self, event):
         '''Handle keyboard events.'''
@@ -107,6 +94,10 @@ class LabelPanel(QtWidgets.QWidget):
             self.close()
         
         if (key == QtCore.Qt.Key_Return or key == QtCore.Qt.Key_Enter) and ctrl:
+            self.set_label()
+            self.close()
+
+        if ctrl and key == QtCore.Qt.Key_S:
             self.set_label()
 
     def quit(self):

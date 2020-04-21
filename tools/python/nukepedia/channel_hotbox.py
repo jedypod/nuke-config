@@ -31,7 +31,7 @@ nuke.menu("Nuke").findItem("Edit").addCommand("HotBox", 'channel_hotbox.start()'
 """
 
 import math
-import nuke  # pylint: disable=import-error
+import nuke
 
 
 
@@ -39,16 +39,13 @@ import nuke  # pylint: disable=import-error
 nuke.menu('Nuke').addCommand('Viewer/Channel Hotbox', 'channel_hotbox.start()', 'alt+meta+`')
 
 
-try:
-    # < Nuke 11
-    import PySide.QtCore as QtCore
-    import PySide.QtGui as QtGui
-    import PySide.QtGui as QtGuiWidgets
-except ImportError:
-    # >= Nuke 11
-    import PySide2.QtCore as QtCore
-    import PySide2.QtGui as QtGui
-    import PySide2.QtWidgets as QtGuiWidgets
+
+if nuke.NUKE_VERSION_MAJOR < 11:
+    from PySide import QtCore, QtGui, QtGui as QtWidgets
+    from PySide.QtCore import Qt
+else:
+    from PySide2 import QtWidgets, QtGui, QtCore
+    from PySide2.QtCore import Qt
 
 
 HOTBOX = None
@@ -58,15 +55,15 @@ COLORS = {'regular': "background-color:#282828; font: 13px",
           'green': "background-color: #1EB028; font: 13px"}
 
 
-class LayerButton(QtGuiWidgets.QPushButton):
+class LayerButton(QtWidgets.QPushButton):
     """Custom QPushButton to change colors when hovering above."""
     def __init__(self, name, button_width, parent=None):
         super(LayerButton, self).__init__(parent)
         self.setMouseTracking(True)
         self.setText(name)
         self.setMinimumWidth(button_width / 2)
-        self.setSizePolicy(QtGuiWidgets.QSizePolicy.Preferred,
-                           QtGuiWidgets.QSizePolicy.Expanding)
+        self.setSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                           QtWidgets.QSizePolicy.Expanding)
         self.setStyleSheet(COLORS['regular'])
 
     def enterEvent(self, event):  # pylint: disable=invalid-name,unused-argument
@@ -80,20 +77,20 @@ class LayerButton(QtGuiWidgets.QPushButton):
             self.setStyleSheet(COLORS['regular'])
 
 
-class LineEdit(QtGuiWidgets.QLineEdit):
+class LineEdit(QtWidgets.QLineEdit):
     """Custom QLineEdit with combined auto completion."""
     def __init__(self, parent, layer_list):
         super(LineEdit, self).__init__(parent)
         self.parent = parent
-        self.setSizePolicy(QtGuiWidgets.QSizePolicy.Preferred,
-                           QtGuiWidgets.QSizePolicy.Expanding)
-        self.completer = QtGuiWidgets.QCompleter(layer_list, self)
-        self.completer.setCompletionMode(QtGuiWidgets.QCompleter.InlineCompletion)  # pylint: disable=line-too-long
+        self.setSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                           QtWidgets.QSizePolicy.Expanding)
+        self.completer = QtWidgets.QCompleter(layer_list, self)
+        self.completer.setCompletionMode(QtWidgets.QCompleter.InlineCompletion)  # pylint: disable=line-too-long
         self.setCompleter(self.completer)
         self.completer.activated.connect(self.returnPressed)
 
 
-class HotBox(QtGuiWidgets.QWidget):
+class HotBox(QtWidgets.QDialog):
     """User Interface class to provide buttons for each channel layer."""
     shuffle_list = []
 
@@ -125,7 +122,7 @@ class HotBox(QtGuiWidgets.QWidget):
         offset = QtCore.QPoint(width * 0.5, height * 0.5)
         self.move(QtGui.QCursor.pos() - offset)
 
-        grid = QtGuiWidgets.QGridLayout()
+        grid = QtWidgets.QGridLayout()
         self.setLayout(grid)
 
         column_counter, row_counter = 0, 0
@@ -198,7 +195,7 @@ class HotBox(QtGuiWidgets.QWidget):
 
     def clicked(self):
         """Route click events based on key modifier."""
-        modifiers = QtGuiWidgets.QApplication.keyboardModifiers()
+        modifiers = QtWidgets.QApplication.keyboardModifiers()
 
         if modifiers == QtCore.Qt.ShiftModifier:
             channel = self.sender().text()
@@ -237,7 +234,7 @@ def start():
     """Start up function for Hotbox. Checks if Viewer available and active."""
     if nuke.allNodes('Viewer'):
         if nuke.activeViewer().activeInput() is not None:
-            global HOTBOX  # pylint: disable=global-statement
+            global HOTBOX
             HOTBOX = HotBox()
             HOTBOX.show()
         else:
