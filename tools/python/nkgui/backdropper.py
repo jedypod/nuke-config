@@ -157,7 +157,8 @@ class BackdropPanel(QtWidgets.QDialog):
         note_font_size_label = QtWidgets.QLabel('Font Size')
         hbox_note_font_size.addWidget(note_font_size_label)
         self.note_font_size_slider = QtWidgets.QSlider(QtCore.Qt.Horizontal)
-        self.note_font_size_slider.setMinimum(12)
+        self.note_font_size_slider.setMinimum(10)
+        self.note_font_size_slider.setMaximum(200)
         self.note_font_size_slider.valueChanged.connect(self.set_note_font_size)
         hbox_note_font_size.addWidget(self.note_font_size_slider)
         self.layout.addLayout(hbox_note_font_size)
@@ -350,7 +351,7 @@ class BackdropPanel(QtWidgets.QDialog):
 
 
     def create_bd(self, nodes):
-        ''' Create backdrop node. If nodes are selected, set size.
+        ''' Create backdrop node. If nodes are selected, set size and font size
         '''
         _ = [n.setSelected(False) for n in nuke.allNodes(recurseGroups=True)]
 
@@ -361,6 +362,7 @@ class BackdropPanel(QtWidgets.QDialog):
                 self.bd[knob].setValue(value)
 
         if nodes:
+            # Find dimensions of selected nodes
             positions = [[n.xpos() + n.screenWidth()/2, n.ypos() + n.screenHeight()/2] 
                 for n in nodes]
             sorted_x = sorted(positions, key=lambda v: v[0])
@@ -370,13 +372,23 @@ class BackdropPanel(QtWidgets.QDialog):
             maxpos = (sorted_x[-1][0], sorted_y[-1][1])
             margin = (50, 60, 50) # sides, top, bottom
 
-            # Set Backdrop size - XYpos is top left corner +x is right, +y is down
+            # Set Backdrop size - XYpos is top left corner, +x is right, +y is down, bdwidth * bdheight = size
             self.bd.setXYpos(
                 minpos[0] - screen_size[0] - margin[0],
                 minpos[1] - screen_size[1] - margin[1]
                 )
             self.bd['bdwidth'].setValue(maxpos[0]-minpos[0] + screen_size[0]*2 + margin[0]*2)
             self.bd['bdheight'].setValue(maxpos[1]-minpos[1] + screen_size[1]*2 + margin[2]+margin[1])
+        
+        # Init font size from bdwidth
+        bd_width = self.bd['bdwidth'].getValue()
+        # Font size is hard-coded ratio
+        font_size = round(bd_width / 34.0)
+        # Clamp to sensible range
+        font_size = max(10, min(font_size, 200))
+        self.bd['note_font_size'].setValue(font_size)
+
+        # Restore selection
         _ = [n.setSelected(True) for n in nodes]
 
 
