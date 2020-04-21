@@ -8,25 +8,12 @@ else:
     from PySide2 import QtWidgets, QtGui, QtCore
     from PySide2.QtCore import Qt
 
-
 from QtUtils import CodeTextEdit
 
-nuke.menu('Nuke').addCommand('Edit/Node/Backdropper', 'reload(backdropper);backdropper.invoke()', 'shift+b')
 
-'''
-# Create and edit backdrop nodes
-    Create a new backdrop node given a node selection, or create one of a default size
-    Create panel shows:
-        - Header 
-        - Sub-Header
-        - Text mutliline input field
-        - option for preformatted text
-        - color (colorchip)
-        - presets dropdown (light / dark pastels?)
-    Edit existing backdrop node
-        (nuke.selectedNodes()[-1] = selected backdrop)
-        - populate fields with contents
-'''
+nuke.menu('Nuke').addCommand('Edit/Node/Backdropper', 'backdropper.invoke()', 'shift+b')
+
+
 
 # Color conversion utility functions
 def dec2rgb(dec, fp=True):
@@ -81,7 +68,6 @@ def hex2dec(hexcol):
 
 
 
-
 class ColorPatch(QtWidgets.QPushButton):
     ''' Square color patch for setting colors 
     '''
@@ -95,6 +81,7 @@ class ColorPatch(QtWidgets.QPushButton):
         self.setStyleSheet('border-size: 0px; background-color: #{0}'.format(hexcol))
         # self.btn_col_bg.setFlat(True)
 
+
 class ColorPatchBox(QtWidgets.QHBoxLayout):
     ''' Container for colorpatches
     '''
@@ -106,20 +93,13 @@ class ColorPatchBox(QtWidgets.QHBoxLayout):
 
 
 
-
-class BackdropPanel(QtWidgets.QWidget):
+class BackdropPanel(QtWidgets.QDialog):
     ''' Show an interface to create or modify a BackdropNode
     '''
-    def __init__(self):
-        super(BackdropPanel, self).__init__()
-
+    def __init__(self, _parent=QtWidgets.QApplication.activeWindow()):
+        super(BackdropPanel, self).__init__(_parent)
         self.setup_ui()
         self.setup_nodes()
-
-        # Invoke window
-
-        # self.show()
-
 
     def setup_ui(self):
         # Set up the user interface
@@ -127,37 +107,87 @@ class BackdropPanel(QtWidgets.QWidget):
 
         # self.text = QtWidgets.QPlainTextEdit()
         self.text = CodeTextEdit() # Use our souped-up code editor widget from Knob Scripter
+        self.text.textChanged.connect(self.save) 
         self.layout.addWidget(self.text)
 
-        # Value Buttons
-        self.bx_color_values = ColorPatchBox()
-        # color_label = QtWidgets.QLabel('Color')
-        ln = 14
-        for i in range(ln):
-            print i
-            hsv = (0.0, 0.0, 0.0+1.0/ln*i)
-            print hsv
-            rgb = hsv2rgb(hsv)
-            btn = ColorPatch(rgb)
-            btn.clicked.connect(self.set_tile_color)
-            self.bx_color_values.addWidget(btn)
-        self.layout.addLayout(self.bx_color_values)
+        self.bx_color_presets = ColorPatchBox()
 
-        # Hue Buttons
-        self.bx_color_hues = ColorPatchBox()
-        # color_label = QtWidgets.QLabel('Color')
-        ln = 14
-        for i in range(ln):
-            print i
-            hsv = (0.0+1.0/ln*(i), 0.2, 0.5)
-            print hsv
-            rgb = hsv2rgb(hsv)
+
+        preset_colors = [
+            (0.00, 0.00, 0.12),
+            (0.00, 0.00, 0.16),
+            (0.00, 0.00, 0.24),
+            (0.00, 0.00, 0.33),
+            (0.00, 0.00, 0.50),
+            (0.00, 0.00, 0.70),
+            (0.11, 0.22, 0.24),
+            (0.33, 0.22, 0.24),
+            (0.50, 0.22, 0.24),
+            (0.58, 0.22, 0.24),
+            (0.62, 0.22, 0.24),
+            (0.72, 0.22, 0.24),
+            (0.11, 0.22, 0.33),
+            (0.33, 0.22, 0.33),
+            (0.50, 0.22, 0.33),
+            (0.58, 0.22, 0.33),
+            (0.62, 0.22, 0.33),
+            (0.72, 0.22, 0.33),
+            (0.94, 0.22, 0.33),
+            (0.11, 0.33, 0.33),
+            (0.33, 0.33, 0.33),
+            (0.62, 0.33, 0.33),
+            (0.94, 0.33, 0.33),
+        ]
+
+
+        for color in preset_colors:
+            rgb = hsv2rgb(color)
             btn = ColorPatch(rgb)
-            btn.clicked.connect(self.set_tile_color)
-            self.bx_color_hues.addWidget(btn)
-        self.layout.addLayout(self.bx_color_hues)
+            btn.clicked.connect(self.set_tile_color_from_patch)
+            self.bx_color_presets.addWidget(btn)
+        self.layout.addLayout(self.bx_color_presets)
+
+
+        for label in ['Hue', 'Sat', 'Val']:
+            self.add_slider_box(label)
+
+        # Create other config options
+        # Font size slider
+        hbox_note_font_size = QtWidgets.QHBoxLayout()
+        note_font_size_label = QtWidgets.QLabel('Font Size')
+        hbox_note_font_size.addWidget(note_font_size_label)
+        self.note_font_size_slider = QtWidgets.QSlider(QtCore.Qt.Horizontal)
+        self.note_font_size_slider.setMinimum(12)
+        self.note_font_size_slider.valueChanged.connect(self.set_note_font_size)
+        hbox_note_font_size.addWidget(self.note_font_size_slider)
+        self.layout.addLayout(hbox_note_font_size)
+
+        # Font color slider
+        hbox_note_font_color = QtWidgets.QHBoxLayout()
+        note_font_color_label = QtWidgets.QLabel('Font Color')
+        hbox_note_font_color.addWidget(note_font_color_label)
+        self.note_font_color_slider = QtWidgets.QSlider(QtCore.Qt.Horizontal)
+        self.note_font_color_slider.valueChanged.connect(self.set_note_font_color)
+        hbox_note_font_color.addWidget(self.note_font_color_slider)
+        self.layout.addLayout(hbox_note_font_color)
+
+        # Appearance switcher
+        hbox_style = QtWidgets.QHBoxLayout()
+        self.appearance_checkbox = QtWidgets.QCheckBox('Appearance: Border')
+        self.appearance_checkbox.stateChanged.connect(self.set_appearance)
+        hbox_style.addWidget(self.appearance_checkbox)
+
+        # Border width slider
+        border_width_slider_label = QtWidgets.QLabel('Border Width')
+        hbox_style.addWidget(border_width_slider_label)
+        self.border_width_slider = QtWidgets.QSlider(QtCore.Qt.Horizontal)
+        self.border_width_slider.setMaximum(14)
+        self.border_width_slider.valueChanged.connect(self.set_border_width)
+        hbox_style.addWidget(self.border_width_slider)
         
-        
+        self.layout.addLayout(hbox_style)
+
+
         # Create Ok / Cancel buttons
         btn_ok = QtWidgets.QPushButton('Ok')
         btn_ok.clicked.connect(self.save_and_quit)
@@ -173,14 +203,27 @@ class BackdropPanel(QtWidgets.QWidget):
         self.layout.addLayout(btnbox_bottom)
         
         self.setLayout(self.layout)
-        self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-        self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
-        self.setWindowTitle('Set Backdrop')
+        self.setWindowTitle('Backdrop')
         self.resize(500, 500)
         self.setMinimumSize(self.sizeHint().width(), self.sizeHint().height())
-        # self.under_cursor()
         self.move(QtGui.QCursor().pos() - QtCore.QPoint(32,74))
 
+
+    def add_slider_box(self, label):
+        # Add QSlider with label, assign sliders to vars
+        hbox = QtWidgets.QHBoxLayout()
+        lab = QtWidgets.QLabel(label)
+        hbox.addWidget(lab)
+        slider = QtWidgets.QSlider(QtCore.Qt.Horizontal)
+        slider.valueChanged.connect(self.set_tile_color_from_sliders)
+        hbox.addWidget(slider)
+        self.layout.addLayout(hbox)
+        if label == 'Hue':
+            self.slider_hue = slider
+        elif label == 'Sat':
+            self.slider_sat = slider
+        elif label == 'Val':
+            self.slider_val = slider
 
 
     def setup_nodes(self):
@@ -203,7 +246,7 @@ class BackdropPanel(QtWidgets.QWidget):
         if nodes:
             # If last selected node is a BackdropNode, we edit it.
             # Otherwise, we create a new one based on the selection.
-            if nodes[0].Class() == 'BackdropNode':
+            if nodes[-1].Class() == 'BackdropNode':
                 self.bd = nodes[-1]
                 self.get_text()
             # Get min existing z_order, put this backdrop behind all existing ones.
@@ -216,62 +259,83 @@ class BackdropPanel(QtWidgets.QWidget):
         if not self.bd:
             self.create_bd(nodes)
 
+        self.appearance_exists = 'appearance' in self.bd.knobs()
+        self.border_width_exists = 'border_width' in self.bd.knobs()
 
-    def set_tile_color(self):
+        # Set sliders from Backdrop
+        self.set_sliders()
+
+
+    def set_appearance(self):
         sender = self.sender()
-        
-        adjust_hue = False
-        adjust_val = False
-        # Check if button is  in color hues or color values.
-        val_idx = self.bx_color_values.indexOf(sender)
-        hue_idx = self.bx_color_hues.indexOf(sender)
-        if val_idx != -1:
-            print 'BTN in VAL!'
-            adjust_val = True
-        if hue_idx != -1:
-            print 'BTN in HUE!'
-            adjust_hue = True
+        state = sender.isChecked()
+        if self.appearance_exists:
+            if state:
+                self.bd['appearance'].setValue(1)
+            else:
+                self.bd['appearance'].setValue(0)
 
 
+    def set_note_font_size(self):
+        sender = self.sender()
+        self.bd['note_font_size'].setValue(sender.value())
+
+
+    def set_note_font_color(self):
+        sender = self.sender()
+        # self.bd['note_font_color'].setValue(sender.value())
+        value = sender.value() / 100.0
+        hexcol = rgb2hex(hsv2rgb((0, 0, value)))
+        self.bd_defaults['text_color'] = hexcol
+        self.save()
+
+    def set_border_width(self):
+        if self.border_width_exists:
+            self.bd['border_width'].setValue(self.sender().value())
+
+
+    def set_tile_color_from_sliders(self):
+        hsv = (self.slider_hue.value()/100.0, self.slider_sat.value()/100.0, self.slider_val.value()/100.0)
+        rgb = hsv2rgb(hsv)
+        dec = rgb2dec(rgb)
+        self.bd['tile_color'].setValue(dec)
+
+
+    def set_tile_color_from_patch(self):
+        sender = self.sender()
         style = sender.styleSheet()
         pattern = 'background-color: #'
         if pattern in style:
             sender_hex = style.split(pattern)[-1]
         else:
             return
-
-        print 'BTN color HEX', sender_hex
-
-        sender_rgb = hex2rgb(sender_hex)
-        sender_hsv = rgb2hsv(sender_rgb)
-
-        currgb = dec2rgb(self.bd['tile_color'].value())
-        print 'Current RGB', currgb
-
-        curhsv = rgb2hsv(currgb)
-        print 'Current HSV', curhsv
-
-        if adjust_hue:
-            # Adjust hue without changing value
-            newhsv = (sender_hsv[0], sender_hsv[1], curhsv[2])
-        if adjust_val:
-            # Adjust value without changing hue
-            newhsv = (curhsv[0], curhsv[1], sender_hsv[2])
-        print 'New HSV:', newhsv
-        new_rgb = hsv2rgb(newhsv)
-        print 'NEW RGB:', new_rgb
-        dec = rgb2dec(new_rgb)
+        rgb = hex2rgb(sender_hex)
+        dec = rgb2dec(rgb)
         self.bd['tile_color'].setValue(dec)
+        self.set_sliders()
 
 
+    def set_sliders(self):
+        # Get tile color from Backdrop and set hsv sliders
+        curhsv = rgb2hsv(dec2rgb(self.bd['tile_color'].value()))
+        self.slider_hue.setValue(curhsv[0]*100)
+        self.slider_sat.setValue(curhsv[1]*100)
+        self.slider_val.setValue(curhsv[2]*100)
+        self.note_font_size_slider.setValue(self.bd['note_font_size'].getValue())
+        if self.appearance_exists:
+            self.appearance_checkbox.setChecked(self.bd['appearance'].getValue())
+        # set text color
+        rgb = hex2rgb(self.bd_defaults['text_color'])
+        hsv = rgb2hsv(rgb)
+        self.note_font_color_slider.setValue(hsv[2]*100)
+        if self.border_width_exists:
+            self.border_width_slider.setValue(self.bd['border_width'].getValue())
 
 
     def set_color(self):
         ''' Prompt user for a color, and set the bg color of the sender to that color
             # http://zetcode.com/gui/pyqt5/eventssignals/
         '''
-
-
         sender = self.sender()
         color = nuke.getColor()
         color_hex = nkhex2hex(color)
@@ -284,17 +348,7 @@ class BackdropPanel(QtWidgets.QWidget):
         elif sender.text() == 'Text':
             self.bd['note_font_color'].setValue(color)
 
-        '''
-            I'm thinking maybe a row of color patches at the bottom to 
-            set the tile_color
-            and maybe the font color is another row
-            maybe a button to select a color that sets it to a custom color
-            int knobs for z_order and font size? Presets for font scale?
 
-        '''
-
-
-    
     def create_bd(self, nodes):
         ''' Create backdrop node. If nodes are selected, set size.
         '''
@@ -343,10 +397,8 @@ class BackdropPanel(QtWidgets.QWidget):
             self.bd_defaults.get('text_color'),
             lines[0])
         if len(lines) > 1:
-            lines[1] = '<font size=4><b>{0}</b></font>'.format(lines[1])
+            lines[1] = '<font size=4><b>{0}</b></font><font size=2>'.format(lines[1])
             lines.append('\n</font>')
-        if len(lines) > 2:
-            lines[2] = '<font size=2>{0}'.format(lines[2])
         self.bd['label'].setValue('\n'.join(lines))
 
 
@@ -379,6 +431,11 @@ class BackdropPanel(QtWidgets.QWidget):
             label[-1] = label[-1].split('</font>')[0]
         self.text.appendPlainText('\n'.join(label))
 
+        # Set self.bd_defaults['text_color'] from first line
+        if '<font color=#' in lines[0] and '><font size=' in lines[0]:
+            hex_col = lines[0].split('<font color=#')[-1].split('><font size=')[0]
+            self.bd_defaults['text_color'] = hex_col
+
 
     def keyPressEvent(self, event):
         '''Handle keyboard events.'''
@@ -393,8 +450,10 @@ class BackdropPanel(QtWidgets.QWidget):
         if ctrl and key == QtCore.Qt.Key_S:
             self.save()
 
+
     def quit(self):
         self.close()
+
 
     def save_and_quit(self):
         self.save()
@@ -405,74 +464,4 @@ class BackdropPanel(QtWidgets.QWidget):
 def invoke():
     global panel
     panel = BackdropPanel()
-    # panel.setWindowFlags(QtCore.Qt.Tool)
-    panel.show()  # Show the UI
-
-
-
-
-# # Get the grid size from the preferences. Used as the default unit of movement.
-# grid = (int(nuke.toNode('preferences').knob('GridWidth').value()), int(nuke.toNode('preferences').knob('GridHeight').value()))
-
-
-# MARGIN = [grid[0]*1, grid[1]*4]
-
-
-# def create_backdrop(settings):
-#     # Create a backdrop node with given settings
-#     # param: dict: settings - 
-#     pass
-
-
-
-# def show_panel(node=None):
-#     # Show a backdrop panel and return the settings
-#     # param: node object - optional backdrop node to populate settings from
-
-#     # dict for mapping font sizes
-#     font_sizes = {
-#         'small': 14,
-#         'medium': 24,
-#         'large': 48,
-#         'huge': 96,
-#     }
-
-#     # Get existing values if any
-#     # if not node:
-#     settings = {
-#         'tile_color': '0x7f7f7f01',
-#         'note_font_color': '0x7f7f7f01',
-#         'header': '',
-#         'subheader': '',
-#         'contents': '',
-#         'font_size': 'medium',
-#         'preformatted': True,
-#         'border_style': False,
-#     }
-
-#     # Set up panel
-#     panel = nuke.Panel('Backdrop')
-#     panel.addRGBColorChip('tile_color', settings.get('tile_color'))
-#     panel.addRGBColorChip('note_font_color', settings.get('note_font_color'))
-#     panel.addSingleLineInput('header', settings.get('header'))
-#     panel.addSingleLineInput('subheader', settings.get('subheader'))
-#     panel.addNotepad('contents', settings.get('contents'))
-#     panel.addEnumerationPulldown('font_size', 'small medium large huge')
-#     panel.addBooleanCheckBox('preformatted', settings.get('preformatted'))
-#     panel.addBooleanCheckBox('border_style', settings.get('border_style'))
-    
-#     if not panel.show():
-#         return None
-
-#     # Get values from User
-#     for item in settings.keys():
-#         value = panel.value(item)
-#         print 'settings: {0} to {1}'.format(item, value)
-#         settings[item] = value
-
-#     # Create backdrop node if one doesn't exist
-#     if not node:
-#         node = create_backdrop(settings)
-
-#     # Apply settings to node
-#     print settings
+    panel.show()
