@@ -1,27 +1,17 @@
-#-------------------------------------------------
-# KnobScripter by Adrian Pueyo
-# Complete python sript editor for Nuke
-# adrianpueyo.com, 2016-2019
-version = "2.3 wip"
-date = "Aug 12 2019"
-#-------------------------------------------------
-
 import nuke
-import os
-import json
 from nukescripts import panels
+import os
 import sys
-import nuke
+import json
 import re
-import traceback, string
-from functools import partial
-import subprocess
 import platform
+import subprocess
+import traceback
+import string
+from functools import partial
 from threading import Event, Thread
-from webbrowser import open as openUrl
 
-from nkgui.QtUtils import CodeTextEdit
-
+from nuketools.QtUtils import * 
 
 
 #Symlinks on windows...
@@ -39,30 +29,26 @@ if os.name == "nt":
             pass
     os.symlink = symlink_ms
 
-try:
-    if nuke.NUKE_VERSION_MAJOR < 11:
-        from PySide import QtCore, QtGui, QtGui as QtWidgets
-        from PySide.QtCore import Qt
-    else:
-        from PySide2 import QtWidgets, QtGui, QtCore
-        from PySide2.QtCore import Qt
-except ImportError:
-    from Qt import QtCore, QtGui, QtWidgets
+
+if nuke.NUKE_VERSION_MAJOR < 11:
+    from PySide import QtCore, QtGui, QtGui as QtWidgets
+else:
+    from PySide2 import QtWidgets, QtGui, QtCore
+
+
 
 KS_DIR = os.path.dirname(__file__)
-icons_path = KS_DIR+"/icons/"
+icons_path = KS_DIR+"/knobscripter_icons/"
 DebugMode = False
 AllKnobScripters = [] # All open instances at a given time
 
 PrefsPanel = ""
 SnippetEditPanel = ""
 
-# nuke.tprint('KnobScripter v{}, built {}.\nCopyright (c) 2016-2019 Adrian Pueyo. All Rights Reserved.'.format(version,date))
 
-class KnobScripter(QtWidgets.QWidget):
-
-    def __init__(self, node="", knob="knobChanged"):
-        super(KnobScripter,self).__init__()
+class KnobScripter(QtWidgets.QDialog):
+    def __init__(self, node="", knob="knobChanged", _parent=QtWidgets.QApplication.activeWindow()):
+        super(KnobScripter,self).__init__(_parent)
 
         # Autosave the other knobscripters and add this one
         for ks in AllKnobScripters:
@@ -450,9 +436,6 @@ class KnobScripter(QtWidgets.QWidget):
         if self.pinned:
             self.setWindowFlags(self.windowFlags() | QtCore.Qt.WindowStaysOnTopHint)
             self.pinAct.toggle()
-        self.helpAct = QtWidgets.QAction("&Help", self, statusTip="Open the KnobScripter help in your browser.", shortcut="F1", triggered=self.showHelp)
-        self.nukepediaAct = QtWidgets.QAction("Show in Nukepedia", self, statusTip="Open the KnobScripter download page on Nukepedia.", triggered=self.showInNukepedia)
-        self.githubAct = QtWidgets.QAction("Show in GitHub", self, statusTip="Open the KnobScripter repo on GitHub.", triggered=self.showInGithub)
         self.snippetsAct = QtWidgets.QAction("Snippets", self, statusTip="Open the Snippets editor.", triggered=self.openSnippets)
         self.snippetsAct.setIcon(QtGui.QIcon(icons_path+"icon_snippets.png"))
         #self.snippetsAct = QtWidgets.QAction("Keywords", self, statusTip="Add custom keywords.", triggered=self.openSnippets) #TODO THIS
@@ -463,11 +446,6 @@ class KnobScripter(QtWidgets.QWidget):
         self.prefsMenu = QtWidgets.QMenu("Preferences")
         self.prefsMenu.addAction(self.echoAct)
         self.prefsMenu.addAction(self.pinAct)
-        self.prefsMenu.addSeparator()
-        self.prefsMenu.addAction(self.nukepediaAct)
-        self.prefsMenu.addAction(self.githubAct)
-        self.prefsMenu.addSeparator()
-        self.prefsMenu.addAction(self.helpAct)
         self.prefsMenu.addSeparator()
         self.prefsMenu.addAction(self.snippetsAct)
         self.prefsMenu.addAction(self.prefsAct)
@@ -485,15 +463,6 @@ class KnobScripter(QtWidgets.QWidget):
     def togglePin(self):
         ''' Toggle "always on top" based on the submenu button '''
         self.pin(self.pinAct.isChecked())
-
-    def showInNukepedia(self):
-        openUrl("http://www.nukepedia.com/python/ui/knobscripter")
-
-    def showInGithub(self):
-        openUrl("https://github.com/adrianpueyo/KnobScripter")
-
-    def showHelp(self):
-        openUrl("https://vimeo.com/adrianpueyo/knobscripter2")
 
 
     # Node Mode
@@ -1376,7 +1345,7 @@ class KnobScripter(QtWidgets.QWidget):
         else:
             updatedCount = 0
             self.autosave()
-        if newNode != "" and nuke.exists(newNode):
+        if newNode and nuke.exists(newNode):
             selection = [newNode]
         elif not len(selection):
             node_dialog = ChooseNodeDialog(self)
@@ -1629,40 +1598,47 @@ class KnobScripter(QtWidgets.QWidget):
 
     def findSE(self):
         for widget in QtWidgets.QApplication.allWidgets():
-            if "Script Editor" in widget.windowTitle():
+            if widget.metaObject().className() == 'Nuke::NukeScriptEditor':
                 return widget
 
-    # FunctiosaveScrollValuens for Nuke's Script Editor
-    def findScriptEditors(self):
-        script_editors = []
-        for widget in QtWidgets.QApplication.allWidgets():
-            if "Script Editor" in widget.windowTitle() and len(widget.children())>5:
-                script_editors.append(widget)
-        return script_editors
-
     def findSEInput(self, se):
-        return se.children()[-1].children()[0]
+        children = se.children()
+        splitter = [w for w in children if isinstance(w, QtWidgets.QSplitter)]
+        if not splitter:
+            return None
+        splitter = splitter[0]
+        for widget in splitter.children():
+            if widget.metaObject().className() == 'Foundry::PythonUI::ScriptInputWidget':
+                return widget
+        return None
 
     def findSEOutput(self, se):
-        print help(se)
-        return se.children()[-1].children()[1]
+        children = se.children()
+        splitter = [w for w in children if isinstance(w, QtWidgets.QSplitter)]
+        if not splitter:
+            return None
+        splitter = splitter[0]
+        for widget in splitter.children():
+            if widget.metaObject().className() == 'Foundry::PythonUI::ScriptOutputWidget':
+                return widget
+        return None
 
     def findSERunBtn(self, se):
-        for btn in se.children():
-            try:
-                if "Run the current script" in btn.toolTip():
-                    return btn
-            except:
-                pass
-        return False
+        children = se.children()
+        buttons = [b for b in children if isinstance(b, QtWidgets.QPushButton)]
+        for button in buttons:
+            tooltip = button.toolTip()
+            if "Run the current script" in tooltip:
+                return button
+        return None
 
     def setSEOutputEvent(self):
-        nukeScriptEditors = self.findScriptEditors()
-        self.origConsoleText = self.nukeSEOutput.document().toPlainText().encode("utf8") # Take the console from the first script editor found...
-        for se in nukeScriptEditors:
-            se_output = self.findSEOutput(se)
-            se_output.textChanged.connect(partial(consoleChanged,se_output, self))
-            consoleChanged(se_output, self) # Initialise.
+        se = self.findSE()
+        se_output = self.findSEOutput(se)
+        self.origConsoleText = se_output.document().toPlainText().encode('utf8')
+        se_output.textChanged.connect(partial(consoleChanged, se_output, self))
+        consoleChanged(se_output, self)
+
 
 class KnobScripterPane(KnobScripter):
     def __init__(self, node = "", knob="knobChanged"):
@@ -1913,7 +1889,6 @@ class ChooseNodeDialog(QtWidgets.QDialog):
     def clickedCancel(self):
         self.reject()
         return
-
 
 
 class KSScriptEditorHighlighter(QtGui.QSyntaxHighlighter):
@@ -2198,7 +2173,7 @@ class ScriptOutputWidget(QtWidgets.QTextEdit) :
             #print event.key()
             if key in [32]: # Space
                 return KnobScripter.keyPressEvent(self.knobScripter, event)
-            elif key in [Qt.Key_Backspace, Qt.Key_Delete]:
+            elif key in [QtCore.Qt.Key_Backspace, QtCore.Qt.Key_Delete]:
                 self.knobScripter.clearConsole()
         return QtWidgets.QTextEdit.keyPressEvent(self, event)
 
@@ -2208,7 +2183,7 @@ class ScriptOutputWidget(QtWidgets.QTextEdit) :
     #    QtWidgets.QTextEdit.mousePressEvent(self, QMouseEvent)
 
 #---------------------------------------------------------------------
-# Modified KnobScripterTextEdit to include snippets etc.
+# Modified CodeTextEdit to include snippets etc.
 #---------------------------------------------------------------------
 class KnobScripterTextEditMain(CodeTextEdit):
     def __init__(self, knobScripter, output=None, parent=None):
@@ -2323,7 +2298,7 @@ class KnobScripterTextEditMain(CodeTextEdit):
         #BEFORE ANYTHING ELSE, IF SPECIAL MODIFIERS SIMPLY IGNORE THE REST
         if not self.nukeCompleterShowing and (ctrl or shift or alt):
             #Bypassed!
-            if key not in [Qt.Key_Return, Qt.Key_Enter, Qt.Key_Tab]:
+            if key not in [QtCore.Qt.Key_Return, QtCore.Qt.Key_Enter, QtCore.Qt.Key_Tab]:
                 CodeTextEdit.keyPressEvent(self,event)
                 return
         
@@ -2331,7 +2306,7 @@ class KnobScripterTextEditMain(CodeTextEdit):
         if self.nukeCompleterShowing :
             tc = self.textCursor()
             #If we're hitting enter, do completion
-            if key in [Qt.Key_Return, Qt.Key_Enter, Qt.Key_Tab]:
+            if key in [QtCore.Qt.Key_Return, QtCore.Qt.Key_Enter, QtCore.Qt.Key_Tab]:
                 if not self.currentNukeCompletion:
                     self.nukeCompleter.setCurrentRow(0)
                     self.currentNukeCompletion = self.nukeCompleter.currentCompletion()
@@ -2340,11 +2315,11 @@ class KnobScripterTextEditMain(CodeTextEdit):
                 self.nukeCompleter.popup().hide()
                 self.nukeCompleterShowing = False
             #If you're hitting right or escape, hide the popup
-            elif key == Qt.Key_Right or key == Qt.Key_Escape:
+            elif key == QtCore.Qt.Key_Right or key == QtCore.Qt.Key_Escape:
                 self.nukeCompleter.popup().hide()
                 self.nukeCompleterShowing = False
             #If you hit tab, escape or ctrl-space, hide the completer
-            elif key == Qt.Key_Tab or key == Qt.Key_Escape or (ctrl and key == Qt.Key_Space) :
+            elif key == QtCore.Qt.Key_Tab or key == QtCore.Qt.Key_Escape or (ctrl and key == QtCore.Qt.Key_Space) :
                 self.currentNukeCompletion = ""
                 self.nukeCompleter.popup().hide()
                 self.nukeCompleterShowing = False
@@ -2373,9 +2348,9 @@ class KnobScripterTextEditMain(CodeTextEdit):
             return
 
         if type(event) == QtGui.QKeyEvent:
-            if key == Qt.Key_Escape: # Close the knobscripter...
+            if key == QtCore.Qt.Key_Escape: # Close the knobscripter...
                 self.knobScripter.close()
-            elif not ctrl and not alt and not shift and event.key()==Qt.Key_Tab:
+            elif not ctrl and not alt and not shift and event.key()==QtCore.Qt.Key_Tab:
                 self.placeholder = "$$"
                 # 1. Set the cursor
                 self.cursor = self.textCursor()
@@ -2435,7 +2410,7 @@ class KnobScripterTextEditMain(CodeTextEdit):
                             return
 
                     CodeTextEdit.keyPressEvent(self,event)
-            elif event.key() in [Qt.Key_Enter, Qt.Key_Return]:
+            elif event.key() in [QtCore.Qt.Key_Enter, QtCore.Qt.Key_Return]:
                 modifiers = QtWidgets.QApplication.keyboardModifiers()
                 if modifiers == QtCore.Qt.ControlModifier:
                     self.runScript()
@@ -3374,9 +3349,9 @@ class SnippetFilePath(QtWidgets.QWidget):
 def showKnobScripter(knob="knobChanged"):
     selection = nuke.selectedNodes()
     if not len(selection):
-        pan = KnobScripter()
+        pan = KnobScripter(_parent=QtWidgets.QApplication.activeWindow())
     else:
-        pan = KnobScripter(selection[0], knob)
+        pan = KnobScripter(selection[0], knob, _parent=QtWidgets.QApplication.activeWindow())
     pan.show()
 
 def addKnobScripterPanel():
