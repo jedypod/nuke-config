@@ -17,6 +17,10 @@ nuke.menu('Nuke').findItem('File').findItem('Clear').setShortcut('ctrl+shift+w')
 nuke.menu('Nuke').findItem('&Cache').findItem('Clear All').setShortcut('ctrl+alt+meta+shift+w')
 nuke.menu('Nuke').findItem('Workspace').addCommand("Toggle Fullscreen", 'nuke.toggleFullscreen()', 'ctrl+alt+shift+f')
 
+# Show or hide Nuke statusbar
+nuke.menu('Nuke').addCommand('File/Show Status Bar', 'import hiero; hiero.ui.mainStatusBar.show()')
+nuke.menu('Nuke').addCommand('File/Hide Status Bar', 'import hiero; hiero.ui.mainStatusBar.hide()')
+
 
 # nuke.menu('Nuke').findItem("Render").addCommand("Render Selected", 'terminal_render.render(nuke.selectedNodes())', 'F7', index=5)
 # nuke.menu('Nuke').addCommand('Edit/Node/Label Dot', 'createBackdrop.create_dot()', 'ctrl+meta+shift+d', shortcutContext=2)

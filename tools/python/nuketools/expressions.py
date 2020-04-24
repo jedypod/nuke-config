@@ -1,9 +1,10 @@
 import nuke
 
+# Bake all knobs with expressions to keyframes
+
 nuke.menu('Nuke').addCommand('Edit/Node/Bake Expressions', 'expressions.bake(nuke.selectedNodes(), nuke.root().firstFrame(), nuke.root().lastFrame())', 'ctrl+alt+meta+shift+b')
 
 def bake(nodes, start, end):
-    # Bake all knobs with expressions to keyframes
     for node in nodes:
         for knob in node.knobs().values():
             if isinstance(knob, nuke.Link_Knob):

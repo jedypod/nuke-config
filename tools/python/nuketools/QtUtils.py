@@ -574,8 +574,9 @@ class LineNumberArea(QtWidgets.QWidget):
 
 def _nuke_main_window():
     """Returns Nuke's main window"""
-    for obj in QtGui.qApp.topLevelWidgets():
-        if (obj.inherits('QMainWindow') and obj.metaObject().className() == 'Foundry::UI::DockMainWindow'):
-            return obj
-    else:
-        raise RuntimeError('Could not find DockMainWindow instance')
+    # for obj in QtGui.qApp.topLevelWidgets():
+    #     if (obj.inherits('QMainWindow') and obj.metaObject().className() == 'Foundry::UI::DockMainWindow'):
+    #         return obj
+    # else:
+    #     raise RuntimeError('Could not find DockMainWindow instance')
+    return QtWidgets.QApplication.activeWindow()

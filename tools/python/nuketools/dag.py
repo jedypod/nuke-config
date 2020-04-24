@@ -204,9 +204,8 @@ def auto_place():
         xpos_sort = sorted(filenodes_pos.items(), key=lambda (k, v): v[0])
         start_pos = [xpos_sort[0][1][0], ypos_sort[0][1][1]]
         for node, filepath in sorted_filenodes:
-            print node['file'].getValue()
             node.setXYpos(start_pos[0], start_pos[1])
-            start_pos = (start_pos[0] + grid_x*2, start_pos[1])
+            start_pos = (start_pos[0] + grid[0]*2, start_pos[1])
 
     # Normal autoplace for nodes without file knob
     normal_nodes = [n for n in nodes if 'file' not in n.knobs()]
@@ -241,7 +240,6 @@ def connect_to_closest():
     # Connect next available input of all selected nodes to the closest node
     for node in nuke.selectedNodes():
         closest = get_closest_node(node)
-        print "{0} : {1}".format(node.name(), closest.name())
         node.connectInput(0, closest)
 
 
@@ -380,13 +378,16 @@ def declone(node):
     # Declone a single node
     if not node.clones():
         return
-    with get_parent(node):
-        args = node.writeKnobs(nuke.WRITE_ALL | nuke.WRITE_USER_KNOB_DEFS |
-                                nuke.WRITE_NON_DEFAULT_ONLY | nuke.TO_SCRIPT)
-        decloned_node = nuke.createNode(node.Class(), knobs=args, inpanel=False)
-        copy_inputs(node, decloned_node)
-        nuke.delete(node)
-        return decloned_node
+    parent = get_parent(node)
+    parent.begin()
+    node.setSelected(True)
+    args = node.writeKnobs( nuke.WRITE_ALL | nuke.WRITE_USER_KNOB_DEFS |
+                            nuke.WRITE_NON_DEFAULT_ONLY | nuke.TO_SCRIPT)
+    decloned_node = nuke.createNode(node.Class(), knobs=args, inpanel=False)
+    copy_inputs(node, decloned_node)
+    nuke.delete(node)
+    parent.end()
+    return decloned_node
 
 
 def declone_nodes(nodes):
@@ -394,9 +395,9 @@ def declone_nodes(nodes):
     unselect()
     decloned_nodes = list()
     for node in nodes:
-        node.setSelected(True)
         decloned_nodes.append(declone(node))
     if decloned_nodes:
+        # Restore selection
         _ = [n.setSelected(True) for n in decloned_nodes]
 
 
@@ -418,8 +419,10 @@ def export_selected_nodes():
 
 #--------------------------------------------------------------
 # Nuke Node Dependency Utilities
-
-connection_filter = nuke.INPUTS | nuke.HIDDEN_INPUTS | nuke.EXPRESSIONS | nuke.LINKINPUTS
+if nuke.NUKE_VERSION_MAJOR > 11:
+    connection_filter = nuke.INPUTS | nuke.HIDDEN_INPUTS | nuke.EXPRESSIONS | nuke.LINKINPUTS
+else:
+    connection_filter = nuke.INPUTS | nuke.HIDDEN_INPUTS | nuke.EXPRESSIONS
 
 def find_root_nodes(node, results=[], remove_roots_with_inputs=True):
     # Find all root nodes of node. 

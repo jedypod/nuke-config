@@ -251,7 +251,7 @@ setval('showSplashScreen', 'false')
 setval('submitUsageStatistics', 'false')
 
 # Nuke
-setval('Nuke/startupWorkspace', 'floating_comp')
+setval('Nuke/startupWorkspace', 'comp_float')
 
 # ColorPicker
 # The sub-sections HSV RGB Swatches etc get converted to "\" when loaded in the uistate
