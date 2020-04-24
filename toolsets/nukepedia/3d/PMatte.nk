@@ -1,10 +1,9 @@
 set cut_paste_input [stack 0]
 push $cut_paste_input
-add_layer {Pworld Pworld._w Pworld.red Pworld.green Pworld.blue}
 Group {
  name PMatte
  help "aPMatte v1.0 by Adrian Pueyo\n\nGenerate a matte of different shapes, based on a Position pass. Includes options to transform the mask and change its falloff. Also has the option to output or overlay a P-based 3D noise.\n\nadrianpueyo.com, 2017"
- addUserKnob {20 aPMatte}
+ addUserKnob {20 PMatte}
  addUserKnob {41 useGPUIfAvailable l "Use GPU if available" T BlinkScriptPMatte.useGPUIfAvailable}
  addUserKnob {41 vectorize l "Vectorize on CPU" -STARTLINE T BlinkScriptPMatte.vectorize}
  addUserKnob {26 ""}
@@ -63,15 +62,15 @@ Group {
  Dot {
   name Dot1
   label " "
-  note_font "Helvetica Bold Bold Bold Bold Bold Bold"
+  note_font "Helvetica Bold"
   note_font_size 24
   note_font_color 0xff000000
   xpos -446
   ypos 498
  }
-set N24d5e8b0 [stack 0]
+set Nbc1c5a0 [stack 0]
  Shuffle {
-  in Pworld
+  in none
   in2 rgba
   alpha alpha2
   name ShuffleIn
@@ -107,8 +106,6 @@ set N24d5e8b0 [stack 0]
   aPMatteKernel_noise_gamma {{parent.noise_gamma}}
   aPMatteKernel_noise_mix {{parent.noise_mix}}
   rebuild_finalise ""
-  maxGPUMemory 76
-  maxTileLines 40
   name BlinkScriptPMatte
   xpos -370
   ypos 536
@@ -121,7 +118,7 @@ set N24d5e8b0 [stack 0]
   black_point {0 0 0}
   addUserKnob {6 black_point_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
  }
-push $N24d5e8b0
+push $Nbc1c5a0
  ShuffleCopy {
   inputs 2
   red red

@@ -1,0 +1,98 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name PrecompWrite
+ tile_color 0xffaf00ff
+ addUserKnob {20 PrecompWrite}
+ addUserKnob {41 channels T write_exr.channels}
+ addUserKnob {26 ""}
+ addUserKnob {26 spacer_00 l " " T " "}
+ addUserKnob {1 framerange l "&nbsp; &nbsp; frame range"}
+ addUserKnob {22 set_framerange_to_input l "Set to Input" -STARTLINE T "n = nuke.thisNode()\nfr = n.frameRange()\nn\['framerange'].setValue('\{0\}-\{1\}'.format(fr.first(), fr.last()))"}
+ addUserKnob {22 set_framerange_to_root l Reset -STARTLINE T "n = nuke.thisNode()\nfr = n.frameRange()\nn\['framerange'].setValue('\{0\}-\{1\}'.format(int(nuke.root()\['first_frame'].getValue()), int(nuke.root()\['last_frame'].getValue())))"}
+ addUserKnob {2 file +DISABLED}
+ addUserKnob {26 ""}
+ addUserKnob {26 label_read_settings l " " T "<font size=4><b>Read Settings"}
+ addUserKnob {41 read_from_file l "Read from File" T knob_python.read_from_file}
+ addUserKnob {41 read_filepath l file T PrecompRead.file}
+ addUserKnob {41 localizationPolicy l localization T PrecompRead.localizationPolicy}
+ addUserKnob {41 updateLocalization l Update -STARTLINE T PrecompRead.updateLocalization}
+ addUserKnob {41 reload T PrecompRead.reload}
+}
+ Input {
+  inputs 0
+  name Input
+  label "\[value number]"
+  xpos 1080
+  ypos 417
+ }
+ Dot {
+  name knob_python
+  knobChanged "node = nuke.thisNode()\nknob = nuke.thisKnob()\nparent = nuke.thisParent()\n\nif knob.name() == \"read_from_file\":\n    if knob.getValue():\n        parent\['postage_stamp'].setValue(True)\n        parent\['tile_color'].setValue(1018888447)\n    else:\n        parent\['postage_stamp'].setValue(False)\n        parent\['tile_color'].setValue(4289659135)\n        "
+  tile_color 0xff00
+  label " "
+  note_font "Helvetica Bold"
+  note_font_size 24
+  note_font_color 0xa5a5a501
+  xpos 1114
+  ypos 534
+  addUserKnob {20 User}
+  addUserKnob {6 read_from_file +STARTLINE}
+ }
+set N9cf78b0 [stack 0]
+ Reformat {
+  type "to box"
+  box_width {{"\[exists input] ? input.width : root.width"}}
+  box_height {{"\[exists input] ? input.height : root.height"}}
+  box_fixed true
+  box_pixel_aspect {{"\[exists input] ? input.pixel_aspect : root.pixel_aspect"}}
+  resize none
+  black_outside true
+  name BboxRemove
+  xpos 1240
+  ypos 531
+  disable {{!parent.crop_bbox}}
+ }
+ Write {
+  channels rgba
+  file "\[value parent.file]"
+  file_type exr
+  autocrop true
+  datatype {{parent._32bpc}}
+  metadata "all metadata"
+  interleave {{"parent.multipart ? 2 : 0"}}
+  first_part rgba
+  "standard layer name format" true
+  write_full_layer_names true
+  checkHashOnRead false
+  name write_exr
+  xpos 1240
+  ypos 603
+  disable {{"parent.file_type != 0"}}
+ }
+ Read {
+  inputs 0
+  localizationPolicy onDemand
+  origset true
+  version 1
+  auto_alpha true
+  name PrecompRead
+  tile_color 0x989898ff
+  xpos 920
+  ypos 675
+  postage_stamp false
+ }
+push $N9cf78b0
+ Switch {
+  inputs 2
+  which {{parent.read_from_file}}
+  name ReadPrecomp
+  xpos 1080
+  ypos 675
+ }
+ Output {
+  name Output
+  xpos 1080
+  ypos 855
+ }
+end_group

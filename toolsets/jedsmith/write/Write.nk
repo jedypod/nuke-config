@@ -1,0 +1,56 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name Write3
+ tile_color 0xbfbf00ff
+ label "\[value this.Write.file]  \[value start]-\[value end]\n"
+ selected true
+ xpos 294
+ ypos -904
+ addUserKnob {20 Write_tab l Write}
+ addUserKnob {41 channels T Write.channels}
+ addUserKnob {2 folder t "folder to write to"}
+ folder .
+ addUserKnob {1 base l name t "base filename not including frame padding or file extension"}
+ base temp
+ addUserKnob {6 in_subdir t "Put image sequence in subdir with base as name\n" -STARTLINE}
+ in_subdir true
+ addUserKnob {6 add_colorspace l colorspace t "Add colorspace to filename" -STARTLINE}
+ add_colorspace true
+ addUserKnob {41 colorspace T Write.colorspace}
+ addUserKnob {41 raw l "raw data" -STARTLINE T Write.raw}
+ addUserKnob {41 views -STARTLINE T Write.views}
+ addUserKnob {3 pad t "frame padding" -STARTLINE}
+ pad 5
+ addUserKnob {35 file_type l "file type" M {"exr : zip" "knobs this.Write \{file_type exr datatype 0 compression 1 metadata 4 interleave 1 create_directories 1\}" "exr : dwaa" "knobs this.Write \{file_type exr datatype 0 compression 7 dw_compression_level 45 metadata 4 interleave 0 create_directories 1\}" hdr "knobs this.Write \{file_type hdr\}" jpeg "knobs this.Write \{file_type jpeg _jpeg_quality 0.9 _jpeg_sub_sampling 1\}" "tiff : uint8" "knobs this.Write \{file_type tiff datatype 0\}" "tiff : uint16" "knobs this.Write \{file_type tiff datatype 1\}" "png : uint8" "knobs this.Write \{file_type png\}" ""}}
+ addUserKnob {35 out_presets l "out presets" t "Output presets." -STARTLINE M {topnode "knobs this \{folder \{\[file dirname \[value \[topnode].file]]\}\}" ""}}
+ addUserKnob {26 framerange_label l framerange T " "}
+ addUserKnob {35 framerange l "" -STARTLINE M {input "knobs this \{start first_frame end last_frame\}" root "knobs this \{start root.first_frame end root.last_frame\}" ""}}
+ addUserKnob {3 start l "" -STARTLINE}
+ start {{root.first_frame}}
+ addUserKnob {3 end l "" -STARTLINE}
+ end {{root.last_frame}}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos -40
+  ypos 14
+ }
+ Write {
+  channels rgba
+  file "\[value parent.folder]/\[if \{\[value in_subdir]\} \{return \[value parent.base]/\}]\[value parent.base].\[if \{\[value add_colorspace]\} \{return \[value colorspace].\}]%0\[value parent.pad]d.\[value file_type]"
+  colorspace aces
+  create_directories true
+  checkHashOnRead false
+  name Write
+  note_font Helvetica
+  xpos -40
+  ypos 53
+ }
+ Output {
+  name Output1
+  xpos -40
+  ypos 110
+ }
+end_group
