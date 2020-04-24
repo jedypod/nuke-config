@@ -1,26 +1,23 @@
 import nuke
 
-# from Qt import QtCore, QtWidgets, QtGui
 
 if nuke.NUKE_VERSION_MAJOR < 11:
     from PySide import QtCore, QtGui, QtGui as QtWidgets
-    from PySide.QtCore import Qt
 else:
     from PySide2 import QtWidgets, QtGui, QtCore
-    from PySide2.QtCore import Qt
 
 
 from QtUtils import CodeTextEdit
 
 
-nuke.menu('Nuke').addCommand('Edit/Node/Set Label', 'labeler.label()', 'shift+a')
+nuke.menu('Nuke').addCommand('Edit/Node/Set Label', 'labeler.label(nodes=nuke.selectedNodes())', 'shift+a')
 
 
 class LabelPanel(QtWidgets.QDialog):
     ''' Show a text entry interface for entering text for a node label
     '''
-    def __init__(self, nodes, _parent=QtWidgets.QApplication.activeWindow()):
-        super(LabelPanel, self).__init__(_parent)
+    def __init__(self, nodes, parent):
+        super(LabelPanel, self).__init__(parent)
         
         if not nodes:
             return
@@ -38,7 +35,7 @@ class LabelPanel(QtWidgets.QDialog):
         
         # Create Ok / Cancel buttons
         ok_button = QtWidgets.QPushButton('Ok')
-        ok_button.clicked.connect(self.set_label)
+        ok_button.clicked.connect(self.set_and_quit)
         cancel_button = QtWidgets.QPushButton('Cancel')
         cancel_button.clicked.connect(self.quit)
         
@@ -60,10 +57,10 @@ class LabelPanel(QtWidgets.QDialog):
         # self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         # self.setWindowFlags(QtCore.Qt.X11BypassWindowManagerHint)
         # self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
-        # self.setWindowFlags(QtCore.Qt.Tool)
+        # self.setWindowFlags(QtCore.Qt.Tool) # This is not necessary for stay on top behavior in < Nuke12 if parent is passed on instantiation
         self.setMinimumSize(self.sizeHint().width(), self.sizeHint().height())
         self.move(QtGui.QCursor().pos() - QtCore.QPoint(32,74))
-        self.show()
+        # self.show()
 
     def get_label(self):
         ''' Get label from last selected node. Populate the text field with it.
@@ -81,14 +78,19 @@ class LabelPanel(QtWidgets.QDialog):
                 if not label.startswith(' '):
                     label = ' ' + label
             node['label'].setValue(label)
+
+    def set_and_quit(self):
+        # Set label and close (for ok button)
+        self.set_label()
+        self.quit()
         
 
     def keyPressEvent(self, event):
         '''Handle keyboard events.'''
         key = event.key()
-        ctrl = bool(event.modifiers() & Qt.ControlModifier)
-        alt = bool(event.modifiers() & Qt.AltModifier)
-        shift = bool(event.modifiers() & Qt.ShiftModifier)
+        ctrl = bool(event.modifiers() & QtCore.Qt.ControlModifier)
+        alt = bool(event.modifiers() & QtCore.Qt.AltModifier)
+        shift = bool(event.modifiers() & QtCore.Qt.ShiftModifier)
 
         if key == QtCore.Qt.Key_Escape:
             self.close()
@@ -108,15 +110,7 @@ def label(nodes=None):
     ''' Prompt user for a new node label 
     '''
     if not nodes:
-        nodes = nuke.selectedNodes()
-    windows = [
-        obj for obj in QtWidgets.QApplication.topLevelWidgets()
-        if (obj.inherits('QMainWindow') and
-        obj.metaObject().className() == 'Foundry::UI::DockMainWindow')
-        ]
-    if windows:
-        nuke_main_window = windows[0]
-    global panel
-    panel = LabelPanel(nodes, _parent=nuke_main_window)
+        return
 
-
+    panel = LabelPanel(nodes, QtWidgets.QApplication.activeWindow())
+    panel.show()
