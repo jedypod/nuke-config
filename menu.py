@@ -4,7 +4,7 @@ import sys
 
 try:
     # Import all nuke python tools into the local namespace
-    from nkgui import *
+    from nuketools import *
 
     # Import all nukepedia tools
     from nukepedia import *

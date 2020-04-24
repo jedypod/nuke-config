@@ -2,12 +2,9 @@ import nuke
 import os, errno
 
 
-# Nuke version number
-# nuke_version = float(str(nuke.NUKE_VERSION_MAJOR) + '.' + str(nuke.NUKE_VERSION_MINOR))
-
-# The folder of this init.py file
-base_path = os.path.dirname(__file__)
+base_path = os.path.dirname(__file__) # The folder of this init.py file
 plugin_dirs = ['tools']
+
 # Add plugin_dirs and subdirs to plugin path
 for plugin_dir in plugin_dirs:
     fullpath = os.path.join(base_path, plugin_dir)
@@ -17,6 +14,7 @@ for plugin_dir in plugin_dirs:
         subdirs = [d for d in os.listdir(fullpath) if os.path.isdir(os.path.join(fullpath, d))]
         for subdir in subdirs:
             nuke.pluginAddPath(os.path.join(fullpath, subdir))
+
 
 
 # Callbacks
