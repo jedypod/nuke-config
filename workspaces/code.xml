@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout version="1.0">
+    <window x="0" y="0" w="2560" h="1439" maximized="1" screen="0">
+        <splitter orientation="1">
+            <split size="2557"/>
+            <dock id="" hideTitles="1" activePageId="DAG.1" focus="true">
+                <page id="DAG.1"/>
+            </dock>
+            <split size="81"/>
+            <dock id="" hideTitles="1" activePageId="uk.co.thefoundry.scripteditor.1">
+                <page id="uk.co.thefoundry.scripteditor.1"/>
+            </dock>
+        </splitter>
+    </window>
+</layout>
