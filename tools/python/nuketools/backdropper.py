@@ -1,12 +1,11 @@
+
 import nuke
 import colorsys
 
 if nuke.NUKE_VERSION_MAJOR < 11:
     from PySide import QtCore, QtGui, QtGui as QtWidgets
-    from PySide.QtCore import Qt
 else:
     from PySide2 import QtWidgets, QtGui, QtCore
-    from PySide2.QtCore import Qt
 
 from QtUtils import CodeTextEdit
 
@@ -96,8 +95,8 @@ class ColorPatchBox(QtWidgets.QHBoxLayout):
 class BackdropPanel(QtWidgets.QDialog):
     ''' Show an interface to create or modify a BackdropNode
     '''
-    def __init__(self, _parent=QtWidgets.QApplication.activeWindow()):
-        super(BackdropPanel, self).__init__(_parent)
+    def __init__(self, parent):
+        super(BackdropPanel, self).__init__(parent)
         self.setup_ui()
         self.setup_nodes()
 
@@ -208,6 +207,7 @@ class BackdropPanel(QtWidgets.QDialog):
         self.resize(500, 500)
         self.setMinimumSize(self.sizeHint().width(), self.sizeHint().height())
         self.move(QtGui.QCursor().pos() - QtCore.QPoint(32,74))
+        # self.show()
 
 
     def add_slider_box(self, label):
@@ -452,9 +452,9 @@ class BackdropPanel(QtWidgets.QDialog):
     def keyPressEvent(self, event):
         '''Handle keyboard events.'''
         key = event.key()
-        ctrl = bool(event.modifiers() & Qt.ControlModifier)
-        alt = bool(event.modifiers() & Qt.AltModifier)
-        shift = bool(event.modifiers() & Qt.ShiftModifier)
+        ctrl = bool(event.modifiers() & QtCore.Qt.ControlModifier)
+        alt = bool(event.modifiers() & QtCore.Qt.AltModifier)
+        shift = bool(event.modifiers() & QtCore.Qt.ShiftModifier)
         if key == QtCore.Qt.Key_Escape:
             self.quit()
         if (key == QtCore.Qt.Key_Return or key == QtCore.Qt.Key_Enter) and ctrl:
@@ -474,6 +474,5 @@ class BackdropPanel(QtWidgets.QDialog):
 
 
 def invoke():
-    global panel
-    panel = BackdropPanel()
+    panel = BackdropPanel(QtWidgets.QApplication.activeWindow())
     panel.show()
