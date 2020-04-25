@@ -22,8 +22,10 @@ nuke.menu('Nuke').addCommand('Edit/Node/DAG/Scale/Scale Up Vertical', 'dag.scale
 nuke.menu('Nuke').addCommand('Edit/Node/DAG/Scale/Scale Down Vertical', 'dag.scale(1, 0.5)', 'meta+shift+_', shortcutContext=2)
 nuke.menu('Nuke').addCommand('Edit/Node/DAG/Scale/Scale Up Horizontal', 'dag.scale(0, 2)', 'meta+=', shortcutContext=2)
 nuke.menu('Nuke').addCommand('Edit/Node/DAG/Scale/Scale Down Horizontal', 'dag.scale(0, 0.5)', 'meta+-', shortcutContext=2)
-nuke.menu('Nuke').addCommand('Edit/Node/DAG/Mirror Horizontally', 'dag.scale(0, -1, pivot="min")', 'meta+m')
-nuke.menu('Nuke').addCommand('Edit/Node/DAG/Mirror Vertically', 'dag.scale(0, -1, pivot="max")', 'meta+shift+m')
+nuke.menu('Nuke').addCommand('Edit/Node/DAG/Mirror Horizontal from Right', 'dag.scale(0, -1, pivot="min")', 'meta+m')
+nuke.menu('Nuke').addCommand('Edit/Node/DAG/Mirror Horizontal from Left', 'dag.scale(0, -1, pivot="max")', 'meta+shift+m')
+nuke.menu('Nuke').addCommand('Edit/Node/DAG/Mirror Vertical from Top', 'dag.scale(1, -1, pivot="max")', 'ctrl+meta+alt+m')
+nuke.menu('Nuke').addCommand('Edit/Node/DAG/Mirror Vertical from Bottom', 'dag.scale(1, -1, pivot="min")', 'ctrl+alt+meta+shift+m')
 
 nuke.menu('Nuke').addCommand('Edit/Node/DAG/Align/Left', 'dag.align("left")', 'ctrl+shift+left', shortcutContext=2)
 nuke.menu('Nuke').addCommand('Edit/Node/DAG/Align/Right', 'dag.align("right")', 'ctrl+shift+right', shortcutContext=2)
@@ -360,18 +362,26 @@ def scale(axis, scale, pivot='max'):
     nuke.Undo().begin()
     for node, pos in positions.iteritems():
         if axis:
-            set_pos(node, pos[0], (pos[1] - pivot_pos) * scale + pivot_pos)
+            new_pos = (pos[1] - pivot_pos) * scale + pivot_pos
+            set_pos(node, pos[0], new_pos)
             if node.Class() == 'BackdropNode':
-                node['bdheight'].setValue(
-                    ((pos[1] + node['bdheight'].getValue()) - pivot_pos)
-                     * scale + pivot_pos - node.ypos())
-
+                bdpos = ((pos[1] + node['bdheight'].getValue()) - pivot_pos) * scale + pivot_pos - node.ypos()
+                print pos[1]
+                print new_pos
+                print bdpos
+                if scale > 0:
+                    node['bdheight'].setValue(bdpos)
+                else:
+                    node.setXYpos(pos[0], int(new_pos-abs(bdpos)))
         else:
-            set_pos(node, (pos[0] - pivot_pos) * scale + pivot_pos, pos[1])
+            new_pos = (pos[0] - pivot_pos) * scale + pivot_pos
+            set_pos(node, new_pos, pos[1])
             if node.Class() == 'BackdropNode':
-                node['bdwidth'].setValue(
-                    ((pos[0] + node['bdwidth'].getValue()) - pivot_pos)
-                     * scale + pivot_pos - node.xpos())
+                bdpos = ((pos[0] + node['bdwidth'].getValue()) - pivot_pos) * scale + pivot_pos - node.xpos()
+                if scale > 0:
+                    node['bdwidth'].setValue(bdpos)
+                else:
+                    node.setXYpos(int(new_pos-abs(bdpos)), int(node.ypos()))
     nuke.Undo().end()
 
 
