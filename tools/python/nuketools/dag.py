@@ -1,6 +1,8 @@
 import nuke
 import nukescripts
 import operator, math, os
+import string
+import random
 
 
 # Utilities for enhancing efficiency when interacting with Nuke's Directed Acyclic Graph
@@ -70,13 +72,14 @@ nuke.menu('Nuke').addCommand('Edit/Bookmark/Save Position 4', 'nukescripts.bookm
 nuke.menu('Nuke').addCommand('Edit/Bookmark/Save Position 5', 'nukescripts.bookmarks.quickSave(5)', 'ctrl+shift+5', shortcutContext=2)
 nuke.menu('Nuke').addCommand('Edit/Bookmark/Save Position 6', 'nukescripts.bookmarks.quickSave(6)', 'ctrl+shift+6', shortcutContext=2)
 
-# Hlink Nodes
-nuke.menu('Nuke').addCommand('Edit/HLink Cut', 'dag.hlink_cut()', 'ctrl+x')
-nuke.menu('Nuke').addCommand('Edit/HLink Copy', 'dag.hlink_copy()', 'ctrl+c')
-nuke.menu('Nuke').addCommand('Edit/HLink Paste', 'dag.hlink_paste()', 'ctrl+v')
-nuke.menu('Nuke').addCommand('Edit/HLink Create', 'dag.hlink_create()', 'alt+shift+p')
-nuke.menu('Nuke').addCommand('Edit/Paste', 'nuke.nodePaste("%clipboard%")', 'ctrl+shift+v', index=6)
+# # Hlink Nodes
+# nuke.menu('Nuke').addCommand('Edit/HLink Cut', 'dag.hlink_cut()', 'ctrl+x')
+# nuke.menu('Nuke').addCommand('Edit/HLink Copy', 'dag.hlink_copy()', 'ctrl+c')
+# nuke.menu('Nuke').addCommand('Edit/HLink Paste', 'dag.hlink_paste()', 'ctrl+v')
+# nuke.menu('Nuke').addCommand('Edit/HLink Create', 'dag.hlink_create()', 'alt+shift+p')
+# nuke.menu('Nuke').addCommand('Edit/Paste', 'nuke.nodePaste("%clipboard%")', 'ctrl+shift+v', index=6)
 
+nuke.menu('Nodes').addCommand('Other/Create Pointer', 'dag.create_pointer()', 'alt+t')
 
 
 
@@ -106,8 +109,9 @@ def get_parent(node):
 
 
 def get_topnode(node):
+
     # return the topnode of node
-    pass
+    return nuke.toNode(nuke.tcl('return [value [topnode {0}].name]'.format(node.fullName())))
 
 
 def get_pos(node):
@@ -524,6 +528,7 @@ def load_dag_pos(preset):
 
 #----------------------------------------------------------------------------------
 # Hidden Input Link Nodes
+# This is no longer used in favor of the anchor / pointer workflow
 
 def hidden_inputs_in_selection(nodes):
     return [n for n in nodes if 'hide_input' in n.knobs() and n['hide_input'].getValue()]
@@ -580,6 +585,108 @@ def hlink_create():
         hlink.setXYpos(node.xpos() - grid[0]*2, node.ypos()-grid[1]*0)
         nuke.autoplaceSnap(hlink)
     _ = [n.setSelected(True) for n in hlinks]
+
+
+
+def dec2hex(dec):
+    hexcol = '%08x' % dec
+    return '0x%02x%02x%02x' %  (int(hexcol[0:2], 16), int(hexcol[2:4], 16), int(hexcol[4:6], 16))
+
+def create_pointer():
+    # Create an anchor / pointer set
+    nodes = nuke.selectedNodes()
+    if not nodes:
+        return
+
+    for target in nodes:
+        upstream = [n for n in connected(nodes, upstream=True, downstream=False)]
+
+        if len(upstream) > 5:
+            if not nuke.ask('More than 5 upstream nodes. Are you sure you want to continue?'):
+                return
+
+        randstr = ''.join(random.choice(string.ascii_lowercase) for i in range(4))
+        
+        topnode = get_topnode(target)
+
+        target_label = target['label'].getValue()
+
+        # If topnode has a file knob, use that to set title
+        # If it's a roto node, use the roto label
+        if 'file' in topnode.knobs():
+            pointer_title = os.path.basename(topnode['file'].getValue())
+            if '.' in pointer_title:
+                pointer_title = pointer_title.split('.')[0]
+        elif topnode.Class() in ['Roto', 'RotoPaint'] and topnode['label'].getValue():
+            pointer_title = topnode['label'].getValue()
+        elif target_label:
+            pointer_title = target_label
+        else:
+            pointer_title = ''
+
+        topnode_color = topnode['tile_color'].value()
+
+        if topnode_color == 0:
+            # Get default color from prefs if node is not colored https://community.foundry.com/discuss/topic/103301/get-the-default-tile-color-from-preferences
+            prefs = nuke.toNode('preferences')
+            default_colors = {prefs['NodeColour{0:02d}Color'.format(i)].value(): prefs['NodeColourClass{0:02d}'.format(i)].value() for i in range(1, 14)}
+            node_class = topnode.Class().lower()
+            node_class = ''.join([i for i in node_class if not i.isdigit()])
+            for color, classes in default_colors.items():
+                if node_class in classes:
+                    topnode_color = color
+                    print "found color:", topnode_color, classes
+                    print "in hex", dec2hex(topnode_color)
+                    break
+            if 'deep' in node_class:
+                topnode_color = prefs['NodeColourDeepColor'].value()
+        
+        panel = nuke.Panel('Create Pointer')
+        panel.addSingleLineInput('title', pointer_title)
+        if panel.show():
+            pointer_title = panel.value('title')
+        else:
+            return
+
+        # create anchor node
+        unselect()
+        target.setSelected(True)
+        anchor = nuke.createNode('NoOp', 'name ___anchor_{0} icon Output.png label "<font size=7>\[value title]"'.format(randstr))
+        anchor.addKnob(nuke.Tab_Knob('anchor_tab', 'anchor'))
+        anchor.addKnob(nuke.String_Knob('title', 'title'))
+        anchor['title'].setValue(pointer_title)
+        anchor['tile_color'].setValue(topnode_color)
+
+        # create pointer node
+        pointer = nuke.createNode('NoOp', 'name ___pointer_{0} hide_input true icon Input.png'.format(randstr))
+        pointer.addKnob(nuke.Tab_Knob('pointer_tab', 'pointer'))
+        pointer.addKnob(nuke.String_Knob('target', 'target'))
+        pointer['target'].setValue(anchor.fullName())
+        pointer['label'].setValue('<font size=7> [if {[exists input.title]} {return [value input.title]}]')
+        pointer.addKnob(nuke.PyScript_Knob('connect_to_target', 'connect'))
+        pointer['connect_to_target'].setFlag(nuke.STARTLINE)
+        pointer.addKnob(nuke.PyScript_Knob('zoom_to_target', 'zoom'))
+        pointer.addKnob(nuke.PyScript_Knob('set_target', 'set target'))
+        pointer['connect_to_target'].setValue('''n = nuke.thisNode()
+t = n['target'].getValue()
+if nuke.exists(t):
+    tn = nuke.toNode(t)
+    n.setInput(0, tn)''')
+        pointer['zoom_to_target'].setValue('''t = nuke.thisNode()['target'].getValue()
+if nuke.exists(t):
+    tn = nuke.toNode(t)
+    nuke.zoom(2.0, [tn.xpos(), tn.ypos()])''')
+        pointer['set_target'].setValue('''n = nuke.thisNode()
+sn = nuke.selectedNodes()
+if sn:
+    t = sn[-1]
+n['target'].setValue(t.fullName())''')
+        # set autolabel node to execute connect python script button.
+        # it's a hack but it works to automatically reconnect the input without using knobChanged callbacks!
+        # FYI, onCreate callback can not connect input 0 due to a nuke bug
+        pointer['autolabel'].setValue('nuke.thisNode()["connect_to_target"].execute()')
+        pointer.setXYpos(anchor.xpos(), anchor.ypos()+120)
+        pointer['tile_color'].setValue(topnode_color)
 
 
 

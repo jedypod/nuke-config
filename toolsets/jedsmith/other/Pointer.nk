@@ -1,0 +1,16 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+NoOp {
+ name ___pointer___
+ autolabel "nuke.thisNode()\['connect_to_target'].execute()"
+ tile_color 0x1e1e1eff
+ label "<font size=7> \[if \{\[exists input.title]\} \{return \[value input.title]\}]\n"
+ note_font_color 0x66717bff
+ icon Input.png
+ hide_input true
+ addUserKnob {20 pointer_tab l pointer}
+ addUserKnob {1 target}
+ addUserKnob {22 connect_to_target l connect t "connect this pointer to target anchor" T "n = nuke.thisNode()\nt = n\['target'].getValue()\nif nuke.exists(t):\n    tn = nuke.toNode(t)\n    n.setInput(0, tn)" +STARTLINE}
+ addUserKnob {22 zoom_to_target l zoom t "frame target in the dag" -STARTLINE T "t = nuke.thisNode()\['target'].getValue()\nif nuke.exists(t):\n    tn = nuke.toNode(t)\n    nuke.zoom(2.0, \[tn.xpos(), tn.ypos()])"}
+ addUserKnob {22 set_target l "set target" t "set target to selected node" -STARTLINE T "n = nuke.thisNode()\nsn = nuke.selectedNodes()\nif sn:\n    t = sn\[-1]\nn\['target'].setValue(t.fullName())"}
+}
