@@ -484,6 +484,12 @@ def select_connected(nodes):
     # Select all nodes connected to node
     _ = [n.setSelected(True) for n in connected(nodes, upstream=True, downstream=True)]
 
+def select_unused(nodes):
+    # select all nodes that are not upstream or downstream of :param: nodes
+    # Backdrops and dot nodes with a label are omitted.
+    connected_nodes = [n for n in connected(nodes, upstream=True, downstream=True)]
+
+
 
 
 
@@ -702,10 +708,12 @@ def create_dots():
     dots = list()
     for node in nodes:
         select([node])
-        dot = nuke.createNode('Dot')
+        dot = nuke.createNode('Dot', inpanel=False)
         dots.append(dot)
         unselect(dot)
     select(dots)
+    if not nodes:
+    	dot = nuke.createNode('Dot', inpanel=False)
 
 
 
