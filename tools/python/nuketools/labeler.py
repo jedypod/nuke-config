@@ -101,6 +101,7 @@ class LabelPanel(QtWidgets.QDialog):
 
         if ctrl and key == QtCore.Qt.Key_S:
             self.set_label()
+            self.close()
 
     def quit(self):
         self.close()
