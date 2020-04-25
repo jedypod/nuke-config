@@ -41,6 +41,7 @@ nuke.menu('Nuke').addCommand('Edit/Select Upstream', 'dag.select_upstream(nuke.s
 nuke.menu('Nuke').addCommand('Edit/Invert Selection', 'nuke.invertSelection()', 'alt+meta+shift+i', shortcutContext=2)
 nuke.menu('Nuke').addCommand('Edit/Select Connected Nodes', 'dag.select_connected(nuke.selectedNodes())', 'alt+meta+shift+o', shortcutContext=2)
 nuke.menu('Nuke').addCommand('Edit/Select Downstream', 'dag.select_downstream(nuke.selectedNodes())', 'alt+meta+shift+p', shortcutContext=2)
+nuke.menu('Nuke').addCommand('Edit/Select Unused Nodes', 'dag.select_unused(nuke.selectedNodes())', 'ctrl+alt+meta+shift+u', shortcutContext=2)
 
 nuke.menu('Nuke').addCommand('Edit/Node/DAG/Properties Panel Open', 'dag.open_panels()', 'a', shortcutContext=1)
 nuke.menu('Nuke').addCommand('Edit/Node/DAG/Properties Panel Close', 'dag.close_panels()', 'alt+a', shortcutContext=1)
@@ -474,20 +475,30 @@ def connected(nodes, upstream=True, downstream=True):
 
 def select_upstream(nodes):
     # Select all upstream dependencies of node
-    _ = [n.setSelected(True) for n in connected(nodes, upstream=True, downstream=False)]
+    deps = [n for n in connected(nodes, upstream=True, downstream=False)]
+    select(deps)
+    return deps
 
 def select_downstream(nodes):
     # Select all downstream dependencies of node
-    _ = [n.setSelected(True) for n in connected(nodes, upstream=False, downstream=True)]
+    deps = [n for n in connected(nodes, upstream=False, downstream=True)]
+    select(deps)
+    return deps
 
 def select_connected(nodes):
     # Select all nodes connected to node
-    _ = [n.setSelected(True) for n in connected(nodes, upstream=True, downstream=True)]
+    deps = [n for n in connected(nodes, upstream=True, downstream=True)]
+    select(deps)
+    return deps
 
 def select_unused(nodes):
     # select all nodes that are not upstream or downstream of :param: nodes
     # Backdrops and dot nodes with a label are omitted.
     connected_nodes = [n for n in connected(nodes, upstream=True, downstream=True)]
+    unused_nodes = [n for n in nuke.allNodes() if n not in connected_nodes and n.Class() != 'BackdropNode' and not (n.Class() == 'Dot' and n['label'].getValue())]
+    unselect()
+    select(unused_nodes)
+    return unused_nodes
 
 
 
@@ -720,6 +731,9 @@ def create_dots():
 def create_transform():
     # Create a Transform or TransformGeo node depending on node type
     nodes = nuke.selectedNodes()
+    if not nodes:
+        nuke.createNode('Transform')
+        return
     unselect()
     transform_nodes = list()
     for node in nodes:
@@ -734,6 +748,7 @@ def create_transform():
                 transform_nodes.append(new_node)
         unselect()
     select(transform_nodes)
+
 
 
 # Enhanced swap functionality.
