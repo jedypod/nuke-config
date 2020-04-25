@@ -35,8 +35,8 @@ nuke.menu('Nuke').addCommand('Edit/Node/DAG/Paste To Selected', 'dag.paste_to_se
 
 nuke.menu('Nuke').addCommand('Edit/Select Similar/Select Similar Class', 'nuke.selectSimilar(nuke.MATCH_CLASS)', 'alt+meta+shift+s', shortcutContext=2)
 nuke.menu('Nuke').addCommand('Edit/Select Similar/Select Similar Color', 'nuke.selectSimilar(nuke.MATCH_COLOR)', 'alt+meta+shift+c', shortcutContext=2)
-nuke.menu('Nuke').addCommand('Edit/Select Similar/Select Similar Y Position', 'dag.select_similar_position(axis=1)', 'alt+meta+v', shortcutContext=2)
-nuke.menu('Nuke').addCommand('Edit/Select Similar/Select Similar X Position', 'dag.select_similar_position(axis=0)', 'alt+meta+shift+v', shortcutContext=2)
+nuke.menu('Nuke').addCommand('Edit/Select Similar/Select Similar Y Position', 'dag.select_similar_position(axis=1)', 'alt+meta+shift+v', shortcutContext=2)
+nuke.menu('Nuke').addCommand('Edit/Select Similar/Select Similar X Position', 'dag.select_similar_position(axis=0)', 'ctrl+alt+meta+shift+v', shortcutContext=2)
 nuke.menu('Nuke').addCommand('Edit/Select Upstream', 'dag.select_upstream(nuke.selectedNodes())', 'alt+meta+shift+u', shortcutContext=2)
 nuke.menu('Nuke').addCommand('Edit/Invert Selection', 'nuke.invertSelection()', 'alt+meta+shift+i', shortcutContext=2)
 nuke.menu('Nuke').addCommand('Edit/Select Connected Nodes', 'dag.select_connected(nuke.selectedNodes())', 'alt+meta+shift+o', shortcutContext=2)
@@ -56,6 +56,8 @@ nuke.menu('Nuke').addCommand('Edit/Node/Swap A - B', 'dag.swap_node()', 'shift+x
 nuke.menu('Viewer').addCommand("Swap View", "dag.swap_view()", "shift+q")
 
 nuke.menu('Nodes').addCommand( 'Transform/Transform', 'dag.create_transform()', 't')
+
+nuke.menu('Nodes').addCommand('Other/Dots', 'dag.create_dots()', 'alt+d', shortcutContext=2)
 
 
 # DAG Position Commands
@@ -95,11 +97,15 @@ def unselect(nodes=None):
     # Unselect nodes
     if not nodes:
         nodes = nuke.allNodes(recurseGroups=True)
+    if not isinstance(nodes, list):
+        return
     _ = [n.setSelected(False) for n in nodes]
 
 
 def select(nodes):
     # Select specified nodes
+    if not isinstance(nodes, list):
+        return
     _ = [n.setSelected(True) for n in nodes]
 
 
@@ -592,6 +598,8 @@ def dec2hex(dec):
     hexcol = '%08x' % dec
     return '0x%02x%02x%02x' %  (int(hexcol[0:2], 16), int(hexcol[2:4], 16), int(hexcol[4:6], 16))
 
+
+
 def create_pointer():
     # Create an anchor / pointer set
     nodes = nuke.selectedNodes()
@@ -635,8 +643,6 @@ def create_pointer():
             for color, classes in default_colors.items():
                 if node_class in classes:
                     topnode_color = color
-                    print "found color:", topnode_color, classes
-                    print "in hex", dec2hex(topnode_color)
                     break
             if 'deep' in node_class:
                 topnode_color = prefs['NodeColourDeepColor'].value()
@@ -689,6 +695,17 @@ n['target'].setValue(t.fullName())''')
         pointer['tile_color'].setValue(topnode_color)
 
 
+def create_dots():
+    # Create dot nodes
+    nodes = nuke.selectedNodes()
+    unselect()
+    dots = list()
+    for node in nodes:
+        select([node])
+        dot = nuke.createNode('Dot')
+        dots.append(dot)
+        unselect(dot)
+    select(dots)
 
 
 
