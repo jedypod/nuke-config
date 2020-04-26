@@ -7,7 +7,7 @@ I've been a Compositor, Compositing TD, Compositing Lead, Compositing Supervisor
 # About
 There is some documentation in the markdown files [in the doc folder](/doc).
 
-Organizationally, the [tools](/tools) folder contains python scripts. Every ffolder in here is loaded on launch by the menu.py. There are two modules: [nuketools](/tools/python/nuketools), and [nukepedia](/tools/python/nukepedia). Nuketools are tools I have written, and Nukepedia includes a few very useful scripts from other authors (sometimes with a few modifications). [toolsets](/toolsets) includes Nuke toolsets (gizmos as groups). Here, [jedsmith](/toolsets/jedsmith) contains tools I've written, and nukepedia includes tools from [Nukededia](http://www.nukepedia.com).
+Organizationally, the [tools](/tools) folder contains python scripts. Every folder in here is loaded on launch by the menu.py. There are two modules: [nuketools](/tools/python/nuketools), and [nukepedia](/tools/python/nukepedia). Nuketools are tools I have written, and Nukepedia includes a few very useful scripts from other authors (sometimes with a few modifications). [toolsets](/toolsets) includes Nuke toolsets (gizmos as groups). Here, [jedsmith](/toolsets/jedsmith) contains tools I've written, and [nukepedia](/toolsets/nukepedia) includes tools from [Nukededia](http://www.nukepedia.com).
 
 # Installation
 
