@@ -461,6 +461,10 @@ class BackdropPanel(QtWidgets.QDialog):
             self.save_and_quit()
         if ctrl and key == QtCore.Qt.Key_S:
             self.save()
+            self.close()
+        if alt and key == QtCore.Qt.Key_A:
+            self.save()
+            self.close()
 
 
     def quit(self):
