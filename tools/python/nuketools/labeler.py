@@ -79,6 +79,10 @@ class LabelPanel(QtWidgets.QDialog):
             self.set_label()
             self.close()
 
+        if alt and key == QtCore.Qt.Key_A:
+            self.set_label()
+            self.close()
+
     def eventFilter(self, object, event):
         if event.type() in [QtCore.QEvent.WindowDeactivate, QtCore.QEvent.FocusOut]:
             self.close()
