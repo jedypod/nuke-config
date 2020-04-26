@@ -32,7 +32,8 @@ nuke.menu('Nuke').addCommand('Edit/Node/DAG/Align/Right', 'dag.align("right")', 
 nuke.menu('Nuke').addCommand('Edit/Node/DAG/Align/Up', 'dag.align("up")', 'ctrl+shift+up', shortcutContext=2)
 nuke.menu('Nuke').addCommand('Edit/Node/DAG/Align/Down', 'dag.align("down")', 'ctrl+shift+down', shortcutContext=2)
 nuke.menu('Nuke').addCommand('Edit/Node/DAG/Snap to Grid', 'dag.snap_to_grid()', 'alt+s', shortcutContext=2)
-nuke.menu('Nuke').addCommand('Edit/Node/DAG/Connect to Closest', 'dag.connect_to_closest()', 'meta+shift+y', shortcutContext=2)
+nuke.menu('Nuke').addCommand('Edit/Node/DAG/Connect Selected to Closest', 'dag.connect_to_closest()', 'meta+shift+y', shortcutContext=2)
+nuke.menu('Nuke').addCommand('Edit/Node/DAG/Connect Closest to Selected', 'dag.connect_to_closest(direction=1)', 'alt+meta+shift+y', shortcutContext=2)
 nuke.menu('Nuke').addCommand('Edit/Node/DAG/Paste To Selected', 'dag.paste_to_selected()', 'alt+v', shortcutContext=2)
 
 nuke.menu('Nuke').addCommand('Edit/Select Similar/Select Similar Class', 'nuke.selectSimilar(nuke.MATCH_CLASS)', 'alt+meta+shift+s', shortcutContext=2)
@@ -172,22 +173,22 @@ def open_panels(nodes=None):
 
 
 def close_panels(nodes=None):
-    # Close properties panels
+    # Close all properties panels
     if not nodes:
-        nodes = nuke.selectedNodes()
-    if not nodes:
-        # Close all panels if no nodes selected
         nodes = nuke.allNodes(recurseGroups=True)
     for node in nodes:
         node.hideControlPanel()
 
 
 def select_similar_position(axis=1):
-    node = nuke.selectedNode()
-    if not node:
+    nodes = nuke.selectedNodes()
+    if not nodes:
         return
+    node = nodes[0]
+    prev_selected = nodes[1:]
     threshold = 1
     unselect()
+    select(prev_selected)
     if axis:
         same_pos_nodes = {n:n.xpos() for n in nuke.allNodes() if abs(n.ypos()- node.ypos()) < threshold}
     else:
@@ -249,11 +250,14 @@ def get_closest_node(node):
     return nuke.toNode(min(distances, key=distances.get))
 
 
-def connect_to_closest():
+def connect_to_closest(direction=0):
     # Connect next available input of all selected nodes to the closest node
     for node in nuke.selectedNodes():
         closest = get_closest_node(node)
-        node.connectInput(0, closest)
+        if direction:
+            closest.setInput(0, node)
+        else:
+            node.connectInput(0, closest)
 
 
 def paste_to_selected():
@@ -674,21 +678,29 @@ def create_pointer():
             if 'deep' in node_class:
                 topnode_color = prefs['NodeColourDeepColor'].value()
         
-        panel = nuke.Panel('Create Pointer')
-        panel.addSingleLineInput('title', pointer_title)
-        if panel.show():
-            pointer_title = panel.value('title')
-        else:
-            return
+        if len(nodes) == 1:
+            # Only prompt the user for info if there is one selected node
+            panel = nuke.Panel('Create Pointer')
+            panel.addSingleLineInput('title', pointer_title)
+            if panel.show():
+                pointer_title = panel.value('title')
+            else:
+                return
+
+        has_downstream = len(select_downstream(target)) > 0
+        unselect()
+
+        if not has_downstream:
+            target.setSelected(True)
 
         # create anchor node
-        unselect()
-        target.setSelected(True)
         anchor = nuke.createNode('NoOp', 'name ___anchor_{0} icon Output.png label "<font size=7>\[value title]"'.format(randstr))
         anchor.addKnob(nuke.Tab_Knob('anchor_tab', 'anchor'))
         anchor.addKnob(nuke.String_Knob('title', 'title'))
         anchor['title'].setValue(pointer_title)
         anchor['tile_color'].setValue(topnode_color)
+        anchor.setInput(0, target)
+        anchor.setSelected(True)
 
         # create pointer node
         pointer = nuke.createNode('NoOp', 'name ___pointer_{0} hide_input true icon Input.png'.format(randstr))
