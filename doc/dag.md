@@ -108,17 +108,35 @@ You can select any node that is aligned vertically press the shortcut and all no
 
 Again a super simple script but this one has saved my ass a few times. It connects many selected nodes to the node in closest proximity. You can connect the input or the output. Very useful for creting contact sheets of many shots or doing balancegrades.
 
-## select_downstream
-![select_downstream](/doc/images/dag.select_downstream.gif)
-## select_downstream2
-![select_downstream2](/doc/images/dag.select_downstream2.gif)
-## select_upstream
-![select_upstream](/doc/images/dag.select_upstream.gif)
-## select_unused
-![select_unused](/doc/images/dag.select_unused.gif)
-## bookmarks
-![bookmarks](/doc/images/dag.bookmarks.gif)
-## anchor_pointer
-![anchor_pointer](/doc/images/dag.anchor_pointer.gif)
-## labeler
-![labeler](/doc/images/dag.labeler.gif)
+
+## Select Upstream
+![Select Upstream](/doc/images/dag.select_upstream.gif)
+- `alt+meta+shift+u`: Select upstream nodes of selected node(s). 
+
+Sometimes it's useful to see what nodes are dependencies of a specific point in the node graph. That is, at a specific position in the node graph, what nodes are required to compute that location? This includes expression links and hidden input nodes.
+
+
+## Select Unused Nodes
+![Select Unused Nodes](/doc/images/dag.select_unused.gif)
+- `ctrl+alt+meta+shift+u`: Select all unused nodes.
+
+Given a selection of one or more nodes, select all nodes that are not part of the tree. This can be useful to clean up a script. If you select the final write node and run this, you can easily see what nodes are not contributing to the final output.
+
+## Select Downstream Nodes
+![Select Downstream Nodes](/doc/images/dag.select_downstream2.gif)
+- `alt+meta+shift+p`: Select all downstream nodes of selected node(s).
+
+This can be useful to select all nodes that are dependent on the selected nodes. 
+![Select Downstream Nodes 2](/doc/images/dag.select_downstream.gif)
+It can also be used to see what is downstream of a specific point in a node graph.
+
+
+## Location Bookmarks
+![Location Bookmarks](/doc/images/dag.bookmarks.gif)
+- `ctrl+shift+[1-5]` - Set a location bookmark in the nodegraph.
+- `ctrl+[1-5]` - Jump to a bookmarked nodegraph location.
+
+If you have a giant node graph it can be useful to set up location bookmarks so that you can quickly jump between different locations in your script. 
+
+This tool is actually just setting up shortcuts for the built-in `nukescripts.bookmarks` function. You can use the `j` shortcut key to search for bookmarks, but I find keyboard shortcuts to be more efficient.
+
