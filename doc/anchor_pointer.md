@@ -47,6 +47,7 @@ It turns out if you put a python expression in there that executes some code but
 The anchor node is very simple. It's a `NoOp` with a single knob which specifies the title.
 
 ![Pointer Node UI](/doc/images/screenshot_pointer_ui.png)
+
 The pointer node connects to the anchor node. It has a few knobs:
 - `target`: The name of the node it is anchored to.
 - `connect`: Reconnects the input of the pointer to it's anchor. This script is run automatically.
@@ -54,6 +55,8 @@ The pointer node connects to the anchor node. It has a few knobs:
 - `set target`: Set's the target of this pointer to a different node.
 
 #### Caution
+![Anchor Warning Message](/doc/images/screenshot_anchor_warning.png)
+
 If there are more than 5 nodes upstream of the node you are trying to anchor, a warning message will be displayed. 
 
 Generally speaking, you should only anchor an input to your script. A read node, a camera, a geometry, a roto, etc. 
