@@ -9,7 +9,7 @@ The shortcuts are all defined at the top of the module and are easy to customize
 
 **How can you make you're hand do that?!** I use my thumb to press the meta key, and then rotate my thumb right to toggle alt on or off. It's easy to press meta+alt with a thumb on both keys.
 
-I also remap my ctrl key to capslock. It makes my hand hurt less. On linux: `setxkbmap -option ctrl:nocaps`
+I also remap my ctrl key to capslock. It makes my pinky finger hurt less. On linux: `setxkbmap -option ctrl:nocaps`
 
 Here's some documentation on all the things this python module does.
 
@@ -122,12 +122,15 @@ Sometimes it's useful to see what nodes are dependencies of a specific point in 
 
 Given a selection of one or more nodes, select all nodes that are not part of the tree. This can be useful to clean up a script. If you select the final write node and run this, you can easily see what nodes are not contributing to the final output.
 
+Note that backdrop nodes and dot nodes with labels are not selected.
+
 ## Select Downstream Nodes
 ![Select Downstream Nodes](/doc/images/dag.select_downstream2.gif)
 - `alt+meta+shift+p`: Select all downstream nodes of selected node(s).
 
-This can be useful to select all nodes that are dependent on the selected nodes. 
+This can be useful to select all nodes that are dependent on the selected node(s). 
 ![Select Downstream Nodes 2](/doc/images/dag.select_downstream.gif)
+
 It can also be used to see what is downstream of a specific point in a node graph.
 
 
@@ -139,4 +142,3 @@ It can also be used to see what is downstream of a specific point in a node grap
 If you have a giant node graph it can be useful to set up location bookmarks so that you can quickly jump between different locations in your script. 
 
 This tool is actually just setting up shortcuts for the built-in `nukescripts.bookmarks` function. You can use the `j` shortcut key to search for bookmarks, but I find keyboard shortcuts to be more efficient.
-
