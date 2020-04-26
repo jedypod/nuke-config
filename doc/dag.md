@@ -106,7 +106,7 @@ You can select any node that is aligned vertically press the shortcut and all no
 - `meta+shift+y`: Connect selected nodes to closest.
 - `meta+shift+alt+y`: Connect closest node to selected.
 
-Again a super simple script but this one has saved my ass a few times. It connects many selected nodes to the node in closest proximity. You can connect the input or the output. Very useful for creting contact sheets of many shots or doing balancegrades.
+Again a super simple script but this one has saved my ass a few times. It connects many selected nodes to the node in closest proximity. You can connect the input or the output. Very useful for creating contact sheets of many shots or doing balancegrades.
 
 
 ## Select Upstream
