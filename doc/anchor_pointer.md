@@ -24,7 +24,7 @@ I struggled for a while to find a way of automatically reconnecting nodes with h
 Previously I had been using the [hidden_input_handler.py](https://gist.github.com/jedypod/29187fa8c82bbbf4bf5e), which overrides the built-in cut/copy/paste functions to achieve this. This always bothered me since it's pretty extreme overriding default functions in this way. 
 
 #### A Saga of knobChanged callbacks
-Of course there is the obvious solution, which relies on a python knobChanged callback in the node to reconnect itself to it's target. 
+Of course there is the obvious solution, which relies on a python knobChanged callback in the node to reconnect itself to it's target. This is the approach Stamps uses.
 
 Over the years I have optimistically used this approach for many things and every time it ends up in pain and suffering. With production sized Nuke scripts, knobChanged callbacks are always dangerous, especially for nodes that have many copies of each other. 
 
