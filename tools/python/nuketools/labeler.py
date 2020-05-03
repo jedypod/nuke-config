@@ -67,7 +67,7 @@ class LabelPanel(QtWidgets.QDialog):
         # Handle keyboard events.
         key = event.key()
         ctrl = bool(event.modifiers() & QtCore.Qt.ControlModifier)
-
+        alt = bool(event.modifiers() & QtCore.Qt.AltModifier)
         if key == QtCore.Qt.Key_Escape:
             self.close()
         
@@ -79,9 +79,6 @@ class LabelPanel(QtWidgets.QDialog):
             self.set_label()
             self.close()
 
-        if alt and key == QtCore.Qt.Key_A:
-            self.set_label()
-            self.close()
 
     def eventFilter(self, object, event):
         if event.type() in [QtCore.QEvent.WindowDeactivate, QtCore.QEvent.FocusOut]:

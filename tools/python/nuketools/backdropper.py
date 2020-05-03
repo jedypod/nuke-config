@@ -455,6 +455,7 @@ class BackdropPanel(QtWidgets.QDialog):
         ctrl = bool(event.modifiers() & QtCore.Qt.ControlModifier)
         alt = bool(event.modifiers() & QtCore.Qt.AltModifier)
         shift = bool(event.modifiers() & QtCore.Qt.ShiftModifier)
+        
         if key == QtCore.Qt.Key_Escape:
             self.quit()
         if (key == QtCore.Qt.Key_Return or key == QtCore.Qt.Key_Enter) and ctrl:
