@@ -15,8 +15,3 @@ for module in modules:
         nuke.tprint('Exception occured loading module \n\t{0}\n\t{1}\n\tContinueing startup...'.format(module, exc))
         pass
 del module
-
-
-
-
-from stamps import *
