@@ -61,7 +61,8 @@ nuke.menu('Viewer').addCommand("Swap View", "dag.swap_view()", "shift+q")
 
 nuke.menu('Nodes').addCommand( 'Transform/Transform', 'dag.create_transform()', 't')
 
-nuke.menu('Nodes').addCommand('Other/Dots', 'dag.create_dots()', 'alt+d', shortcutContext=2)
+nuke.menu('Nodes').addCommand('Other/Create Dots', 'dag.create_dots()', 'alt+d', shortcutContext=2)
+nuke.menu('Nodes').addCommand('Other/Create Side Dots', 'dag.create_dots(side=True)', 'alt+shift+d', shortcutContext=2)
 
 
 # DAG Position Commands
@@ -262,15 +263,18 @@ def connect_to_closest(direction=0):
 
 def paste_to_selected():
     nodes = nuke.selectedNodes()
+    all_nodes = nuke.allNodes()
     unselect()
-    pasted = list()
     for node in nodes:
         node.setSelected(True)
-        pasted.append(nuke.nodePaste('%clipboard'))
+        nuke.nodePaste('%clipboard')
         unselect()
-    for node in pasted:
-        node.setSelected(True)
-
+    if not nodes:
+        nuke.nodePaste('%clipboard')
+    # Select pasted nodes
+    select(all_nodes)
+    nuke.invertSelection()
+    
 
 def align(direction):
     # Align nodes to the farthest outlier in the specified direction.
@@ -734,19 +738,26 @@ n['target'].setValue(t.fullName())''')
         pointer['tile_color'].setValue(topnode_color)
 
 
-def create_dots():
+def create_dots(side=False):
     # Create dot nodes
     nodes = nuke.selectedNodes()
     unselect()
     dots = list()
     for node in nodes:
-        select([node])
+        pos = get_pos(node)
+        if not side:
+            select([node])
         dot = nuke.createNode('Dot', inpanel=False)
+        if side:
+            set_pos(dot, pos[0] - grid[0], pos[1])
+            dot.setInput(0, node)
+        else:
+            set_pos(dot, pos[0], pos[1] + grid[1]*2)
         dots.append(dot)
         unselect(dot)
     select(dots)
     if not nodes:
-    	dot = nuke.createNode('Dot', inpanel=False)
+        dot = nuke.createNode('Dot', inpanel=False)
 
 
 
