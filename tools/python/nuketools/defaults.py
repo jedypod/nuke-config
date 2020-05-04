@@ -22,6 +22,7 @@ knob_defaults = {
                 'EdgeBlur',
                 'Emboss',
                 'FilterErode',
+                'FrameBlend',
                 'Gamma',
                 'Glint',
                 'IDistort',
