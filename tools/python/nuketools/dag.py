@@ -35,6 +35,7 @@ nuke.menu('Nuke').addCommand('Edit/Node/DAG/Snap to Grid', 'dag.snap_to_grid()',
 nuke.menu('Nuke').addCommand('Edit/Node/DAG/Connect Selected to Closest', 'dag.connect_to_closest()', 'meta+shift+y', shortcutContext=2)
 nuke.menu('Nuke').addCommand('Edit/Node/DAG/Connect Closest to Selected', 'dag.connect_to_closest(direction=1)', 'alt+meta+shift+y', shortcutContext=2)
 nuke.menu('Nuke').addCommand('Edit/Node/DAG/Paste To Selected', 'dag.paste_to_selected()', 'alt+v', shortcutContext=2)
+nuke.menu('Nuke').addCommand('Edit/Node/DAG/Read from Write', 'dag.read_from_write()', 'alt+r', shortcutContext=2)
 
 nuke.menu('Nuke').addCommand('Edit/Select Similar/Select Similar Class', 'nuke.selectSimilar(nuke.MATCH_CLASS)', 'alt+meta+shift+s', shortcutContext=2)
 nuke.menu('Nuke').addCommand('Edit/Select Similar/Select Similar Color', 'nuke.selectSimilar(nuke.MATCH_COLOR)', 'alt+meta+shift+c', shortcutContext=2)
@@ -781,6 +782,38 @@ def create_transform():
                 transform_nodes.append(new_node)
         unselect()
     select(transform_nodes)
+
+
+def read_from_write():
+    # Create read nodes from selected write nodes
+    nodes = [n for n in nuke.selectedNodes() if 'file' in n.knobs()]
+    excluded = ['Read', ]
+    for node in nodes:
+        if node.Class() in excluded:
+            continue
+        pos = get_pos(node)
+        filepath = node['file'].getValue()
+        dirname = os.path.dirname(filepath)
+        filename = os.path.basename(filepath)
+        if '#' in filename:
+            is_sequence = True
+            filename_base = filename.split('#')[0]
+        elif r'%' in filename:
+            is_sequence = True
+            filename_base = filename.split(r'%')[0]
+        else:
+            is_sequence = False
+        if is_sequence:
+            sequences = nuke.getFileNameList(dirname)
+            for seq in sequences:
+                if seq.startswith(filename_base):
+                    filepath = os.path.join(dirname, seq)
+                    break
+        read = nuke.createNode('Read', 'file {{{0}}}'.format(filepath), inpanel=False)
+        set_pos(read, pos[0], pos[1] + grid[1]*4)
+        read['colorspace'].setValue(node['colorspace'].value())
+        read['raw'].setValue(node['raw'].getValue())
+
 
 
 
