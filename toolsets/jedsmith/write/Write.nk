@@ -23,7 +23,7 @@ Group {
  addUserKnob {3 pad t "frame padding" -STARTLINE}
  pad 5
  addUserKnob {35 file_type l "file type" M {"exr : zip" "knobs this.Write \{file_type exr datatype 0 compression 1 metadata 4 interleave 1 create_directories 1\}" "exr : dwaa" "knobs this.Write \{file_type exr datatype 0 compression 7 dw_compression_level 45 metadata 4 interleave 0 create_directories 1\}" hdr "knobs this.Write \{file_type hdr\}" jpeg "knobs this.Write \{file_type jpeg _jpeg_quality 0.9 _jpeg_sub_sampling 1\}" "tiff : uint8" "knobs this.Write \{file_type tiff datatype 0\}" "tiff : uint16" "knobs this.Write \{file_type tiff datatype 1\}" "png : uint8" "knobs this.Write \{file_type png\}" ""}}
- addUserKnob {35 out_presets l "out presets" t "Output presets." -STARTLINE M {topnode "knobs this \{folder \{\[file dirname \[value \[topnode].file]]\} name \{\[file tail \[value \[topnode].file]]\}\}"}}
+ addUserKnob {35 out_presets l "out presets" t "Output presets." -STARTLINE M {topnode "knobs this \{folder \{\[file dirname \[value \[topnode].file]]\} name \{\[lrange \[file split \[file rootname \[value \[topnode].file]]] end end]\}\}"}}
  addUserKnob {26 framerange_label l framerange T " "}
  addUserKnob {35 framerange l "" -STARTLINE M {input "knobs this \{start first_frame end last_frame\}" root "knobs this \{start root.first_frame end root.last_frame\}" ""}}
  addUserKnob {3 start l "" -STARTLINE}
