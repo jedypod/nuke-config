@@ -5,6 +5,7 @@
 - [Anchor / Pointer](/doc/anchor_pointer.md) - A simple system for creating hidden input pointer nodes that auto-connect to anchors.
 - [Labeler](/doc/labeler.md) - A simple widget for modifying the label knob of the selected node(s). 
 - [Backdropper](/doc/backdropper.md) - A tool for creating and modifying backdrop nodes.
+- [Find Replace](/doc/find_replace.md) - A simple tool to find and replace strings in nodes.
 
 ## ToolSets
 - PlanarProjection - Reconciles points from 3d to 2d
