@@ -811,7 +811,12 @@ def read_from_write():
                     break
         read = nuke.createNode('Read', 'file {{{0}}}'.format(filepath), inpanel=False)
         set_pos(read, pos[0], pos[1] + grid[1]*4)
-        read['colorspace'].setValue(node['colorspace'].value())
+        # match colorspace
+        colorspace = node['colorspace'].value()
+        if '(' in colorspace and ')' in colorspace:
+            # parse out role
+            colorspace = colorspace.split('(')[1].split(')')[0]
+        read['colorspace'].setValue(colorspace)
         read['raw'].setValue(node['raw'].getValue())
 
 
