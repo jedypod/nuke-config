@@ -53,9 +53,6 @@ nuke.menu('Nodes').addCommand('Merge/Unpremult', 'nuke.createNode("Unpremult", i
 nuke.menu('Nodes').addCommand('Channel/ChannelMerge', 'nuke.createNode("ChannelMerge", "operation union", inpanel=False)', 'alt+meta+c', shortcutContext=2)
 nuke.menu('Nodes').addCommand('Filter/Blur', "nuke.createNode('Blur')", 'b', shortcutContext=2)
 nuke.menu('Nodes').addCommand('Color/ColorLookup', 'nuke.createNode("ColorLookup")', 'meta+alt+shift+c', shortcutContext=2)
-nuke.menu('Nodes').addCommand('Color/Exposure', lambda: nuke.nodePaste(os.path.expanduser("~/.nuke/ToolSets/Color/Exposure.nk")), 'meta+e', shortcutContext=2)
-nuke.menu('Nodes').addCommand('Color/Mult', lambda: nuke.nodePaste(os.path.expanduser("~/.nuke/ToolSets/Color/Mult.nk")), 'alt+meta+g', shortcutContext=2)
-nuke.menu('Nodes').addCommand('Filter/BlurPercent', lambda: nuke.nodePaste(os.path.expanduser("~/.nuke/ToolSets/Filter/BlurPercent.nk")), 'alt+meta+b', shortcutContext=2)
 nuke.menu('Nodes').addCommand('Channel/Shuffle_', 'nuke.createNode("Shuffle")', 'h', shortcutContext=2)
 nuke.menu('Nodes').addCommand('Channel/ShuffleCopy_', 'nuke.createNode("ShuffleCopy", "label [value\ in]\ |\ [value\ in2]\ ->\ [value\ out]")', 'alt+meta+h', shortcutContext=2)
 nuke.menu('Nodes').addCommand('Color/CCorrect', 'nuke.createNode("CCorrect", "channels rgb")', 'alt+meta+c', shortcutContext=2)
@@ -69,3 +66,10 @@ nuke.menu('Nodes').addCommand('Filter/Dilate', 'nuke.createNode("Dilate")', 'alt
 nuke.menu('Nodes').addCommand('Time/FrameHold', 'nuke.createNode("FrameHold", "first_frame {0}".format(nuke.frame()), inpanel=False)', 'meta+alt+shift+f', icon="FrameHold.png", shortcutContext=2)
 nuke.menu('Nodes').addCommand('Other/StickyNote', 'nuke.createNode("StickyNote", "tile_color 0x40454aff note_font_size 14 label <left>")', 'meta+n', shortcutContext=2)
 nuke.menu('Nodes').addCommand('Other/Label Dot', 'nuke.createNode("Dot", "hide_input 1 note_font_size 96 tile_color 0xff")', 'ctrl+meta+alt+shift+d', shortcutContext=2)
+nuke.menu('Nodes').addCommand('Draw/Bezier', 'nuke.createNode("Bezier")', 'meta+alt+b', shortcutContext=2)
+
+
+# Shortcuts for toolsets
+# nuke.menu('Nodes').addCommand('Color/Exposure', lambda: nuke.nodePaste(os.path.expanduser("~/.nuke/ToolSets/Color/Exposure.nk")), 'meta+e', shortcutContext=2)
+# nuke.menu('Nodes').addCommand('Color/Mult', lambda: nuke.nodePaste(os.path.expanduser("~/.nuke/ToolSets/Color/Mult.nk")), 'alt+meta+g', shortcutContext=2)
+# nuke.menu('Nodes').addCommand('Filter/BlurPercent', lambda: nuke.nodePaste(os.path.expanduser("~/.nuke/ToolSets/Filter/BlurPercent.nk")), 'alt+meta+b', shortcutContext=2)
