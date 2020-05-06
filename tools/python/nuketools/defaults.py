@@ -32,6 +32,7 @@ knob_defaults = {
                 'Roto',
                 'Sharpen',
                 'Soften',
+                'TransformMasked',
                 'VectorBlur',
                 'ZBlur',
                 'ZDefocus2',
@@ -100,6 +101,10 @@ node_defaults = {
         'brush_source':'3',
         'cliptype': 'no clip',
         'toolbox': '''clone { { brush ltt 2 h 0 } { clone ltt 2 h 0} { blur ltt 2} { sharpen ltt 2 h 0}{ smear ltt 2 h 0} { eraser ltt 2 h 0} { reveal ltt 2 h 0} { dodge ltt 2 h 0} { burn ltt 2 h 0} }''', 
+    },
+    'Bezier ': {
+        'cliptype': 'no clip', 
+        'output': 'rgba', 
     },
     'SoftClip': {
         'conversion': 'preserve hue and saturation',
