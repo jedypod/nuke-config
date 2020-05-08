@@ -22,6 +22,14 @@ nuke.menu('Nuke').findItem('Workspace').addCommand("Toggle Fullscreen", 'nuke.to
 nuke.menu('Nuke').addCommand('File/Show Status Bar', 'import hiero; hiero.ui.mainStatusBar.show()')
 nuke.menu('Nuke').addCommand('File/Hide Status Bar', 'import hiero; hiero.ui.mainStatusBar.hide()')
 
+# Default to hidden status bar
+# The hiero module is not available on startup, so it's not possible to do this 
+# using a more normal approach...
+def hide_status_bar():
+    import hiero
+    hiero.ui.mainStatusBar.hide()
+nuke.addOnCreate(hide_status_bar, nodeClass='Root')
+
 
 # Viewer Shortcuts
 nuke.menu('Viewer').addCommand('Next Frame', 'nuke.activeViewer().frameControl(1)', 'shift+f')
