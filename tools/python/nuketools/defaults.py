@@ -159,7 +159,7 @@ label_defaults = {
     'Colorspace': r'[value colorspace_in] -> [value colorspace_out]',
     'Dilate':'[value size]',
     'FilterErode':'[value size]',
-    'FrameRange': '[knob first_frame]-[knob last_frame]',
+    'FrameRange': '[value first_frame]-[value last_frame]',
     'OCIOColorSpace': r'[value in_colorspace] -> [value out_colorspace]',
     'OCIODisplay': '[value display]: [value view]',
     'OCIOFileTransform': '[file tail [value file]]\n[knob direction]',
@@ -224,8 +224,8 @@ default_formats = [
 for f in default_formats:
     nuke.addFormat(f)
 # Set default resolution
-nuke.knobDefault('Root.format', 'HD_1080p')
-nuke.knobDefault('Root.proxy_format', 'SD_540p')
+nuke.knobDefault('root.format', 'HD_1080p')
+nuke.knobDefault('root.proxy_format', 'SD_540p')
 
 
 
