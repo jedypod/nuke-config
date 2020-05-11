@@ -224,8 +224,8 @@ default_formats = [
 for f in default_formats:
     nuke.addFormat(f)
 # Set default resolution
-nuke.knobDefault('root.format', 'HD_1080p')
-nuke.knobDefault('root.proxy_format', 'SD_540p')
+nuke.knobDefault('Root.format', 'HD_1080p')
+nuke.knobDefault('Root.proxy_format', 'SD_540p')
 
 
 
