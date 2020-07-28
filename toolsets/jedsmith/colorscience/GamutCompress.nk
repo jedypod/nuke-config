@@ -1,1847 +1,233 @@
 set cut_paste_input [stack 0]
-version 12.1 v2
 push $cut_paste_input
 Group {
- name GamutCompress1
- selected true
- xpos 3703
- ypos 94
+ name GamutCompress
  addUserKnob {20 GamutCompress}
- addUserKnob {41 src_gamut l "src gamut" T SOURCE_GAMUT_GamutToXYZ.gamut}
- addUserKnob {35 target_gamut_presets l target t "Cboose target gamut to compress into" M {gamut/ACES "knobs this \{rxy \{0.73470 0.26530\} gxy \{0.00000 1.00000\} bxy \{0.00010 -0.07700\} wxy \{0.32168 0.33767\} target_gamut_name \{ACES\} target_gamut \{ACES\}\}" gamut/ACEScg "knobs this \{rxy \{0.713 0.293\} gxy \{0.165 0.830\} bxy \{0.128 0.044\} wxy \{0.32168 0.33767\} target_gamut_name \{ACEScg\} target_gamut \{ACEScg\}\}" "gamut/Filmlight E-Gamut" "knobs this \{ rxy \{0.8 0.3177\} gxy \{0.18 0.9\} bxy \{0.065 -0.0805\} wxy \{0.3127 0.329\} target_gamut_name \{Filmlight E target_gamut_name \{Filt E-Gamut\}\}" gamut/Rec709 "knobs this \{rxy \{0.64000 0.33000\} gxy \{0.30000 0.60000\} bxy \{0.15000 0.06000\} wxy \{0.31270 0.32900\} target_gamut_name \{Rec709\} target_gamut \{Rec709\}\}" gamut/Rec2020 "knobs this \{rxy \{0.70800 0.29200\} gxy \{0.17000 0.79700\} bxy \{0.13100 0.04600\} wxy \{0.31270 0.32900\} target_gamut_name \{Rec2020\} target_gamut \{Rec2020\}\}" gamut/P3D60 "knobs this \{rxy \{0.68000 0.32000\} gxy \{0.26500 0.69000\} bxy \{0.15000 0.06000\} wxy \{0.32168 0.33767\} target_gamut_name \{P3D60\} target_gamut \{P3D60\}\}" gamut/P3D65 "knobs this \{rxy \{0.68000 0.32000\} gxy \{0.26500 0.69000\} bxy \{0.15000 0.06000\} wxy \{0.31270 0.32900\} target_gamut_name \{P3D65\} target_gamut \{P3D65\}\}" gamut/P3DCI "knobs this \{rxy \{0.68000 0.32000\} gxy \{0.26500 0.69000\} bxy \{0.15000 0.06000\} wxy \{0.31400 0.35100\} target_gamut_name \{P3DCI\} target_gamut \{P3DCI\}\}" gamut/ArriAlexaWideGamut "knobs this \{rxy \{0.68400 0.31300\} gxy \{0.22100 0.84800\} bxy \{0.08610 0.10200\} wxy \{0.31270 0.32900\} target_gamut_name \{ArriAlexaWideGamut\} target_gamut \{ArriAlexaWideGamut\}\}" "gamut/AdobeRGB " "knobs this \{rxy \{0.6400 0.3300\} gxy \{0.2100 0.7100\} bxy \{0.1500 0.0600\} wxy \{0.3127 0.3290\} target_gamut_name \{AdobeRGB\} target_gamut \{AdobeRGB\}\}" gamut/AdobeWideGamutRGB "knobs this \{rxy \{0.7347 0.2653\} gxy \{0.1152 0.8264\} bxy \{0.1566 0.0177\} wxy \{0.3457 0.3585\} target_gamut_name \{AdobeWideGamutRGB\} target_gamut \{AdobeWideGamutRGB\}\}" gamut/ROMM "knobs this \{rxy \{7.34700000e-01 2.65300000e-01\} gxy \{1.59600000e-01  8.40400000e-01\} bxy \{3.66000000e-02 1.00000000e-04\} wxy \{0.3457 0.3585\} target_gamut_name \{ROMM\} target_gamut \{ROMM\}\}" gamut/RIMM "knobs this \{rxy \{7.34700000e-01 2.65300000e-01\} gxy \{1.59600000e-01 8.40400000e-01\} bxy \{3.66000000e-02 1.00000000e-04\} wxy \{0.3457 0.3585\} target_gamut_name \{RIMM\} target_gamut \{RIMM\}\}" gamut/ERIMM "knobs this \{rxy \{7.34700000e-01 2.65300000e-01\} gxy \{1.59600000e-01 8.40400000e-01\} bxy \{3.66000000e-02 1.00000000e-04\} wxy \{0.3457 0.3585\} target_gamut_name \{ERIMM\} target_gamut \{ERIMM\}\}" gamut/ProPhotoRGB "knobs this \{rxy \{0.734699 0.265301\} gxy \{0.159597 0.840403\} bxy \{0.036598 0.000105\} wxy \{0.345704 0.358540\} target_gamut_name \{ProPhotoRGB\} target_gamut \{ProPhotoRGB\}\}" gamut/REDDRAGONcolor "knobs this \{rxy \{0.753044222785 0.327830576682\} gxy \{0.299570228481 0.700699321956\} bxy \{0.079642066735 -0.0549379510888\} wxy \{0.321683187724 0.337673316035\} target_gamut_name \{REDDRAGONcolor\} target_gamut \{REDDRAGONcolor\}\}" gamut/REDDRAGONcolor2 "knobs this \{rxy \{0.753044491143 0.327831029513\} gxy \{0.299570490451 0.700699415614\} bxy \{0.145011584278 0.0510971250879\} wxy \{0.321683210353 0.337673610062\} target_gamut_name \{REDDRAGONcolor2\} target_gamut \{REDDRAGONcolor2\}\}" gamut/REDcolor "knobs this \{rxy \{0.699747001291 0.329046930313\} gxy \{0.304264039024 0.623641145129\} bxy \{0.134913961296 0.0347174412813\} wxy \{0.321683289449 0.337673447208\} target_gamut_name \{REDcolor\} target_gamut \{REDcolor\}\}" gamut/REDcolor2 "knobs this \{rxy \{0.878682510476 0.32496400741\} gxy \{0.300888714367 0.679054755791\} bxy \{0.0953986946056 -0.0293793268343\} wxy \{0.321683289449 0.337673447208\} target_gamut_name \{REDcolor2\} target_gamut \{REDcolor2\}\}" gamut/REDcolor3 "knobs this \{rxy \{0.701181035906 0.329014155583\} gxy \{0.300600304652 0.683788834269\} bxy \{0.108154455624 -0.00868817578666\} wxy \{0.321683210353 0.337673610062\} target_gamut_name \{REDcolor3\} target_gamut \{REDcolor3\}\}" gamut/REDcolor4 "knobs this \{rxy \{0.701180591892 0.329013699116\} gxy \{0.300600395529 0.683788824257\} bxy \{0.145331946229 0.0516168036226\} wxy \{0.321683289449 0.337673447208\} target_gamut_name \{REDcolor4\} target_gamut \{REDcolor4\}\}" gamut/REDWideGamutRGB "knobs this \{rxy \{0.780308 0.304253\} gxy \{0.121595 1.493994\} bxy \{0.095612 -0.084589\} wxy \{0.3127 0.3290\} target_gamut_name \{REDWideGamutRGB\} target_gamut \{REDWideGamutRGB\}\}" gamut/GoProProtune "knobs this \{rxy \{0.69848046 0.19302645\} gxy \{0.32955538 1.02459662\} bxy \{0.10844263 -0.03467857\} wxy \{0.3127 0.329\} target_gamut_name \{GoProProtune\} target_gamut \{GoProProtune\}\}" gamut/CanonCinemaGamut "knobs this \{rxy \{0.74 0.27\} gxy \{0.17 1.14\} bxy \{0.08 -0.1\} wxy \{0.3127 0.329\} target_gamut_name \{CanonCinemaGamut\} target_gamut \{CanonCinemaGamut\}\}" gamut/SonySGamut "knobs this \{rxy \{0.73 0.28\} gxy \{0.14 0.855\} bxy \{0.1 -0.05\} wxy \{0.3127 0.329\} target_gamut_name \{SonySGamut\} target_gamut \{SonySGamut\}\}" gamut/SonySGamut3Cine "knobs this \{rxy \{0.766 0.275\} gxy \{0.225 0.8\} bxy \{0.089 -0.087\} wxy \{0.3127 0.329\} target_gamut_name \{SonySGamut3Cine\} target_gamut \{SonySGamut3Cine\}\}" gamut/PanasonicVGamut "knobs this \{rxy \{0.730 0.280\} gxy \{0.165 0.840\} bxy \{0.100 -0.030\} wxy \{0.3127 0.3290\} target_gamut_name \{PanasonicVGamut\} target_gamut \{PanasonicVGamut\}\}" gamut/XYZ "knobs this \{rxy \{0 0\} gxy \{0 0\} bxy \{0 0\} wxy \{0 0\} target_gamut_name \{XYZ\} target_gamut \{XYZ\}\}" "" ""}}
- addUserKnob {1 target_gamut_name l "" -STARTLINE +DISABLED}
- target_gamut_name ACEScg
- addUserKnob {6 compress_only l "compress only" t "No gamut conversion, just do the compression mapping.\n<b>INPUT</b>: CIE XYZ\n<b>OUTPUT</b>: CIE XYZ" +STARTLINE}
- addUserKnob {6 invert +STARTLINE}
+ addUserKnob {41 threshold t "Percentage of the outer gamut boundary to affect. A value of 0.2 means 20% of the outer gamut will be utilized for gamut compression." T compress.threshold}
+ addUserKnob {41 power t "Adjust the exponent of the compression function. 1 = Reinhard. Higher values have C2 continuity and result in a more \"aggressive\" curve which preserves more color purity or saturation.\n\nBe wary of high values if accurate inv\nersion is important to you." T compress.power}
+ addUserKnob {7 shd_rolloff l "shd rolloff" t "Shadow rolloff reduces the gamut compression effect below the specified pixel value. This reduces invertability issues with negative pixels in shadow grain." R 0 0.1}
+ shd_rolloff 0.03
+ addUserKnob {26 distance_limit_label l " " t "Specifies the maximum distance beyond the gamut boundary to map to the gamut boundary for each color component." T "<b>max distance limit"}
+ addUserKnob {41 cyan t "Maximum distance beyond the green-blue gamut boundary to compress to the gamut boundary." T compress.cyan}
+ addUserKnob {41 magenta t "Maximum distance beyond the blue-red gamut boundary to compress to the gamut boundary." T compress.magenta}
+ addUserKnob {41 yellow t "Maximum distance beyond the red-green gamut boundary to compress to the gamut boundary." T compress.yellow}
+ addUserKnob {22 reset t "Reset knobs to default values. Distance limits are calculated based on an the average of a selection of digital cinema cameras." T "n = nuke.thisNode()\nnuke.root().begin()\ndefaults = \{\n    'threshold': 0.2,\n    'power': 1.2,\n    'shd_rolloff': 0.03,\n    'cyan': 0.09,\n    'magenta':0.24,\n    'yellow': 0.12,\n\}\nfor k, v in defaults.items():\n    n\[k].setValue(v)" +STARTLINE}
  addUserKnob {26 ""}
- addUserKnob {26 compress_gamut_label l " " T "<b>Compress Gamut"}
- addUserKnob {35 preset t "gamut compression presets" M {""}}
- addUserKnob {7 threshold}
- threshold 1
- addUserKnob {7 slope}
- slope 0.785
- addUserKnob {41 limit T SoftCompress15.limit}
- addUserKnob {22 calc_limit l "Calculate Limit" t "Calculate the max saturation value" T "n = nuke.thisNode()\nnuke.root().begin()\nn.begin()\nct = nuke.toNode('CT')\nnuke.execute(ct, nuke.frame(), nuke.frame())\nmaxpx = ct\['maxlumapixvalue'].getValue()\n\nn\['limit'].setValue(maxpx\[1])" +STARTLINE}
- addUserKnob {26 ""}
- addUserKnob {26 purple_supression_label l " " T "<b>Suppress Purple"}
- addUserKnob {7 strength}
- addUserKnob {7 hue_phase}
- hue_phase 0.5
- addUserKnob {7 range}
- range 0.7
- addUserKnob {20 Chromaticities}
- addUserKnob {41 target_gamut l "target gamut" +DISABLED T TARGET_GAMUT_GamutToXYZ1.gamut}
- addUserKnob {26 target_chromaticities_label l " " T "<b>Target Gamut Chromaticities</b>"}
- addUserKnob {12 rxy l r t "Red xy chromaticity coordinates in CIE 1931 colorspace."}
- rxy {0.713 0.293}
- addUserKnob {12 gxy l g t "Green xy chromaticity coordinates in CIE 1931 colorspace."}
- gxy {0.165 0.83}
- addUserKnob {12 bxy l b t "Blue xy chromaticity coordinates in CIE 1931 colorspace."}
- bxy {0.128 0.044}
- addUserKnob {12 wxy l w t "Whitepoint xy chromaticity coordinates in CIE 1931 colorspace."}
- wxy {0.32168 0.33767}
- addUserKnob {13 primaryAngle}
- primaryAngle {{"(-(degrees(atan2(rxy.x - wxy.x, rxy.y-wxy.y))-180)+270)%360/360"} {"(-(degrees(atan2(gxy.x-wxy.x, gxy.y-wxy.y))-180)+270)%360/360"} {"(-(degrees(atan2(bxy.x-wxy.x, bxy.y-wxy.y))-180)+270)%360/360"}}
+ addUserKnob {4 direction M {forward inverse}}
+ addUserKnob {20 info_tab l Info}
+ addUserKnob {26 info_label l " " T "<style> a:link \{ color: #ccc \}</style>\n<font color=#ccc>\n<b>GamutCompress</b><br>\nmaps out of gamut colors back into gamut.\n<br><br><a href=https://github.com/jedypod/gamut-compress>Documentation</a>"}
+ addUserKnob {26 about_label l " " T "<style> a:link \{ color: #ccc \}</style>\n<font color=#ccc><br>\n<b>About</b><br>\nWritten by <a href=https://github.com/jedypod color=red>Jed Smith</a> <br> with <a href=https://community.acescentral.com/t/rgb-saturation-gamut-mapping-approach-and-a-comp-vfx-perspective>help</a> from the <a href=https://community.acescentral.com/c/aces-development-acesnext/vwg-aces-gamut-mapping-working-group>ACES Gamut Mapping VWG</a>"}
 }
- BackdropNode {
-  inputs 0
-  name BackdropNode1
-  tile_color 0x5e295fff
-  label "Purple Supress"
-  note_font_size 42
-  xpos 171
-  ypos 127
-  bdwidth 508
-  bdheight 598
- }
  Input {
   inputs 0
   name Input
   xpos -40
-  ypos -202
+  ypos -274
  }
- Dot {
-  name Dot6
-  label "  SRC GAMUT"
-  note_font "Helvetica Bold"
-  note_font_size 24
-  note_font_color 0xa5a5a501
-  xpos -6
-  ypos -136
- }
-set Ne8c7d90 [stack 0]
- Group {
-  name SOURCE_GAMUT_GamutToXYZ
-  label "\[value gamut] to XYZ\n"
-  xpos -40
-  ypos -83
-  disable {{parent.compress_only}}
-  addUserKnob {20 GamutToXYZ_tab l GamutToXYZ}
-  addUserKnob {4 gamut t "Choose gamut" M {XYZ ACES ACEScg "Filmlight E-Gamut" Rec709 Rec2020 P3D60 P3D65 P3DCI ArriAlexaWideGamut "AdobeRGB\t" AdobeWideGamutRGB ROMM RIMM ERIMM ProPhotoRGB REDDRAGONcolor REDDRAGONcolor2 REDcolor REDcolor2 REDcolor3 REDcolor4 REDWideGamutRGB GoProProtune CanonCinemaGamut SonySGamut SonySGamut3Cine PanasonicVGamut ""}}
-  gamut ACEScg
-  addUserKnob {6 invert +STARTLINE}
-  addUserKnob {41 matrix T ColorMatrix.matrix}
- }
-  Input {
-   inputs 0
-   name Input
-   xpos -40
-   ypos -10
-  }
-  ColorMatrix {
-   matrix {
-       {{curve(which) 1 0.9525524378 0.6624541879 0.7053968906 0.4123907983 0.6369580626 0.5049495697 0.4865709841 0.4451698363 0.6380076408 0.5766690373 0.7165006995 0.797760427 0.797760427 0.797760427 0.7976718545 0.5070186853 0.4462202489 0.4300414324 0.4581649601 0.4878340662 0.4517004192 0.7352752686 0.5022571683 0.7160496712 0.7064827085 0.5990839601 0.6796444654} {curve(which) 0 0 0.1340042055 0.1640413404 0.3575843275 0.1446169019 0.2646814585 0.2656676769 0.2771343887 0.2147038579 0.1855582297 0.1010205746 0.1351858526 0.1351858526 0.1351858526 0.1351878047 0.3587769568 0.3157556653 0.3700728714 0.3832037449 0.3432727158 0.3178463876 0.06860940903 0.2929667532 0.1296834797 0.1288010478 0.2489254922 0.1522114277} {curve(which) 0 9.367863095e-05 0.1561876982 0.08101774752 0.180480808 0.1688809693 0.1830150485 0.1982172877 0.1722826511 0.09774444997 0.1882286519 0.1467743814 0.03134934977 0.03134934977 0.03134934977 0.03133957833 0.0868505761 0.190669477 0.152531758 0.1112773567 0.1215386018 0.1830992699 0.1465712637 0.1552320272 0.1047228053 0.1151721701 0.1024464965 0.1186000481}}
-       {{curve(which) 0 0.3439664543 0.2722287476 0.2801307142 0.2126390189 0.2627002299 0.237623319 0.2289745659 0.209491685 0.2919537723 0.2973450124 0.258728236 0.2880711257 0.2880711257 0.2880711257 0.2880405784 0.2207257152 0.1942579001 0.2022213936 0.1694435924 0.2289056629 0.2119505703 0.2866941094 0.1387997568 0.2612613738 0.2709796727 0.2150758505 0.2606855333} {curve(which) 1 0.7281661034 0.6740817428 0.8202066422 0.7151686549 0.6779980659 0.6891706586 0.6917385459 0.7215952873 0.8238410354 0.6273635626 0.7246823311 0.7118432522 0.7118432522 0.7118432522 0.7118694782 0.839184761 0.7385566831 0.7585275769 0.8648257852 0.7808576822 0.7230190039 0.8429791331 0.910841465 0.8696421385 0.786606431 0.8850684762 0.7748944759} {curve(which) 0 -0.07213255018 0.05368951708 -0.1003373638 0.07219231874 0.05930171534 0.07320601493 0.07928691059 0.06891305745 -0.1157948226 0.07529145479 0.01658944227 8.565396274e-05 8.565396274e-05 8.565396274e-05 8.991353388e-05 -0.05991046131 0.06718540192 0.03925102949 -0.03426937759 -0.009763340466 0.06503042579 -0.1296732277 -0.04964122549 -0.1309035122 -0.05758608505 -0.1001443192 -0.03558001295}}
-       {{curve(which) 0 -3.863927134e-08 -0.005574660841 -0.1037815213 0.01933082007 0 0 0 0 0.0027982709 0.02703136392 -2.906408625e-08 -3.236030111e-08 -3.236030111e-08 -3.236030111e-08 0 -0.0544523783 -0.04792318866 -0.0176958181 -0.1061859056 -0.02100777067 -0.01945115253 -0.07968087494 0.07801423222 -0.009676366113 -0.009677864611 -0.03206583485 -0.009310216643} {curve(which) 0 0 0.004060741514 -0.07290724665 0.1191947311 0.0280726999 0.0449459292 0.04511339962 0.04706057906 -0.06703422964 0.07068887353 0.05121183768 1.2621717e-08 1.2621717e-08 1.2621717e-08 -1.262213711e-08 -0.0003228379355 -0.0002844714036 0.08768811822 0.02554347552 0.01782695204 0.01650637016 -0.3473432064 -0.3148325086 -0.2364816219 0.004600019194 -0.02765839547 -0.004612449091} {curve(which) 1 1.008825183 1.010339141 1.265746474 0.950532198 1.060985088 0.9638792276 1.043944359 0.9073553085 1.153293729 0.9913375378 0.7738927603 0.8251045942 0.8251045942 0.8251045942 0.8248898983 1.063571215 1.057001948 0.9388025999 1.089437366 1.01197505 1.011739731 1.51608181 1.325875998 1.335215807 1.094135642 1.148782015 1.102980375}}
-     }
-   invert {{parent.invert}}
-   name ColorMatrix
-   label "RGB to XYZ"
-   xpos -40
-   ypos 33
-   addUserKnob {20 Gamut}
-   addUserKnob {3 which}
-   which {{parent.gamut}}
-   addUserKnob {12 rxy +DISABLED}
-   rxy {{curve(which) 0 0.7347 0.713 0.8 0.64 0.708 0.68 0.68 0.68 0.684 0.64 0.7347 0.7347 0.7347 0.7347 0.734699 0.7530442228 0.7530444911 0.6997470013 0.8786825105 0.7011810359 0.7011805919 0.780308 0.69848046 0.74 0.73 0.766 0.73} {curve(which) 0 0.2653 0.293 0.3177 0.33 0.292 0.32 0.32 0.32 0.313 0.33 0.2653 0.2653 0.2653 0.2653 0.265301 0.3278305767 0.3278310295 0.3290469303 0.3249640074 0.3290141556 0.3290136991 0.304253 0.19302645 0.27 0.28 0.275 0.28}}
-   addUserKnob {12 gxy +DISABLED}
-   gxy {{curve(which) 0 0 0.165 0.18 0.3 0.17 0.265 0.265 0.265 0.221 0.21 0.1152 0.1596 0.1596 0.1596 0.159597 0.2995702285 0.2995704905 0.304264039 0.3008887144 0.3006003047 0.3006003955 0.121595 0.32955538 0.17 0.14 0.225 0.165} {curve(which) 0 1 0.83 0.9 0.6 0.797 0.69 0.69 0.69 0.848 0.71 0.8264 0.8404 0.8404 0.8404 0.840403 0.700699322 0.7006994156 0.6236411451 0.6790547558 0.6837888343 0.6837888243 1.493994 1.02459662 1.14 0.855 0.8 0.84}}
-   addUserKnob {12 bxy +DISABLED}
-   bxy {{curve(which) 0 0.0001 0.128 0.065 0.15 0.131 0.15 0.15 0.15 0.0861 0.15 0.1566 0.0366 0.0366 0.0366 0.036598 0.07964206674 0.1450115843 0.1349139613 0.09539869461 0.1081544556 0.1453319462 0.095612 0.10844263 0.08 0.1 0.089 0.1} {curve(which) 0 -0.077 0.044 -0.0805 0.06 0.046 0.06 0.06 0.06 -0.102 0.06 0.0177 0.0001 0.0001 0.0001 0.000105 -0.05493795109 0.05109712509 0.03471744128 -0.02937932683 -0.008688175787 0.05161680362 -0.084589 -0.03467857 -0.1 -0.05 -0.087 -0.03}}
-   addUserKnob {12 wxy +DISABLED}
-   wxy {{curve(which) 0.33333 0.32168 0.32168 0.3127 0.3127 0.3127 0.32168 0.3127 0.314 0.3127 0.3127 0.3457 0.3457 0.3457 0.3457 0.345704 0.3216831877 0.3216832104 0.3216832894 0.3216832894 0.3216832104 0.3216832894 0.3127 0.3127 0.3127 0.3127 0.3127 0.3127} {curve(which) 0.33333 0.33767 0.33767 0.329 0.329 0.329 0.33767 0.329 0.351 0.329 0.329 0.3585 0.3585 0.3585 0.3585 0.35854 0.337673316 0.3376736101 0.3376734472 0.3376734472 0.3376736101 0.3376734472 0.329 0.329 0.329 0.329 0.329 0.329}}
-  }
-  Output {
-   name Output
-   xpos -40
-   ypos 86
-  }
- end_group
- Dot {
-  name Dot45
-  label " XYZ"
-  note_font "Helvetica Bold"
-  note_font_size 24
-  note_font_color 0xa5a5a501
-  xpos -6
-  ypos -6
- }
- Group {
-  name XYZtoLMS5
-  label "direction : \[value direction]"
-  xpos -40
-  ypos 104
-  addUserKnob {20 XYZtoLMS}
-  addUserKnob {4 direction M {forward inverse}}
- }
-  Input {
-   inputs 0
-   name Input
-   xpos -40
-   ypos -10
-  }
-  Dot {
-   name Dot1
-   label " "
-   note_font "Helvetica Bold"
-   note_font_size 24
-   note_font_color 0xa5a5a501
-   xpos -6
-   ypos 42
-  }
-set Ne4922c0 [stack 0]
-  ColorMatrix {
-   matrix {
-       {0.41478972 0.579999 0.014648}
-       {-0.20151 1.120649 0.0531008}
-       {-0.0166008 0.2648 0.6684799}
-     }
-   invert true
-   name ColorMatrix1
-   label "LMS\nto\nX'Y'Z (D65)"
-   note_font "Bitstream Vera Sans"
-   xpos 70
-   ypos 92
-  }
-  Expression {
-   temp_name2 Xd65
-   temp_expr2 (r+(cb-1)*b)/cb
-   expr0 Xd65
-   expr1 (g+(cg-1)*Xd65)/cg
-   expr2 b
-   name Expression47
-   label "X'Y'Z (D65)\nto\nXYZ (D65)"
-   note_font "Bitstream Vera Sans"
-   xpos 70
-   ypos 188
-   addUserKnob {20 User}
-   addUserKnob {7 cb R 0 2}
-   cb 1.15
-   addUserKnob {7 cg}
-   cg 0.66
-  }
-push $Ne4922c0
-  Expression {
-   expr0 "(cb*r) - ((cb-1)*b)"
-   expr1 "(cg*g) - ((cg-1)*r)"
-   expr2 b
-   name Expression4
-   label "XYZ (D65)\nto\nX'Y'Z (D65)"
-   note_font "Bitstream Vera Sans"
-   xpos -150
-   ypos 91
-   addUserKnob {20 User}
-   addUserKnob {7 cb R 0 2}
-   cb 1.15
-   addUserKnob {7 cg}
-   cg 0.66
-  }
-  ColorMatrix {
-   matrix {
-       {0.41478972 0.579999 0.014648}
-       {-0.20151 1.120649 0.0531008}
-       {-0.0166008 0.2648 0.6684799}
-     }
-   name ColorMatrix8
-   label "X'Y'Z (D65)\nto\nLMS"
-   note_font "Bitstream Vera Sans"
-   xpos -150
-   ypos 188
-  }
-  Switch {
-   inputs 2
-   which {{parent.direction}}
-   name Switch1
-   xpos -40
-   ypos 350
-  }
-  Output {
-   name Output
-   xpos -40
-   ypos 446
-  }
- end_group
- Dot {
-  name Dot44
-  label " LMS"
-  note_font "Helvetica Bold"
-  note_font_size 24
-  note_font_color 0xa5a5a501
-  xpos -6
-  ypos 162
- }
- Dot {
-  name Dot1
-  label " "
-  note_font "Helvetica Bold"
-  note_font_size 24
-  note_font_color 0xa5a5a501
-  xpos -6
-  ypos 234
- }
-set Nd4ff7930 [stack 0]
- Dot {
-  name Dot39
-  xpos 544
-  ypos 234
- }
- Expression {
-  temp_name0 v
-  temp_expr0 max(abs(r-g),abs(g-b),abs(r-r))
-  temp_name1 n
-  temp_expr1 v/max(r,g,b)
-  expr0 n
-  expr1 n
-  expr2 n
-  expr3 n
-  name Expression13
-  label "saturation mask"
-  xpos 510
-  ypos 344
- }
- Clamp {
-  channels rgba
-  name Clamp3
-  xpos 510
-  ypos 398
- }
- Dot {
-  name Dot38
-  label " "
-  note_font "Helvetica Bold"
-  note_font_size 24
-  note_font_color 0xa5a5a501
-  xpos 544
-  ypos 474
- }
-push $Nd4ff7930
- Group {
-  name RGBtoHSV
-  label "direction : \[value direction]"
-  xpos -40
-  ypos 296
-  addUserKnob {20 RGBtoHSV_tab l RGBtoHSV}
-  addUserKnob {4 direction M {forward inverse}}
- }
-  Input {
-   inputs 0
-   name Input
-   xpos -700
-   ypos 566
-  }
-set N37bc2230 [stack 0]
-  Expression {
-   temp_name0 C
-   temp_expr0 b*g
-   temp_name1 X
-   temp_expr1 C*(1-abs((r*6)%2-1))
-   temp_name2 m
-   temp_expr2 b-C
-   expr0 (r<1/6?C:r<2/6?X:r<3/6?0:r<4/6?0:r<5/6?X:C)+m
-   expr1 (r<1/6?X:r<2/6?C:r<3/6?C:r<4/6?X:r<5/6?0:0)+m
-   expr2 (r<1/6?0:r<2/6?0:r<3/6?X:r<4/6?C:r<5/6?C:X)+m
-   name Expression48
-   label "HSV to RGB"
-   note_font "Bitstream Vera Sans"
-   xpos -590
-   ypos 656
-  }
-push $N37bc2230
-  Expression {
-   temp_name0 cmax
-   temp_expr0 max(r,g,b)
-   temp_name1 cmin
-   temp_expr1 min(r,g,b)
-   temp_name2 delta
-   temp_expr2 cmax-cmin
-   expr0 delta==0?0:cmax==r?(((g-b)/delta+6)%6)/6:cmax==g?(((b-r)/delta+2)/6):(((r-g)/delta+4)/6)
-   expr1 "cmax == 0 ? 0 : delta / cmax"
-   expr2 cmax
-   name Expression47
-   label "RGB to HSV"
-   note_font "Bitstream Vera Sans"
-   xpos -810
-   ypos 656
-  }
-  Switch {
-   inputs 2
-   which {{parent.direction}}
-   name Switch1
-   xpos -700
-   ypos 734
-  }
-  Output {
-   name Output
-   xpos -700
-   ypos 806
-  }
- end_group
- Dot {
-  name Dot2
-  label " HSV"
-  note_font "Helvetica Bold"
-  note_font_size 24
-  note_font_color 0xa5a5a501
-  xpos -6
-  ypos 354
- }
- Dot {
-  name Dot46
-  label " "
-  note_font "Helvetica Bold"
-  note_font_size 24
-  note_font_color 0xa5a5a501
-  xpos -6
-  ypos 426
- }
-set N384a0260 [stack 0]
- Expression {
-  expr0 "r < 0 ? 1-abs(r)%1:r%1"
-  expr1 g
-  expr2 b
-  expr3 a
-  name Expression23
-  label "hue wrap-around"
-  xpos 290
-  ypos 416
- }
-set N35a49420 [stack 0]
- Expression {
-  expr0 -(r+o)*m/c/c*exp(-(r+o)*m*(r+o)*m/2/c/c)
-  expr1 g
-  expr2 b
-  expr3 a
-  name Expression25
-  label "gauss derivative"
-  xpos 400
-  ypos 416
-  addUserKnob {20 User}
-  addUserKnob {7 amplitude R 0 0.1}
-  amplitude {{"0.6*max(1e-8, parent.strength)/exp(1/parent.range*2)"}}
-  addUserKnob {7 phase R -1 1}
-  phase {{parent.hue_phase}}
-  addUserKnob {7 length}
-  length {{parent.range/2}}
-  addUserKnob {7 c R 0 5}
-  c {{(1/exp(0.5)/amplitude)}}
-  addUserKnob {7 m}
-  m {{exp(1/length)*c}}
-  addUserKnob {7 o}
-  o {{-phase}}
- }
- Merge2 {
-  inputs 2
-  operation multiply
-  name Merge15
-  xpos 400
-  ypos 470
- }
-set N35aba720 [stack 0]
-push $N35a49420
- Merge2 {
-  inputs 2
-  operation from
-  bbox B
-  output rgb
-  name Merge19
-  xpos 400
-  ypos 542
- }
-push $N35aba720
-push $N35a49420
- Merge2 {
-  inputs 2
-  operation plus
-  name Merge16
-  xpos 290
-  ypos 542
- }
- Switch {
-  inputs 2
-  which {{parent.invert}}
-  name Switch_Inverse
-  xpos 290
-  ypos 590
- }
- Expression {
-  expr0 "r < 0 ? 1 - abs(r) % 1 : r % 1"
-  expr1 g
-  expr2 b
-  expr3 a
-  name Expression26
-  label "hue wrap-around"
-  xpos 290
-  ypos 632
- }
-push $N384a0260
- Copy {
-  inputs 2
-  from0 rgba.red
-  to0 rgba.red
-  name Copy3
-  xpos -40
-  ypos 632
- }
- Dot {
-  name Dot40
-  xpos -6
-  ypos 834
- }
-set N3a6b2be0 [stack 0]
- Dot {
-  name Dot41
-  xpos 434
-  ypos 834
- }
- Group {
-  name RGBtoHSV1
-  label "direction : \[value direction]"
-  xpos 400
-  ypos 873
-  addUserKnob {20 RGBtoHSV_tab l RGBtoHSV}
-  addUserKnob {4 direction M {forward inverse}}
-  direction inverse
- }
-  Input {
-   inputs 0
-   name Input
-   xpos -700
-   ypos 566
-  }
-set Nb0e9ee50 [stack 0]
-  Expression {
-   temp_name0 C
-   temp_expr0 b*g
-   temp_name1 X
-   temp_expr1 C*(1-abs((r*6)%2-1))
-   temp_name2 m
-   temp_expr2 b-C
-   expr0 (r<1/6?C:r<2/6?X:r<3/6?0:r<4/6?0:r<5/6?X:C)+m
-   expr1 (r<1/6?X:r<2/6?C:r<3/6?C:r<4/6?X:r<5/6?0:0)+m
-   expr2 (r<1/6?0:r<2/6?0:r<3/6?X:r<4/6?C:r<5/6?C:X)+m
-   name Expression48
-   label "HSV to RGB"
-   note_font "Bitstream Vera Sans"
-   xpos -590
-   ypos 656
-  }
-push $Nb0e9ee50
-  Expression {
-   temp_name0 cmax
-   temp_expr0 max(r,g,b)
-   temp_name1 cmin
-   temp_expr1 min(r,g,b)
-   temp_name2 delta
-   temp_expr2 cmax-cmin
-   expr0 delta==0?0:cmax==r?(((g-b)/delta+6)%6)/6:cmax==g?(((b-r)/delta+2)/6):(((r-g)/delta+4)/6)
-   expr1 "cmax == 0 ? 0 : delta / cmax"
-   expr2 cmax
-   name Expression47
-   label "RGB to HSV"
-   note_font "Bitstream Vera Sans"
-   xpos -810
-   ypos 656
-  }
-  Switch {
-   inputs 2
-   which {{parent.direction}}
-   name Switch1
-   xpos -700
-   ypos 734
-  }
-  Output {
-   name Output
-   xpos -700
-   ypos 806
-  }
- end_group
- Group {
-  name XYZtoLMS1
-  label "direction : \[value direction]"
-  xpos 400
-  ypos 926
-  addUserKnob {20 XYZtoLMS}
-  addUserKnob {4 direction M {forward inverse}}
-  direction inverse
- }
-  Input {
-   inputs 0
-   name Input
-   xpos -40
-   ypos -10
-  }
-  Dot {
-   name Dot1
-   label " "
-   note_font "Helvetica Bold"
-   note_font_size 24
-   note_font_color 0xa5a5a501
-   xpos -6
-   ypos 42
-  }
-set Nc4199c20 [stack 0]
-  ColorMatrix {
-   matrix {
-       {0.41478972 0.579999 0.014648}
-       {-0.20151 1.120649 0.0531008}
-       {-0.0166008 0.2648 0.6684799}
-     }
-   invert true
-   name ColorMatrix1
-   label "LMS\nto\nX'Y'Z (D65)"
-   note_font "Bitstream Vera Sans"
-   xpos 70
-   ypos 92
-  }
-  Expression {
-   temp_name2 Xd65
-   temp_expr2 (r+(cb-1)*b)/cb
-   expr0 Xd65
-   expr1 (g+(cg-1)*Xd65)/cg
-   expr2 b
-   name Expression47
-   label "X'Y'Z (D65)\nto\nXYZ (D65)"
-   note_font "Bitstream Vera Sans"
-   xpos 70
-   ypos 188
-   addUserKnob {20 User}
-   addUserKnob {7 cb R 0 2}
-   cb 1.15
-   addUserKnob {7 cg}
-   cg 0.66
-  }
-push $Nc4199c20
-  Expression {
-   expr0 "(cb*r) - ((cb-1)*b)"
-   expr1 "(cg*g) - ((cg-1)*r)"
-   expr2 b
-   name Expression4
-   label "XYZ (D65)\nto\nX'Y'Z (D65)"
-   note_font "Bitstream Vera Sans"
-   xpos -150
-   ypos 91
-   addUserKnob {20 User}
-   addUserKnob {7 cb R 0 2}
-   cb 1.15
-   addUserKnob {7 cg}
-   cg 0.66
-  }
-  ColorMatrix {
-   matrix {
-       {0.41478972 0.579999 0.014648}
-       {-0.20151 1.120649 0.0531008}
-       {-0.0166008 0.2648 0.6684799}
-     }
-   name ColorMatrix8
-   label "X'Y'Z (D65)\nto\nLMS"
-   note_font "Bitstream Vera Sans"
-   xpos -150
-   ypos 188
-  }
-  Switch {
-   inputs 2
-   which {{parent.direction}}
-   name Switch1
-   xpos -40
-   ypos 350
-  }
-  Output {
-   name Output
-   xpos -40
-   ypos 446
-  }
- end_group
- Colorspace {
-  colorspace_in CIE-XYZ
-  colorspace_out CIE-Yxy
-  name Colorspace6
-  label "\[value colorspace_in] -> \[value colorspace_out]"
-  xpos 400
-  ypos 1001
- }
- Expression {
-  temp_name0 yellow
-  temp_expr0 "hypot(( (g*white.y-b*white.x)*(red.x-green.x)-(g-white.x)*(red.x*green.y-red.y*green.x) ) / ( (g-white.x)*(red.y-green.y)-(b-white.y)*(red.x-green.x) )-white.x, ( (g*white.y-b*white.x)*(red.y-green.y)-(b-white.y)*(red.x*green.y-red.y*green.x) ) / ( (g-white.x)*(red.y-green.y)-(b-white.y)*(red.x-green.x) )-white.y)"
-  temp_name1 cyan
-  temp_expr1 "hypot(( (g*white.y-b*white.x)*(green.x-blue.x)-(g-white.x)*(green.x*blue.y-green.y*blue.x) ) / ( (g-white.x)*(green.y-blue.y)-(b-white.y)*(green.x-blue.x) )-white.x, ( (g*white.y-b*white.x)*(green.y-blue.y)-(b-white.y)*(green.x*blue.y-green.y*blue.x) ) / ( (g-white.x)*(green.y-blue.y)-(b-white.y)*(green.x-blue.x) )-white.y)"
-  temp_name2 magenta
-  temp_expr2 "hypot(( (g*white.y-b*white.x)*(blue.x-red.x)-(g-white.x)*(blue.x*red.y-blue.y*red.x) ) / ( (g-white.x)*(blue.y-red.y)-(b-white.y)*(blue.x-red.x) )-white.x, ( (g*white.y-b*white.x)*(blue.y-red.y)-(b-white.y)*(blue.x*red.y-blue.y*red.x) ) / ( (g-white.x)*(blue.y-red.y)-(b-white.y)*(blue.x-red.x) )-white.y)"
-  temp_name3 angleNorm
-  temp_expr3 "(-(degrees(atan2(g-white.x, b-white.y))-180)+270)%360/360-primaryNormOffset < 0 ? (-(degrees(atan2(g-white.x, b-white.y))-180)+270)%360/360-primaryNormOffset + 1 : (-(degrees(atan2(g-white.x, b-white.y))-180)+270)%360/360-primaryNormOffset"
-  expr0 r
-  expr1 "(-(degrees(atan2(g-white.x, b-white.y))-180)+270)%360/360"
-  expr2 "g == white.x && b == white.y ? hypot(g-red.x, b-red.y) : angleNorm < primaryAngleNorm.y ? yellow : angleNorm < primaryAngleNorm.z ? cyan : magenta"
-  name Expression_max_rg5
-  label "Yxy to YHmaxC"
-  note_font "Bitstream Vera Sans"
-  xpos 400
-  ypos 1050
-  addUserKnob {20 User}
-  addUserKnob {12 red}
-  red {{parent.rxy} {parent.rxy}}
-  addUserKnob {12 green}
-  green {{parent.gxy} {parent.gxy}}
-  addUserKnob {12 blue}
-  blue {{parent.bxy} {parent.bxy}}
-  addUserKnob {12 white}
-  white {{parent.wxy} {parent.wxy}}
-  addUserKnob {13 primaryAngle}
-  primaryAngle {{parent.primaryAngle} {parent.primaryAngle} {parent.primaryAngle}}
-  addUserKnob {7 primaryNormOffset}
-  primaryNormOffset {{primaryAngle.x}}
-  addUserKnob {13 primaryAngleNorm}
-  primaryAngleNorm {{"primaryAngle.x-primaryNormOffset < 0 ? primaryAngle.x-primaryNormOffset + 1 : primaryAngle.x-primaryNormOffset"} {"primaryAngle.y-primaryNormOffset < 0 ? primaryAngle.y-primaryNormOffset + 1 : primaryAngle.y-primaryNormOffset"} {"primaryAngle.z-primaryNormOffset < 0 ? primaryAngle.z-primaryNormOffset + 1 : primaryAngle.z-primaryNormOffset"}}
- }
- Expression {
-  expr0 1
-  expr1 cos(radians(g*360))*b+white.x
-  expr2 sin(radians(g*360))*b+white.y
-  expr3 1
-  name Expression40
-  label "YHC to 1xy"
-  xpos 400
-  ypos 1096
-  addUserKnob {20 User}
-  addUserKnob {12 white}
-  white {{parent.wxy} {parent.wxy}}
- }
- Colorspace {
-  colorspace_in CIE-Yxy
-  colorspace_out CIE-XYZ
-  name Colorspace7
-  label "\[value colorspace_in] -> \[value colorspace_out]"
-  xpos 400
-  ypos 1143
- }
- Group {
-  name XYZtoLMS2
-  label "direction : \[value direction]"
-  xpos 400
-  ypos 1197
-  addUserKnob {20 XYZtoLMS}
-  addUserKnob {4 direction M {forward inverse}}
- }
-  Input {
-   inputs 0
-   name Input
-   xpos -40
-   ypos -10
-  }
-  Dot {
-   name Dot1
-   label " "
-   note_font "Helvetica Bold"
-   note_font_size 24
-   note_font_color 0xa5a5a501
-   xpos -6
-   ypos 42
-  }
-set Nef890d0 [stack 0]
-  ColorMatrix {
-   matrix {
-       {0.41478972 0.579999 0.014648}
-       {-0.20151 1.120649 0.0531008}
-       {-0.0166008 0.2648 0.6684799}
-     }
-   invert true
-   name ColorMatrix1
-   label "LMS\nto\nX'Y'Z (D65)"
-   note_font "Bitstream Vera Sans"
-   xpos 70
-   ypos 92
-  }
-  Expression {
-   temp_name2 Xd65
-   temp_expr2 (r+(cb-1)*b)/cb
-   expr0 Xd65
-   expr1 (g+(cg-1)*Xd65)/cg
-   expr2 b
-   name Expression47
-   label "X'Y'Z (D65)\nto\nXYZ (D65)"
-   note_font "Bitstream Vera Sans"
-   xpos 70
-   ypos 188
-   addUserKnob {20 User}
-   addUserKnob {7 cb R 0 2}
-   cb 1.15
-   addUserKnob {7 cg}
-   cg 0.66
-  }
-push $Nef890d0
-  Expression {
-   expr0 "(cb*r) - ((cb-1)*b)"
-   expr1 "(cg*g) - ((cg-1)*r)"
-   expr2 b
-   name Expression4
-   label "XYZ (D65)\nto\nX'Y'Z (D65)"
-   note_font "Bitstream Vera Sans"
-   xpos -150
-   ypos 91
-   addUserKnob {20 User}
-   addUserKnob {7 cb R 0 2}
-   cb 1.15
-   addUserKnob {7 cg}
-   cg 0.66
-  }
-  ColorMatrix {
-   matrix {
-       {0.41478972 0.579999 0.014648}
-       {-0.20151 1.120649 0.0531008}
-       {-0.0166008 0.2648 0.6684799}
-     }
-   name ColorMatrix8
-   label "X'Y'Z (D65)\nto\nLMS"
-   note_font "Bitstream Vera Sans"
-   xpos -150
-   ypos 188
-  }
-  Switch {
-   inputs 2
-   which {{parent.direction}}
-   name Switch1
-   xpos -40
-   ypos 350
-  }
-  Output {
-   name Output
-   xpos -40
-   ypos 446
-  }
- end_group
- Group {
-  name RGBtoHSV2
-  label "direction : \[value direction]"
-  xpos 400
-  ypos 1247
-  addUserKnob {20 RGBtoHSV_tab l RGBtoHSV}
-  addUserKnob {4 direction M {forward inverse}}
- }
-  Input {
-   inputs 0
-   name Input
-   xpos -700
-   ypos 566
-  }
-set N182a97d0 [stack 0]
-  Expression {
-   temp_name0 C
-   temp_expr0 b*g
-   temp_name1 X
-   temp_expr1 C*(1-abs((r*6)%2-1))
-   temp_name2 m
-   temp_expr2 b-C
-   expr0 (r<1/6?C:r<2/6?X:r<3/6?0:r<4/6?0:r<5/6?X:C)+m
-   expr1 (r<1/6?X:r<2/6?C:r<3/6?C:r<4/6?X:r<5/6?0:0)+m
-   expr2 (r<1/6?0:r<2/6?0:r<3/6?X:r<4/6?C:r<5/6?C:X)+m
-   name Expression48
-   label "HSV to RGB"
-   note_font "Bitstream Vera Sans"
-   xpos -590
-   ypos 656
-  }
-push $N182a97d0
-  Expression {
-   temp_name0 cmax
-   temp_expr0 max(r,g,b)
-   temp_name1 cmin
-   temp_expr1 min(r,g,b)
-   temp_name2 delta
-   temp_expr2 cmax-cmin
-   expr0 delta==0?0:cmax==r?(((g-b)/delta+6)%6)/6:cmax==g?(((b-r)/delta+2)/6):(((r-g)/delta+4)/6)
-   expr1 "cmax == 0 ? 0 : delta / cmax"
-   expr2 cmax
-   name Expression47
-   label "RGB to HSV"
-   note_font "Bitstream Vera Sans"
-   xpos -810
-   ypos 656
-  }
-  Switch {
-   inputs 2
-   which {{parent.direction}}
-   name Switch1
-   xpos -700
-   ypos 734
-  }
-  Output {
-   name Output
-   xpos -700
-   ypos 806
-  }
- end_group
- Dot {
-  name Dot3
-  label " "
-  note_font "Helvetica Bold"
-  note_font_size 24
-  note_font_color 0xa5a5a501
-  xpos 434
-  ypos 1329
- }
-set N35dfe680 [stack 0]
- Dot {
-  name Dot42
-  label " "
-  note_font "Helvetica Bold"
-  note_font_size 24
-  note_font_color 0xa5a5a501
-  xpos 434
-  ypos 1520
- }
-push $N3a6b2be0
  Dot {
   name Dot4
-  label " "
-  note_font "Helvetica Bold"
-  note_font_size 24
-  note_font_color 0xa5a5a501
   xpos -6
-  ypos 1262
+  ypos -174
  }
-set N107bd030 [stack 0]
-push $N35dfe680
+set N2754af40 [stack 0]
+ Dot {
+  name Dot2
+  xpos -226
+  ypos -174
+ }
+ Expression {
+  channel0 {rgba.red rgba.green rgba.blue none}
+  expr0 max(r,g,b)
+  name achromatic
+  xpos -260
+  ypos -130
+ }
+set Nab95c00 [stack 0]
+ Dot {
+  name Dot1
+  xpos -226
+  ypos -78
+ }
+set N275256a0 [stack 0]
+ Dot {
+  name Dot3
+  xpos -226
+  ypos 114
+ }
+push $N275256a0
+ Expression {
+  temp_name0 c_r
+  temp_expr0 1-r
+  temp_name1 c_g
+  temp_expr1 1-g
+  temp_name2 c_b
+  temp_expr2 1-b
+  expr0 1-(c_r<(1-thr)?c_r:(1-thr)+thr*tanh(((c_r-(1-thr))/thr)))
+  expr1 1-(c_g<(1-thr)?c_g:(1-thr)+thr*tanh(((c_g-(1-thr))/thr)))
+  expr2 1-(c_b<(1-thr)?c_b:(1-thr)+thr*tanh(((c_b-(1-thr))/thr)))
+  name toe
+  xpos -150
+  ypos -82
+  disable {{parent.shd_rolloff==0}}
+  addUserKnob {20 Params_tab l Params}
+  addUserKnob {7 thr t "complement of threshold"}
+  thr {{parent.shd_rolloff}}
+ }
+set N992d7b0 [stack 0]
+ Dot {
+  name Dot7
+  xpos -116
+  ypos 66
+ }
+push $Nab95c00
+push $N2754af40
+ Merge2 {
+  inputs 2
+  operation minus
+  bbox B
+  Achannels rgb
+  Bchannels rgb
+  output rgb
+  name Merge1
+  xpos -40
+  ypos -130
+ }
+push $N992d7b0
  Merge2 {
   inputs 2
   operation divide
-  name Merge17
-  note_font "Bitstream Vera Sans"
-  xpos 190
-  ypos 1325
+  bbox B
+  Achannels rgb
+  Bchannels rgb
+  output rgb
+  name Merge2
+  xpos -40
+  ypos -82
  }
-set N1092cb80 [stack 0]
  Group {
-  name SoftCompress15
-  label "direction: \[knob direction]"
-  selected true
-  xpos 190
-  ypos 1423
-  addUserKnob {20 SoftCompress}
-  addUserKnob {7 slope t "The softness of the compressing curve's slope. 0 is a clamp."}
-  slope {{parent.threshold}}
-  addUserKnob {7 threshold t "The minimum threshold. Values below this number will not be affected." R 0 2}
-  threshold {{parent.slope}}
-  addUserKnob {7 limit t "The asymptotic maximum value. For example, the value that inf becomes." R 0 2}
-  limit 1.28495717
-  addUserKnob {4 direction M {forward inverse}}
+  name compress
+  xpos -40
+  ypos -10
+  addUserKnob {20 compress}
+  addUserKnob {18 threshold}
+  threshold 0.2
+  addUserKnob {6 threshold_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {7 power R 1 5}
+  power 1.2
+  addUserKnob {7 cyan}
+  cyan 0.09
+  addUserKnob {7 magenta}
+  magenta 0.24
+  addUserKnob {7 yellow}
+  yellow 0.12
+  addUserKnob {26 ""}
+  addUserKnob {6 invert +STARTLINE}
+  invert {{parent.direction}}
  }
-  Input {
-   inputs 0
-   name InputMask
-   xpos -590
-   ypos 806
-   number 1
-  }
   Input {
    inputs 0
    name Input
-   xpos -810
-   ypos 494
+   xpos -260
+   ypos -250
   }
-  Dot {
-   name Dot1
-   label " "
-   note_font "Helvetica Bold"
-   note_font_size 24
-   note_font_color 0xa5a5a501
-   xpos -776
-   ypos 546
-  }
-set N3c86fb00 [stack 0]
+set N27437c20 [stack 0]
   Expression {
-   temp_name0 sl
-   temp_expr0 "(1-slope)*(max(0, limit-threshold))"
-   temp_name1 th
-   temp_expr1 threshold
-   temp_name2 lim
-   temp_expr2 "max(0, (limit-threshold))"
-   expr0 "r < th + sl ? r : (pow(sl, 2) + 2 * sl * th - 2 * sl * r + pow(th, 2) - th * r + lim * r)/(th + lim - r)"
-   expr1 "g < th + sl ? g : (pow(sl, 2) + 2 * sl * th - 2 * sl * g + pow(th, 2) - th * g + lim * g)/(th + lim - g)"
-   expr2 "b < th + sl ? b : (pow(sl, 2) + 2 * sl * th - 2 * sl * b + pow(th, 2) - th * b + lim * b)/(th + lim - b)"
-   expr3 "a < th + sl ? a : (pow(sl, 2) + 2 * sl * th - 2 * sl * a + pow(th, 2) - th * a + lim * a)/(th + lim - a)"
-   name SoftCompress_inverse
-   xpos -700
-   ypos 638
+   temp_name0 s_x
+   temp_expr0 (lim_x-thr_x)/pow(pow((1-thr_x)/(lim_x-thr_x),-p)-1,1/p)
+   temp_name1 s_y
+   temp_expr1 (lim_y-thr_y)/pow(pow((1-thr_y)/(lim_y-thr_y),-p)-1,1/p)
+   temp_name2 s_z
+   temp_expr2 (lim_z-thr_z)/pow(pow((1-thr_z)/(lim_z-thr_z),-p)-1,1/p)
+   expr0 r<thr_x||lim_x<1.0001?r:r>(thr_x+s_x)?r:thr_x+s_x*pow(-(pow((r-thr_x)/s_x,p)/(pow((r-thr_x)/s_x,p)-1)),1/p)
+   expr1 g<thr_y||lim_y<1.0001?g:g>(thr_y+s_y)?g:thr_y+s_y*pow(-(pow((g-thr_y)/s_y,p)/(pow((g-thr_y)/s_y,p)-1)),1/p)
+   expr2 b<thr_z||lim_z<1.0001?b:b>(thr_z+s_z)?b:thr_z+s_z*pow(-(pow((b-thr_z)/s_z,p)/(pow((b-thr_z)/s_z,p)-1)),1/p)
+   name uncompress
+   xpos -150
+   ypos -202
    addUserKnob {20 Params_tab l Params}
-   addUserKnob {7 slope}
-   slope {{parent.slope}}
-   addUserKnob {7 threshold R 0 25}
-   threshold {{parent.threshold}}
-   addUserKnob {7 limit R 0 25}
-   limit {{parent.limit}}
+   addUserKnob {7 thr_x}
+   thr_x {{1-parent.threshold.r}}
+   addUserKnob {7 thr_y}
+   thr_y {{1-parent.threshold.g}}
+   addUserKnob {7 thr_z}
+   thr_z {{1-parent.threshold.b}}
+   addUserKnob {7 lim_x}
+   lim_x {{parent.cyan+1}}
+   addUserKnob {7 lim_y}
+   lim_y {{parent.magenta+1}}
+   addUserKnob {7 lim_z}
+   lim_z {{parent.yellow+1}}
+   addUserKnob {7 p R 1 5}
+   p {{parent.power}}
   }
-push $N3c86fb00
+push $N27437c20
   Expression {
-   temp_name0 sl
-   temp_expr0 "(1-slope)*(max(0, limit-threshold))"
-   temp_name1 th
-   temp_expr1 "min(threshold, limit)"
-   temp_name2 lim
-   temp_expr2 "max(0, (limit-threshold))"
-   expr0 "r < th + sl ? r :  th + (-1 / ((r - th - sl) / (lim - sl) + 1) + 1) * (lim - sl) + sl"
-   expr1 "g < th + sl ? g :  th + (-1 / ((g - th - sl) / (lim - sl) + 1) + 1) * (lim - sl) + sl"
-   expr2 "b < th + sl ? b :  th + (-1 / ((b - th - sl) / (lim - sl) + 1) + 1) * (lim - sl) + sl"
-   expr3 "a < th + sl ? a :  th + (-1 / ((a - th - sl) / (lim - sl) + 1) + 1) * (lim - sl) + sl"
-   name SoftCompress
-   xpos -920
-   ypos 638
+   temp_name0 s_x
+   temp_expr0 (lim_x-thr_x)/pow(pow((1-thr_x)/(lim_x-thr_x),-p)-1,1/p)
+   temp_name1 s_y
+   temp_expr1 (lim_y-thr_y)/pow(pow((1-thr_y)/(lim_y-thr_y),-p)-1,1/p)
+   temp_name2 s_z
+   temp_expr2 (lim_z-thr_z)/pow(pow((1-thr_z)/(lim_z-thr_z),-p)-1,1/p)
+   expr0 r<thr_x||lim_x<1.0001?r:thr_x+s_x*((r-thr_x)/s_x)/(pow(1+pow((r-thr_x)/s_x,p),1/p))
+   expr1 g<thr_y||lim_y<1.0001?g:thr_y+s_y*((g-thr_y)/s_y)/(pow(1+pow((g-thr_y)/s_y,p),1/p))
+   expr2 b<thr_z||lim_z<1.0001?b:thr_z+s_z*((b-thr_z)/s_z)/(pow(1+pow((b-thr_z)/s_z,p),1/p))
+   name compress
+   xpos -370
+   ypos -202
    addUserKnob {20 Params_tab l Params}
-   addUserKnob {7 slope}
-   slope {{parent.slope}}
-   addUserKnob {7 threshold R 0 25}
-   threshold {{parent.threshold}}
-   addUserKnob {7 limit R 0 25}
-   limit {{parent.limit}}
+   addUserKnob {7 thr_x}
+   thr_x {{1-parent.threshold.r}}
+   addUserKnob {7 thr_y}
+   thr_y {{1-parent.threshold.g}}
+   addUserKnob {7 thr_z}
+   thr_z {{1-parent.threshold.b}}
+   addUserKnob {7 lim_x}
+   lim_x {{parent.cyan+1}}
+   addUserKnob {7 lim_y}
+   lim_y {{parent.magenta+1}}
+   addUserKnob {7 lim_z}
+   lim_z {{parent.yellow+1}}
+   addUserKnob {7 p R 1 5}
+   p {{parent.power}}
   }
   Switch {
    inputs 2
-   which {{parent.direction}}
-   name SwitchDirection
-   xpos -810
-   ypos 710
-  }
-push $N3c86fb00
-  Dot {
-   name Dot2
-   label " "
-   note_font "Helvetica Bold"
-   note_font_size 24
-   note_font_color 0xa5a5a501
-   xpos -996
-   ypos 546
-  }
-  Dot {
-   name Dot3
-   label " "
-   note_font "Helvetica Bold"
-   note_font_size 24
-   note_font_color 0xa5a5a501
-   xpos -996
-   ypos 810
-  }
-  NodeWrapper {
-   inputs 2+1
-   channels rgba
-   name NodeWrapper1
-   xpos -810
-   ypos 806
+   which {{parent.invert}}
+   name switch_direction
+   xpos -260
+   ypos -154
   }
   Output {
    name Output
-   xpos -810
-   ypos 926
+   xpos -260
+   ypos -106
   }
  end_group
  Merge2 {
   inputs 2
   operation multiply
-  name Merge18
-  note_font "Bitstream Vera Sans"
-  xpos 190
-  ypos 1516
+  bbox B
+  Achannels rgb
+  Bchannels rgb
+  output rgb
+  name Merge3
+  xpos -40
+  ypos 62
  }
- Dot {
-  name Dot5
-  label " "
-  note_font "Helvetica Bold"
-  note_font_size 24
-  note_font_color 0xa5a5a501
-  xpos 224
-  ypos 1610
- }
-push $N107bd030
- Copy {
+ Merge2 {
   inputs 2
-  from0 rgba.green
-  to0 rgba.green
-  name Copy1
+  operation minus
+  bbox B
+  Achannels rgb
+  Bchannels rgb
+  output rgb
+  name Merge5
   xpos -40
-  ypos 1600
+  ypos 110
  }
- Group {
-  name RGBtoHSV3
-  label "direction : \[value direction]"
-  xpos -40
-  ypos 1689
-  addUserKnob {20 RGBtoHSV_tab l RGBtoHSV}
-  addUserKnob {4 direction M {forward inverse}}
-  direction inverse
- }
-  Input {
-   inputs 0
-   name Input
-   xpos -700
-   ypos 566
-  }
-set N10a59110 [stack 0]
-  Expression {
-   temp_name0 C
-   temp_expr0 b*g
-   temp_name1 X
-   temp_expr1 C*(1-abs((r*6)%2-1))
-   temp_name2 m
-   temp_expr2 b-C
-   expr0 (r<1/6?C:r<2/6?X:r<3/6?0:r<4/6?0:r<5/6?X:C)+m
-   expr1 (r<1/6?X:r<2/6?C:r<3/6?C:r<4/6?X:r<5/6?0:0)+m
-   expr2 (r<1/6?0:r<2/6?0:r<3/6?X:r<4/6?C:r<5/6?C:X)+m
-   name Expression48
-   label "HSV to RGB"
-   note_font "Bitstream Vera Sans"
-   xpos -590
-   ypos 656
-  }
-push $N10a59110
-  Expression {
-   temp_name0 cmax
-   temp_expr0 max(r,g,b)
-   temp_name1 cmin
-   temp_expr1 min(r,g,b)
-   temp_name2 delta
-   temp_expr2 cmax-cmin
-   expr0 delta==0?0:cmax==r?(((g-b)/delta+6)%6)/6:cmax==g?(((b-r)/delta+2)/6):(((r-g)/delta+4)/6)
-   expr1 "cmax == 0 ? 0 : delta / cmax"
-   expr2 cmax
-   name Expression47
-   label "RGB to HSV"
-   note_font "Bitstream Vera Sans"
-   xpos -810
-   ypos 656
-  }
-  Switch {
-   inputs 2
-   which {{parent.direction}}
-   name Switch1
-   xpos -700
-   ypos 734
-  }
-  Output {
-   name Output
-   xpos -700
-   ypos 806
-  }
- end_group
- Group {
-  name XYZtoLMS4
-  label "direction : \[value direction]"
-  xpos -40
-  ypos 1741
-  addUserKnob {20 XYZtoLMS}
-  addUserKnob {4 direction M {forward inverse}}
-  direction inverse
- }
-  Input {
-   inputs 0
-   name Input
-   xpos -40
-   ypos -10
-  }
-  Dot {
-   name Dot1
-   label " "
-   note_font "Helvetica Bold"
-   note_font_size 24
-   note_font_color 0xa5a5a501
-   xpos -6
-   ypos 42
-  }
-set N1d482800 [stack 0]
-  ColorMatrix {
-   matrix {
-       {0.41478972 0.579999 0.014648}
-       {-0.20151 1.120649 0.0531008}
-       {-0.0166008 0.2648 0.6684799}
-     }
-   invert true
-   name ColorMatrix1
-   label "LMS\nto\nX'Y'Z (D65)"
-   note_font "Bitstream Vera Sans"
-   xpos 70
-   ypos 92
-  }
-  Expression {
-   temp_name2 Xd65
-   temp_expr2 (r+(cb-1)*b)/cb
-   expr0 Xd65
-   expr1 (g+(cg-1)*Xd65)/cg
-   expr2 b
-   name Expression47
-   label "X'Y'Z (D65)\nto\nXYZ (D65)"
-   note_font "Bitstream Vera Sans"
-   xpos 70
-   ypos 188
-   addUserKnob {20 User}
-   addUserKnob {7 cb R 0 2}
-   cb 1.15
-   addUserKnob {7 cg}
-   cg 0.66
-  }
-push $N1d482800
-  Expression {
-   expr0 "(cb*r) - ((cb-1)*b)"
-   expr1 "(cg*g) - ((cg-1)*r)"
-   expr2 b
-   name Expression4
-   label "XYZ (D65)\nto\nX'Y'Z (D65)"
-   note_font "Bitstream Vera Sans"
-   xpos -150
-   ypos 91
-   addUserKnob {20 User}
-   addUserKnob {7 cb R 0 2}
-   cb 1.15
-   addUserKnob {7 cg}
-   cg 0.66
-  }
-  ColorMatrix {
-   matrix {
-       {0.41478972 0.579999 0.014648}
-       {-0.20151 1.120649 0.0531008}
-       {-0.0166008 0.2648 0.6684799}
-     }
-   name ColorMatrix8
-   label "X'Y'Z (D65)\nto\nLMS"
-   note_font "Bitstream Vera Sans"
-   xpos -150
-   ypos 188
-  }
-  Switch {
-   inputs 2
-   which {{parent.direction}}
-   name Switch1
-   xpos -40
-   ypos 350
-  }
-  Output {
-   name Output
-   xpos -40
-   ypos 446
-  }
- end_group
- ColorMatrix {
-  matrix {
-      {{parent.SOURCE_GAMUT_GamutToXYZ.ColorMatrix.matrix} {parent.SOURCE_GAMUT_GamutToXYZ.ColorMatrix.matrix} {parent.SOURCE_GAMUT_GamutToXYZ.ColorMatrix.matrix}}
-      {{parent.SOURCE_GAMUT_GamutToXYZ.ColorMatrix.matrix} {parent.SOURCE_GAMUT_GamutToXYZ.ColorMatrix.matrix} {parent.SOURCE_GAMUT_GamutToXYZ.ColorMatrix.matrix}}
-      {{parent.SOURCE_GAMUT_GamutToXYZ.ColorMatrix.matrix} {parent.SOURCE_GAMUT_GamutToXYZ.ColorMatrix.matrix} {parent.SOURCE_GAMUT_GamutToXYZ.ColorMatrix.matrix}}
-    }
-  invert true
-  name ColorMatrix1
-  label "XYZ to \[value parent.src_gamut]"
-  xpos -40
-  ypos 1909
-  disable {{parent.compress_only}}
- }
- Dot {
-  name Dot7
-  label " OUTPUT GAMUT"
-  note_font "Helvetica Bold"
-  note_font_size 24
-  note_font_color 0xa5a5a501
-  xpos -6
-  ypos 1986
- }
-set Ne4e4800 [stack 0]
  Output {
   name Output
   xpos -40
-  ypos 2121
+  ypos 182
  }
-push $N1092cb80
- Group {
-  name SoftCompress16
-  label "direction: \[knob direction]"
-  xpos 1023
-  ypos 1394
-  addUserKnob {20 SoftCompress}
-  addUserKnob {7 slope t "The softness of the compressing curve's slope. 0 is a clamp."}
-  slope {{parent.SoftCompress15.slope}}
-  addUserKnob {7 threshold t "The minimum threshold. Values below this number will not be affected." R 0 2}
-  threshold {{parent.SoftCompress15.threshold}}
-  addUserKnob {7 limit t "The asymptotic maximum value. For example, the value that inf becomes." R 0 2}
-  limit {{parent.SoftCompress15.limit}}
-  addUserKnob {4 direction M {forward inverse}}
-  direction inverse
- }
-  Input {
-   inputs 0
-   name InputMask
-   xpos -590
-   ypos 806
-   number 1
-  }
-  Input {
-   inputs 0
-   name Input
-   xpos -810
-   ypos 494
-  }
-  Dot {
-   name Dot1
-   label " "
-   note_font "Helvetica Bold"
-   note_font_size 24
-   note_font_color 0xa5a5a501
-   xpos -776
-   ypos 546
-  }
-set N3d932cc0 [stack 0]
-  Expression {
-   temp_name0 sl
-   temp_expr0 "(1-slope)*(max(0, limit-threshold))"
-   temp_name1 th
-   temp_expr1 threshold
-   temp_name2 lim
-   temp_expr2 "max(0, (limit-threshold))"
-   expr0 "r < th + sl ? r : (pow(sl, 2) + 2 * sl * th - 2 * sl * r + pow(th, 2) - th * r + lim * r)/(th + lim - r)"
-   expr1 "g < th + sl ? g : (pow(sl, 2) + 2 * sl * th - 2 * sl * g + pow(th, 2) - th * g + lim * g)/(th + lim - g)"
-   expr2 "b < th + sl ? b : (pow(sl, 2) + 2 * sl * th - 2 * sl * b + pow(th, 2) - th * b + lim * b)/(th + lim - b)"
-   name SoftCompress_inverse
-   xpos -700
-   ypos 638
-   addUserKnob {20 Params_tab l Params}
-   addUserKnob {7 slope}
-   slope {{parent.slope}}
-   addUserKnob {7 threshold R 0 25}
-   threshold {{parent.threshold}}
-   addUserKnob {7 limit R 0 25}
-   limit {{parent.limit}}
-  }
-push $N3d932cc0
-  Expression {
-   temp_name0 sl
-   temp_expr0 "(1-slope)*(max(0, limit-threshold))"
-   temp_name1 th
-   temp_expr1 "min(threshold, limit)"
-   temp_name2 lim
-   temp_expr2 "max(0, (limit-threshold))"
-   expr0 "r < th + sl ? r :  th + (-1 / ((r - th - sl) / (lim - sl) + 1) + 1) * (lim - sl) + sl"
-   expr1 "g < th + sl ? g :  th + (-1 / ((g - th - sl) / (lim - sl) + 1) + 1) * (lim - sl) + sl"
-   expr2 "b < th + sl ? b :  th + (-1 / ((b - th - sl) / (lim - sl) + 1) + 1) * (lim - sl) + sl"
-   name SoftCompress
-   xpos -920
-   ypos 638
-   addUserKnob {20 Params_tab l Params}
-   addUserKnob {7 slope}
-   slope {{parent.slope}}
-   addUserKnob {7 threshold R 0 25}
-   threshold {{parent.threshold}}
-   addUserKnob {7 limit R 0 25}
-   limit {{parent.limit}}
-  }
-  Switch {
-   inputs 2
-   which {{parent.direction}}
-   name Switch1
-   xpos -810
-   ypos 710
-  }
-push $N3d932cc0
-  Dot {
-   name Dot2
-   label " "
-   note_font "Helvetica Bold"
-   note_font_size 24
-   note_font_color 0xa5a5a501
-   xpos -996
-   ypos 546
-  }
-  Dot {
-   name Dot3
-   label " "
-   note_font "Helvetica Bold"
-   note_font_size 24
-   note_font_color 0xa5a5a501
-   xpos -996
-   ypos 810
-  }
-  NodeWrapper {
-   inputs 2+1
-   channels rgb
-   name NodeWrapper1
-   xpos -810
-   ypos 806
-  }
-  Output {
-   name Output
-   xpos -810
-   ypos 926
-  }
- end_group
-push 0
- Switch {
-  inputs 2
-  which {{parent.invert}}
-  name Switch_Inverse1
-  xpos 1023
-  ypos 1482
- }
- Group {
-  inputs 0
-  name SoftclipExpression8
-  label "Type A"
-  note_font "Bitstream Vera Sans"
-  xpos 610
-  ypos 1441
-  addUserKnob {20 User}
-  addUserKnob {18 threshold}
-  threshold {0 0 0}
-  addUserKnob {6 threshold_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-  addUserKnob {3 direction}
-  addUserKnob {7 mix}
-  mix 1
- }
-  Input {
-   inputs 0
-   name Input1
-   xpos -284
-   ypos 147
-  }
-set Na0ef8830 [stack 0]
-  Expression {
-   temp_name0 one_minus_e
-   temp_expr0 "1 - pow(10,-15)"
-   temp_name1 maxr
-   temp_expr1 "(pow(threshold.r, 2) - 2 * threshold.r * one_minus_e + one_minus_e ) / ( 1 - one_minus_e )"
-   temp_name2 maxg
-   temp_expr2 "(pow(threshold.g, 2) - 2 * threshold.g * one_minus_e + one_minus_e ) / ( 1 - one_minus_e )"
-   temp_name3 maxb
-   temp_expr3 "(pow(threshold.b, 2) - 2 * threshold.b * one_minus_e + one_minus_e ) / ( 1 - one_minus_e )"
-   expr0 " threshold.r < 1 ? r >= 1 ? maxr : r > threshold.r ? (pow(threshold.r, 2) - 2 * threshold.r * r + r ) / ( 1 - r ) : r : r"
-   expr1 " threshold.g < 1 ? g >= 1 ? maxg : g > threshold.g ? (pow(threshold.g, 2) - 2 * threshold.g * g + g ) / ( 1 - g ) : g : g"
-   expr2 " threshold.b < 1 ? b >= 1 ? maxb : b > threshold.b ? (pow(threshold.b, 2) - 2 * threshold.b * b + b ) / ( 1 - b ) : b : b"
-   expr3 a
-   mix {{parent.mix}}
-   name Expression2
-   label inverse
-   xpos -222
-   ypos 258
-   addUserKnob {20 User}
-   addUserKnob {18 threshold}
-   threshold {{parent.threshold.r} {parent.threshold.g} {parent.threshold.b}}
-   addUserKnob {6 threshold_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-  }
-push $Na0ef8830
-  Expression {
-   expr0 "threshold.r < 1 ? r > threshold.r ? ( -1 / (( r - threshold.r ) / ( 1 - threshold.r ) +1 ) +1 ) * ( 1 - threshold.r ) + threshold.r : r : r"
-   expr1 "threshold.g < 1 ? g > threshold.g ? ( -1 / (( g - threshold.g ) / ( 1 - threshold.g ) +1 ) +1 ) * ( 1 - threshold.g ) + threshold.g : g : g"
-   expr2 "threshold.b < 1 ? b > threshold.b ? ( -1 / (( b - threshold.b ) / ( 1 - threshold.b ) +1 ) +1 ) * ( 1 - threshold.b ) + threshold.b : b : b"
-   expr3 a
-   mix {{parent.mix}}
-   name Expression1
-   label forward
-   xpos -349
-   ypos 258
-   addUserKnob {20 User}
-   addUserKnob {18 threshold_1 l threshold}
-   threshold_1 {{parent.threshold.r} {parent.threshold.g} {parent.threshold.b}}
-   addUserKnob {6 threshold_1_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_1_panelDropped_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-  }
-  Switch {
-   inputs 2
-   which {{parent.direction}}
-   name Switch2
-   note_font "Bitstream Vera Sans"
-   xpos -287
-   ypos 351
-  }
-  Output {
-   name Output1
-   xpos -287
-   ypos 463
-  }
- end_group
- Group {
-  inputs 0
-  name SoftclipExpression1
-  label "Type B"
-  note_font "Bitstream Vera Sans"
-  xpos 720
-  ypos 1441
-  addUserKnob {20 User}
-  addUserKnob {18 threshold}
-  threshold {0 0 0}
-  addUserKnob {6 threshold_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-  addUserKnob {3 direction}
-  addUserKnob {7 mix}
-  mix 1
- }
-  Input {
-   inputs 0
-   name Input1
-   xpos -284
-   ypos 147
-  }
-set N3a2c8680 [stack 0]
-  Expression {
-   temp_name0 atanh_r
-   temp_expr0 log((1+(threshold.r-r)/threshCompl.r)/(1-(threshold.r-r)/threshCompl.r))/2
-   temp_name1 atanh_g
-   temp_expr1 log((1+(threshold.g-g)/threshCompl.g)/(1-(threshold.g-g)/threshCompl.g))/2
-   temp_name2 atanh_b
-   temp_expr2 log((1+(threshold.b-b)/threshCompl.b)/(1-(threshold.b-b)/threshCompl.b))/2
-   expr0 "r > threshold.r ? threshold.r*(-atanh_r) + atanh_r + threshold.r : r"
-   expr1 "g > threshold.g ? threshold.g*(-atanh_g) + atanh_g + threshold.g : g"
-   expr2 "b > threshold.b ? threshold.b*(-atanh_b) + atanh_b + threshold.b : b"
-   expr3 a
-   name Expression12
-   label inverse
-   xpos -204
-   ypos 272
-   addUserKnob {20 User}
-   addUserKnob {18 threshold}
-   threshold {{parent.threshold.r} {parent.threshold.g} {parent.threshold.b}}
-   addUserKnob {6 threshold_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {18 threshCompl}
-   threshCompl {{threshold.r-1} {threshold.g-1} {threshold.b-1}}
-   addUserKnob {6 threshCompl_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshCompl_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshCompl_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshCompl_panelDropped_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshCompl_panelDropped_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshCompl_panelDropped_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshCompl_panelDropped_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshCompl_panelDropped_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshCompl_panelDropped_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshCompl_panelDropped_1_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-  }
-push $N3a2c8680
-  Expression {
-   expr0 "r > threshold.r ? threshold.r + threshCompl.r * tanh((r - threshold.r) / threshCompl.r) : r"
-   expr1 "g > threshold.g ? threshold.g + threshCompl.g * tanh((g - threshold.g) / threshCompl.g) : g"
-   expr2 "b > threshold.b ? threshold.b + threshCompl.b * tanh((b - threshold.b) / threshCompl.b) : b"
-   expr3 a
-   name Expression3
-   label forward
-   xpos -376
-   ypos 269
-   addUserKnob {20 User}
-   addUserKnob {18 threshold}
-   threshold {{parent.threshold.r} {parent.threshold.g} {parent.threshold.b}}
-   addUserKnob {6 threshold_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshold_panelDropped_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {18 threshCompl}
-   threshCompl {{1-threshold.r} {1-threshold.g} {1-threshold.b}}
-   addUserKnob {6 threshCompl_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshCompl_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshCompl_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshCompl_panelDropped_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshCompl_panelDropped_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshCompl_panelDropped_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshCompl_panelDropped_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshCompl_panelDropped_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-   addUserKnob {6 threshCompl_panelDropped_1_1_1_1_1_1_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
-  }
-  Switch {
-   inputs 2
-   which {{parent.direction}}
-   name Switch2
-   note_font "Bitstream Vera Sans"
-   xpos -287
-   ypos 356
-  }
-  Output {
-   name Output1
-   xpos -287
-   ypos 463
-  }
- end_group
-push $N1092cb80
- CurveTool {
-  operation "Max Luma Pixel"
-  ROI {0 0 {input.width} {input.height}}
-  autocropdata {0 0 {input.width} {input.height}}
-  maxlumapixdata {{curve x1 478 x14 1800} {curve x1 364 x14 436}}
-  maxlumapixvalue {{curve x1 329576.0312 x14 3.869687557} {curve x1 1.28495717 x14 4.130000114} {curve x1 0.4011462331 x14 3.160937548}}
-  minlumapixdata {{curve x1 145 x14 380} {curve x1 425 x14 0}}
-  minlumapixvalue {{curve x1 2.707561186e-25 x14 0} {curve x1 0 x14 0} {curve x1 0 x14 0}}
-  name CT
-  xpos 313
-  ypos 1404
- }
-push $Ne8c7d90
-push $Ne4e4800
- Viewer {
-  inputs 2
-  frame_range 1-52
-  colour_sample_bbox {-0.86328125 0.41015625 -0.861328125 0.412109375}
-  viewerProcess "grade (bt709)"
-  name Viewer1
-  xpos 1206
-  ypos 1432
-  addUserKnob {20 Lock}
-  addUserKnob {6 lock_all_buffers l "lock all buffers" -STARTLINE}
-  addUserKnob {6 lock_buffer_1 l "lock buffer 1" +STARTLINE}
-  addUserKnob {6 lock_buffer_2 l "lock buffer 2" +STARTLINE}
-  addUserKnob {6 lock_buffer_3 l "lock buffer 3" +STARTLINE}
-  addUserKnob {6 lock_buffer_4 l "lock buffer 4" +STARTLINE}
-  addUserKnob {6 lock_buffer_5 l "lock buffer 5" +STARTLINE}
-  addUserKnob {6 lock_buffer_6 l "lock buffer 6" +STARTLINE}
-  addUserKnob {6 lock_buffer_7 l "lock buffer 7" +STARTLINE}
-  addUserKnob {6 lock_buffer_8 l "lock buffer 8" +STARTLINE}
-  addUserKnob {6 lock_buffer_9 l "lock buffer 9" +STARTLINE}
-  addUserKnob {6 lock_buffer_0 l "lock buffer 0" +STARTLINE}
- }
- Group {
-  inputs 0
-  name SoftCompress1
-  label "direction: \[knob direction]"
-  xpos 53
-  ypos 1420
-  addUserKnob {20 SoftCompress}
-  addUserKnob {7 slope t "The softness of the compressing curve's slope. 0 is a clamp."}
-  slope 0.945
-  addUserKnob {7 threshold t "The minimum threshold. Values below this number will not be affected." R 0 2}
-  threshold 0.57
-  addUserKnob {7 limit t "The asymptotic maximum value. For example, the value that inf becomes." R 0 2}
-  limit 1.07
-  addUserKnob {4 direction M {forward inverse}}
- }
-  Input {
-   inputs 0
-   name InputMask
-   xpos -590
-   ypos 806
-   number 1
-  }
-  Input {
-   inputs 0
-   name Input
-   xpos -810
-   ypos 494
-  }
-  Dot {
-   name Dot1
-   label " "
-   note_font "Helvetica Bold"
-   note_font_size 24
-   note_font_color 0xa5a5a501
-   xpos -776
-   ypos 546
-  }
-set N8cc7b670 [stack 0]
-  Expression {
-   temp_name0 sl
-   temp_expr0 "(1-slope)*(max(0, limit-threshold))"
-   temp_name1 th
-   temp_expr1 threshold
-   temp_name2 lim
-   temp_expr2 "max(0, (limit-threshold))"
-   expr0 "r < th + sl ? r : (pow(sl, 2) + 2 * sl * th - 2 * sl * r + pow(th, 2) - th * r + lim * r)/(th + lim - r)"
-   expr1 "g < th + sl ? g : (pow(sl, 2) + 2 * sl * th - 2 * sl * g + pow(th, 2) - th * g + lim * g)/(th + lim - g)"
-   expr2 "b < th + sl ? b : (pow(sl, 2) + 2 * sl * th - 2 * sl * b + pow(th, 2) - th * b + lim * b)/(th + lim - b)"
-   expr3 "a < th + sl ? a : (pow(sl, 2) + 2 * sl * th - 2 * sl * a + pow(th, 2) - th * a + lim * a)/(th + lim - a)"
-   name SoftCompress_inverse
-   xpos -702
-   ypos 636
-   addUserKnob {20 Params_tab l Params}
-   addUserKnob {7 slope}
-   slope {{parent.slope}}
-   addUserKnob {7 threshold R 0 25}
-   threshold {{parent.threshold}}
-   addUserKnob {7 limit R 0 25}
-   limit {{parent.limit}}
-  }
-push $N8cc7b670
-  Expression {
-   temp_name0 sl
-   temp_expr0 "(1-slope)*(max(0, limit-threshold))"
-   temp_name1 th
-   temp_expr1 "min(threshold, limit)"
-   temp_name2 lim
-   temp_expr2 "max(0, (limit-threshold))"
-   expr0 "r < th + sl ? r :  th + (-1 / ((r - th - sl) / (lim - sl) + 1) + 1) * (lim - sl) + sl"
-   expr1 "g < th + sl ? g :  th + (-1 / ((g - th - sl) / (lim - sl) + 1) + 1) * (lim - sl) + sl"
-   expr2 "b < th + sl ? b :  th + (-1 / ((b - th - sl) / (lim - sl) + 1) + 1) * (lim - sl) + sl"
-   expr3 "a < th + sl ? a :  th + (-1 / ((a - th - sl) / (lim - sl) + 1) + 1) * (lim - sl) + sl"
-   name SoftCompress
-   xpos -921
-   ypos 639
-   addUserKnob {20 Params_tab l Params}
-   addUserKnob {7 slope}
-   slope {{parent.slope}}
-   addUserKnob {7 threshold R 0 25}
-   threshold {{parent.threshold}}
-   addUserKnob {7 limit R 0 25}
-   limit {{parent.limit}}
-  }
-  Switch {
-   inputs 2
-   which {{parent.direction}}
-   name SwitchDirection
-   xpos -810
-   ypos 709
-  }
-push $N8cc7b670
-  Dot {
-   name Dot2
-   label " "
-   note_font "Helvetica Bold"
-   note_font_size 24
-   note_font_color 0xa5a5a501
-   xpos -996
-   ypos 546
-  }
-  Dot {
-   name Dot3
-   label " "
-   note_font "Helvetica Bold"
-   note_font_size 24
-   note_font_color 0xa5a5a501
-   xpos -996
-   ypos 810
-  }
-  NodeWrapper {
-   inputs 2+1
-   channels rgba
-   name NodeWrapper1
-   xpos -810
-   ypos 806
-  }
-  Output {
-   name Output
-   xpos -810
-   ypos 926
-  }
- end_group
 end_group
