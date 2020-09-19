@@ -34,6 +34,7 @@ knob_defaults = {
                 'Soften',
                 'TransformMasked',
                 'VectorBlur',
+                'Write',
                 'ZBlur',
                 'ZDefocus2',
                 'ZSlice',
