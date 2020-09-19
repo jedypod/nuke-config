@@ -793,6 +793,10 @@ def read_from_write():
             continue
         pos = get_pos(node)
         filepath = node['file'].getValue()
+        if '[' in filepath:
+            # contains tcl expression. use evaluate instead.
+            filepath_eval = node['file'].evaluate()
+            
         dirname = os.path.dirname(filepath)
         filename = os.path.basename(filepath)
         if '#' in filename:
@@ -845,6 +849,12 @@ def swap_node():
                 invert.setValue(0)
             else:
                 invert.setValue(1)
+        elif 'reverse' in node.knobs():
+            reverse = node['reverse']
+            if reverse.getValue() == 1:
+                reverse.setValue(0)
+            else:
+                reverse.setValue(1)
         elif node.Class() == 'Colorspace':
             colorspace_in = node['colorspace_in'].value()
             colorspace_out = node['colorspace_out'].value()
