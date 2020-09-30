@@ -1,0 +1,36 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name WeightedMedian
+ tile_color 0xcc804eff
+ addUserKnob {20 WeightedMedian_tab l WeightedMedian}
+ addUserKnob {7 size t "Calculate median pixel value of square box sized size*2+1 " R 0 10}
+ size 3
+ addUserKnob {7 weight t "Weighted median amount. 0 = unweighted median. 1 is full weight where center pixel value of box is inserted into pixel array size*1.5 times."}
+ weight 1
+}
+ Input {
+  inputs 0
+  name Input
+  xpos 180
+  ypos 302
+ }
+ BlinkScript {
+  recompileCount 1
+  ProgramGroup 1
+  KernelDescription "2 \"WeightedMedian\" iterate componentWise 628a4173cd6d66f12d7baf4418b25bcd66a14ccb1d88e22cb6a8f663d720f7b4 2 \"src\" Read Ranged2D \"dst\" Write Point 2 \"size\" Int 1 AAAAAA== \"weight\" Float 1 AAAAAA== 2 \"size\" 1 1 \"weight\" 1 1 4 \"srcrangeMin\" Int 2 1 AAAAAAAAAAA= \"srcrangeMax\" Int 2 1 AAAAAAAAAAA= \"_size\" Int 1 1 AAAAAA== \"sample_mult\" Float 1 1 AAAAAA=="
+  kernelSource "kernel WeightedMedian : public ImageComputationKernel<eComponentWise>\n\{\n  Image<eRead, eAccessRanged2D, eEdgeClamped> src;\n  Image<eWrite, eAccessPoint> dst;\n\n  param:\n    int size;\n    float weight;\n\n  local:\n    int _size;\n    float sample_mult;\n\n  void init() \{\n    _size = min(size, 10);\n    src.setRange(-_size, -_size, _size, _size);\n    sample_mult = ceil(float(_size)*1.5f); \n  \}\n\n  float gaussian(float x) \{\n    x = fabs(x);\n    return exp(-(x*x)/(_size*weight*weight));\n  \}\n\n  void process() \{\n    float pixels\[961];\n    int idx = 0;\n    for (int i = -_size; i <= _size; i++) \{\n      for (int j = -_size; j <= _size; j++) \{\n        float c = src(i, j);\n        if (weight < 1e-3) \{\n          pixels\[idx] = c;\n          idx++;\n        \} else \{\n          float dist = fabs(j)+fabs(i);\n          int extra_samples = round(gaussian(dist)*sample_mult);\n          for (int wct = 0; wct <= extra_samples; wct++) \{\n            pixels\[idx] = c; \n            idx++;\n          \}\n        \}\n      \}\n    \}\n    if (idx <= 961) \{\n      dst() = median(pixels, idx);\n    \}\n  \}\n\};\n"
+  rebuild ""
+  WeightedMedian_size {{parent.size}}
+  WeightedMedian_weight {{parent.weight}}
+  rebuild_finalise ""
+  name BlinkScript6
+  xpos 180
+  ypos 345
+ }
+ Output {
+  name Output
+  xpos 180
+  ypos 398
+ }
+end_group
