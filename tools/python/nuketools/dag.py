@@ -742,9 +742,9 @@ n['target'].setValue(t.fullName())''')
 def create_dots(side=False):
     # Create dot nodes
     nodes = nuke.selectedNodes()
-    unselect()
     dots = list()
     for node in nodes:
+        unselect()
         pos = get_pos(node)
         if not side:
             select([node])
