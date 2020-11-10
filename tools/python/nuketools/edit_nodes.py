@@ -76,7 +76,7 @@ def edit_knobs():
     if not panel.show():
         return
     k = panel.value('knobs')
-    set_expression = panel.value('expression')
+    create_expression = panel.value('expression')
     values = list()
     for i in range(4):
         val = panel.value(str(i))
@@ -93,7 +93,7 @@ def edit_knobs():
             array_size = knob.arraySize()
         except AttributeError:
             array_size = 1
-        if set_expression:
+        if create_expression:
             for i in range(array_size):
                 if values[i]:
                     if knob.hasExpression(i):
@@ -107,8 +107,13 @@ def edit_knobs():
                     knob.setValue(False)
                 else:
                     knob.setValue(True)
-            elif isinstance(knob, (nuke.File_Knob)):
+            elif isinstance(knob, nuke.File_Knob):
                 knob.setValue(values[0])
+            elif isinstance(knob, nuke.Enumeration_Knob):
+                if create_expression:
+                    knob.setExpression(str(values[0]))
+                else:
+                    knob.setValue(values[0])
             elif isinstance(knob, (nuke.XYZ_Knob, nuke.XY_Knob, nuke.WH_Knob, nuke.UV_Knob, nuke.Array_Knob)):
                 if knob.singleValue():
                     if values[0] and not values[1] and not values[2] and not values[3]:
@@ -168,12 +173,10 @@ def paste_knobs(checkboxes=False):
                     chosen_knobs.append(k)
         else:
             paste_all = panel.value('paste all')
-            print paste_all
             if paste_all:
                 chosen_knobs = knobs
             else:
                 chosen_knobs.append(panel.value('knob'))
-                print 'got single value: ', chosen_knobs
         for dst_node in dst_nodes:
             dst_knobs = dst_node.knobs()
             for knob in chosen_knobs:
