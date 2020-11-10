@@ -1,0 +1,465 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+name ExposureBlend
+label "\[value brackets] Brackets"
+addUserKnob {20 ExposureBlend_tab l ExposureBlend}
+addUserKnob {22 sort_selected_reads l "Sort Selected Reads" t "Sort selected read nodes by exposure time, and create an ExposureBracketBlender for each exposure set.\n\n" T "import nuke\nimport os, math\nfrom datetime import datetime\n\ndef hex_color(r, g=None, b=None):\n    # Return hex code for given rgb tuple. g and b are optional. If not specified, a greyscale value will be returned.\n    # r g and b should be between 0 and 1\n    if not g:\n        g = r\n    if not b:\n        b = r\n    return int('%02x%02x%02x%02x' % (r*255,g*255,b*255,1), 16)\n\ndef unselect():\n    _ = \[n.setSelected(False) for n in nuke.allNodes(recurseGroups=True)]\n\ndef sort():\n    # For selected read nodes:\n    # Sort by exposure time, seperate by bracked set\n\n    grid_x = int(nuke.toNode('preferences').knob('GridWidth').value())\n    grid_y = int(nuke.toNode('preferences').knob('GridHeight').value())\n\n    node = nuke.thisNode()\n\n    nuke.root().begin()\n    nodes = nuke.selectedNodes('Read')\n    if not nodes:\n        nuke.message(\"Please select a number of read nodes to sort.\")\n        return\n\n    unselect()\n    node.setSelected(True)\n    nuke.nodeCopy('%clipboard')\n    unselect()\n\n    task = nuke.ProgressTask('Sorting \{0\} Exposure Brackets'.format(len(nodes)))\n\n\n    # http://strftime.org\n    data = \{n:(n.metadata().get('input/exposure_time'), datetime.strptime(n.metadata().get('exr/Exif:DateTimeOriginal'), r'%Y:%m:%d %H:%M:%S')) for n in nodes\}\n\n    # bracket_sets is a list that will contain lists of exposure bracket sets\n    bracket_sets = \[]\n    bracket = \[]\n\n    # Loop through all images, group into exposure brackets by calculating time difference\n    data_by_time = sorted(data.items(), key=lambda x: x\[1]\[1])\n\n    for i, exposure in enumerate(data_by_time):\n        read = exposure\[0]\n        etime = exposure\[1]\[0]\n        ctime = exposure\[1]\[1]\n        task.setProgress( int( float(i) / len(data_by_time) * 100) )\n        if task.isCancelled():\n            break\n        task.setMessage('Getting next exposure time: \\t\{0\}'.format(read.name()))\n        if i < len(data_by_time)-1:\n            next_ctime = data_by_time\[i+1]\[1]\[1]\n\n        task.setMessage('Calc time diff: \\t\{0\}'.format(read.name()))\n        time_diff = next_ctime - ctime\n\n        task.setMessage('Printing info: \\t\{0\}'.format(read.name()))\n        # print \"===> \", read.name()\n        # print etime\n        # print ctime.isoformat()\n        # print time_diff.total_seconds()\n        # print\n\n\n        task.setMessage('Append lists: \\t\{0\}'.format(read.name()))\n        if time_diff.total_seconds() > 2.0:\n            # print \"New bracket Detected!\\n------------------------------------------------------------\\n\\n\"\n            bracket.append((read, etime, ctime, time_diff.total_seconds()))\n            bracket_sets.append(bracket)\n            bracket = \[]\n        else:\n            bracket.append((read, etime, ctime, time_diff.total_seconds()))\n        # Add last images to the last exposure set\n        if i == len(data_by_time)-1:\n            bracket_sets.append(bracket)\n            bracket = \[]\n\n\n    pos = (node.xpos(), node.ypos() - grid_y*12)\n    # Loop through each exposure set, sort by exposure time dark to bright\n    # Sort horizontally\n    for i, eset in enumerate(bracket_sets):\n        if task.isCancelled():\n            break\n        esetsort = sorted(eset, key=lambda x: x\[1])\n        set_size = len(esetsort)\n        print \"Exposure set \{0\} contains \{1\} images: \\n\\t\{2\}\".format(i, set_size, \"\\n\\t\".join(\[\"\{0\}     \\t\\t- \{1\} \\t: \{2\} \\t- \{3\}\".format(e\[0].name(), os.path.basename(e\[0]\['file'].getValue()), e\[1], e\[2]) for e in esetsort]))\n\n        task.setMessage('Sorting exposure set: \\t\{0\}'.format(i))\n        # Create new exposure blender if we have a complete exposure set\n        if set_size > 1:\n            nuke.nodePaste(\"%clipboard\")\n            new_brack = nuke.selectedNode()\n            unselect()\n            new_brack.setXYpos(pos\[0], pos\[1]+grid_y*10)\n            new_brack\['brackets'].setValue(set_size)\n            # Set base exposure to 1 up from middle frame\n            # new_brack\['exposure'].setValue(esetsort\[-2]\[1])\n            new_brack\['exposure'].setValue(esetsort\[int(math.ceil(float(set_size)/2))]\[1])\n\n        for j, e in enumerate(esetsort):\n            if task.isCancelled():\n                break\n            cur_node = e\[0]\n            etime = e\[1]\n            ctime = e\[2]\n            cur_node.setXYpos(pos\[0], pos\[1])\n            cur_node\['tile_color'].setValue(hex_color(float(j)/set_size*0.8+0.2))\n            if set_size > 1:\n                new_brack.connectInput(0, cur_node)\n\n            pos = (pos\[0] + grid_x, pos\[1])\n            # space between big exposure time diffs\n            # if e\[3] > 100:\n            #     pos = (pos\[0] + grid_x*4, pos\[1])\n\n        pos = (pos\[0] + grid_x, pos\[1])\n\n    nuke.delete(node)\nsort()" +STARTLINE}
+addUserKnob {22 ungroup l Ungroup t "Ungroup this ExposureBracketBlender so you can manipulate the graph more easily.\n\nUseful if you need to keep only pieces of certain exposures, for example if there is motion in the frame." -STARTLINE T "def unselect():\n    _ = \[n.setSelected(False) for n in nuke.allNodes(recurseGroups=True)]\n\ndef expand_group():\n    # nuke.expandSelectedGroup() # not an option: reverses input order\n    node = nuke.thisNode()\n    node.begin()\n    brackets = node\['brackets'].getValue()\n    \n    # Copy used nodes inside group\n    _ = \[n.setSelected(True) for n in nuke.allNodes()]\n    for n in nuke.selectedNodes(): # remove unused brackets\n        lastchar = n.name()\[-1]\n        if lastchar.isdigit():\n            if int(lastchar) >= brackets:\n                n.setSelected(False)\n    nuke.nodeCopy('%clipboard')\n\n    # Paste nodes to root \n    nuke.root().begin()\n    unselect()\n    nuke.nodePaste('%clipboard')\n    copied_nodes = nuke.selectedNodes()\n    \n    # Move ungrouped nodes to 0th input of node\n    input0 = nuke.toNode('Input0')\n    offset = (input0.xpos() - node.input(0).xpos(), input0.ypos() - node.input(0).ypos())\n    _ = \[n.setXYpos(n.xpos() - offset\[0], n.ypos() - offset\[1]) for n in copied_nodes]\n    \n    # Reconnect Input nodes\n    for i in xrange(node.inputs()):\n        inputNode = nuke.toNode('Input\{0\}'.format(i))\n        inputNode.setInput(0, node.input(i))\n\n    # Delete Inputs and Output\n    _ = \[nuke.delete(n) for n in copied_nodes if n.Class() in \['Input', 'Output']]\n    \n    # Move ExposureBlend node out of the way\n    node.setXYpos(node.xpos()-400, node.ypos())\n    \n\nexpand_group()"}
+addUserKnob {22 create_equalize_exposure l "Create EqualizeExposure" t "Create an EqualizeExposure node on selected" -STARTLINE T "def unselect(): \n    _ = \[n.setSelected(False) for n in nuke.allNodes('recurseGroups=True')]\ndef create_mult(exp_val=1, target=None):\n    if target:\n        unselect()\n        target.setSelected(True)\n    mult = nuke.createNode('Multiply')\n    mult\['channels'].setValue('rgb')\n    mult.setName('EqualizeExposure')\n    mult.addKnob(nuke.Tab_Knob('exposure_tab', 'exposure'))\n    mult.addKnob(nuke.Double_Knob('exposure', 'exposure'))\n    mult\['value'].setExpression('exposure/\[metadata input/exposure_time]')\n    mult\['exposure'].setValue(exp_val)\n    return mult\n    \nnode = nuke.thisNode()\nexp_val = node\['exposure'].getValue()\nnuke.root().begin()\nsel = nuke.selectedNodes()\nmults = list()\nif sel:\n    for n in sel:\n        mults.append(create_mult(exp_val, n))\nelse:\n    mults.append(create_mult(exp_val))\n_ = \[n.setSelected(True) for n in mults]"}
+addUserKnob {41 brackets T P.brackets}
+addUserKnob {41 exposure T P.exposure}
+addUserKnob {41 noise_floor l "noise floor" T P.noise_floor}
+addUserKnob {41 falloff T P.falloff}
+addUserKnob {41 center T P.center}
+addUserKnob {20 keyer_ranges_grp l "Keyer Ranges" t "Show the Keyers for each bracket, for visualization" n 1}
+keyer_ranges_grp 0
+addUserKnob {41 _1 l "" +STARTLINE T Keyer0.range}
+addUserKnob {41 _2 l "" +STARTLINE T Keyer1.range}
+addUserKnob {41 _3 l "" +STARTLINE T Keyer2.range}
+addUserKnob {41 _4 l "" +STARTLINE T Keyer3.range}
+addUserKnob {41 _5 l "" +STARTLINE T Keyer4.range}
+addUserKnob {41 _6 l "" +STARTLINE T Keyer5.range}
+addUserKnob {41 _7 l "" +STARTLINE T Keyer6.range}
+addUserKnob {20 endGroup n -1}
+}
+Input {
+inputs 0
+name Input9
+xpos 950
+ypos 206
+number 9
+}
+Keyer {
+operation "luminance key"
+range {{lerp(P.noise_floor,0,number/P.brackets)} {lerp(A,P.center,P.falloff)} {start?1:lerp(D,P.center,P.falloff)} 0.99999}
+name Keyer9
+xpos 950
+ypos 248
+addUserKnob {20 Params}
+addUserKnob {3 number}
+number 4
+addUserKnob {6 start -STARTLINE}
+start {{number==0}}
+addUserKnob {6 end -STARTLINE}
+end {{number==(P.brackets-1)}}
+}
+Multiply {
+channels rgb
+value {{"exposure/\[metadata input/exposure_time]"}}
+name EqualizeExposure9
+label "\[value value]"
+note_font Helvetica
+xpos 950
+ypos 297
+addUserKnob {20 exposure_tab l exposure}
+addUserKnob {7 exposure}
+exposure {{P.exposure}}
+}
+Premult {
+name Premult9
+xpos 950
+ypos 374
+}
+Input {
+inputs 0
+name Input8
+xpos 840
+ypos 206
+number 8
+}
+Keyer {
+operation "luminance key"
+range {{lerp(P.noise_floor,0,number/P.brackets)} {lerp(A,P.center,P.falloff)} {start?1:lerp(D,P.center,P.falloff)} 0.99999}
+name Keyer8
+xpos 840
+ypos 248
+addUserKnob {20 Params}
+addUserKnob {3 number}
+number 4
+addUserKnob {6 start -STARTLINE}
+start {{number==0}}
+addUserKnob {6 end -STARTLINE}
+end {{number==(P.brackets-1)}}
+}
+Multiply {
+channels rgb
+value {{"exposure/\[metadata input/exposure_time]"}}
+name EqualizeExposure8
+label "\[value value]"
+note_font Helvetica
+xpos 840
+ypos 297
+addUserKnob {20 exposure_tab l exposure}
+addUserKnob {7 exposure}
+exposure {{P.exposure}}
+}
+Premult {
+name Premult8
+xpos 840
+ypos 374
+}
+Input {
+inputs 0
+name Input7
+xpos 730
+ypos 206
+number 7
+}
+Keyer {
+operation "luminance key"
+range {{lerp(P.noise_floor,0,number/P.brackets)} {lerp(A,P.center,P.falloff)} {start?1:lerp(D,P.center,P.falloff)} 0.99999}
+name Keyer7
+xpos 730
+ypos 248
+addUserKnob {20 Params}
+addUserKnob {3 number}
+number 4
+addUserKnob {6 start -STARTLINE}
+start {{number==0}}
+addUserKnob {6 end -STARTLINE}
+end {{number==(P.brackets-1)}}
+}
+Multiply {
+channels rgb
+value {{"exposure/\[metadata input/exposure_time]"}}
+name EqualizeExposure7
+label "\[value value]"
+note_font Helvetica
+xpos 730
+ypos 297
+addUserKnob {20 exposure_tab l exposure}
+addUserKnob {7 exposure}
+exposure {{P.exposure}}
+}
+Premult {
+name Premult7
+xpos 730
+ypos 374
+}
+Input {
+inputs 0
+name Input6
+xpos 620
+ypos 206
+number 6
+}
+Keyer {
+operation "luminance key"
+range {{lerp(P.noise_floor,0,number/P.brackets)} {lerp(A,P.center,P.falloff)} {start?1:lerp(D,P.center,P.falloff)} 0.99999}
+name Keyer6
+xpos 620
+ypos 248
+addUserKnob {20 Params}
+addUserKnob {3 number}
+number 4
+addUserKnob {6 start -STARTLINE}
+start {{number==0}}
+addUserKnob {6 end -STARTLINE}
+end {{number==(P.brackets-1)}}
+}
+Multiply {
+channels rgb
+value {{"exposure/\[metadata input/exposure_time]"}}
+name EqualizeExposure6
+label "\[value value]"
+note_font Helvetica
+xpos 620
+ypos 297
+addUserKnob {20 exposure_tab l exposure}
+addUserKnob {7 exposure}
+exposure {{P.exposure}}
+}
+Premult {
+name Premult6
+xpos 620
+ypos 374
+}
+Input {
+inputs 0
+name Input5
+xpos 510
+ypos 206
+number 5
+}
+Keyer {
+operation "luminance key"
+range {{lerp(P.noise_floor,0,number/P.brackets)} {lerp(A,P.center,P.falloff)} {start?1:lerp(D,P.center,P.falloff)} 0.99999}
+name Keyer5
+xpos 510
+ypos 248
+addUserKnob {20 Params}
+addUserKnob {3 number}
+number 5
+addUserKnob {6 start -STARTLINE}
+start {{number==0}}
+addUserKnob {6 end -STARTLINE}
+end {{number==(P.brackets-1)}}
+}
+Multiply {
+channels rgb
+value {{"exposure/\[metadata input/exposure_time]"}}
+name EqualizeExposure5
+label "\[value value]"
+note_font Helvetica
+xpos 510
+ypos 297
+addUserKnob {20 exposure_tab l exposure}
+addUserKnob {7 exposure}
+exposure {{P.exposure}}
+}
+Premult {
+name Premult5
+xpos 510
+ypos 374
+}
+Input {
+inputs 0
+name Input4
+xpos 400
+ypos 206
+number 4
+}
+Keyer {
+operation "luminance key"
+range {{lerp(P.noise_floor,0,number/P.brackets)} {lerp(A,P.center,P.falloff)} {start?1:lerp(D,P.center,P.falloff)} 0.99999}
+name Keyer4
+xpos 400
+ypos 248
+addUserKnob {20 Params}
+addUserKnob {3 number}
+number 6
+addUserKnob {6 start -STARTLINE}
+start {{number==0}}
+addUserKnob {6 end -STARTLINE}
+end {{number==(P.brackets-1)}}
+}
+Multiply {
+channels rgb
+value {{"exposure/\[metadata input/exposure_time]"}}
+name EqualizeExposure4
+label "\[value value]"
+note_font Helvetica
+xpos 400
+ypos 297
+addUserKnob {20 exposure_tab l exposure}
+addUserKnob {7 exposure}
+exposure {{P.exposure}}
+}
+Premult {
+name Premult4
+xpos 400
+ypos 374
+}
+Input {
+inputs 0
+name Input3
+xpos 290
+ypos 206
+number 3
+}
+Keyer {
+operation "luminance key"
+range {{lerp(P.noise_floor,0,number/P.brackets)} {lerp(A,P.center,P.falloff)} {start?1:lerp(D,P.center,P.falloff)} 0.99999}
+name Keyer3
+xpos 290
+ypos 248
+addUserKnob {20 Params}
+addUserKnob {3 number}
+number 3
+addUserKnob {6 start -STARTLINE}
+start {{number==0}}
+addUserKnob {6 end -STARTLINE}
+end {{number==(P.brackets-1)}}
+}
+Multiply {
+channels rgb
+value {{"exposure/\[metadata input/exposure_time]"}}
+name EqualizeExposure3
+label "\[value value]"
+note_font Helvetica
+xpos 290
+ypos 297
+addUserKnob {20 exposure_tab l exposure}
+addUserKnob {7 exposure}
+exposure {{P.exposure}}
+}
+Premult {
+name Premult3
+xpos 290
+ypos 374
+}
+Input {
+inputs 0
+name Input2
+xpos 180
+ypos 206
+number 2
+}
+Keyer {
+operation "luminance key"
+range {{lerp(P.noise_floor,0,number/P.brackets)} {lerp(A,P.center,P.falloff)} {start?1:lerp(D,P.center,P.falloff)} 0.99999}
+name Keyer2
+xpos 180
+ypos 248
+addUserKnob {20 Params}
+addUserKnob {3 number}
+number 2
+addUserKnob {6 start -STARTLINE}
+start {{number==0}}
+addUserKnob {6 end -STARTLINE}
+end {{number==(P.brackets-1)}}
+}
+Multiply {
+channels rgb
+value {{"exposure/\[metadata input/exposure_time]"}}
+name EqualizeExposure2
+label "\[value value]"
+note_font Helvetica
+xpos 180
+ypos 297
+addUserKnob {20 exposure_tab l exposure}
+addUserKnob {7 exposure}
+exposure {{P.exposure}}
+}
+Premult {
+name Premult2
+xpos 180
+ypos 374
+}
+push 0
+Input {
+inputs 0
+name Input1
+xpos 70
+ypos 206
+number 1
+}
+Keyer {
+operation "luminance key"
+range {{lerp(P.noise_floor,0,number/P.brackets)} {lerp(A,P.center,P.falloff)} {start?1:lerp(D,P.center,P.falloff)} 0.99999}
+name Keyer1
+xpos 70
+ypos 248
+addUserKnob {20 Params}
+addUserKnob {3 number}
+number 1
+addUserKnob {6 start -STARTLINE}
+start {{number==0}}
+addUserKnob {6 end -STARTLINE}
+end {{number==(P.brackets-1)}}
+}
+Multiply {
+channels rgb
+value {{"exposure/\[metadata input/exposure_time]"}}
+name EqualizeExposure1
+label "\[value value]"
+note_font Helvetica
+xpos 70
+ypos 297
+addUserKnob {20 exposure_tab l exposure}
+addUserKnob {7 exposure}
+exposure {{P.exposure}}
+}
+Premult {
+name Premult1
+xpos 70
+ypos 374
+}
+Input {
+inputs 0
+name Input0
+xpos -40
+ypos 206
+}
+Keyer {
+operation "luminance key"
+range {{lerp(P.noise_floor,0,number/P.brackets)} {lerp(A,P.center,P.falloff)} {start?1:lerp(D,P.center,P.falloff)} 0.99999}
+name Keyer0
+xpos -40
+ypos 248
+addUserKnob {20 Params}
+addUserKnob {3 number}
+addUserKnob {6 start -STARTLINE}
+start {{number==0}}
+addUserKnob {6 end -STARTLINE}
+end {{number==(P.brackets-1)}}
+}
+Multiply {
+channels rgb
+value {{"exposure/\[metadata input/exposure_time]"}}
+name EqualizeExposure0
+label "\[value value]"
+note_font Helvetica
+xpos -40
+ypos 296
+addUserKnob {20 exposure_tab l exposure}
+addUserKnob {7 exposure}
+exposure {{P.exposure}}
+}
+Premult {
+name Premult0
+xpos -40
+ypos 374
+}
+Merge2 {
+inputs 10+1
+operation plus
+name MergePlus
+xpos -40
+ypos 504
+}
+Dot {
+name P
+tile_color 0xff0000ff
+label " P"
+note_font_size 24
+note_font_color 0xa5a5a501
+xpos -6
+ypos 570
+addUserKnob {20 Params_tab l Params}
+addUserKnob {3 brackets}
+brackets 7
+addUserKnob {7 exposure R 0 10}
+exposure 1
+addUserKnob {7 noise_floor l "noise floor" R 0 0.1}
+noise_floor 0.01
+addUserKnob {7 falloff}
+falloff 0.2
+addUserKnob {7 center}
+center 0.18
+}
+set N1e8f46d0 [stack 0]
+Shuffle {
+red alpha
+green alpha
+blue alpha
+name ShuffleAlpha
+xpos -150
+ypos 566
+}
+push $N1e8f46d0
+MergeExpression {
+inputs 2
+expr0 Ar==0?0:Br/Ar
+expr1 Ag==0?0:Bg/Ag
+expr2 Ab==0?0:Bb/Ab
+channel3 alpha
+expr3 Aa==0?0:Ba/Aa
+name MergeDivideReverse
+xpos -40
+ypos 614
+}
+Dot {
+name OUT
+note_font_size 24
+note_font_color 0xff
+xpos -6
+ypos 700
+}
+Output {
+name Output
+xpos -40
+ypos 751
+}
+end_group
