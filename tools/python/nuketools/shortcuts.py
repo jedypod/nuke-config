@@ -42,6 +42,7 @@ nuke.menu('Viewer').addCommand('Play Backward', 'nuke.activeViewer().frameContro
 nuke.menu('Viewer').findItem('Show Overscan').setShortcut('alt+shift+o')
 
 
+
 # Nodes
 nuke.menu('Nodes').addCommand('Merge/Merge', 'nuke.createNode("Merge2", "bbox B", inpanel=False)', 'm', shortcutContext=2)
 nuke.menu('Nodes').addCommand('Merge/Merges/MergeUnion', 'nuke.createNode("Merge2", "bbox union", inpanel=False)', 'alt+meta+m', shortcutContext=2)
