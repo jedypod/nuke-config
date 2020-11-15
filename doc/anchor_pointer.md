@@ -64,3 +64,9 @@ Generally speaking, you should only anchor an input to your script. A read node,
 If you are trying to anchor to some location in the middle of your script, you are not working procedurally and you are probably making a horrible mistake which is going to cause paint and suffering to someone. Either you in the near future, or someone else who is taking over your script, or some poor stereo conversion artist who has to figure out your mess later down the line. 
 
 Be cautious!
+
+
+#### Style
+If you prefer Dot nodes instead of NoOp you can change a couple of variables in the dag.py code. 
+- `AP_CLASS = 'NoOp'` - this defines the class of the anchor/pointer nodes. Change this to `AP_CLASS = 'Dot'` if you prefer dot nodes.
+- `AP_ICON = True` - this enables icon decoration to differentiate these nodes. You can disable this by setting `AP_ICON = False`
