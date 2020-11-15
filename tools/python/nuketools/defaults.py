@@ -1,7 +1,14 @@
 import nuke
 import os
 
-# Defaults for many nodes that have the same knob value
+############################################################
+# defaults module
+#   contains default settings
+#       knob default values
+
+
+
+# Set knob defaults for multiple nodes: Heirarchy - knob name : knob value : nodes
 knob_defaults = {
     'channels': {
         'rgb': [
@@ -47,7 +54,8 @@ for knob, vals in knob_defaults.iteritems():
             nuke.knobDefault('{0}.{1}'.format(node, knob), val)
 
 
-# Presets for individual nodes that have multiple knob values
+# Set knob specialized knob defaults for individual nodes.
+# These are nodes that need multiple or extremely custom knob default values 
 node_defaults = {
     'CheckerBoard': {'centerlinewidth': '0', },
     'ContactSheet': {
@@ -146,7 +154,8 @@ for node, vals in node_defaults.iteritems():
         nuke.knobDefault('{0}.{1}'.format(node, knob), val)
 
 
-# Global defaults for all knobs with the same name
+# Set global knob defaults by name independent of node. 
+# All nodes that have this knob name will have their defaultl overriden.
 defaults = {
     'postage_stamp': 'false',
     'shutteroffset': 'centred',
@@ -156,6 +165,7 @@ for knob, val in defaults.iteritems():
     nuke.knobDefault(knob, val)
 
 
+# Set default label knob value for specific nodes.
 label_defaults = {
     'Colorspace': r'[value colorspace_in] -> [value colorspace_out]',
     'Dilate':'[value size]',
@@ -179,23 +189,20 @@ for node, val in label_defaults.iteritems():
 
 
 
-# Add default favorite dirs
+# Add default favorite directories that appear in the file browser.
 favorite_dirs = {
-    'dev': '/cave/dev',
-    'vault': '/cave/vault',
-    'hdri': '/cave/vault/hdri',
-    'stock': '/cave/vault/stock',
-    'proj': '/cave/proj',
+    # 'dev': '/cave/dev',
+    # 'vault': '/cave/vault',
+    # 'hdri': '/cave/vault/hdri',
+    # 'stock': '/cave/vault/stock',
+    # 'proj': '/cave/proj',
 }
-
 for name, path in sorted(favorite_dirs.items(), key=lambda (k, v): k):
     nuke.addFavoriteDir(name, path, nuke.IMAGE | nuke.SCRIPT | nuke.GEO | nuke.PYTHON)
 
 
 
-
-
-# Set default formats
+# Set default formats. Note this expects an empty formats.tcl in the NUKE_PATH to clear the existing default formats.
 default_formats = [
     '854 480 1 SD_480p', 
     '960 540 1 SD_540p', 
@@ -227,9 +234,6 @@ for f in default_formats:
 # Set default resolution
 nuke.knobDefault('Root.format', 'HD_1080p')
 nuke.knobDefault('Root.proxy_format', 'SD_540p')
-
-
-
 
 
 
