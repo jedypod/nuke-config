@@ -2,10 +2,13 @@ import nuke
 import os, errno
 
 
-base_path = os.path.dirname(__file__) # The folder of this init.py file
-plugin_dirs = ['tools']
+# The folder of this init.py file
+base_path = os.path.dirname(__file__) 
 
-# Add plugin_dirs and subdirs to plugin path
+
+# plugin_dirs is a list of folders to add to the $NUKE_PATH plugin path.
+# All subdirectories of each folder will also be added.
+plugin_dirs = ['tools']
 for plugin_dir in plugin_dirs:
     fullpath = os.path.join(base_path, plugin_dir)
     nuke.tprint('Loading plugin directory: {0}'.format(fullpath))
@@ -33,6 +36,7 @@ nuke.addBeforeRender(create_write_directory)
 
 
 # Works around bug in node.dependent calls which sometimes return an empty list in error
+# Only add callback if not in commandline render mode
 def eval_deps():
     nodes = nuke.allNodes()
     if nodes:
