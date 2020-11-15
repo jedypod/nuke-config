@@ -1,3 +1,7 @@
+# # NOTE: These defaults are now set in defaults.py
+# # I leave this file with everything commented out
+# # as an example of how to accomplish the same thing with a tcl method.
+
 # #---------------------------------------------------------------------------
 # #       W = Total image width in pixels
 # #       H = Total image height in pixels
