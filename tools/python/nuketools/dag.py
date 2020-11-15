@@ -638,6 +638,16 @@ def dec2hex(dec):
 
 def create_pointer():
     # Create an anchor / pointer set
+    
+    # Customization Options
+    # Node class to use for anchor / pointer nodes. Defaults to NoOp but could be a Dot node if you prefer
+    AP_CLASS = 'NoOp'   
+
+    # Displays an input / output icon on the node to visually differentiate it from the standard node class
+    AP_ICON = True
+
+
+
     nodes = nuke.selectedNodes()
     if not nodes:
         return
@@ -699,7 +709,8 @@ def create_pointer():
             target.setSelected(True)
 
         # create anchor node
-        anchor = nuke.createNode('NoOp', 'name ___anchor_{0} icon Output.png label "<font size=7>\[value title]"'.format(randstr))
+
+        anchor = nuke.createNode(AP_CLASS, 'name ___anchor_{0}{1}label "<font size=7>\[value title]"'.format(randstr, ' icon Output.png ' if AP_ICON else ' '))
         anchor.addKnob(nuke.Tab_Knob('anchor_tab', 'anchor'))
         anchor.addKnob(nuke.String_Knob('title', 'title'))
         anchor['title'].setValue(pointer_title)
@@ -708,7 +719,7 @@ def create_pointer():
         anchor.setSelected(True)
 
         # create pointer node
-        pointer = nuke.createNode('NoOp', 'name ___pointer_{0} hide_input true icon Input.png'.format(randstr))
+        pointer = nuke.createNode(AP_CLASS, 'name ___pointer_{0} hide_input true{1}'.format(randstr, ' icon Input.png ' if AP_ICON else ''))
         pointer.addKnob(nuke.Tab_Knob('pointer_tab', 'pointer'))
         pointer.addKnob(nuke.String_Knob('target', 'target'))
         pointer['target'].setValue(anchor.fullName())
