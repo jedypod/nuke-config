@@ -64,8 +64,8 @@ nuke.menu('Nodes').addCommand('Filter/Blur', "nuke.createNode('Blur')", 'b', sho
 nuke.menu('Nodes').addCommand('Color/ColorLookup', 'nuke.createNode("ColorLookup")', 'meta+alt+shift+c', shortcutContext=2)
 nuke.menu('Nodes').addCommand('Channel/Shuffle_', 'nuke.createNode("Shuffle")', 'h', shortcutContext=2)
 nuke.menu('Nodes').addCommand('Channel/ShuffleCopy_', 'nuke.createNode("ShuffleCopy", "label [value\ in]\ |\ [value\ in2]\ ->\ [value\ out]")', 'alt+meta+h', shortcutContext=2)
-nuke.menu('Nodes').addCommand('Color/CCorrect', 'nuke.createNode("CCorrect", "channels rgb")', 'alt+meta+c', shortcutContext=2)
-nuke.menu('Nodes').addCommand('Color/Fill', 'nuke.createNode("Fill")', shortcutContext=2)
+nuke.menu('Nodes').addCommand('Color/CCorrect', 'nuke.createNode("CCorrect", "channels rgb")', shortcutContext=2) # Older version of ColorCorrect. Supports contrast with  pivot.
+nuke.menu('Nodes').addCommand('Color/Fill', 'nuke.createNode("Fill")', shortcutContext=2) # Super useful node to fill input format with color.
 nuke.menu('Nodes').addCommand('Color/ClampMin', 'nuke.createNode("Clamp", "name ClampMin maximum_enable 0")', index=5, shortcutContext=2)
 nuke.menu('Nodes').addCommand('Color/GradeAlpha', 'nuke.createNode("Grade", "name Grade channels a white_clamp 1 black_clamp 1")', 'alt+shift+g', shortcutContext=2)
 nuke.menu('Nodes').addCommand('Color/HueCorrect', 'nuke.createNode("HueCorrect", "")', 'alt+shift+h', shortcutContext=2)
