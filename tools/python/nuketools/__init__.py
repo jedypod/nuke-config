@@ -11,7 +11,7 @@ for module in os.listdir(os.path.dirname(__file__)):
     try:
         __import__(module[:-3], locals(), globals())
     except Exception as exc:
-    	nuke.tprint('Exception occured loading module \n\t{0}\n\t{1}\n\tContinueing startup...'.format(module[:-3], exc))
+        nuke.tprint('Exception occured loading module \n\t{0}\n\t{1}\n\tContinueing startup...'.format(module[:-3], exc))
         pass
 
 del module
