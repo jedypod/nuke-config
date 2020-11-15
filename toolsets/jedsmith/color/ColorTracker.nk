@@ -1,0 +1,43 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name ColorTracker
+ addUserKnob {20 ColorTracker}
+ addUserKnob {26 ""}
+ addUserKnob {26 label_trackcolor l "<b>Track Color" T " "}
+ addUserKnob {41 track_color l "Track Color" t "This button will track the color change over the specified framerange and put the data into the intensitydata knob." T CurveTool.go}
+ addUserKnob {41 intensitydata T CurveTool.intensitydata}
+ addUserKnob {26 ""}
+ addUserKnob {26 label_apply_color_track l "<b>Apply Track" T " "}
+ addUserKnob {3 reference_frame l "reference frame" t "On the specified frame, the calculated color change will have no effect."}
+ reference_frame 1001
+ addUserKnob {4 mode l Mode t "If using this node to apply the color transform, choose whether to matchmove or stabilize the sampled color." M {Matchmove Stabilize "" "" "" ""}}
+ addUserKnob {6 enable_expression_links t "If this is enabled, the grade node will be expression linked to the color track node. Otherwise the keyframes will be baked." -STARTLINE}
+ enable_expression_links true
+ addUserKnob {22 create_linked_grade l "Create Linked Grade" t "Creates a grade expression linked to this node. Useful if you need to link the same color transform to many places in your script. " T "## Create Linked Grade\n\nn = nuke.thisNode()\n\nnuke.root().begin()\n\ngrade_node = nuke.createNode('Grade')\ngrade_node.setName('\{0\}_APPLY'.format(n.fullName()))\ngrade_node.addKnob(nuke.Tab_Knob('ColorTrack'))\ngrade_node.addKnob(nuke.Int_Knob('reference_frame', 'reference frame'))\ngrade_node\['reference_frame'].setValue(int(n\['reference_frame'].value()))\ngrade_node.addKnob(nuke.Boolean_Knob('stabilize', 'stabilize'))\ngrade_node\['stabilize'].clearFlag(nuke.STARTLINE)\ngrade_node\['stabilize'].setValue(n\['mode'].getValue())\n\ngrade_node.addKnob(nuke.AColor_Knob('intensitydata', 'intensitydata'))\ngrade_node.addKnob(nuke.AColor_Knob('color_pivot', 'color_pivot'))\ngrade_node.addKnob(nuke.AColor_Knob('color_mult', 'color_mult'))\ngrade_node\['color_pivot'].setValue(\[1,1,1,1])\ngrade_node\['color_mult'].setValue(\[1,1,1,1])\n\n# Set intensity data: expression link if enable_expression_links is set, otherwise copy the animation curve\nintensity_data_knob = grade_node\['intensitydata']\nintensity_data_knob_src = n\['intensitydata']\nif n\['enable_expression_links'].getValue():\n\tintensity_data_knob.setExpression('parent.\{0\}.intensitydata'.format(n.fullName()))\nelse:\n\t# Copy the animation curves from the Color Track node\n\tintensity_data_knob.setAnimated()\n\tfor i, k in enumerate(intensity_data_knob.animations()):\n\t\tif intensity_data_knob_src.isAnimated():\n\t\t\tk.addKey(intensity_data_knob_src.animation(i).keys())\n\n\n\nexprstring = 'stabilize ? 1/(((intensitydata / intensitydata(reference_frame))-color_pivot)*color_mult+color_pivot) : ((intensitydata / intensitydata(reference_frame))-color_pivot)*color_mult+color_pivot'\ngrade_node\['white'].setValue(1, 1) # Split the color knob\nfor i in xrange(4):\n    grade_node\['white'].setExpression(exprstring, i)" +STARTLINE}
+ addUserKnob {20 info_tab l Info}
+ addUserKnob {26 info_label l " " T "<b>ColorTracker</b><br>\nTrack the color change in the input pixels. <br>\nCreate a Grade to apply a matchmove or stabilize relative to a reference frame."}
+ addUserKnob {26 instructions_text l " " T "Instructions\n1). Stabilize your plate around the area you want to track\n2). Crop your plate to just the area you want to analyze\n4). Press Track Color to analyze the footage\n5). Create a matchmove or stabilize grade, and specify your reference frame\n6). You can scale the curve around a specified pivot value on the grade node \n      using the color_pivot and color_mult knobs in the ColorTrack tab"}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos 400
+  ypos -729
+ }
+ CurveTool {
+  ROI {0 0 {width} {height}}
+  autocropdata {160 120 480 360}
+  intensitydata 1
+  maxlumapixdata {140 385}
+  minlumapixdata {186 -390}
+  name CurveTool
+  xpos 400
+  ypos -490
+ }
+ Output {
+  name Output1
+  xpos 400
+  ypos -226
+ }
+end_group
