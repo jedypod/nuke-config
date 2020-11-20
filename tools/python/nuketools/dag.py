@@ -144,9 +144,12 @@ def set_pos(node, posx, posy):
 
 
 def hide_panel():
-    # Always hide control panels on node creation
-    nuke.thisNode().showControlPanel()
-    nuke.thisNode().hideControlPanel()
+    # Always hide control panels on node creation if node not in exceptions
+    node = nuke.thisNode()
+    exceptions = ['Roto', 'RotoPaint']
+    if node.Class() not in exceptions:
+        nuke.thisNode().showControlPanel()
+        nuke.thisNode().hideControlPanel()
 nuke.addOnUserCreate(hide_panel)
 
 
