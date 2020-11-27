@@ -2,7 +2,7 @@ set cut_paste_input [stack 0]
 push $cut_paste_input
 NoOp {
  name ___pointer___
- autolabel "nuke.thisNode()\['connect_to_target'].execute()"
+ autolabel "\"\{0\}\\n\{1\}\".format(nuke.thisNode().name(), nuke.thisNode()\[\"label\"].evaluate()) if nuke.thisNode().setInput(0, nuke.toNode(nuke.thisNode()\[\"target\"].getValue())) else \"\""
  tile_color 0x1e1e1eff
  label "<font size=7> \[if \{\[exists input.title]\} \{return \[value input.title]\}]\n"
  note_font_color 0x66717bff

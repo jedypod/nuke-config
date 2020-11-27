@@ -745,10 +745,10 @@ sn = nuke.selectedNodes()
 if sn:
     t = sn[-1]
 n['target'].setValue(t.fullName())''')
-        # set autolabel node to execute connect python script button.
+        # set autolabel knob to execute python script to reconnect node to target.
         # it's a hack but it works to automatically reconnect the input without using knobChanged callbacks!
         # FYI, onCreate callback can not connect input 0 due to a nuke bug
-        pointer['autolabel'].setValue('nuke.thisNode()["connect_to_target"].execute()')
+        pointer['autolabel'].setValue('"{0}\\n{1}".format(nuke.thisNode().name(), nuke.thisNode()["label"].evaluate()) if nuke.thisNode().setInput(0, nuke.toNode(nuke.thisNode()["target"].getValue())) else ""')
         pointer.setXYpos(anchor.xpos(), anchor.ypos()+120)
         pointer['tile_color'].setValue(topnode_color)
 
