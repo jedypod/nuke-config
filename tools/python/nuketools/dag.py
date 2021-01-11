@@ -9,14 +9,14 @@ import random
 
 
 # Register keyboard shortcuts and menu entries
-nuke.menu('Nuke').addCommand('Edit/Node/DAG/Move/Move Right', 'dag.move(4, 0)', 'alt+meta+Right')
-nuke.menu('Nuke').addCommand('Edit/Node/DAG/Move/Move Left', 'dag.move(-4, 0)', 'alt+meta+Left')
-nuke.menu('Nuke').addCommand('Edit/Node/DAG/Move/Move Up', 'dag.move(0, -4)', 'alt+meta+Up')
-nuke.menu('Nuke').addCommand('Edit/Node/DAG/Move/Move Down', 'dag.move(0, 4)', 'alt+meta+Down')
-nuke.menu('Nuke').addCommand('Edit/Node/DAG/Move/Move Right Big', 'dag.move(1, 0)', 'alt+meta+shift+Right')
-nuke.menu('Nuke').addCommand('Edit/Node/DAG/Move/Move Left Big', 'dag.move(-1, 0)', 'alt+meta+shift+Left')
-nuke.menu('Nuke').addCommand('Edit/Node/DAG/Move/Move Up Big', 'dag.move(0, -1)', 'alt+meta+shift+Up')
-nuke.menu('Nuke').addCommand('Edit/Node/DAG/Move/Move Down Big', 'dag.move(0, 1)', 'alt+meta+shift+Down')
+nuke.menu('Nuke').addCommand('Edit/Node/DAG/Move/Move Right', 'dag.move(1, 0, norm=False)', 'alt+meta+Right')
+nuke.menu('Nuke').addCommand('Edit/Node/DAG/Move/Move Left', 'dag.move(-1, 0, norm=False)', 'alt+meta+Left')
+nuke.menu('Nuke').addCommand('Edit/Node/DAG/Move/Move Up', 'dag.move(0, -1, norm=False)', 'alt+meta+Up')
+nuke.menu('Nuke').addCommand('Edit/Node/DAG/Move/Move Down', 'dag.move(0, 1, norm=False)', 'alt+meta+Down')
+nuke.menu('Nuke').addCommand('Edit/Node/DAG/Move/Move Right Big', 'dag.move(4, 0)', 'alt+meta+shift+Right')
+nuke.menu('Nuke').addCommand('Edit/Node/DAG/Move/Move Left Big', 'dag.move(-4, 0)', 'alt+meta+shift+Left')
+nuke.menu('Nuke').addCommand('Edit/Node/DAG/Move/Move Up Big', 'dag.move(0, -4)', 'alt+meta+shift+Up')
+nuke.menu('Nuke').addCommand('Edit/Node/DAG/Move/Move Down Big', 'dag.move(0, 4)', 'alt+meta+shift+Down')
 
 nuke.menu('Nuke').addCommand('Edit/Node/DAG/Scale/Scale Up Vertical', 'dag.scale(1, 2)', 'meta+shift++', shortcutContext=2)
 nuke.menu('Nuke').addCommand('Edit/Node/DAG/Scale/Scale Down Vertical', 'dag.scale(1, 0.5)', 'meta+shift+_', shortcutContext=2)
@@ -234,10 +234,10 @@ def auto_place():
     _ = [n.setSelected(True) for n in nodes]
 
 
-def move(xvel, yvel):
+def move(xvel, yvel, norm=True):
     # Move selected nodes by specified number of grid lengths in x and y
-    yvel *= 3
     nodes = nuke.selectedNodes()
+    if norm: yvel *= 2
     for node in nodes:
         node.setXYpos(int(node.xpos() + grid[0] * xvel), int(node.ypos() + grid[1] * yvel))
 
@@ -841,8 +841,12 @@ def read_from_write():
 
 
 # Enhanced swap functionality.
-def swap_node():
-    nodes = nuke.selectedNodes()
+def swap_knob(knob):
+    knob.setValue(0) if knob.getValue() == 1 else knob.setValue(1)
+
+def swap_node(nodes=None):
+    if not nodes:
+        nodes = nuke.selectedNodes()
     for node in nodes:
         if node.inputs() > 1:
             nukescripts.swapAB(node)
@@ -851,29 +855,24 @@ def swap_node():
             out_colorspace = node['out_colorspace'].value()
             node['out_colorspace'].setValue(in_colorspace)
             node['in_colorspace'].setValue(out_colorspace)
-        elif 'direction' in node.knobs():
-            direction = node['direction']
-            if direction.getValue() == 1:
-                direction.setValue(0)
-            else:
-                direction.setValue(1)
-        elif 'invert' in node.knobs():
-            invert = node['invert']
-            if invert.getValue() == 1:
-                invert.setValue(0)
-            else:
-                invert.setValue(1)
-        elif 'reverse' in node.knobs():
-            reverse = node['reverse']
-            if reverse.getValue() == 1:
-                reverse.setValue(0)
-            else:
-                reverse.setValue(1)
-        elif node.Class() == 'Colorspace':
+        if node.Class() == 'Colorspace':
             colorspace_in = node['colorspace_in'].value()
             colorspace_out = node['colorspace_out'].value()
             node['colorspace_out'].setValue(colorspace_in)
             node['colorspace_in'].setValue(colorspace_out)
+        if 'direction' in node.knobs():
+            swap_knob(node['direction'])
+        if 'invert' in node.knobs():
+            swap_knob(node['invert'])
+        if 'reverse' in node.knobs():
+            swap_knob(node['reverse'])
+        if 'operation' in node.knobs():
+            opknob = node['operation']
+            vals = opknob.values()
+            if vals:
+                if 'log' in vals[0]:
+                    swap_knob(node['operation'])
+
 
 def swap_view():
     views = nuke.views()
