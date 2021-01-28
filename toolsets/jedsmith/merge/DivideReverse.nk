@@ -1,8 +1,10 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
 push 0
 MergeExpression {
  inputs 2
- expr0 "isnan(Br/Ar) ? 0 : Br/Ar"
- expr1 "isnan(Bg/Ag) ? 0 : Bg/Ag"
- expr2 "isnan(Bb/Ab) ? 0 : Bb/Ab"
+ expr0 Ar==0?0:Br/Ar
+ expr1 Ag==0?0:Bg/Ag
+ expr2 Ab==0?0:Bb/Ab
  name MergeDivideReverse
 }
