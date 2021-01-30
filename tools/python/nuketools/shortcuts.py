@@ -73,7 +73,7 @@ nuke.menu('Nodes').addCommand('Color/Math/Multiply', 'nuke.createNode("Multiply"
 nuke.menu('Nodes').addCommand('Filter/FilterErode', 'nuke.createNode("FilterErode")', 'meta+shift+e', shortcutContext=2)
 nuke.menu('Nodes').addCommand('Filter/Dilate', 'nuke.createNode("Dilate")', 'alt+shift+e', shortcutContext=2)
 nuke.menu('Nodes').addCommand('Time/FrameHold', 'nuke.createNode("FrameHold", "first_frame {0}".format(nuke.frame()), inpanel=False)', 'meta+alt+shift+f', icon="FrameHold.png", shortcutContext=2)
-nuke.menu('Nodes').addCommand('Other/StickyNote', 'nuke.createNode("StickyNote", "tile_color 0x40454aff note_font_size 14 label <left>")', 'meta+n', shortcutContext=2)
+nuke.menu('Nodes').addCommand('Other/StickyNote', 'nuke.createNode("StickyNote", "tile_color 0x272727ff note_font_color 0xa8a8a8ff note_font_size 14 label <left>")', 'meta+n', shortcutContext=2)
 nuke.menu('Nodes').addCommand('Other/Label Dot', 'nuke.createNode("Dot", "hide_input 1 note_font_size 96 tile_color 0xff")', 'ctrl+meta+alt+shift+d', shortcutContext=2)
 nuke.menu('Nodes').addCommand('Draw/Bezier', 'nuke.createNode("Bezier")', 'meta+alt+b', shortcutContext=2)
 
