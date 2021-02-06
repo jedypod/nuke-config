@@ -1,0 +1,71 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+name Vignette
+selected true
+xpos 5460
+ypos 17
+addUserKnob {20 Vignette}
+addUserKnob {41 center -STARTLINE T Distance.p}
+addUserKnob {41 profile l "" +STARTLINE T Profile.lut}
+addUserKnob {41 grade T Grade.value}
+}
+Input {
+inputs 0
+name Input
+xpos 476
+ypos -166
+}
+Dot {
+name Dot11
+note_font "Helvetica Bold"
+note_font_size 24
+note_font_color 0xff
+xpos 510
+ypos -76
+}
+set N1dcb6aa0 [stack 0]
+Expression {
+channel0 rgba
+expr0 "sqrt(pow2(x-p.x) + pow2(y-p.y))/width*2"
+channel1 none
+channel2 none
+channel3 none
+name Distance
+xpos 366
+ypos -79
+addUserKnob {20 User}
+addUserKnob {12 p l "" +STARTLINE}
+p {{width/2} {height/2}}
+}
+ColorLookup {
+lut {master {curve C 1 S x0.4627837539 0.9475553036 x1.386325836 -0.003523349762}
+  red {}
+  green {}
+  blue {}
+  alpha {}}
+name Profile
+xpos 366
+ypos -32
+}
+Invert {
+channels rgba
+name Invert3
+xpos 366
+ypos 17
+}
+push $N1dcb6aa0
+Multiply {
+inputs 1+1
+channels rgb
+value 2
+name Grade
+xpos 476
+ypos 17
+}
+Output {
+name Output
+xpos 476
+ypos 117
+}
+end_group

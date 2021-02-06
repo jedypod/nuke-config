@@ -1,0 +1,55 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Axis2 {
+ translate {{parent.Axis1.translate} {parent.Axis1.translate} {parent.Axis1.translate}}
+ rotate {{parent.Axis1.rotate} {parent.Axis1.rotate} {parent.Axis1.rotate}}
+ scaling {{parent.Axis1.scaling} {parent.Axis1.scaling} {parent.Axis1.scaling}}
+ name Axis4
+ tile_color 0x3f3f3f00
+ gl_color 0x3f3f3fff
+ label "Restore original transform"
+ selected true
+ xpos -83
+ ypos -398
+}
+Axis2 {
+ rotate {-27.59135853 0 0}
+ name Axis3
+ label "Transform, around origin"
+ selected true
+ xpos -83
+ ypos -297
+}
+Axis2 {
+ xform_order TRS
+ rot_order YXZ
+ translate {{-parent.Axis1.translate} {-parent.Axis1.translate} {-parent.Axis1.translate}}
+ rotate {{-parent.Axis1.rotate} {-parent.Axis1.rotate} {-parent.Axis1.rotate}}
+ scaling {{1/parent.Axis1.scaling} {1/parent.Axis1.scaling} {1/parent.Axis1.scaling}}
+ name Axis2
+ tile_color 0x3f3f3f00
+ gl_color 0x3f3f3fff
+ label Back-to-origin
+ selected true
+ xpos -83
+ ypos -206
+}
+Camera2 {
+ translate {0 0.9250000119 1.174999952}
+ name Camera1
+ label "Object to move"
+ selected true
+ xpos -83
+ ypos -78
+}
+Axis2 {
+ inputs 0
+ translate {-0.1299988776 2.158158064 0}
+ name Axis1
+ tile_color 0x890000ff
+ gl_color 0x890000ff
+ label "Transform origin"
+ selected true
+ xpos 52
+ ypos -294
+}

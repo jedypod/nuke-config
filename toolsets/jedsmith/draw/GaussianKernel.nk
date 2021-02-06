@@ -1,0 +1,14 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Expression {
+ channel0 rgba
+ expr0 "amp*exp( -( pow2(x-p.x)/2*pow2(s.w) + pow2(y-p.y)/2*pow2(s.h) ))"
+ name GaussianKernel
+ addUserKnob {20 User}
+ addUserKnob {12 p l pos}
+ p {{width/2} {height/2}}
+ addUserKnob {7 amp l amplitude R 0 10}
+ amp 1
+ addUserKnob {14 s l sigma R 0 100}
+ s 1
+}

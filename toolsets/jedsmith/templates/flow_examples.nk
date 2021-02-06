@@ -1,0 +1,4821 @@
+set cut_paste_input [stack 0]
+BackdropNode {
+ inputs 0
+ name RIVERS
+ tile_color 0xaaaaaa00
+ label RIVERS
+ note_font_size 42
+ selected true
+ xpos 276
+ ypos -784
+ bdwidth 680
+ bdheight 565
+ z_order -1
+}
+BackdropNode {
+ inputs 0
+ name FONT
+ tile_color 0xaaaaaa00
+ label FONT
+ note_font_size 42
+ selected true
+ xpos 274
+ ypos -188
+ bdwidth 682
+ bdheight 555
+}
+BackdropNode {
+ inputs 0
+ name GRAVITY
+ tile_color 0xaaaaaa00
+ label GRAVITY
+ note_font_size 42
+ selected true
+ xpos -449
+ ypos -786
+ bdwidth 690
+ bdheight 567
+}
+BackdropNode {
+ inputs 0
+ name RAIN
+ tile_color 0xaaaaaa00
+ label RAIN
+ note_font_size 42
+ selected true
+ xpos -453
+ ypos -190
+ bdwidth 696
+ bdheight 556
+}
+Constant {
+ inputs 0
+ format "960 540 0 0 960 540 1 Quarter HD"
+ name Constant2
+ selected true
+ xpos -153
+ ypos -99
+}
+Dot {
+ name Dot2
+ note_font_size 20
+ selected true
+ xpos -119
+ ypos 27
+}
+set Nbe008f0 [stack 0]
+Dot {
+ name Dot8
+ selected true
+ xpos -317
+ ypos 27
+}
+Noise {
+ size 20
+ zoffset {{frame/10}}
+ gain 0.4
+ gamma 0.03
+ center {720 405}
+ name Rain1
+ selected true
+ xpos -351
+ ypos 92
+}
+FilterErode {
+ filter gaussian
+ name FilterErode1
+ selected true
+ xpos -351
+ ypos 118
+}
+Blur {
+ size 1
+ name Blur1
+ selected true
+ xpos -351
+ ypos 156
+}
+Dot {
+ name Dot9
+ selected true
+ xpos -317
+ ypos 262
+}
+push $Nbe008f0
+Dot {
+ name Dot14
+ note_font_size 20
+ selected true
+ xpos 110
+ ypos 27
+}
+Add {
+ value 0.2
+ name Add2
+ selected true
+ xpos 76
+ ypos 110
+}
+Dot {
+ name Dot15
+ note_font_size 20
+ selected true
+ xpos 110
+ ypos 262
+}
+push $Nbe008f0
+Group {
+ inputs 3
+ name Flow3
+ note_font Helvetica
+ selected true
+ xpos -153
+ ypos 258
+ addUserKnob {20 User}
+ addUserKnob {3 start l Start}
+ start 1
+ addUserKnob {3 end l End -STARTLINE}
+ end 200
+ addUserKnob {6 extend_existing l "Extend Existing" t "If enabled, simulation will continue from the end of any existing renders." -STARTLINE}
+ addUserKnob {2 cache l "Cache Files" t "Location to save simulation -- must be exr format"}
+ addUserKnob {41 reload -STARTLINE T CACHE.reload}
+ addUserKnob {22 simulate l Simulate! t "Runs the simulation for the given frame range." T flow.simulate() +STARTLINE}
+ addUserKnob {26 ""}
+ addUserKnob {6 colour_flow l "Use Colour" t "If checked, simulation will blend colours (Note: This will assume an instant blend for the entire column!)\nOtherwise, only the alpha (height) will be used." +STARTLINE}
+ addUserKnob {7 flow_rate l "Flow Rate" t "Adjusts the speed of the water transfer between pixels."}
+ flow_rate 0.8
+ addUserKnob {7 flow_rate_div l INVISIBLE t "The flow rate is the amount of the height difference in pixels to allow out per direction - in a single frame, the water cannot reduce more than the height difference as long as this is below 1 / 8. When combined with the previous flow rate, it can greatly increase." +INVISIBLE}
+ flow_rate_div {{"flow_rate / 8"}}
+}
+ BackdropNode {
+  inputs 0
+  name BackdropNode1
+  tile_color 0x789eb5ff
+  label Colour
+  note_font_size 42
+  xpos -250
+  ypos 916
+  bdwidth 468
+  bdheight 704
+ }
+ Read {
+  inputs 0
+  file "\[value parent.cache]"
+  format "1440 810 0 0 1440 810 1 \"3/4 HD\""
+  first {{start}}
+  last {{end}}
+  origset true
+  on_error "nearest frame"
+  version 40192
+  name CACHE
+  label "DO NOT RENAME"
+  xpos 1030
+  ypos -1118
+ }
+set N2bee9600 [stack 0]
+ Dot {
+  name Dot69
+  xpos 1064
+  ypos -975
+ }
+set N2a769540 [stack 0]
+ Dot {
+  name Dot2
+  note_font_size 20
+  xpos 1225
+  ypos -975
+ }
+ Output {
+  name Output1
+  xpos 1191
+  ypos 2666
+ }
+ StickyNote {
+  inputs 0
+  name StickyNote1
+  label "    Add water to existing water,\nie, source + drain,\n         make sure no negative water       "
+  xpos 861
+  ypos -450
+ }
+ StickyNote {
+  inputs 0
+  name Formula
+  label "                max(0, Flux(t) + timestep * pipe_cross_section * gravity * height_difference / pipe_length)                "
+  note_font_size 20
+  xpos -1126
+  ypos 260
+ }
+ StickyNote {
+  inputs 0
+  name StickyNote2
+  label "                min(1, height * column_cross_section / (sum(outflow) * timestep))                "
+  note_font_size 20
+  xpos -402
+  ypos 662
+ }
+ Input {
+  inputs 0
+  name InputTerrain
+  xpos -732
+  ypos -1197
+ }
+push $N2a769540
+ FrameHold {
+  first_frame {{frame-1}}
+  name FrameHold4
+  xpos 1030
+  ypos -806
+ }
+set N2bf49200 [stack 0]
+ Dot {
+  name Dot15
+  note_font_size 20
+  xpos 1064
+  ypos -583
+ }
+ Input {
+  inputs 0
+  name InputWater
+  xpos 750
+  ypos -1197
+  number 1
+ }
+ Dot {
+  name Dot73
+  note_font_size 20
+  xpos 784
+  ypos -973
+ }
+set N2bf5bce0 [stack 0]
+ Switch {
+  inputs 2
+  which {{"start != frame"}}
+  name Switch_Sim
+  xpos 750
+  ypos -587
+ }
+set N2bf60b20 [stack 0]
+ Input {
+  inputs 0
+  name InputSource
+  xpos 452
+  ypos -1197
+  number 2
+ }
+ Dot {
+  name Dot17
+  xpos 486
+  ypos -710
+ }
+set N2bf6dc10 [stack 0]
+ Dot {
+  name Dot30
+  xpos 602
+  ypos -710
+ }
+ MergeExpression {
+  inputs 2
+  temp_name0 total_alpha
+  temp_expr0 "Aa + Ba"
+  temp_name1 col_r
+  temp_expr1 "(Br * Ba + Ar * Aa) / total_alpha"
+  temp_name2 col_g
+  temp_expr2 "(Bg * Ba + Ag * Aa) / total_alpha"
+  temp_name3 col_b
+  temp_expr3 "(Bb * Ba + Ab * Aa) / total_alpha"
+  expr0 "isnan(col_r) ? 0 : col_r"
+  expr1 "isnan(col_g) ? 0 : col_g"
+  expr2 "isnan(col_b) ? 0 : col_b"
+  expr3 total_alpha
+  name BLEND_COL
+  xpos 568
+  ypos -587
+ }
+ Dot {
+  name Dot1
+  xpos 602
+  ypos -476
+ }
+push $N2bf6dc10
+ Shuffle {
+  in alpha
+  name STRIP_COL
+  xpos 452
+  ypos -587
+ }
+ Dot {
+  name Dot3
+  xpos 486
+  ypos -530
+ }
+push $N2bf60b20
+ Merge2 {
+  inputs 2
+  operation plus
+  bbox B
+  name Merge2
+  xpos 750
+  ypos -534
+ }
+ Switch {
+  inputs 2
+  which {{parent.colour_flow}}
+  name Switch_Colour
+  xpos 750
+  ypos -480
+ }
+ Clamp {
+  channels rgba
+  maximum inf
+  name Clamp1
+  label "No negative water column"
+  xpos 750
+  ypos -437
+ }
+ Dot {
+  name Dot16
+  xpos 784
+  ypos -363
+ }
+set N2bfc5870 [stack 0]
+ Dot {
+  name Dot13
+  xpos 374
+  ypos -363
+ }
+ Shuffle {
+  in alpha
+  name Water_Height
+  label "Water height only"
+  xpos 340
+  ypos -318
+ }
+ Dot {
+  name Dot11
+  xpos 374
+  ypos -248
+ }
+set N2bfdfeb0 [stack 0]
+ Merge2 {
+  inputs 2
+  operation plus
+  bbox B
+  name TOTAL_HEIGHT
+  xpos -732
+  ypos -252
+ }
+ Dot {
+  name Dot59
+  xpos -698
+  ypos -128
+ }
+set N2bff5540 [stack 0]
+ Dot {
+  name Dot63
+  xpos -922
+  ypos -128
+ }
+ Expression {
+  expr0 "(r - r(x-1, y)) * flow_rate_div"
+  expr1 "(g - g(x, y+1)) * flow_rate_div"
+  expr2 "(b - b(x+1, y)) * flow_rate_div"
+  expr3 "(a - a(x, y-1)) * flow_rate_div"
+  name CROSS
+  label "Height difference / pipe length"
+  xpos -956
+  ypos -61
+ }
+push $N2bf49200
+ Dot {
+  name Dot65
+  note_font_size 20
+  xpos -236
+  ypos -796
+ }
+set N2c00d0c0 [stack 0]
+ Dot {
+  name Dot66
+  note_font_size 20
+  xpos -1280
+  ypos -796
+ }
+add_layer {FlowC FlowC.red FlowC.green FlowC.blue FlowC.alpha}
+ Shuffle {
+  in FlowC
+  name Shuffle4
+  label "<center><font size = \"5\"> \[value in]\nSimulation</center>"
+  xpos -1314
+  ypos -758
+  postage_stamp true
+ }
+ Dot {
+  name Dot5
+  note_font_size 20
+  xpos -1280
+  ypos -583
+ }
+push $N2bf5bce0
+ Dot {
+  name Dot72
+  note_font_size 20
+  xpos -92
+  ypos -973
+ }
+set N2c02c490 [stack 0]
+ Dot {
+  name Dot70
+  note_font_size 20
+  xpos -1136
+  ypos -973
+ }
+ Shuffle {
+  in FlowC
+  name Shuffle8
+  label "<center><font size = \"5\"> \[value in]\nSTART</center>"
+  xpos -1170
+  ypos -758
+  postage_stamp true
+ }
+ Switch {
+  inputs 2
+  which {{"start != frame"}}
+  name Switch1
+  xpos -1170
+  ypos -587
+ }
+ Dot {
+  name Dot4
+  xpos -1136
+  ypos 164
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge3
+  xpos -956
+  ypos 160
+ }
+ Clamp {
+  channels rgba
+  maximum inf
+  name Clamp2
+  label "MIN 0\n"
+  xpos -956
+  ypos 186
+ }
+ Dot {
+  name Dot21
+  xpos -922
+  ypos 474
+ }
+set N2c0729f0 [stack 0]
+push $N2bff5540
+ Dot {
+  name Dot62
+  xpos -488
+  ypos -128
+ }
+ Expression {
+  expr0 "(r - r(x-1, y+1)) * flow_rate_div"
+  expr1 "(g - g(x+1, y+1)) * flow_rate_div"
+  expr2 "(b - b(x+1, y-1)) * flow_rate_div"
+  expr3 "(a - a(x-1, y-1)) * flow_rate_div"
+  name DIAGONAL
+  label "Height difference / pipe length"
+  xpos -522
+  ypos -62
+ }
+push $N2c00d0c0
+add_layer {FlowD FlowD.red FlowD.green FlowD.blue FlowD.alpha}
+ Shuffle {
+  in FlowD
+  name Shuffle3
+  label "<center><font size = \"5\"> \[value in]\nSimulation</center>"
+  xpos -270
+  ypos -755
+  postage_stamp true
+ }
+ Dot {
+  name Dot6
+  note_font_size 20
+  xpos -236
+  ypos -583
+ }
+push $N2c02c490
+ Shuffle {
+  in FlowD
+  name Shuffle7
+  label "<center><font size = \"5\"> \[value in]\nSTART</center>"
+  xpos -126
+  ypos -755
+  postage_stamp true
+ }
+ Switch {
+  inputs 2
+  which {{"start != frame"}}
+  name Switch3
+  xpos -126
+  ypos -587
+ }
+set N2c0b0a80 [stack 0]
+ Dot {
+  name Dot8
+  xpos -92
+  ypos 164
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge4
+  xpos -522
+  ypos 160
+ }
+ Clamp {
+  channels rgba
+  maximum inf
+  name Clamp3
+  label "MIN 0"
+  xpos -522
+  ypos 186
+ }
+ Dot {
+  name Dot34
+  xpos -488
+  ypos 371
+ }
+set N2c0dcc70 [stack 0]
+ Dot {
+  name Dot22
+  xpos -91
+  ypos 371
+ }
+ MergeExpression {
+  inputs 2
+  channel0 rgba
+  expr0 "Ar + Ag + Ab + Aa + Br + Bg + Bb + Ba"
+  name OUTFLOW_MAX
+  label "Total outflow per pixel"
+  xpos -125
+  ypos 464
+ }
+set N2c0e7ac0 [stack 0]
+push $N2bfdfeb0
+ Dot {
+  name Dot64
+  note_font_size 20
+  xpos 374
+  ypos 582
+ }
+ MergeExpression {
+  inputs 2
+  temp_name0 scaled
+  temp_expr0 "Ba / Ar"
+  channel0 rgba
+  expr0 "isnan(scaled) ? 1 : scaled"
+  name SCALE_FACTOR
+  xpos -125
+  ypos 578
+ }
+ Clamp {
+  channels rgba
+  name Clamp4
+  label "MAX HERE LIMITS QUANTITY OF OUTFLOW,\nLOWER MEANS A COLUMN CAN'T FULL DEPLETE IN ONE GO"
+  xpos -125
+  ypos 604
+ }
+ Dot {
+  name Dot20
+  xpos -91
+  ypos 740
+ }
+set N2c116010 [stack 0]
+ Dot {
+  name Dot19
+  xpos -91
+  ypos 815
+ }
+set N2c11b380 [stack 0]
+push $N2c0dcc70
+ Merge2 {
+  inputs 2
+  operation multiply
+  name RESTRICT_OUTFLOW_DIAGONAL
+  xpos -522
+  ypos 811
+ }
+ Dot {
+  name Dot33
+  xpos -488
+  ypos 1286
+ }
+set N2c130780 [stack 0]
+ Dot {
+  name Dot28
+  xpos -1121
+  ypos 1286
+ }
+ Dot {
+  name Dot67
+  note_font_size 20
+  xpos -1121
+  ypos 2354
+ }
+push $N2c116010
+push $N2c0729f0
+ Merge2 {
+  inputs 2
+  operation multiply
+  name RESTRICT_OUTFLOW_CROSS
+  xpos -956
+  ypos 736
+ }
+ Dot {
+  name Dot27
+  xpos -922
+  ypos 1377
+ }
+set N2c14f560 [stack 0]
+ Dot {
+  name Dot12
+  note_font_size 20
+  xpos -1032
+  ypos 1377
+ }
+ Dot {
+  name Dot68
+  note_font_size 20
+  xpos -1032
+  ypos 2274
+ }
+push $N2c14f560
+push $N2bfc5870
+ Dot {
+  name Dot38
+  label "COLOUR / HEIGHT"
+  xpos 784
+  ypos 1094
+ }
+set N2c15dfd0 [stack 0]
+ Dot {
+  name Dot71
+  xpos 166
+  ypos 1094
+ }
+set N2c162dc0 [stack 0]
+ Dot {
+  name Dot18
+  xpos -40
+  ypos 1094
+ }
+set N2c167be0 [stack 0]
+ Dot {
+  name Dot31
+  xpos -206
+  ypos 1094
+ }
+ MergeExpression {
+  inputs 2
+  temp_name0 from_left
+  temp_expr0 "Ab(x-1, y)"
+  temp_name1 from_right
+  temp_expr1 "Ar(x+1, y)"
+  temp_name2 from_below
+  temp_expr2 "Ag(x, y-1)"
+  temp_name3 from_above
+  temp_expr3 "Aa(x, y+1)"
+  expr0 "from_left * Br(x-1, y) + from_right * Br(x+1, y) + from_below * Br(x, y-1) + from_above * Br(x, y+1)"
+  expr1 "from_left * Bg(x-1, y) + from_right * Bg(x+1, y) + from_below * Bg(x, y-1) + from_above * Bg(x, y+1)"
+  expr2 "from_left * Bb(x-1, y) + from_right * Bb(x+1, y) + from_below * Bb(x, y-1) + from_above * Bb(x, y+1)"
+  expr3 "from_left + from_right + from_below + from_above"
+  name INFLOW_CROSS_COLOUR
+  label "Colour from B\nWeight from A\nblue from left (x-1)\nred from right (x+1)\ngreen from down (y-1)\nalpha from up (y+1)"
+  xpos -240
+  ypos 1334
+ }
+ Dot {
+  name Dot32
+  xpos -206
+  ypos 1471
+ }
+push 0
+push $N2c130780
+push $N2c167be0
+ MergeExpression {
+  inputs 2
+  temp_name0 from_topleft
+  temp_expr0 "Ab(x-1, y+1)"
+  temp_name1 from_botright
+  temp_expr1 "Ar(x+1, y-1)"
+  temp_name2 from_botleft
+  temp_expr2 "Ag(x-1, y-1)"
+  temp_name3 from_topright
+  temp_expr3 "Aa(x+1, y+1)"
+  expr0 "from_topleft * Br(x-1, y+1) + from_botright * Br(x+1, y-1) + from_botleft * Br(x-1, y-1) + from_topright * Br(x+1, y+1)"
+  expr1 "from_topleft * Bg(x-1, y+1) + from_botright * Bg(x+1, y-1) + from_botleft * Bg(x-1, y-1) + from_topright * Bg(x+1, y+1)"
+  expr2 "from_topleft * Bb(x-1, y+1) + from_botright * Bb(x+1, y-1) + from_botleft * Bb(x-1, y-1) + from_topright * Bb(x+1, y+1)"
+  expr3 "from_topleft + from_botright + from_botleft + from_topright"
+  name INFLOW_DIAGONAL_COLOUR
+  label "Colour from B\nWeight from A\nblue from topleft (x-1, y+1)\nred from botright (x+1, y-1)\ngreen from botleft (x-1, y-1)\nalpha from topright (x+1, y+1)"
+  xpos -74
+  ypos 1243
+ }
+push $N2c162dc0
+ Expression {
+  expr0 "r * a"
+  expr1 "g * a"
+  expr2 "b * a"
+  expr3 a
+  name WEIGHTED_COLOUR
+  xpos 132
+  ypos 1212
+ }
+ Merge2 {
+  inputs 3+1
+  operation plus
+  name SUM_WEIGHTED_COLOUR
+  xpos 132
+  ypos 1467
+ }
+ Expression {
+  temp_name0 col_r
+  temp_expr0 "r / a"
+  temp_name1 col_g
+  temp_expr1 "g / a"
+  temp_name2 col_b
+  temp_expr2 "b / a"
+  expr0 "isnan(col_r) ? 0 : col_r"
+  expr1 "isnan(col_g) ? 0 : col_g"
+  expr2 "isnan(col_b) ? 0 : col_b"
+  name COLOUR_OUTPUT
+  xpos 132
+  ypos 1508
+ }
+ Dot {
+  name Dot14
+  xpos 166
+  ypos 2129
+ }
+push $N2c14f560
+push $N2c130780
+ Dot {
+  name Dot23
+  xpos -488
+  ypos 1554
+ }
+ MergeExpression {
+  inputs 2
+  channel0 rgba
+  expr0 "Ab(x-1,y) + Aa(x,y+1) + Ar(x+1,y) + Ag(x,y-1) + Bb(x-1,y+1) + Ba(x+1,y+1) + Br(x+1,y-1) + Bg(x-1,y-1)"
+  channel1 {-rgba.red -rgba.green -rgba.blue none}
+  channel2 {-rgba.red -rgba.green -rgba.blue none}
+  channel3 none
+  name INFLOW
+  xpos -956
+  ypos 1550
+ }
+ Dot {
+  name Dot26
+  xpos -922
+  ypos 1646
+ }
+push $N2c0e7ac0
+ Dot {
+  name Dot24
+  xpos 483
+  ypos 474
+ }
+push $N2c11b380
+ Merge2 {
+  inputs 2
+  operation multiply
+  name OUTFLOW
+  xpos 449
+  ypos 811
+ }
+ Merge2 {
+  inputs 2
+  operation minus
+  name HEIGHT_CHANGE
+  xpos 449
+  ypos 1642
+ }
+ Dot {
+  name Dot25
+  xpos 483
+  ypos 1893
+ }
+push $N2c15dfd0
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge8
+  xpos 750
+  ypos 1889
+ }
+ ShuffleCopy {
+  inputs 2
+  red red
+  green green
+  blue blue
+  alpha alpha2
+  name COLOUR_AND_HEIGHT
+  xpos 750
+  ypos 2125
+  disable {{"1 - parent.colour_flow"}}
+ }
+ Dot {
+  name Dot29
+  label "WATER OUT"
+  xpos 784
+  ypos 2205
+ }
+ ShuffleCopy {
+  inputs 2
+  alpha alpha2
+  black red
+  white green
+  red2 blue
+  green2 alpha
+  out2 FlowC
+  name ShuffleCopy2
+  xpos 750
+  ypos 2270
+ }
+ ShuffleCopy {
+  inputs 2
+  alpha alpha2
+  black red
+  white green
+  red2 blue
+  green2 alpha
+  out2 FlowD
+  name ShuffleCopy1
+  xpos 750
+  ypos 2350
+ }
+ Write {
+  channels all
+  file "\[value cache]"
+  file_type exr
+  metadata "all metadata"
+  first_part rgba
+  version 39517
+  in_colorspace scene_linear
+  out_colorspace scene_linear
+  name WriteWATER
+  label "DO NOT RENAME"
+  xpos 750
+  ypos 2425
+ }
+push $N2c0b0a80
+push $N2bee9600
+push 0
+ Viewer {
+  inputs 3
+  frame_range 1-100
+  frame_range_lock true
+  fps 25
+  colour_sample_bbox {0.1541666687 0.04583333433 0.1583333313 0.05000000075}
+  samplepoints {{0.1541666687 0.04583333433}
+    }
+  name Viewer1
+  xpos 2697
+  ypos 371
+ }
+end_group
+Constant {
+ inputs 0
+ format "480 270 0 0 480 270 1 quarter_HD"
+ name Constant4
+ selected true
+ xpos 746
+ ypos -99
+}
+Dot {
+ name Dot23
+ note_font_size 20
+ selected true
+ xpos 780
+ ypos 27
+}
+set Nc242830 [stack 0]
+Dot {
+ name Dot24
+ selected true
+ xpos 636
+ ypos 27
+}
+set Nc247c20 [stack 0]
+Dot {
+ name Dot25
+ selected true
+ xpos 526
+ ypos 27
+}
+set Nc24cae0 [stack 0]
+Dot {
+ name Dot28
+ selected true
+ xpos 434
+ ypos 27
+}
+set Nc2519a0 [stack 0]
+Noise {
+ size 51
+ zoffset {{frame/30}}
+ center {720 405}
+ name Noise6
+ selected true
+ xpos 400
+ ypos 81
+}
+push $Nc2519a0
+Dot {
+ name Dot31
+ selected true
+ xpos 334
+ ypos 27
+}
+RotoPaint {
+ curves {{{v x3f99999a}
+  {f 0}
+  {n
+   {layer Root
+    {f 512}
+    {t x44340000 x43ca8000}
+    {a pt1x 0 pt1y 0 pt2x 0 pt2y 0 pt3x 0 pt3y 0 pt4x 0 pt4y 0 ptex00 0 ptex01 0 ptex02 0 ptex03 0 ptex10 0 ptex11 0 ptex12 0 ptex13 0 ptex20 0 ptex21 0 ptex22 0 ptex23 0 ptex30 0 ptex31 0 ptex32 0 ptex33 0 ptof1x 0 ptof1y 0 ptof2x 0 ptof2y 0 ptof3x 0 ptof3y 0 ptof4x 0 ptof4y 0 pterr 0 ptrefset 0 ptmot x40800000 ptref 0}
+    {curvegroup Rectangle2 512 bezier
+     {{cc
+       {f 8192}
+       {px x42d20000
+        {{{0 -}}
+	 {{xc0eaaac0 -}}}
+        {{{xc157bbc6 xbd4ccccd 1 0 1}}
+      {{x4238968d x3d6eeee9 1 0 1}}}
+        {{{x41ab3333 xbda9fbec 1 0 1}}
+	 {{xc0e2925c xbd910183 1 0 1}}}
+        {{{xc1e62224 -}}
+      {{x408f8fc0 -}}}
+        {{{x4280bbbc xbe488885 1 0 1}}
+      {{x412504ed xbd6eeeec 1 0 1}}}
+        {{{x424b3322 -}}
+      {{xc0fd8516 -}}}
+        {{{xc24da7f0 -}}
+	 {{0 -}}}
+        {{{x43441bd2 xbed11114 1 0 1}}
+	 {{x41b9d7c8 x3dc4443c 1 0 1}}}
+        {{{x421a59a8 -}}
+	 {{0 -}}}
+        {{{xc23fd0e0 xbdbfd2e1 1 0 1}}
+	 {{xbf9a8e38 xbc45d4c3 1 0 1}}}
+        {{{x43a4b69c xbe6e5e14 1 0 1}}
+	 {{x41318868 xbcd0ff33 1 0 1}}}
+        {{{x42c58bf8 x3f08e552 1 0 1}}
+	 {{x402044c8 x3ccd24d7 1 0 1}}}
+        {{{xc20fdde8 x3b9ddc29 1 0 1}}
+      {{xc149d1ac x3de51866 1 0 1}}}
+        {{{x43f66223 x3b8887ae 1 0 1}}
+      {{x42534138 x3dbbbbc1 1 0 1}}}
+        {{{x4080fa00 -}}
+      {{xc0c40b98 -}}}
+        {{{0 -}}
+	 {{x40eaaac0 -}}}
+        {{{x43f44cce -}}
+	 {{xc105a5b1 -}}}
+        {{{xc3250000 -}}
+	 {{0 -}}}
+        {{{x43250000 -}}
+	 {{0 -}}}
+        {{{xc0cccccc -}}
+	 {{xc105a5b1 -}}}
+        {{{0 -}}
+	 {{x40eaaac0 -}}}}}     idem}
+     {tx x40a00000 x4371199a x43848000}
+     {a r x3b83126f g x3b83126f b x3b83126f a x3b83126f osw x41200000 osf 0 str 1 spx x44340000 spy x43ca8000 sb 1 ltn x40a00000 ltm x40a00000 tt x41000000 fx x41200000 fy x41200000}}
+    {curvegroup Rectangle1 512 bezier
+     {{cc
+       {f 8192}
+       {px x42d20000
+        {{{0 -}}
+	 {{xc0eaaac0 -}}}
+        {{{xc0cccccd -}}
+	 {{x438a0000 -}}}
+        {{{x43250000 -}}
+	 {{0 -}}}
+        {{{xc3250000 -}}
+	 {{0 -}}}
+        {{{x43f44ccd -}}
+	 {{x438a0000 -}}}
+        {{{0 -}}
+	 {{xc0eaaac0 -}}}
+        {{{x4034bf00 -}}
+      {{x40d89100 -}}}
+        {{{x43f66223 -}}
+      {{x436fd556 -}}}
+        {{{xc1afbbd0 -}}
+      {{x4112aaa0 -}}}
+        {{{x41f6ac00 x3d60deb8 1 0 1}}
+	 {{xbe0a4000 xbab0f5c3 1 0 1}}}
+        {{{x43c5d40a xbe2d2c52 1 0 1}}
+	 {{x4382547b x3d88659a 1 0 1}}}
+        {{{xc24972e0 xbdb7a4cd 1 0 1}}
+	 {{x3e61c800 x3b108000 1 0 1}}}
+        {{{x423918b8 x3d47d70a 1 0 1}}
+	 {{x3fdba000 x3c8c8f5c 1 0 1}}}
+        {{{x438089dc xbea0488f 1 0 1}}
+	 {{x4377c442 xbd7f519a 1 0 1}}}
+        {{{xc19ea778 xbcab4b33 1 0 1}}
+	 {{xbf3c3e00 xbbf0f333 1 0 1}}}
+        {{{x418ded30 -}}
+	 {{0 -}}}
+        {{{x433f96ae xbedf15ec 1 0 1}}
+	 {{x437f1249 x3c2f8ae1 1 0 1}}}
+        {{{xc23e147c -}}
+	 {{0 -}}}
+        {{{x423e147a -}}
+	 {{0 -}}}
+        {{{x42873332 xbe800003 1 0 1}}
+	 {{x437236dc xbdf15f0a 1 0 1}}}
+        {{{xc2040000 -}}
+	 {{0 -}}}
+        {{{x41e9e2b9 xbd2c0833 1 0 1}}
+      {{x40846b60 xbd5d2f0a 1 0 1}}}
+        {{{xc0ddf10c xbc9248f3 1 0 1}}
+      {{x4360985f xbd12491f 1 0 1}}}
+        {{{xc0164998 -}}
+      {{x40de4f80 -}}}}}
+      {cc
+       {f 8192}
+       {px x42d20000
+        {0 xc0eaaac0}
+        {0 0}
+        {x43250000 0}
+        {xc3250000 0}
+        {0 0}
+        {0 xc0eaaac0}
+        {x4034bf00 x40d89100}
+        {0 0}
+        {xc1afbbd0 x4112aaa0}
+        {{{x41f6ac00 x3d60deb8 1 0 1}}
+	 {{xbe0a4000 xbab0f5c3 1 0 1}}}
+        {0 0}
+        {{{xc24972e0 xbdb7a4cd 1 0 1}}
+	 {{x3e61c800 x3b108000 1 0 1}}}
+        {{{x423918b8 x3d47d70a 1 0 1}}
+	 {{x3fdba000 x3c8c8f5c 1 0 1}}}
+        {0 0}
+        {{{xc19ea778 xbcab4b33 1 0 1}}
+	 {{xbf3c3e00 xbbf0f333 1 0 1}}}
+        {x418ded30 0}
+        {0 0}
+        {xc23e147c 0}
+        {x423e147a 0}
+        {0 0}
+        {xc2040000 0}
+        {{{x41e9e2b9 xbd2c0833 1 0 1}}
+      {{x40846b60 xbd5d2f0a 1 0 1}}}
+        {0 0}
+        {xc0164998 x40de4f80}}}}
+     {tx x40a00000 x4371199a x43848000}
+     {a r x3b83126f g x3b83126f b x3b83126f a x3b83126f fx x41200000 fy x41200000 osw x41200000 osf 0 str 1 spx x44340000 spy x43ca8000 sb 1 ltn x40a00000 ltm x40a00000 tt x41000000}}}}}}
+ toolbox {selectAll {
+  { selectAll str 1 ssx 1 ssy 1 sf 1 }
+  { createBezier str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createBezierCusped str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createBSpline str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createEllipse str 1 ssx 1 ssy 1 sf 1 sb 1 tt 7 }
+  { createRectangle str 1 ssx 1 ssy 1 sf 1 sb 1 tt 8 }
+  { createRectangleCusped str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { addPoints str 1 ssx 1 ssy 1 sf 1 }
+  { brush str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { eraser src 2 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { clone src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { reveal src 3 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { dodge src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { burn src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { blur src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { sharpen src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { smear src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+} }
+ toolbar_brush_hardness 0.200000003
+ toolbar_source_transform_scale {1 1}
+ toolbar_source_transform_center {720 405}
+ color 0.004
+ colorOverlay {0 0 0 0}
+ lifetime_type "all frames"
+ lifetime_start 5
+ lifetime_end 5
+ motionblur_shutter_offset_type centred
+ feather 10
+ source_black_outside true
+ name RotoPaint7
+ selected true
+ xpos 300
+ ypos 81
+}
+Dot {
+ name Dot32
+ selected true
+ xpos 334
+ ypos 151
+}
+Copy {
+ inputs 2
+ from0 rgba.red
+ to0 forward.u
+ from1 rgba.green
+ to1 forward.v
+ name Copy1
+ selected true
+ xpos 400
+ ypos 134
+}
+IDistort {
+ uv forward
+ uv_scale 32.5
+ name IDistort1
+ selected true
+ xpos 400
+ ypos 184
+}
+Dot {
+ name Dot33
+ selected true
+ xpos 434
+ ypos 225
+}
+push $Nc247c20
+Noise {
+ size 9.8
+ zoffset {{frame/10}}
+ octaves 2
+ gain 0.73
+ gamma 0.818
+ center {720 405}
+ name Noise5
+ selected true
+ xpos 602
+ ypos 80
+}
+push $Nc24cae0
+RotoPaint {
+ curves {{{v x3f99999a}
+  {f 0}
+  {n
+   {layer Root
+    {f 512}
+    {t x44340000 x43ca8000}
+    {a pt1x 0 pt1y 0 pt2x 0 pt2y 0 pt3x 0 pt3y 0 pt4x 0 pt4y 0 ptex00 0 ptex01 0 ptex02 0 ptex03 0 ptex10 0 ptex11 0 ptex12 0 ptex13 0 ptex20 0 ptex21 0 ptex22 0 ptex23 0 ptex30 0 ptex31 0 ptex32 0 ptex33 0 ptof1x 0 ptof1y 0 ptof2x 0 ptof2y 0 ptof3x 0 ptof3y 0 ptof4x 0 ptof4y 0 pterr 0 ptrefset 0 ptmot x40800000 ptref 0}
+    {curvegroup Ellipse10 512 bezier
+     {{cc
+       {f 8192}
+       {p
+        {xc0078b40}
+        {x43451e60 x431b2f00}
+        {x40078b80}
+        {0 xc0078b40}
+        {x4348f413 x431f04b3}
+        {0 x40078b40}
+        {x40078b80}
+        {x43451e60 x4322da66}
+        {xc0078b40}
+        {0 x40078b40}
+        {x434148ad x431f04b3}
+        {0 xc0078b40}}}
+      {cc
+       {f 8192}
+       {p
+        {xc0078b40}
+        {}
+        {x40078b80}
+        {0 xc0078b40}
+        {}
+        {0 x40078b40}
+        {x40078b80}
+        {}
+        {xc0078b40}
+        {0 x40078b40}
+        {}
+        {0 xc0078b40}}}}
+     {tx x41b80000 x42fb6667 x4305199a}
+     {a r x3d23d70a g x3d23d70a b x3d23d70a a x3d23d70a osw x41200000 osf 0 str 1 spx x44340000 spy x43ca8000 sb 1 ltn x41b80000 ltm x41b80000 tt x40e00000}}
+    {curvegroup Ellipse9 512 bezier
+     {{cc
+       {f 8192}
+       {px x40a00000
+        {xc05d1d80 0}
+        {x43ceef31 x4300633b}
+        {x405d1e00 0}
+        {0 xc05d1dc0}
+        {x43d20fed x4306a4b3}
+        {0 x405d1e00}
+        {x405d1e00 0}
+        {x43ceef31 x430ce62a}
+        {xc05d1d80 0}
+        {0 x405d1e00}
+        {x43cbce75 x4306a4b3}
+        {0 xc05d1dc0}}}     idem}
+     {tx x41b80000 x42fb6667 x4305199a}
+     {a r x3d23d70a g x3d23d70a b x3d23d70a a x3d23d70a osw x41200000 osf 0 str 1 spx x44340000 spy x43ca8000 sb 1 ltn x41b80000 ltm x41b80000 tt x40e00000}}
+    {curvegroup Ellipse8 512 bezier
+     {{cc
+       {f 8192}
+       {px x40a00000
+        {xc0841680 0}
+        {x43c81c1b x432c5f01}
+        {x408416c0 0}
+        {0 xc08416c0}
+        {x43cbd8c7 x4333d85a}
+        {0 x408416c0}
+        {x408416c0 0}
+        {x43c81c1b x433b51b0}
+        {xc0841680 0}
+        {0 x408416c0}
+        {x43c45f6f x4333d85a}
+        {0 xc08416c0}}}     idem}
+     {tx x41b80000 x42fb6667 x4305199a}
+     {a r x3d23d70a g x3d23d70a b x3d23d70a a x3d23d70a osw x41200000 osf 0 str 1 spx x44340000 spy x43ca8000 sb 1 ltn x41b80000 ltm x41b80000 tt x40e00000}}
+    {curvegroup Ellipse7 512 bezier
+     {{cc
+       {f 8192}
+       {px x40a00000
+        {xc0737900 0}
+        {x43b4a171 x42a4bf44}
+        {x40737880 0}
+        {0 xc07378c0}
+        {x43b81321 x42b28607}
+        {0 x407378e0}
+        {x40737880 0}
+        {x43b4a171 x42c04cc7}
+        {xc0737900 0}
+        {0 x407378e0}
+        {x43b12fc0 x42b28607}
+        {0 xc07378c0}}}     idem}
+     {tx x41b80000 x42fb6667 x4305199a}
+     {a r x3d23d70a g x3d23d70a b x3d23d70a a x3d23d70a osw x41200000 osf 0 str 1 spx x44340000 spy x43ca8000 sb 1 ltn x41b80000 ltm x41b80000 tt x40e00000}}
+    {curvegroup Ellipse6 512 bezier
+     {{cc
+       {f 8192}
+       {px x40a00000
+        {xc0937080 0}
+        {x43a6fc1c x4301c0a3}
+        {x40937080 0}
+        {0 xc0937080}
+        {x43ab27f6 x430a1858}
+        {0 x409370a0}
+        {x40937080 0}
+        {x43a6fc1c x4312700c}
+        {xc0937080 0}
+        {0 x409370a0}
+        {x43a2d041 x430a1858}
+        {0 xc0937080}}}     idem}
+     {tx x41b80000 x42fb6667 x4305199a}
+     {a r x3d23d70a g x3d23d70a b x3d23d70a a x3d23d70a osw x41200000 osf 0 str 1 spx x44340000 spy x43ca8000 sb 1 ltn x41b80000 ltm x41b80000 tt x40e00000}}
+    {curvegroup Ellipse5 512 bezier
+     {{cc
+       {f 8192}
+       {px x40a00000
+        {xc0b27f90 0}
+        {x4386bc1c x43013ebe}
+        {x40b27fa0 0}
+        {0 xc0b27f90}
+        {x438bc8e8 x430b5859}
+        {0 x40b27fa0}
+        {x40b27fa0 0}
+        {x4386bc1c x431571f1}
+        {xc0b27f90 0}
+        {0 x40b27fa0}
+        {x4381af4f x430b5859}
+        {0 xc0b27f90}}}     idem}
+     {tx x41b80000 x42fb6667 x4305199a}
+     {a r x3d23d70a g x3d23d70a b x3d23d70a a x3d23d70a osw x41200000 osf 0 str 1 spx x44340000 spy x43ca8000 sb 1 ltn x41b80000 ltm x41b80000 tt x40e00000}}
+    {curvegroup Ellipse4 512 bezier
+     {{cc
+       {f 8192}
+       {px x40a00000
+        {xc0b27f90 0}
+        {x42b97070 x42befd7f}
+        {x40b27fa0 0}
+        {0 xc0b27f90}
+        {x42cda3a0 x42d330b3}
+        {0 x40b27fa0}
+        {x40b27fa0 0}
+        {x42b97070 x42e763e3}
+        {xc0b27f90 0}
+        {0 x40b27fa0}
+        {x42a53d3c x42d330b3}
+        {0 xc0b27f90}}}     idem}
+     {tx x41b80000 x42fb6667 x4305199a}
+     {a r x3d23d70a g x3d23d70a b x3d23d70a a x3d23d70a osw x41200000 osf 0 str 1 spx x44340000 spy x43ca8000 sb 1 ltn x41b80000 ltm x41b80000 tt x40e00000}}
+    {curvegroup Ellipse3 512 bezier
+     {{cc
+       {f 8192}
+       {px x40a00000
+        {xc08d03a0 0}
+        {x43365655 x42d1e119}
+        {x408d0380 0}
+        {0 xc08d0380}
+        {x433e50f5 x42e1d658}
+        {0 x408d0390}
+        {x408d0380 0}
+        {x43365655 x42f1cb96}
+        {xc08d03a0 0}
+        {0 x408d0390}
+        {x432e5bb6 x42e1d658}
+        {0 xc08d0380}}}     idem}
+     {tx x41b80000 x42fb6667 x4305199a}
+     {a r x3d23d70a g x3d23d70a b x3d23d70a a x3d23d70a osw x41200000 osf 0 str 1 spx x44340000 spy x43ca8000 sb 1 ltn x41b80000 ltm x41b80000 tt x40e00000}}
+    {curvegroup Ellipse2 512 bezier
+     {{cc
+       {f 8192}
+       {px x40a00000
+        {xc06031c0 0}
+        {x430d383b x430a1eb7}
+        {x406031c0 0}
+        {0 xc06031c0}
+        {x43138ffc x43107679}
+        {0 x406031c0}
+        {x406031c0 0}
+        {x430d383b x4316ce39}
+        {xc06031c0 0}
+        {0 x406031c0}
+        {x4306e079 x43107679}
+        {0 xc06031c0}}}     idem}
+     {tx x41b80000 x42fb6667 x4305199a}
+     {a r x3d23d70a g x3d23d70a b x3d23d70a a x3d23d70a osw x41200000 osf 0 str 1 spx x44340000 spy x43ca8000 sb 1 ltn x41b80000 ltm x41b80000 tt x40e00000}}
+    {curvegroup Ellipse1 512 bezier
+     {{cc
+       {f 8192}
+       {px x40a00000
+        {xc07baeb0 0}
+        {x42835757 x4312cd94}
+        {x407baee0 0}
+        {0 xc07baec0}
+        {x42919506 x4319ec6e}
+        {0 x407baec0}
+        {x407baee0 0}
+        {x42835757 x43210b46}
+        {xc07baeb0 0}
+        {0 x407baec0}
+        {x426a3348 x4319ec6e}
+        {0 xc07baec0}}}     idem}
+     {tx x41b80000 x42fb6667 x4305199a}
+     {a r x3d23d70a g x3d23d70a b x3d23d70a a x3d23d70a osw x41200000 osf 0 str 1 spx x44340000 spy x43ca8000 sb 1 ltn x41b80000 ltm x41b80000 tt x40e00000}}}}}}
+ toolbox {selectAll {
+  { selectAll str 1 ssx 1 ssy 1 sf 1 }
+  { createBezier str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createBezierCusped str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createBSpline str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createEllipse str 1 ssx 1 ssy 1 sf 1 sb 1 tt 7 }
+  { createRectangle str 1 ssx 1 ssy 1 sf 1 sb 1 tt 8 }
+  { createRectangleCusped str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { addPoints str 1 ssx 1 ssy 1 sf 1 }
+  { brush str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { eraser src 2 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { clone src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { reveal src 3 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { dodge src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { burn src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { blur src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { sharpen src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { smear src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+} }
+ toolbar_brush_hardness 0.200000003
+ toolbar_source_transform_scale {1 1}
+ toolbar_source_transform_center {720 405}
+ color 0.009999999776
+ colorOverlay {0 0 0 0}
+ lifetime_type "all frames"
+ lifetime_start 5
+ lifetime_end 5
+ view {}
+ motionblur_on true
+ motionblur_shutter_offset_type centred
+ source_black_outside true
+ name RotoPaint5
+ selected true
+ xpos 492
+ ypos 80
+}
+Dot {
+ name Dot26
+ selected true
+ xpos 526
+ ypos 183
+}
+Merge2 {
+ inputs 2
+ operation mask
+ name Merge5
+ selected true
+ xpos 602
+ ypos 179
+}
+Merge2 {
+ inputs 2
+ name Merge6
+ selected true
+ xpos 602
+ ypos 221
+}
+Dot {
+ name Dot27
+ selected true
+ xpos 636
+ ypos 262
+}
+push $Nc242830
+Dot {
+ name Dot29
+ note_font_size 20
+ selected true
+ xpos 890
+ ypos 27
+}
+Dot {
+ name Dot30
+ note_font_size 20
+ selected true
+ xpos 890
+ ypos 262
+}
+push $Nc242830
+Text2 {
+ font_size_toolbar 100
+ font_width_toolbar 100
+ font_height_toolbar 100
+ message FLOW
+ box {20 67 430 168}
+ transforms {{0 2}
+   }
+ cursor_position 4
+ font {{ Blacksword : Regular : Blacksword.otf : 0 }}
+ scale {1 1}
+ cursor_initialised true
+ initial_cursor_position {{20 168}
+   }
+ group_animations {{0} imported: 0 selected: items: "root transform/"}
+ animation_layers {{1 11 720 405 0 0 1 1 0 0 0 0}
+   }
+ name Text1
+ selected true
+ xpos 746
+ ypos 86
+}
+Blur {
+ size 3
+ name Blur3
+ selected true
+ xpos 746
+ ypos 152
+}
+Group {
+ inputs 3
+ name Flow4
+ note_font Helvetica
+ selected true
+ xpos 746
+ ypos 259
+ addUserKnob {20 User}
+ addUserKnob {3 start l Start}
+ start 1
+ addUserKnob {3 end l End -STARTLINE}
+ end 200
+ addUserKnob {6 extend_existing l "Extend Existing" t "If enabled, simulation will continue from the end of any existing renders." -STARTLINE}
+ addUserKnob {2 cache l "Cache Files" t "Location to save simulation -- must be exr format"}
+ addUserKnob {41 reload -STARTLINE T CACHE.reload}
+ addUserKnob {22 simulate l Simulate! t "Runs the simulation for the given frame range." T flow.simulate() +STARTLINE}
+ addUserKnob {26 ""}
+ addUserKnob {6 colour_flow l "Use Colour" t "If checked, simulation will blend colours (Note: This will assume an instant blend for the entire column!)\nOtherwise, only the alpha (height) will be used." +STARTLINE}
+ addUserKnob {7 flow_rate l "Flow Rate" t "Adjusts the speed of the water transfer between pixels."}
+ flow_rate 0.8
+ addUserKnob {7 flow_rate_div l INVISIBLE t "The flow rate is the amount of the height difference in pixels to allow out per direction - in a single frame, the water cannot reduce more than the height difference as long as this is below 1 / 8. When combined with the previous flow rate, it can greatly increase." +INVISIBLE}
+ flow_rate_div {{"flow_rate / 8"}}
+}
+ BackdropNode {
+  inputs 0
+  name BackdropNode1
+  tile_color 0x789eb5ff
+  label Colour
+  note_font_size 42
+  xpos -250
+  ypos 916
+  bdwidth 468
+  bdheight 704
+ }
+ Read {
+  inputs 0
+  file "\[value parent.cache]"
+  format "1440 810 0 0 1440 810 1 \"3/4 HD\""
+  first {{start}}
+  last {{end}}
+  origset true
+  on_error "nearest frame"
+  version 40192
+  name CACHE
+  label "DO NOT RENAME"
+  xpos 1030
+  ypos -1118
+ }
+set N2a77c050 [stack 0]
+ Dot {
+  name Dot69
+  xpos 1064
+  ypos -975
+ }
+set N11ac0b30 [stack 0]
+ Dot {
+  name Dot2
+  note_font_size 20
+  xpos 1225
+  ypos -975
+ }
+ Output {
+  name Output1
+  xpos 1191
+  ypos 2666
+ }
+ StickyNote {
+  inputs 0
+  name StickyNote1
+  label "    Add water to existing water,\nie, source + drain,\n         make sure no negative water       "
+  xpos 861
+  ypos -450
+ }
+ StickyNote {
+  inputs 0
+  name Formula
+  label "                max(0, Flux(t) + timestep * pipe_cross_section * gravity * height_difference / pipe_length)                "
+  note_font_size 20
+  xpos -1126
+  ypos 260
+ }
+ StickyNote {
+  inputs 0
+  name StickyNote2
+  label "                min(1, height * column_cross_section / (sum(outflow) * timestep))                "
+  note_font_size 20
+  xpos -402
+  ypos 662
+ }
+ Input {
+  inputs 0
+  name InputTerrain
+  xpos -732
+  ypos -1197
+ }
+push $N11ac0b30
+ FrameHold {
+  first_frame {{frame-1}}
+  name FrameHold4
+  xpos 1030
+  ypos -806
+ }
+set N2a086f30 [stack 0]
+ Dot {
+  name Dot15
+  note_font_size 20
+  xpos 1064
+  ypos -583
+ }
+ Input {
+  inputs 0
+  name InputWater
+  xpos 750
+  ypos -1197
+  number 1
+ }
+ Dot {
+  name Dot73
+  note_font_size 20
+  xpos 784
+  ypos -973
+ }
+set N2a099620 [stack 0]
+ Switch {
+  inputs 2
+  which {{"start != frame"}}
+  name Switch_Sim
+  xpos 750
+  ypos -587
+ }
+set N2a09e460 [stack 0]
+ Input {
+  inputs 0
+  name InputSource
+  xpos 452
+  ypos -1197
+  number 2
+ }
+ Dot {
+  name Dot17
+  xpos 486
+  ypos -710
+ }
+set N2a0ab2a0 [stack 0]
+ Dot {
+  name Dot30
+  xpos 602
+  ypos -710
+ }
+ MergeExpression {
+  inputs 2
+  temp_name0 total_alpha
+  temp_expr0 "Aa + Ba"
+  temp_name1 col_r
+  temp_expr1 "(Br * Ba + Ar * Aa) / total_alpha"
+  temp_name2 col_g
+  temp_expr2 "(Bg * Ba + Ag * Aa) / total_alpha"
+  temp_name3 col_b
+  temp_expr3 "(Bb * Ba + Ab * Aa) / total_alpha"
+  expr0 "isnan(col_r) ? 0 : col_r"
+  expr1 "isnan(col_g) ? 0 : col_g"
+  expr2 "isnan(col_b) ? 0 : col_b"
+  expr3 total_alpha
+  name BLEND_COL
+  xpos 568
+  ypos -587
+ }
+ Dot {
+  name Dot1
+  xpos 602
+  ypos -476
+ }
+push $N2a0ab2a0
+ Shuffle {
+  in alpha
+  name STRIP_COL
+  xpos 452
+  ypos -587
+ }
+ Dot {
+  name Dot3
+  xpos 486
+  ypos -530
+ }
+push $N2a09e460
+ Merge2 {
+  inputs 2
+  operation plus
+  bbox B
+  name Merge2
+  xpos 750
+  ypos -534
+ }
+ Switch {
+  inputs 2
+  which {{parent.colour_flow}}
+  name Switch_Colour
+  xpos 750
+  ypos -480
+ }
+ Clamp {
+  channels rgba
+  maximum inf
+  name Clamp1
+  label "No negative water column"
+  xpos 750
+  ypos -437
+ }
+ Dot {
+  name Dot16
+  xpos 784
+  ypos -363
+ }
+set N2b73a6e0 [stack 0]
+ Dot {
+  name Dot13
+  xpos 374
+  ypos -363
+ }
+ Shuffle {
+  in alpha
+  name Water_Height
+  label "Water height only"
+  xpos 340
+  ypos -318
+ }
+ Dot {
+  name Dot11
+  xpos 374
+  ypos -248
+ }
+set N2b754d20 [stack 0]
+ Merge2 {
+  inputs 2
+  operation plus
+  bbox B
+  name TOTAL_HEIGHT
+  xpos -732
+  ypos -252
+ }
+ Dot {
+  name Dot59
+  xpos -698
+  ypos -128
+ }
+set N2b769e90 [stack 0]
+ Dot {
+  name Dot63
+  xpos -922
+  ypos -128
+ }
+ Expression {
+  expr0 "(r - r(x-1, y)) * flow_rate_div"
+  expr1 "(g - g(x, y+1)) * flow_rate_div"
+  expr2 "(b - b(x+1, y)) * flow_rate_div"
+  expr3 "(a - a(x, y-1)) * flow_rate_div"
+  name CROSS
+  label "Height difference / pipe length"
+  xpos -956
+  ypos -61
+ }
+push $N2a086f30
+ Dot {
+  name Dot65
+  note_font_size 20
+  xpos -236
+  ypos -796
+ }
+set N2b781420 [stack 0]
+ Dot {
+  name Dot66
+  note_font_size 20
+  xpos -1280
+  ypos -796
+ }
+ Shuffle {
+  in FlowC
+  name Shuffle4
+  label "<center><font size = \"5\"> \[value in]\nSimulation</center>"
+  xpos -1314
+  ypos -758
+  postage_stamp true
+ }
+ Dot {
+  name Dot5
+  note_font_size 20
+  xpos -1280
+  ypos -583
+ }
+push $N2a099620
+ Dot {
+  name Dot72
+  note_font_size 20
+  xpos -92
+  ypos -973
+ }
+set N2b7a07f0 [stack 0]
+ Dot {
+  name Dot70
+  note_font_size 20
+  xpos -1136
+  ypos -973
+ }
+ Shuffle {
+  in FlowC
+  name Shuffle8
+  label "<center><font size = \"5\"> \[value in]\nSTART</center>"
+  xpos -1170
+  ypos -758
+  postage_stamp true
+ }
+ Switch {
+  inputs 2
+  which {{"start != frame"}}
+  name Switch1
+  xpos -1170
+  ypos -587
+ }
+ Dot {
+  name Dot4
+  xpos -1136
+  ypos 164
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge3
+  xpos -956
+  ypos 160
+ }
+ Clamp {
+  channels rgba
+  maximum inf
+  name Clamp2
+  label "MIN 0\n"
+  xpos -956
+  ypos 186
+ }
+ Dot {
+  name Dot21
+  xpos -922
+  ypos 474
+ }
+set N2b7e6880 [stack 0]
+push $N2b769e90
+ Dot {
+  name Dot62
+  xpos -488
+  ypos -128
+ }
+ Expression {
+  expr0 "(r - r(x-1, y+1)) * flow_rate_div"
+  expr1 "(g - g(x+1, y+1)) * flow_rate_div"
+  expr2 "(b - b(x+1, y-1)) * flow_rate_div"
+  expr3 "(a - a(x-1, y-1)) * flow_rate_div"
+  name DIAGONAL
+  label "Height difference / pipe length"
+  xpos -522
+  ypos -62
+ }
+push $N2b781420
+ Shuffle {
+  in FlowD
+  name Shuffle3
+  label "<center><font size = \"5\"> \[value in]\nSimulation</center>"
+  xpos -270
+  ypos -755
+  postage_stamp true
+ }
+ Dot {
+  name Dot6
+  note_font_size 20
+  xpos -236
+  ypos -583
+ }
+push $N2b7a07f0
+ Shuffle {
+  in FlowD
+  name Shuffle7
+  label "<center><font size = \"5\"> \[value in]\nSTART</center>"
+  xpos -126
+  ypos -755
+  postage_stamp true
+ }
+ Switch {
+  inputs 2
+  which {{"start != frame"}}
+  name Switch3
+  xpos -126
+  ypos -587
+ }
+set N2b8240c0 [stack 0]
+ Dot {
+  name Dot8
+  xpos -92
+  ypos 164
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge4
+  xpos -522
+  ypos 160
+ }
+ Clamp {
+  channels rgba
+  maximum inf
+  name Clamp3
+  label "MIN 0"
+  xpos -522
+  ypos 186
+ }
+ Dot {
+  name Dot34
+  xpos -488
+  ypos 371
+ }
+set N2b8502b0 [stack 0]
+ Dot {
+  name Dot22
+  xpos -91
+  ypos 371
+ }
+ MergeExpression {
+  inputs 2
+  channel0 rgba
+  expr0 "Ar + Ag + Ab + Aa + Br + Bg + Bb + Ba"
+  name OUTFLOW_MAX
+  label "Total outflow per pixel"
+  xpos -125
+  ypos 464
+ }
+set N2b85b100 [stack 0]
+push $N2b754d20
+ Dot {
+  name Dot64
+  note_font_size 20
+  xpos 374
+  ypos 582
+ }
+ MergeExpression {
+  inputs 2
+  temp_name0 scaled
+  temp_expr0 "Ba / Ar"
+  channel0 rgba
+  expr0 "isnan(scaled) ? 1 : scaled"
+  name SCALE_FACTOR
+  xpos -125
+  ypos 578
+ }
+ Clamp {
+  channels rgba
+  name Clamp4
+  label "MAX HERE LIMITS QUANTITY OF OUTFLOW,\nLOWER MEANS A COLUMN CAN'T FULL DEPLETE IN ONE GO"
+  xpos -125
+  ypos 604
+ }
+ Dot {
+  name Dot20
+  xpos -91
+  ypos 740
+ }
+set N2b8891f0 [stack 0]
+ Dot {
+  name Dot19
+  xpos -91
+  ypos 815
+ }
+set N2b88e560 [stack 0]
+push $N2b8502b0
+ Merge2 {
+  inputs 2
+  operation multiply
+  name RESTRICT_OUTFLOW_DIAGONAL
+  xpos -522
+  ypos 811
+ }
+ Dot {
+  name Dot33
+  xpos -488
+  ypos 1286
+ }
+set N2b8a3960 [stack 0]
+ Dot {
+  name Dot28
+  xpos -1121
+  ypos 1286
+ }
+ Dot {
+  name Dot67
+  note_font_size 20
+  xpos -1121
+  ypos 2354
+ }
+push $N2b8891f0
+push $N2b7e6880
+ Merge2 {
+  inputs 2
+  operation multiply
+  name RESTRICT_OUTFLOW_CROSS
+  xpos -956
+  ypos 736
+ }
+ Dot {
+  name Dot27
+  xpos -922
+  ypos 1377
+ }
+set N2b8c2740 [stack 0]
+ Dot {
+  name Dot12
+  note_font_size 20
+  xpos -1032
+  ypos 1377
+ }
+ Dot {
+  name Dot68
+  note_font_size 20
+  xpos -1032
+  ypos 2274
+ }
+push $N2b8c2740
+push $N2b73a6e0
+ Dot {
+  name Dot38
+  label "COLOUR / HEIGHT"
+  xpos 784
+  ypos 1094
+ }
+set N2b8d11b0 [stack 0]
+ Dot {
+  name Dot71
+  xpos 166
+  ypos 1094
+ }
+set N2b8d5fa0 [stack 0]
+ Dot {
+  name Dot18
+  xpos -40
+  ypos 1094
+ }
+set N2b8dadc0 [stack 0]
+ Dot {
+  name Dot31
+  xpos -206
+  ypos 1094
+ }
+ MergeExpression {
+  inputs 2
+  temp_name0 from_left
+  temp_expr0 "Ab(x-1, y)"
+  temp_name1 from_right
+  temp_expr1 "Ar(x+1, y)"
+  temp_name2 from_below
+  temp_expr2 "Ag(x, y-1)"
+  temp_name3 from_above
+  temp_expr3 "Aa(x, y+1)"
+  expr0 "from_left * Br(x-1, y) + from_right * Br(x+1, y) + from_below * Br(x, y-1) + from_above * Br(x, y+1)"
+  expr1 "from_left * Bg(x-1, y) + from_right * Bg(x+1, y) + from_below * Bg(x, y-1) + from_above * Bg(x, y+1)"
+  expr2 "from_left * Bb(x-1, y) + from_right * Bb(x+1, y) + from_below * Bb(x, y-1) + from_above * Bb(x, y+1)"
+  expr3 "from_left + from_right + from_below + from_above"
+  name INFLOW_CROSS_COLOUR
+  label "Colour from B\nWeight from A\nblue from left (x-1)\nred from right (x+1)\ngreen from down (y-1)\nalpha from up (y+1)"
+  xpos -240
+  ypos 1334
+ }
+ Dot {
+  name Dot32
+  xpos -206
+  ypos 1471
+ }
+push 0
+push $N2b8a3960
+push $N2b8dadc0
+ MergeExpression {
+  inputs 2
+  temp_name0 from_topleft
+  temp_expr0 "Ab(x-1, y+1)"
+  temp_name1 from_botright
+  temp_expr1 "Ar(x+1, y-1)"
+  temp_name2 from_botleft
+  temp_expr2 "Ag(x-1, y-1)"
+  temp_name3 from_topright
+  temp_expr3 "Aa(x+1, y+1)"
+  expr0 "from_topleft * Br(x-1, y+1) + from_botright * Br(x+1, y-1) + from_botleft * Br(x-1, y-1) + from_topright * Br(x+1, y+1)"
+  expr1 "from_topleft * Bg(x-1, y+1) + from_botright * Bg(x+1, y-1) + from_botleft * Bg(x-1, y-1) + from_topright * Bg(x+1, y+1)"
+  expr2 "from_topleft * Bb(x-1, y+1) + from_botright * Bb(x+1, y-1) + from_botleft * Bb(x-1, y-1) + from_topright * Bb(x+1, y+1)"
+  expr3 "from_topleft + from_botright + from_botleft + from_topright"
+  name INFLOW_DIAGONAL_COLOUR
+  label "Colour from B\nWeight from A\nblue from topleft (x-1, y+1)\nred from botright (x+1, y-1)\ngreen from botleft (x-1, y-1)\nalpha from topright (x+1, y+1)"
+  xpos -74
+  ypos 1243
+ }
+push $N2b8d5fa0
+ Expression {
+  expr0 "r * a"
+  expr1 "g * a"
+  expr2 "b * a"
+  expr3 a
+  name WEIGHTED_COLOUR
+  xpos 132
+  ypos 1212
+ }
+ Merge2 {
+  inputs 3+1
+  operation plus
+  name SUM_WEIGHTED_COLOUR
+  xpos 132
+  ypos 1467
+ }
+ Expression {
+  temp_name0 col_r
+  temp_expr0 "r / a"
+  temp_name1 col_g
+  temp_expr1 "g / a"
+  temp_name2 col_b
+  temp_expr2 "b / a"
+  expr0 "isnan(col_r) ? 0 : col_r"
+  expr1 "isnan(col_g) ? 0 : col_g"
+  expr2 "isnan(col_b) ? 0 : col_b"
+  name COLOUR_OUTPUT
+  xpos 132
+  ypos 1508
+ }
+ Dot {
+  name Dot14
+  xpos 166
+  ypos 2129
+ }
+push $N2b8c2740
+push $N2b8a3960
+ Dot {
+  name Dot23
+  xpos -488
+  ypos 1554
+ }
+ MergeExpression {
+  inputs 2
+  channel0 rgba
+  expr0 "Ab(x-1,y) + Aa(x,y+1) + Ar(x+1,y) + Ag(x,y-1) + Bb(x-1,y+1) + Ba(x+1,y+1) + Br(x+1,y-1) + Bg(x-1,y-1)"
+  channel1 {-rgba.red -rgba.green -rgba.blue none}
+  channel2 {-rgba.red -rgba.green -rgba.blue none}
+  channel3 none
+  name INFLOW
+  xpos -956
+  ypos 1550
+ }
+ Dot {
+  name Dot26
+  xpos -922
+  ypos 1646
+ }
+push $N2b85b100
+ Dot {
+  name Dot24
+  xpos 483
+  ypos 474
+ }
+push $N2b88e560
+ Merge2 {
+  inputs 2
+  operation multiply
+  name OUTFLOW
+  xpos 449
+  ypos 811
+ }
+ Merge2 {
+  inputs 2
+  operation minus
+  name HEIGHT_CHANGE
+  xpos 449
+  ypos 1642
+ }
+ Dot {
+  name Dot25
+  xpos 483
+  ypos 1893
+ }
+push $N2b8d11b0
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge8
+  xpos 750
+  ypos 1889
+ }
+ ShuffleCopy {
+  inputs 2
+  red red
+  green green
+  blue blue
+  alpha alpha2
+  name COLOUR_AND_HEIGHT
+  xpos 750
+  ypos 2125
+  disable {{"1 - parent.colour_flow"}}
+ }
+ Dot {
+  name Dot29
+  label "WATER OUT"
+  xpos 784
+  ypos 2205
+ }
+ ShuffleCopy {
+  inputs 2
+  alpha alpha2
+  black red
+  white green
+  red2 blue
+  green2 alpha
+  out2 FlowC
+  name ShuffleCopy2
+  xpos 750
+  ypos 2270
+ }
+ ShuffleCopy {
+  inputs 2
+  alpha alpha2
+  black red
+  white green
+  red2 blue
+  green2 alpha
+  out2 FlowD
+  name ShuffleCopy1
+  xpos 750
+  ypos 2350
+ }
+ Write {
+  channels all
+  file "\[value cache]"
+  file_type exr
+  metadata "all metadata"
+  first_part rgba
+  version 39517
+  name WriteWATER
+  label "DO NOT RENAME"
+  xpos 750
+  ypos 2425
+ }
+push $N2b8240c0
+push $N2a77c050
+push 0
+ Viewer {
+  inputs 3
+  frame_range 1-100
+  frame_range_lock true
+  fps 25
+  colour_sample_bbox {0.1541666687 0.04583333433 0.1583333313 0.05000000075}
+  samplepoints {{0.1541666687 0.04583333433}
+    }
+  name Viewer1
+  xpos 2697
+  ypos 371
+ }
+end_group
+Constant {
+ inputs 0
+ format "960 540 0 0 960 540 1 Quarter HD"
+ name Constant5
+ selected true
+ xpos 565
+ ypos -678
+}
+Dot {
+ name Dot36
+ note_font_size 20
+ selected true
+ xpos 599
+ ypos -564
+}
+set Nb9d0140 [stack 0]
+Noise {
+ size 160
+ zoffset 2.72
+ octaves 6
+ center {720 405}
+ name Noise7
+ selected true
+ xpos 565
+ ypos -466
+}
+set Nb9d5ca0 [stack 0]
+Expression {
+ channel0 rgba
+ expr0 "r < 0.4 ? 0 : 0.001"
+ name Expression4
+ selected true
+ xpos 421
+ ypos -466
+}
+Dot {
+ name Dot37
+ selected true
+ xpos 455
+ ypos -317
+}
+push $Nb9d0140
+Dot {
+ name Dot43
+ note_font_size 20
+ selected true
+ xpos 768
+ ypos -564
+}
+Dot {
+ name Dot44
+ note_font_size 20
+ selected true
+ xpos 768
+ ypos -317
+}
+push $Nb9d5ca0
+Multiply {
+ value 4
+ name Multiply2
+ selected true
+ xpos 565
+ ypos -440
+}
+Group {
+ inputs 3
+ name Flow2
+ note_font Helvetica
+ selected true
+ xpos 565
+ ypos -320
+ addUserKnob {20 User}
+ addUserKnob {3 start l Start}
+ start 1
+ addUserKnob {3 end l End -STARTLINE}
+ end 200
+ addUserKnob {6 extend_existing l "Extend Existing" t "If enabled, simulation will continue from the end of any existing renders." -STARTLINE}
+ addUserKnob {2 cache l "Cache Files" t "Location to save simulation -- must be exr format"}
+ addUserKnob {41 reload -STARTLINE T CACHE.reload}
+ addUserKnob {22 simulate l Simulate! t "Runs the simulation for the given frame range." T flow.simulate() +STARTLINE}
+ addUserKnob {26 ""}
+ addUserKnob {6 colour_flow l "Use Colour" t "If checked, simulation will blend colours (Note: This will assume an instant blend for the entire column!)\nOtherwise, only the alpha (height) will be used." +STARTLINE}
+ addUserKnob {7 flow_rate l "Flow Rate" t "Adjusts the speed of the water transfer between pixels."}
+ flow_rate 0.8
+ addUserKnob {7 flow_rate_div l INVISIBLE t "The flow rate is the amount of the height difference in pixels to allow out per direction - in a single frame, the water cannot reduce more than the height difference as long as this is below 1 / 8. When combined with the previous flow rate, it can greatly increase." +INVISIBLE}
+ flow_rate_div {{"flow_rate / 8"}}
+}
+ BackdropNode {
+  inputs 0
+  name BackdropNode1
+  tile_color 0x789eb5ff
+  label Colour
+  note_font_size 42
+  xpos -250
+  ypos 916
+  bdwidth 468
+  bdheight 704
+ }
+ Read {
+  inputs 0
+  file "\[value parent.cache]"
+  format "1440 810 0 0 1440 810 1 \"3/4 HD\""
+  first {{start}}
+  last {{end}}
+  origset true
+  on_error "nearest frame"
+  version 40192
+  name CACHE
+  label "DO NOT RENAME"
+  xpos 1030
+  ypos -1118
+ }
+set N2ba9f960 [stack 0]
+ Dot {
+  name Dot69
+  xpos 1064
+  ypos -975
+ }
+set N2a85a190 [stack 0]
+ Dot {
+  name Dot2
+  note_font_size 20
+  xpos 1225
+  ypos -975
+ }
+ Output {
+  name Output1
+  xpos 1191
+  ypos 2666
+ }
+ StickyNote {
+  inputs 0
+  name StickyNote1
+  label "    Add water to existing water,\nie, source + drain,\n         make sure no negative water       "
+  xpos 861
+  ypos -450
+ }
+ StickyNote {
+  inputs 0
+  name Formula
+  label "                max(0, Flux(t) + timestep * pipe_cross_section * gravity * height_difference / pipe_length)                "
+  note_font_size 20
+  xpos -1126
+  ypos 260
+ }
+ StickyNote {
+  inputs 0
+  name StickyNote2
+  label "                min(1, height * column_cross_section / (sum(outflow) * timestep))                "
+  note_font_size 20
+  xpos -402
+  ypos 662
+ }
+ Input {
+  inputs 0
+  name InputTerrain
+  xpos -732
+  ypos -1197
+ }
+push $N2a85a190
+ FrameHold {
+  first_frame {{frame-1}}
+  name FrameHold4
+  xpos 1030
+  ypos -806
+ }
+set N2baff990 [stack 0]
+ Dot {
+  name Dot15
+  note_font_size 20
+  xpos 1064
+  ypos -583
+ }
+ Input {
+  inputs 0
+  name InputWater
+  xpos 750
+  ypos -1197
+  number 1
+ }
+ Dot {
+  name Dot73
+  note_font_size 20
+  xpos 784
+  ypos -973
+ }
+set N2bb12180 [stack 0]
+ Switch {
+  inputs 2
+  which {{"start != frame"}}
+  name Switch_Sim
+  xpos 750
+  ypos -587
+ }
+set N2bb16fc0 [stack 0]
+ Input {
+  inputs 0
+  name InputSource
+  xpos 452
+  ypos -1197
+  number 2
+ }
+ Dot {
+  name Dot17
+  xpos 486
+  ypos -710
+ }
+set N2bb240b0 [stack 0]
+ Dot {
+  name Dot30
+  xpos 602
+  ypos -710
+ }
+ MergeExpression {
+  inputs 2
+  temp_name0 total_alpha
+  temp_expr0 "Aa + Ba"
+  temp_name1 col_r
+  temp_expr1 "(Br * Ba + Ar * Aa) / total_alpha"
+  temp_name2 col_g
+  temp_expr2 "(Bg * Ba + Ag * Aa) / total_alpha"
+  temp_name3 col_b
+  temp_expr3 "(Bb * Ba + Ab * Aa) / total_alpha"
+  expr0 "isnan(col_r) ? 0 : col_r"
+  expr1 "isnan(col_g) ? 0 : col_g"
+  expr2 "isnan(col_b) ? 0 : col_b"
+  expr3 total_alpha
+  name BLEND_COL
+  xpos 568
+  ypos -587
+ }
+ Dot {
+  name Dot1
+  xpos 602
+  ypos -476
+ }
+push $N2bb240b0
+ Shuffle {
+  in alpha
+  name STRIP_COL
+  xpos 452
+  ypos -587
+ }
+ Dot {
+  name Dot3
+  xpos 486
+  ypos -530
+ }
+push $N2bb16fc0
+ Merge2 {
+  inputs 2
+  operation plus
+  bbox B
+  name Merge2
+  xpos 750
+  ypos -534
+ }
+ Switch {
+  inputs 2
+  which {{parent.colour_flow}}
+  name Switch_Colour
+  xpos 750
+  ypos -480
+ }
+ Clamp {
+  channels rgba
+  maximum inf
+  name Clamp1
+  label "No negative water column"
+  xpos 750
+  ypos -437
+ }
+ Dot {
+  name Dot16
+  xpos 784
+  ypos -363
+ }
+set N2bb7bd10 [stack 0]
+ Dot {
+  name Dot13
+  xpos 374
+  ypos -363
+ }
+ Shuffle {
+  in alpha
+  name Water_Height
+  label "Water height only"
+  xpos 340
+  ypos -318
+ }
+ Dot {
+  name Dot11
+  xpos 374
+  ypos -248
+ }
+set N2bb96350 [stack 0]
+ Merge2 {
+  inputs 2
+  operation plus
+  bbox B
+  name TOTAL_HEIGHT
+  xpos -732
+  ypos -252
+ }
+ Dot {
+  name Dot59
+  xpos -698
+  ypos -128
+ }
+set N2bbab9e0 [stack 0]
+ Dot {
+  name Dot63
+  xpos -922
+  ypos -128
+ }
+ Expression {
+  expr0 "(r - r(x-1, y)) * flow_rate_div"
+  expr1 "(g - g(x, y+1)) * flow_rate_div"
+  expr2 "(b - b(x+1, y)) * flow_rate_div"
+  expr3 "(a - a(x, y-1)) * flow_rate_div"
+  name CROSS
+  label "Height difference / pipe length"
+  xpos -956
+  ypos -61
+ }
+push $N2baff990
+ Dot {
+  name Dot65
+  note_font_size 20
+  xpos -236
+  ypos -796
+ }
+set N2bbc3560 [stack 0]
+ Dot {
+  name Dot66
+  note_font_size 20
+  xpos -1280
+  ypos -796
+ }
+ Shuffle {
+  in FlowC
+  name Shuffle4
+  label "<center><font size = \"5\"> \[value in]\nSimulation</center>"
+  xpos -1314
+  ypos -758
+  postage_stamp true
+ }
+ Dot {
+  name Dot5
+  note_font_size 20
+  xpos -1280
+  ypos -583
+ }
+push $N2bb12180
+ Dot {
+  name Dot72
+  note_font_size 20
+  xpos -92
+  ypos -973
+ }
+set N2bbe2930 [stack 0]
+ Dot {
+  name Dot70
+  note_font_size 20
+  xpos -1136
+  ypos -973
+ }
+ Shuffle {
+  in FlowC
+  name Shuffle8
+  label "<center><font size = \"5\"> \[value in]\nSTART</center>"
+  xpos -1170
+  ypos -758
+  postage_stamp true
+ }
+ Switch {
+  inputs 2
+  which {{"start != frame"}}
+  name Switch1
+  xpos -1170
+  ypos -587
+ }
+ Dot {
+  name Dot4
+  xpos -1136
+  ypos 164
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge3
+  xpos -956
+  ypos 160
+ }
+ Clamp {
+  channels rgba
+  maximum inf
+  name Clamp2
+  label "MIN 0\n"
+  xpos -956
+  ypos 186
+ }
+ Dot {
+  name Dot21
+  xpos -922
+  ypos 474
+ }
+set N2bc28e90 [stack 0]
+push $N2bbab9e0
+ Dot {
+  name Dot62
+  xpos -488
+  ypos -128
+ }
+ Expression {
+  expr0 "(r - r(x-1, y+1)) * flow_rate_div"
+  expr1 "(g - g(x+1, y+1)) * flow_rate_div"
+  expr2 "(b - b(x+1, y-1)) * flow_rate_div"
+  expr3 "(a - a(x-1, y-1)) * flow_rate_div"
+  name DIAGONAL
+  label "Height difference / pipe length"
+  xpos -522
+  ypos -62
+ }
+push $N2bbc3560
+ Shuffle {
+  in FlowD
+  name Shuffle3
+  label "<center><font size = \"5\"> \[value in]\nSimulation</center>"
+  xpos -270
+  ypos -755
+  postage_stamp true
+ }
+ Dot {
+  name Dot6
+  note_font_size 20
+  xpos -236
+  ypos -583
+ }
+push $N2bbe2930
+ Shuffle {
+  in FlowD
+  name Shuffle7
+  label "<center><font size = \"5\"> \[value in]\nSTART</center>"
+  xpos -126
+  ypos -755
+  postage_stamp true
+ }
+ Switch {
+  inputs 2
+  which {{"start != frame"}}
+  name Switch3
+  xpos -126
+  ypos -587
+ }
+set N2bc66f10 [stack 0]
+ Dot {
+  name Dot8
+  xpos -92
+  ypos 164
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge4
+  xpos -522
+  ypos 160
+ }
+ Clamp {
+  channels rgba
+  maximum inf
+  name Clamp3
+  label "MIN 0"
+  xpos -522
+  ypos 186
+ }
+ Dot {
+  name Dot34
+  xpos -488
+  ypos 371
+ }
+set N2bc93100 [stack 0]
+ Dot {
+  name Dot22
+  xpos -91
+  ypos 371
+ }
+ MergeExpression {
+  inputs 2
+  channel0 rgba
+  expr0 "Ar + Ag + Ab + Aa + Br + Bg + Bb + Ba"
+  name OUTFLOW_MAX
+  label "Total outflow per pixel"
+  xpos -125
+  ypos 464
+ }
+set N2bc9df50 [stack 0]
+push $N2bb96350
+ Dot {
+  name Dot64
+  note_font_size 20
+  xpos 374
+  ypos 582
+ }
+ MergeExpression {
+  inputs 2
+  temp_name0 scaled
+  temp_expr0 "Ba / Ar"
+  channel0 rgba
+  expr0 "isnan(scaled) ? 1 : scaled"
+  name SCALE_FACTOR
+  xpos -125
+  ypos 578
+ }
+ Clamp {
+  channels rgba
+  name Clamp4
+  label "MAX HERE LIMITS QUANTITY OF OUTFLOW,\nLOWER MEANS A COLUMN CAN'T FULL DEPLETE IN ONE GO"
+  xpos -125
+  ypos 604
+ }
+ Dot {
+  name Dot20
+  xpos -91
+  ypos 740
+ }
+set N2bccc4a0 [stack 0]
+ Dot {
+  name Dot19
+  xpos -91
+  ypos 815
+ }
+set N2bcd1810 [stack 0]
+push $N2bc93100
+ Merge2 {
+  inputs 2
+  operation multiply
+  name RESTRICT_OUTFLOW_DIAGONAL
+  xpos -522
+  ypos 811
+ }
+ Dot {
+  name Dot33
+  xpos -488
+  ypos 1286
+ }
+set N2bce6c10 [stack 0]
+ Dot {
+  name Dot28
+  xpos -1121
+  ypos 1286
+ }
+ Dot {
+  name Dot67
+  note_font_size 20
+  xpos -1121
+  ypos 2354
+ }
+push $N2bccc4a0
+push $N2bc28e90
+ Merge2 {
+  inputs 2
+  operation multiply
+  name RESTRICT_OUTFLOW_CROSS
+  xpos -956
+  ypos 736
+ }
+ Dot {
+  name Dot27
+  xpos -922
+  ypos 1377
+ }
+set N2bd059f0 [stack 0]
+ Dot {
+  name Dot12
+  note_font_size 20
+  xpos -1032
+  ypos 1377
+ }
+ Dot {
+  name Dot68
+  note_font_size 20
+  xpos -1032
+  ypos 2274
+ }
+push $N2bd059f0
+push $N2bb7bd10
+ Dot {
+  name Dot38
+  label "COLOUR / HEIGHT"
+  xpos 784
+  ypos 1094
+ }
+set N2bd14460 [stack 0]
+ Dot {
+  name Dot71
+  xpos 166
+  ypos 1094
+ }
+set N2bd19250 [stack 0]
+ Dot {
+  name Dot18
+  xpos -40
+  ypos 1094
+ }
+set N2bd1e070 [stack 0]
+ Dot {
+  name Dot31
+  xpos -206
+  ypos 1094
+ }
+ MergeExpression {
+  inputs 2
+  temp_name0 from_left
+  temp_expr0 "Ab(x-1, y)"
+  temp_name1 from_right
+  temp_expr1 "Ar(x+1, y)"
+  temp_name2 from_below
+  temp_expr2 "Ag(x, y-1)"
+  temp_name3 from_above
+  temp_expr3 "Aa(x, y+1)"
+  expr0 "from_left * Br(x-1, y) + from_right * Br(x+1, y) + from_below * Br(x, y-1) + from_above * Br(x, y+1)"
+  expr1 "from_left * Bg(x-1, y) + from_right * Bg(x+1, y) + from_below * Bg(x, y-1) + from_above * Bg(x, y+1)"
+  expr2 "from_left * Bb(x-1, y) + from_right * Bb(x+1, y) + from_below * Bb(x, y-1) + from_above * Bb(x, y+1)"
+  expr3 "from_left + from_right + from_below + from_above"
+  name INFLOW_CROSS_COLOUR
+  label "Colour from B\nWeight from A\nblue from left (x-1)\nred from right (x+1)\ngreen from down (y-1)\nalpha from up (y+1)"
+  xpos -240
+  ypos 1334
+ }
+ Dot {
+  name Dot32
+  xpos -206
+  ypos 1471
+ }
+push 0
+push $N2bce6c10
+push $N2bd1e070
+ MergeExpression {
+  inputs 2
+  temp_name0 from_topleft
+  temp_expr0 "Ab(x-1, y+1)"
+  temp_name1 from_botright
+  temp_expr1 "Ar(x+1, y-1)"
+  temp_name2 from_botleft
+  temp_expr2 "Ag(x-1, y-1)"
+  temp_name3 from_topright
+  temp_expr3 "Aa(x+1, y+1)"
+  expr0 "from_topleft * Br(x-1, y+1) + from_botright * Br(x+1, y-1) + from_botleft * Br(x-1, y-1) + from_topright * Br(x+1, y+1)"
+  expr1 "from_topleft * Bg(x-1, y+1) + from_botright * Bg(x+1, y-1) + from_botleft * Bg(x-1, y-1) + from_topright * Bg(x+1, y+1)"
+  expr2 "from_topleft * Bb(x-1, y+1) + from_botright * Bb(x+1, y-1) + from_botleft * Bb(x-1, y-1) + from_topright * Bb(x+1, y+1)"
+  expr3 "from_topleft + from_botright + from_botleft + from_topright"
+  name INFLOW_DIAGONAL_COLOUR
+  label "Colour from B\nWeight from A\nblue from topleft (x-1, y+1)\nred from botright (x+1, y-1)\ngreen from botleft (x-1, y-1)\nalpha from topright (x+1, y+1)"
+  xpos -74
+  ypos 1243
+ }
+push $N2bd19250
+ Expression {
+  expr0 "r * a"
+  expr1 "g * a"
+  expr2 "b * a"
+  expr3 a
+  name WEIGHTED_COLOUR
+  xpos 132
+  ypos 1212
+ }
+ Merge2 {
+  inputs 3+1
+  operation plus
+  name SUM_WEIGHTED_COLOUR
+  xpos 132
+  ypos 1467
+ }
+ Expression {
+  temp_name0 col_r
+  temp_expr0 "r / a"
+  temp_name1 col_g
+  temp_expr1 "g / a"
+  temp_name2 col_b
+  temp_expr2 "b / a"
+  expr0 "isnan(col_r) ? 0 : col_r"
+  expr1 "isnan(col_g) ? 0 : col_g"
+  expr2 "isnan(col_b) ? 0 : col_b"
+  name COLOUR_OUTPUT
+  xpos 132
+  ypos 1508
+ }
+ Dot {
+  name Dot14
+  xpos 166
+  ypos 2129
+ }
+push $N2bd059f0
+push $N2bce6c10
+ Dot {
+  name Dot23
+  xpos -488
+  ypos 1554
+ }
+ MergeExpression {
+  inputs 2
+  channel0 rgba
+  expr0 "Ab(x-1,y) + Aa(x,y+1) + Ar(x+1,y) + Ag(x,y-1) + Bb(x-1,y+1) + Ba(x+1,y+1) + Br(x+1,y-1) + Bg(x-1,y-1)"
+  channel1 {-rgba.red -rgba.green -rgba.blue none}
+  channel2 {-rgba.red -rgba.green -rgba.blue none}
+  channel3 none
+  name INFLOW
+  xpos -956
+  ypos 1550
+ }
+ Dot {
+  name Dot26
+  xpos -922
+  ypos 1646
+ }
+push $N2bc9df50
+ Dot {
+  name Dot24
+  xpos 483
+  ypos 474
+ }
+push $N2bcd1810
+ Merge2 {
+  inputs 2
+  operation multiply
+  name OUTFLOW
+  xpos 449
+  ypos 811
+ }
+ Merge2 {
+  inputs 2
+  operation minus
+  name HEIGHT_CHANGE
+  xpos 449
+  ypos 1642
+ }
+ Dot {
+  name Dot25
+  xpos 483
+  ypos 1893
+ }
+push $N2bd14460
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge8
+  xpos 750
+  ypos 1889
+ }
+ ShuffleCopy {
+  inputs 2
+  red red
+  green green
+  blue blue
+  alpha alpha2
+  name COLOUR_AND_HEIGHT
+  xpos 750
+  ypos 2125
+  disable {{"1 - parent.colour_flow"}}
+ }
+ Dot {
+  name Dot29
+  label "WATER OUT"
+  xpos 784
+  ypos 2205
+ }
+ ShuffleCopy {
+  inputs 2
+  alpha alpha2
+  black red
+  white green
+  red2 blue
+  green2 alpha
+  out2 FlowC
+  name ShuffleCopy2
+  xpos 750
+  ypos 2270
+ }
+ ShuffleCopy {
+  inputs 2
+  alpha alpha2
+  black red
+  white green
+  red2 blue
+  green2 alpha
+  out2 FlowD
+  name ShuffleCopy1
+  xpos 750
+  ypos 2350
+ }
+ Write {
+  channels all
+  file "\[value cache]"
+  file_type exr
+  metadata "all metadata"
+  first_part rgba
+  version 39517
+  name WriteWATER
+  label "DO NOT RENAME"
+  xpos 750
+  ypos 2425
+ }
+push $N2bc66f10
+push $N2ba9f960
+push 0
+ Viewer {
+  inputs 3
+  frame_range 1-100
+  frame_range_lock true
+  fps 25
+  colour_sample_bbox {0.1541666687 0.04583333433 0.1583333313 0.05000000075}
+  samplepoints {{0.1541666687 0.04583333433}
+    }
+  name Viewer1
+  xpos 2697
+  ypos 371
+ }
+end_group
+Constant {
+ inputs 0
+ format "480 270 0 0 480 270 1 quarter_HD"
+ name Constant3
+ selected true
+ xpos -153
+ ypos -678
+}
+Dot {
+ name Dot7
+ note_font_size 20
+ selected true
+ xpos -119
+ ypos -564
+}
+set Nb6c4ed0 [stack 0]
+Dot {
+ name Dot20
+ selected true
+ xpos -249
+ ypos -564
+}
+set Nc95a260 [stack 0]
+Noise {
+ size 9.8
+ zoffset {{frame/10}}
+ octaves 2
+ gain 0.73
+ gamma 0.818
+ center {720 405}
+ name Noise2
+ selected true
+ xpos -283
+ ypos -496
+}
+push $Nc95a260
+Dot {
+ name Dot10
+ selected true
+ xpos -359
+ ypos -564
+}
+RotoPaint {
+ curves {{{v x3f99999a}
+  {f 0}
+  {n
+   {layer Root
+    {f 512}
+    {t x44340000 x43ca8000}
+    {a pt1x 0 pt1y 0 pt2x 0 pt2y 0 pt3x 0 pt3y 0 pt4x 0 pt4y 0 ptex00 0 ptex01 0 ptex02 0 ptex03 0 ptex10 0 ptex11 0 ptex12 0 ptex13 0 ptex20 0 ptex21 0 ptex22 0 ptex23 0 ptex30 0 ptex31 0 ptex32 0 ptex33 0 ptof1x 0 ptof1y 0 ptof2x 0 ptof2y 0 ptof3x 0 ptof3y 0 ptof4x 0 ptof4y 0 pterr 0 ptrefset 0 ptmot x40800000 ptref 0}
+    {curvegroup Ellipse3 512 bezier
+     {{cc
+       {f 8192}
+       {px x43290000
+        {xc05a19c0 0}
+        {x42987c56 x436298f1}
+        {x405a1a40 0}
+        {0 xc0569bc0}
+        {x42a4d39c x4368ab46}
+        {0 x40569bc0}
+        {x405a1a40 0}
+        {x42987c56 x436ebd9b}
+        {xc05a19c0 0}
+        {0 x40569bc0}
+        {x428c2512 x4368ab46}
+        {0 xc0569bc0}}}     idem}
+     {tx x43380000 x4344999a x436ccccc}
+     {a r x3f000000 g x3f000000 b x3f000000 a x3f000000 osw x41200000 osf 0 str 1 spx x44340000 spy x43ca8000 sb 1 ltn x43380000 ltm x43380000 tt x40e00000}}
+    {curvegroup Ellipse2 512 bezier
+     {{cc
+       {f 8192}
+       {px x43290000
+        {xc0bda700 0}
+        {x43c72220 x43693a77}
+        {x40bda780 0}
+        {0 xc0569bc0}
+        {x43cc7fb9 x436f4ccc}
+        {0 x40569bc0}
+        {x40bda780 0}
+        {x43c72220 x43755f21}
+        {xc0bda700 0}
+        {0 x40569bc0}
+        {x43c1c488 x436f4ccc}
+        {0 xc0569bc0}}}     idem}
+     {tx x43380000 x4344999a x436ccccc}
+     {a r x3f000000 g x3f000000 b x3f000000 a x3f000000 osw x41200000 osf 0 str 1 spx x44340000 spy x43ca8000 sb 1 ltn x43380000 ltm x43380000 tt x40e00000}}
+    {curvegroup Ellipse1 512 bezier
+     {{cc
+       {f 8192}
+       {px x43290000
+        {{{xc0910fa0 -}}
+      {{0 -}}}
+        {{{x436106c7 x3f000000 1 0 1}}
+      {{x436fc241 x3dfffc00 1 0 1}}}
+        {{{x40910f80 -}}
+      {{0 -}}}
+        {{{0 -}}
+      {{xc097fd20 -}}}
+        {{{x43693c07 x3f000000 1 0 1}}
+      {{x43785bdb x3dfffc00 1 0 1}}}
+        {{{0 -}}
+      {{x4097fd20 -}}}
+        {{{x40910f80 -}}
+      {{0 -}}}
+        {{{x436106c7 x3f000000 1 0 1}}
+      {{x43807aba x3e000000 1 0 1}}}
+        {{{xc0910fa0 -}}
+      {{0 -}}}
+        {{{0 -}}
+      {{x4097fd20 -}}}
+        {{{x4358d187 x3f000000 1 0 1}}
+      {{x43785bdb x3dfffc00 1 0 1}}}
+        {{{0 -}}
+      {{xc097fd20 -}}}}}     idem}
+     {tx x43380000 x4344999a x436ccccc}
+     {a r x3f000000 g x3f000000 b x3f000000 a x3f000000 osw x41200000 osf 0 str 1 spx x44340000 spy x43ca8000 sb 1 ltn x43380000 ltm x43380000 tt x40e00000}}}}}}
+ toolbox {selectAll {
+  { selectAll str 1 ssx 1 ssy 1 sf 1 }
+  { createBezier str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createBezierCusped str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createBSpline str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createEllipse str 1 ssx 1 ssy 1 sf 1 sb 1 tt 7 }
+  { createRectangle str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createRectangleCusped str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { brush str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { eraser src 2 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { clone src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { reveal src 3 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { dodge src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { burn src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { blur src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { sharpen src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { smear src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+} }
+ toolbar_brush_hardness 0.200000003
+ toolbar_source_transform_scale {1 1}
+ toolbar_source_transform_center {720 405}
+ color 0.5
+ colorOverlay {0 0 0 0}
+ lifetime_type "all frames"
+ lifetime_start 184
+ lifetime_end 184
+ motionblur_shutter_offset_type centred
+ source_black_outside true
+ name RotoPaint3
+ selected true
+ xpos -393
+ ypos -495
+}
+Dot {
+ name Dot21
+ selected true
+ xpos -359
+ ypos -427
+}
+Merge2 {
+ inputs 2
+ operation mask
+ name Merge3
+ selected true
+ xpos -283
+ ypos -431
+}
+Dot {
+ name Dot11
+ selected true
+ xpos -249
+ ypos -350
+}
+push $Nb6c4ed0
+Dot {
+ name Dot12
+ note_font_size 20
+ selected true
+ xpos 68
+ ypos -564
+}
+Dot {
+ name Dot17
+ note_font_size 20
+ selected true
+ xpos 78
+ ypos -400
+}
+push $cut_paste_input
+Ramp {
+ p0 {100 0}
+ p1 {100 270}
+ name Ramp2
+ selected true
+ xpos -40
+ ypos -471
+}
+push $Nb6c4ed0
+RotoPaint {
+ curves {{{v x3f99999a}
+  {f 0}
+  {n
+   {layer Root
+    {f 512}
+    {t x43700000 x43070000}
+    {a pt1x 0 pt1y 0 pt2x 0 pt2y 0 pt3x 0 pt3y 0 pt4x 0 pt4y 0 ptex00 0 ptex01 0 ptex02 0 ptex03 0 ptex10 0 ptex11 0 ptex12 0 ptex13 0 ptex20 0 ptex21 0 ptex22 0 ptex23 0 ptex30 0 ptex31 0 ptex32 0 ptex33 0 ptof1x 0 ptof1y 0 ptof2x 0 ptof2y 0 ptof3x 0 ptof3y 0 ptof4x 0 ptof4y 0 pterr 0 ptrefset 0 ptmot x40800000 ptref 0}
+    {layer KnottedPost1
+     {f 512}
+     {t x43700000 x43070000}
+     {a pt1x 0 pt1y 0 pt2x 0 pt2y 0 pt3x 0 pt3y 0 pt4x 0 pt4y 0 ptex00 0 ptex01 0 ptex02 0 ptex03 0 ptex10 0 ptex11 0 ptex12 0 ptex13 0 ptex20 0 ptex21 0 ptex22 0 ptex23 0 ptex30 0 ptex31 0 ptex32 0 ptex33 0 ptof1x 0 ptof1y 0 ptof2x 0 ptof2y 0 ptof3x 0 ptof3y 0 ptof4x 0 ptof4y 0 pterr 0 ptrefset 0 ptmot x40800000 ptref 0}
+     {curvegroup Ellipse5 512 bezier
+      {{cc
+        {f 8192}
+        {px x43380000
+	 {{{x40810380 -}}
+      {{0 -}}}
+	 {{{x4369f82f x4032323c 1 0 1}}
+      {{x4347c1c8 x3da0a089 1 0 1}}}
+	 {{{xc0810380 -}}
+      {{0 -}}}
+	 {{{0 -}}
+      {{x40810380 -}}}
+	 {{{x4362ab62 x4032323c 1 0 1}}
+      {{x434074fb x3da0a089 1 0 1}}}
+	 {{{0 -}}
+      {{xc0810380 -}}}
+	 {{{xc0810380 -}}
+      {{0 -}}}
+	 {{{x4369f82f x4032323c 1 0 1}}
+      {{x4339282e x3da0a089 1 0 1}}}
+	 {{{x40810380 -}}
+      {{0 -}}}
+	 {{{0 -}}
+      {{xc0810380 -}}}
+	 {{{x437144fc x4032323c 1 0 1}}
+      {{x434074fb x3da0a089 1 0 1}}}
+	 {{{0 -}}
+      {{x40810380 -}}}}}      idem}
+      {tx x43290000 x4334e668 x43484ccd}
+      {a osw x41200000 osf 0 str 1 spx x44340000 spy x43ca8000 sb 1 ltn x43290000 ltm x43290000 tt x40e00000}}
+     {curvegroup Ellipse4 512 bezier
+      {{cc
+        {f 8192}
+        {px x43380000
+	 {{{x40810380 -}}
+      {{0 -}}}
+	 {{{x4369b82f x4032323c 1 0 1}}
+      {{x432501c9 x3da0a089 1 0 1}}}
+	 {{{xc0810380 -}}
+      {{0 -}}}
+	 {{{0 -}}
+      {{x40810380 -}}}
+	 {{{x43626b62 x4032323c 1 0 1}}
+      {{x431db4fb x3da0a089 1 0 1}}}
+	 {{{0 -}}
+      {{xc0810380 -}}}
+	 {{{xc0810380 -}}
+      {{0 -}}}
+	 {{{x4369b82f x4032323c 1 0 1}}
+      {{x4316682f x3da0a089 1 0 1}}}
+	 {{{x40810380 -}}
+      {{0 -}}}
+	 {{{0 -}}
+      {{xc0810380 -}}}
+	 {{{x437104fc x4032323c 1 0 1}}
+      {{x431db4fb x3da0a089 1 0 1}}}
+	 {{{0 -}}
+      {{x40810380 -}}}}}      idem}
+      {tx x43290000 x4334e668 x43484ccd}
+      {a osw x41200000 osf 0 str 1 spx x44340000 spy x43ca8000 sb 1 ltn x43290000 ltm x43290000 tt x40e00000}}
+     {curvegroup Ellipse3 512 bezier
+      {{cc
+        {f 8192}
+        {px x43380000
+	 {{{x40810380 -}}
+      {{0 -}}}
+	 {{{x4369f82f x4032323c 1 0 1}}
+      {{x430081c8 x3da0a0cd 1 0 1}}}
+	 {{{xc0810380 -}}
+      {{0 -}}}
+	 {{{0 -}}
+      {{x40810380 -}}}
+	 {{{x4362ab62 x4032323c 1 0 1}}
+      {{x42f269f5 x3da0a089 1 0 1}}}
+	 {{{0 -}}
+      {{xc0810380 -}}}
+	 {{{xc0810380 -}}
+      {{0 -}}}
+	 {{{x4369f82f x4032323c 1 0 1}}
+      {{x42e3d05b x3da0a089 1 0 1}}}
+	 {{{x40810380 -}}
+      {{0 -}}}
+	 {{{0 -}}
+      {{xc0810380 -}}}
+	 {{{x437144fc x4032323c 1 0 1}}
+      {{x42f269f5 x3da0a089 1 0 1}}}
+	 {{{0 -}}
+      {{x40810380 -}}}}}      idem}
+      {tx x43290000 x4334e668 x43484ccd}
+      {a osw x41200000 osf 0 str 1 spx x44340000 spy x43ca8000 sb 1 ltn x43290000 ltm x43290000 tt x40e00000}}
+     {curvegroup Ellipse2 512 bezier
+      {{cc
+        {f 8192}
+        {px x43380000
+	 {{{xc0810380 -}}
+      {{0 -}}}
+	 {{{x436a2d67 x4105a5ad 1 0 1}}
+      {{x429ae856 x3e70f0cd 1 0 1}}}
+	 {{{x40810380 -}}
+      {{0 -}}}
+	 {{{0 -}}
+      {{xc0810380 -}}}
+	 {{{x43717a34 x4105a5ad 1 0 1}}
+      {{x42a981f0 x3e70f0cd 1 0 1}}}
+	 {{{0 -}}
+      {{x40810380 -}}}
+	 {{{x40810380 -}}
+      {{0 -}}}
+	 {{{x436a2d67 x4105a5ad 1 0 1}}
+      {{x42b81b8a x3e70f0cd 1 0 1}}}
+	 {{{xc0810380 -}}
+      {{0 -}}}
+	 {{{0 -}}
+      {{x40810380 -}}}
+	 {{{x4362e09a x4105a5ad 1 0 1}}
+      {{x42a981f0 x3e70f0cd 1 0 1}}}
+	 {{{0 -}}
+      {{xc0810380 -}}}}}      idem}
+      {tx x43290000 x4334e668 x43484ccd}
+      {a osw x41200000 osf 0 str 1 spx x44340000 spy x43ca8000 sb 1 ltn x43290000 ltm x43290000 tt x40e00000}}
+     {curvegroup Ellipse1 512 bezier
+      {{cc
+        {f 8192}
+        {px x43380000
+	 {{{x40810380 -}}
+      {{0 -}}}
+	 {{{x436a8ec4 x4032323c 1 0 1}}
+      {{x42609da6 x3da0a089 1 0 1}}}
+	 {{{xc0810380 -}}
+      {{0 -}}}
+	 {{{0 -}}
+      {{x40810380 -}}}
+	 {{{x436341f7 x4032323c 1 0 1}}
+      {{x42436a72 x3da0a089 1 0 1}}}
+	 {{{0 -}}
+      {{xc0810380 -}}}
+	 {{{xc0810380 -}}
+      {{0 -}}}
+	 {{{x436a8ec4 x4032323c 1 0 1}}
+      {{x4226373e x3da0a089 1 0 1}}}
+	 {{{x40810380 -}}
+      {{0 -}}}
+	 {{{0 -}}
+      {{xc0810380 -}}}
+	 {{{x4371db91 x4032323c 1 0 1}}
+      {{x42436a72 x3da0a089 1 0 1}}}
+	 {{{0 -}}
+      {{x40810380 -}}}}}      idem}
+      {tx x43290000 x4334e668 x43484ccd}
+      {a osw x41200000 osf 0 str 1 spx x44340000 spy x43ca8000 sb 1 ltn x43290000 ltm x43290000 tt x40e00000}}
+     {curvegroup Rectangle6 1049088 bezier
+      {{cc
+        {f 8192}
+        {px x43380000
+	 {{{0 -}}
+      {{x42944444 -}}}
+	 {{{x437b00df x4032323c 1 0 1}}
+      {{x41546c80 x3da0a089 1 0 1}}}
+	 {{{xc0883580 -}}
+      {{0 -}}}
+	 {{{x40444440 -}}
+      {{0 -}}}
+	 {{{x436a9d96 x4032323c 1 0 1}}
+      {{x41546c80 x3da0a089 1 0 1}}}
+	 {{{0 -}}
+      {{x42944444 -}}}
+	 {{{0 -}}
+      {{0 -}}}
+	 {{{x436a9d97 x4032323c 1 0 1}}
+      {{x435fe8ef x3da0a089 1 0 1}}}
+	 {{{0 -}}
+      {{0 -}}}
+	 {{{0 -}}
+      {{0 -}}}
+	 {{{x437b00df x4032323c 1 0 1}}
+      {{x43754ce9 x3da0a089 1 0 1}}}
+	 {{{0 -}}
+      {{0 -}}}}}      idem}
+      {tx x43290000 x4329999a x42f9999a}
+      {a osw x41200000 osf 0 str 1 spx x44340000 spy x43ca8000 sb 1 ltn x43290000 ltm x43290000 tt x41000000}}}
+    {layer KnottedPost
+     {f 512}
+     {t x43700000 x43070000}
+     {a pt1x 0 pt1y 0 pt2x 0 pt2y 0 pt3x 0 pt3y 0 pt4x 0 pt4y 0 ptex00 0 ptex01 0 ptex02 0 ptex03 0 ptex10 0 ptex11 0 ptex12 0 ptex13 0 ptex20 0 ptex21 0 ptex22 0 ptex23 0 ptex30 0 ptex31 0 ptex32 0 ptex33 0 ptof1x 0 ptof1y 0 ptof2x 0 ptof2y 0 ptof3x 0 ptof3y 0 ptof4x 0 ptof4y 0 pterr 0 ptrefset 0 ptmot x40800000 ptref 0}
+     {curvegroup Ellipse5 512 bezier
+      {{cc
+        {f 8192}
+        {px x43380000
+	 {{{xc0810380 -}}
+      {{0 -}}}
+	 {{{x435831b4 x4032323c 1 0 1}}
+      {{x42711e0c x3da0a089 1 0 1}}}
+	 {{{x40810380 -}}
+      {{0 -}}}
+	 {{{0 -}}
+      {{xc0810380 -}}}
+	 {{{x435f7e81 x4032323c 1 0 1}}
+      {{x428728a0 x3da0a089 1 0 1}}}
+	 {{{0 -}}
+      {{x40810380 -}}}
+	 {{{x40810380 -}}
+      {{0 -}}}
+	 {{{x435831b4 x4032323c 1 0 1}}
+      {{x4295c23a x3da0a089 1 0 1}}}
+	 {{{xc0810380 -}}
+      {{0 -}}}
+	 {{{0 -}}
+      {{x40810380 -}}}
+	 {{{x4350e4e7 x4032323c 1 0 1}}
+      {{x428728a0 x3da0a089 1 0 1}}}
+	 {{{0 -}}
+      {{xc0810380 -}}}}}      idem}
+      {tx x43290000 x4334e668 x43484ccd}
+      {a osw x41200000 osf 0 str 1 spx x44340000 spy x43ca8000 sb 1 ltn x43290000 ltm x43290000 tt x40e00000}}
+     {curvegroup Ellipse4 512 bezier
+      {{cc
+        {f 8192}
+        {px x43380000
+	 {{{xc0810380 -}}
+      {{0 -}}}
+	 {{{x435871b3 x4032323c 1 0 1}}
+      {{x42be0f05 x3da0a089 1 0 1}}}
+	 {{{x40810380 -}}
+      {{0 -}}}
+	 {{{0 -}}
+      {{xc0810380 -}}}
+	 {{{x435fbe80 x4032323c 1 0 1}}
+      {{x42cca89f x3da0a089 1 0 1}}}
+	 {{{0 -}}
+      {{x40810380 -}}}
+	 {{{x40810380 -}}
+      {{0 -}}}
+	 {{{x435871b3 x4032323c 1 0 1}}
+      {{x42db4239 x3da0a089 1 0 1}}}
+	 {{{xc0810380 -}}
+      {{0 -}}}
+	 {{{0 -}}
+      {{x40810380 -}}}
+	 {{{x435124e6 x4032323c 1 0 1}}
+      {{x42cca89f x3da0a089 1 0 1}}}
+	 {{{0 -}}
+      {{xc0810380 -}}}}}      idem}
+      {tx x43290000 x4334e668 x43484ccd}
+      {a osw x41200000 osf 0 str 1 spx x44340000 spy x43ca8000 sb 1 ltn x43290000 ltm x43290000 tt x40e00000}}
+     {curvegroup Ellipse3 512 bezier
+      {{cc
+        {f 8192}
+        {px x43380000
+	 {{{xc0810380 -}}
+      {{0 -}}}
+	 {{{x435831b3 x4032323c 1 0 1}}
+      {{x43038783 x3da0a089 1 0 1}}}
+	 {{{x40810380 -}}
+      {{0 -}}}
+	 {{{0 -}}
+      {{xc0810380 -}}}
+	 {{{x435f7e80 x4032323c 1 0 1}}
+      {{x430ad450 x3da0a089 1 0 1}}}
+	 {{{0 -}}
+      {{x40810380 -}}}
+	 {{{x40810380 -}}
+      {{0 -}}}
+	 {{{x435831b3 x4032323c 1 0 1}}
+      {{x4312211d x3da0a089 1 0 1}}}
+	 {{{xc0810380 -}}
+      {{0 -}}}
+	 {{{0 -}}
+      {{x40810380 -}}}
+	 {{{x4350e4e6 x4032323c 1 0 1}}
+      {{x430ad450 x3da0a089 1 0 1}}}
+	 {{{0 -}}
+      {{xc0810380 -}}}}}      idem}
+      {tx x43290000 x4334e668 x43484ccd}
+      {a osw x41200000 osf 0 str 1 spx x44340000 spy x43ca8000 sb 1 ltn x43290000 ltm x43290000 tt x40e00000}}
+     {curvegroup Ellipse2 512 bezier
+      {{cc
+        {f 8192}
+        {px x43380000
+	 {{{xc0810380 -}}
+      {{0 -}}}
+	 {{{x4357e669 x4032323c 1 0 1}}
+      {{x43271e1d x3da0a089 1 0 1}}}
+	 {{{x40810380 -}}
+      {{0 -}}}
+	 {{{0 -}}
+      {{xc0810380 -}}}
+	 {{{x435f3336 x4032323c 1 0 1}}
+      {{x432e6aea x3da0a089 1 0 1}}}
+	 {{{0 -}}
+      {{x40810380 -}}}
+	 {{{x40810380 -}}
+      {{0 -}}}
+	 {{{x4357e669 x4032323c 1 0 1}}
+      {{x4335b7b7 x3da0a089 1 0 1}}}
+	 {{{xc0810380 -}}
+      {{0 -}}}
+	 {{{0 -}}
+      {{x40810380 -}}}
+	 {{{x4350999c x4032323c 1 0 1}}
+      {{x432e6aea x3da0a089 1 0 1}}}
+	 {{{0 -}}
+      {{xc0810380 -}}}}}      idem}
+      {tx x43290000 x4334e668 x43484ccd}
+      {a osw x41200000 osf 0 str 1 spx x44340000 spy x43ca8000 sb 1 ltn x43290000 ltm x43290000 tt x40e00000}}
+     {curvegroup Ellipse1 512 bezier
+      {{cc
+        {f 8192}
+        {px x43380000
+	 {{{xc0810380 -}}
+      {{0 -}}}
+	 {{{x43579b1e x4032323c 1 0 1}}
+      {{x434be1e1 x3da0a089 1 0 1}}}
+	 {{{x40810380 -}}
+      {{0 -}}}
+	 {{{0 -}}
+      {{xc0810380 -}}}
+	 {{{x435ee7eb x4032323c 1 0 1}}
+      {{x43532eae x3da0a089 1 0 1}}}
+	 {{{0 -}}
+      {{x40810380 -}}}
+	 {{{x40810380 -}}
+      {{0 -}}}
+	 {{{x43579b1e x4032323c 1 0 1}}
+      {{x435a7b7b x3da0a089 1 0 1}}}
+	 {{{xc0810380 -}}
+      {{0 -}}}
+	 {{{0 -}}
+      {{x40810380 -}}}
+	 {{{x43504e51 x4032323c 1 0 1}}
+      {{x43532eae x3da0a089 1 0 1}}}
+	 {{{0 -}}
+      {{xc0810380 -}}}}}      idem}
+      {tx x43290000 x4334e668 x43484ccd}
+      {a osw x41200000 osf 0 str 1 spx x44340000 spy x43ca8000 sb 1 ltn x43290000 ltm x43290000 tt x40e00000}}
+     {curvegroup Rectangle6 512 bezier
+      {{cc
+        {f 8192}
+        {px x43380000
+	 {{{0 -}}
+      {{0 -}}}
+	 {{{x434793ad x4032323c 1 0 1}}
+      {{x437732a9 x3da0a089 1 0 1}}}
+	 {{{0 -}}
+      {{0 -}}}
+	 {{{0 -}}
+      {{0 -}}}
+	 {{{x4357f6f9 x4032323c 1 0 1}}
+      {{x4360ec83 x3da0a089 1 0 1}}}
+	 {{{0 -}}
+      {{0 -}}}
+	 {{{0 -}}
+      {{x42944444 -}}}
+	 {{{x4357f6f9 x4032323c 1 0 1}}
+      {{x416c6c6a x3da0a089 1 0 1}}}
+	 {{{xc0444440 -}}
+      {{0 -}}}
+	 {{{x40883580 -}}
+      {{0 -}}}
+	 {{{x434793ad x4032323c 1 0 1}}
+      {{x416c6c6a x3da0a089 1 0 1}}}
+	 {{{0 -}}
+      {{x42944444 -}}}}}      idem}
+      {tx x43290000 x4329999a x42f9999a}
+      {a osw x41200000 osf 0 str 1 spx x44340000 spy x43ca8000 sb 1 ltn x43290000 ltm x43290000 tt x41000000}}}
+    {layer Pipe
+     {f 512}
+     {t x43700000 x43070000}
+     {a pt1x 0 pt1y 0 pt2x 0 pt2y 0 pt3x 0 pt3y 0 pt4x 0 pt4y 0 ptex00 0 ptex01 0 ptex02 0 ptex03 0 ptex10 0 ptex11 0 ptex12 0 ptex13 0 ptex20 0 ptex21 0 ptex22 0 ptex23 0 ptex30 0 ptex31 0 ptex32 0 ptex33 0 ptof1x 0 ptof1y 0 ptof2x 0 ptof2y 0 ptof3x 0 ptof3y 0 ptof4x 0 ptof4y 0 pterr 0 ptrefset 0 ptmot x40800000 ptref 0}
+     {curvegroup Rectangle3 512 bezier
+      {{cc
+        {f 8192}
+        {px x43450000
+	 {{{0 -}}
+      {{xc1133330 -}}}
+	 {{{x420df61a xbb805249 1 0 1}}
+      {{x43811e8b x3e9129b7 1 0 1}}}
+	 {{{x41d2aaac -}}
+      {{0 -}}}
+	 {{{xc1d2aaac -}}
+      {{0 -}}}
+	 {{{x42e4fb0d xbb805249 1 0 1}}
+      {{x43811e8b x3e9129b7 1 0 1}}}
+	 {{{0 -}}
+      {{xc1133330 -}}}
+	 {{{0 -}}
+      {{x41133330 -}}}
+	 {{{x42e4fb0d xbb805249 1 0 1}}
+      {{x4366a37c x3e9129b7 1 0 1}}}
+	 {{{xc1d2aaac -}}
+      {{0 -}}}
+	 {{{x41d2aaac -}}
+      {{0 -}}}
+	 {{{x420df61a xbb805249 1 0 1}}
+      {{x4366a37c x3e9129b7 1 0 1}}}
+	 {{{0 -}}
+      {{x41133330 -}}}}}      idem}
+      {tx x43290000 x42da3334 x436b0000}
+      {a r 0 g 0 b 0 a 0 osw x41200000 osf 0 str 1 spx x44340000 spy x43ca8000 sb 1 ltn x43290000 ltm x43290000 tt x41000000}}
+     {curvegroup OpenSpline2 1049088 bezier
+      {{cc
+        {f 1056800}
+        {px x43450000
+	 {{{0 -}}
+      {{0 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{x42980f56 xbb924925 1 0 1}}
+      {{x4366bc80 x3ec24925 1 0 1}}}
+	 {{{x3e40c400 -}}
+      {{xc0dbdbe0 -}}}
+	 {{{x419083c0 -}}
+      {{x4129b050 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{x4269262c -}}
+      {{x433ae94b -}}}
+	 {{{xc1b78d80 -}}
+      {{xc1578770 -}}}
+	 {{{xc137c3d0 -}}
+      {{x4105b1b0 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{x424ce9fc -}}
+      {{x430fe287 -}}}
+	 {{{x41820708 -}}
+      {{xc13d3278 -}}}
+	 {{{xc085d660 -}}
+      {{x3f39ff80 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{x42b5040a -}}
+      {{x43044d71 -}}}
+	 {{{x41c3bfb8 -}}
+      {{xc08817e0 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{x413260e0 -}}
+      {{x418cd280 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{x42eb74a5 -}}
+      {{x42b697f7 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{xc0563640 -}}
+      {{xc0a91bc0 -}}}
+	 {{{x3fcf3100 -}}
+      {{x418bbdc6 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{x42bd56d1 -}}
+      {{x425d4dde -}}}
+	 {{{xbf482800 -}}
+      {{xc106f930 -}}}
+	 {{{0 -}}
+      {{0 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{x42bc0d15 -}}
+      {{x41b4f00f -}}}
+	 {{{0 -}}
+      {{0 -}}}}}
+       {cc
+        {f 1056800}
+        {px x43450000
+	 {{{0 -}}
+      {{0 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{0 -}}
+      {{0 -}}}
+	 {{{x3e40c400 -}}
+      {{xc0dbdbe0 -}}}
+	 {{{x419083c0 -}}
+      {{x4129b050 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{0 -}}
+      {{0 -}}}
+	 {{{xc1b78d88 -}}
+      {{xc1578770 -}}}
+	 {{{xc137c3e0 -}}
+      {{x4105b1b8 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{0 -}}
+      {{0 -}}}
+	 {{{x41820708 -}}
+      {{xc13d3278 -}}}
+	 {{{xc085d660 -}}
+      {{x3f39ff80 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{0 -}}
+      {{0 -}}}
+	 {{{x41c3bfb8 -}}
+      {{xc08817e0 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{x413260e0 -}}
+      {{x418cd280 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{0 -}}
+      {{0 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{xc0563640 -}}
+      {{xc0a91bc0 -}}}
+	 {{{x3fcf3100 -}}
+      {{x418bbdc6 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{0 -}}
+      {{0 -}}}
+	 {{{xbf482800 -}}
+      {{xc106f930 -}}}
+	 {{{0 -}}
+      {{0 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{0 -}}
+      {{0 -}}}
+	 {{{0 -}}
+      {{0 -}}}}}}
+      {tx x43380000 x432f9999 x42c41111}
+      {a osbe 0 osee 0 osw x41200000 osf 0 str 1 ltn x43380000 ltm x43380000 tt x41200000 a 0 b 0 g 0 r 0}}
+     {curvegroup OpenSpline1 512 bezier
+      {{cc
+        {f 1056800}
+        {px x43450000
+	 {{{0 -}}
+      {{0 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{x42980f56 xbb924925 1 0 1}}
+      {{x436707cb x3ec7a9ee 1 0 1}}}
+	 {{{x3e40c400 -}}
+      {{xc0dbdbe0 -}}}
+	 {{{x419083c0 -}}
+      {{x4129b050 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{x4269262c -}}
+      {{x433ae94b -}}}
+	 {{{xc1b78d80 -}}
+      {{xc1578770 -}}}
+	 {{{xc137c3d0 -}}
+      {{x4105b1b0 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{x424ce9fc -}}
+      {{x430fe287 -}}}
+	 {{{x41820708 -}}
+      {{xc13d3278 -}}}
+	 {{{xc085d660 -}}
+      {{x3f39ff80 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{x42b5040a -}}
+      {{x43044d71 -}}}
+	 {{{x41c3bfb8 -}}
+      {{xc08817e0 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{x413260e0 -}}
+      {{x418cd280 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{x42eb74a5 -}}
+      {{x42b697f7 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{xc0563640 -}}
+      {{xc0a91bc0 -}}}
+	 {{{x3fcf3100 -}}
+      {{x418bbdc6 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{x42bd56d1 -}}
+      {{x425d4dde -}}}
+	 {{{xbf482800 -}}
+      {{xc106f930 -}}}
+	 {{{0 -}}
+      {{0 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{x42bc0d15 -}}
+      {{x41b4f00f -}}}
+	 {{{0 -}}
+      {{0 -}}}}}
+       {cc
+        {f 1056800}
+        {px x43450000
+	 {{{0 -}}
+      {{0 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{0 -}}
+      {{0 -}}}
+	 {{{x3e40c400 -}}
+      {{xc0dbdbe0 -}}}
+	 {{{x419083c0 -}}
+      {{x4129b050 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{0 -}}
+      {{0 -}}}
+	 {{{xc1b78d88 -}}
+      {{xc1578770 -}}}
+	 {{{xc137c3e0 -}}
+      {{x4105b1b8 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{0 -}}
+      {{0 -}}}
+	 {{{x41820708 -}}
+      {{xc13d3278 -}}}
+	 {{{xc085d660 -}}
+      {{x3f39ff80 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{0 -}}
+      {{0 -}}}
+	 {{{x41c3bfb8 -}}
+      {{xc08817e0 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{x413260e0 -}}
+      {{x418cd280 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{0 -}}
+      {{0 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{xc0563640 -}}
+      {{xc0a91bc0 -}}}
+	 {{{x3fcf3100 -}}
+      {{x418bbdc6 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{0 -}}
+      {{0 -}}}
+	 {{{xbf482800 -}}
+      {{xc106f930 -}}}
+	 {{{0 -}}
+      {{0 -}}}
+	 {{a osw
+       {{x43450000 1 -}}	  osf
+       {{x43450000 0 -}}}
+      {{0 -}}
+      {{0 -}}}
+	 {{{0 -}}
+      {{0 -}}}}}}
+      {tx x43380000 x432f9999 x42c41111}
+      {a osbe 0 osee 0 osw x41a00000 osf 0 str 1 ltn x43380000 ltm x43380000 tt x41200000}}}
+    {curvegroup Rectangle5 512 bezier
+     {{cc
+       {f 8192}
+       {px x43290000
+        {x40246e80 xc06f0a00}
+        {x43b6b59e x4335432d}
+        {x41f4c080 x41a85c20}
+        {xc1f4c070 xc1a85c30}
+        {x43e499b6 x437465bd}
+        {x40246e80 xc06f0a00}
+        {xc0246d80 x406f0b00}
+        {x43e8744b x43693141}
+        {xc1f4c070 xc1a85c20}
+        {x41f4c080 x41a85c30}
+        {x43ba9033 x432a0eb3}
+        {xc0246e00 x406f0a80}}}     idem}
+     {tx x43290000 x43920ccc x43419999}
+     {a osw x41200000 osf 0 str 1 spx x44340000 spy x43ca8000 sb 1 ltn x43290000 ltm x43290000 tt x41000000}}
+    {curvegroup Rectangle1 512 bezier
+     {{cc
+       {f 8192}
+       {px x43380000
+        {0 0}
+        {x43f1de1d x42d08787}
+        {0 0}
+        {0 0}
+        {x43f1de1d xc1a5e1e2}
+        {0 0}
+        {0 0}
+        {x4330bc3b xc1a5e1e2}
+        {0 0}}}     idem}
+     {tx x43380000 x43ba0000 x42200000}
+     {a osw x41200000 osf 0 str 1 spx x43700000 spy x43070000 sb 1 ltn x43380000 ltm x43380000 tt x41000000}}
+    {curvegroup Rectangle4 512 bezier
+     {{cc
+       {f 8192}
+       {px x43290000
+        {xbfdec200 xc085f380}
+        {x43867534 x4322a8aa}
+        {x420926fc xc1641560}
+        {xc2092700 x41641560}
+        {x43b9e3d4 x42efc94c}
+        {xbfdec200 xc085f380}
+        {x3fdec400 x4085f380}
+        {x43b7478c x42d6aba5}
+        {xc2092700 x41641560}
+        {x420926fc xc1641560}
+        {x4383d8ec x431619d6}
+        {x3fdec300 x4085f380}}}     idem}
+     {tx x43290000 x43920ccc x43419999}
+     {a osw x41200000 osf 0 str 1 spx x44340000 spy x43ca8000 sb 1 ltn x43290000 ltm x43290000 tt x41000000}}
+    {curvegroup Rectangle2 512 bezier
+     {{cc
+       {f 8192}
+       {px x43380000
+        {0 xc1555555}
+        {xc2750f10 x41829691}
+        {x42e90000 0}
+        {xc2e90000 0}
+        {x43901e1e x41829691}
+        {0 xc1555555}
+        {0 x41555555}
+        {x43901e1e xc1bd696f}
+        {xc2e90000 0}
+        {x42e90000 0}
+        {xc2750f10 xc1bd696f}
+        {0 x41555555}}}     idem}
+     {tx x43380000 x43254000 xc0200000}
+     {a osw x41200000 osf 0 str 1 spx x43700000 spy x43070000 sb 1 ltn x43380000 ltm x43380000 tt x41000000}}}}}}
+ toolbox {selectAll {
+  { selectAll str 1 ssx 1 ssy 1 sf 1 }
+  { createBezier str 1 ssx 1 ssy 1 sf 1 sb 1 tt 4 }
+  { createBezierCusped str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createBSpline str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createEllipse str 1 ssx 1 ssy 1 sf 1 sb 1 tt 7 }
+  { createRectangle str 1 ssx 1 ssy 1 sf 1 sb 1 tt 8 }
+  { createRectangleCusped str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { createOpenSpline str 1 ssx 1 ssy 1 sf 1 tt 10 }
+  { addPoints str 1 ssx 1 ssy 1 sf 1 }
+  { brush str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { eraser src 2 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { clone src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { reveal src 3 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { dodge src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { burn src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { blur src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { sharpen src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+  { smear src 1 str 1 ssx 1 ssy 1 sf 1 sb 1 }
+} }
+ toolbar_brush_hardness 0.200000003
+ toolbar_source_transform_scale {1 1}
+ toolbar_source_transform_center {720 405}
+ colorOverlay {0 0 0 0}
+ lifetime_type "all frames"
+ lifetime_start 169
+ lifetime_end 169
+ motionblur_shutter_offset_type centred
+ source_black_outside true
+ name RotoPaint1
+ selected true
+ xpos -153
+ ypos -495
+}
+Merge2 {
+ inputs 2
+ operation under
+ name Merge4
+ selected true
+ xpos -153
+ ypos -442
+}
+Multiply {
+ value 1000
+ name Multiply1
+ selected true
+ xpos -153
+ ypos -400
+}
+set Nb9a0e50 [stack 0]
+Group {
+ inputs 3
+ name Flow1
+ note_font Helvetica
+ selected true
+ xpos -59
+ ypos -337
+ addUserKnob {20 User}
+ addUserKnob {3 start l Start}
+ start 1
+ addUserKnob {3 end l End -STARTLINE}
+ end 400
+ addUserKnob {6 extend_existing l "Extend Existing" t "If enabled, simulation will continue from the end of any existing renders." -STARTLINE}
+ extend_existing true
+ addUserKnob {2 cache l "Cache Files" t "Location to save simulation -- must be exr format"}
+ addUserKnob {41 reload -STARTLINE T CACHE.reload}
+ addUserKnob {22 simulate l Simulate! t "Runs the simulation for the given frame range." T flow.simulate() +STARTLINE}
+ addUserKnob {26 ""}
+ addUserKnob {6 colour_flow l "Use Colour" t "If checked, simulation will blend colours (Note: This will assume an instant blend for the entire column!)\nOtherwise, only the alpha (height) will be used." +STARTLINE}
+ colour_flow true
+ addUserKnob {7 flow_rate l "Flow Rate" t "Adjusts the speed of the water transfer between pixels."}
+ flow_rate 1.2
+ addUserKnob {7 flow_rate_div l INVISIBLE t "The flow rate is the amount of the height difference in pixels to allow out per direction - in a single frame, the water cannot reduce more than the height difference as long as this is below 1 / 8. When combined with the previous flow rate, it can greatly increase." +INVISIBLE}
+ flow_rate_div {{"flow_rate / 8"}}
+}
+ BackdropNode {
+  inputs 0
+  name BackdropNode1
+  tile_color 0x789eb5ff
+  label Colour
+  note_font_size 42
+  xpos -250
+  ypos 916
+  bdwidth 468
+  bdheight 704
+ }
+ Read {
+  inputs 0
+  file_type exr
+  file "\[value parent.cache]"
+  format "1440 810 0 0 1440 810 1 \"3/4 HD\""
+  first {{start}}
+  last {{end}}
+  origset true
+  on_error "nearest frame"
+  version 40192
+  name CACHE
+  label "DO NOT RENAME"
+  xpos 1030
+  ypos -1131
+ }
+ Dot {
+  name Dot69
+  xpos 1064
+  ypos -975
+ }
+set N29cda730 [stack 0]
+ Dot {
+  name Dot2
+  note_font_size 20
+  xpos 1225
+  ypos -975
+ }
+ Output {
+  name Output1
+  xpos 1191
+  ypos 2666
+ }
+ StickyNote {
+  inputs 0
+  name StickyNote1
+  label "    Add water to existing water,\nie, source + drain,\n         make sure no negative water       "
+  xpos 861
+  ypos -450
+ }
+ StickyNote {
+  inputs 0
+  name Formula
+  label "                max(0, Flux(t) + timestep * pipe_cross_section * gravity * height_difference / pipe_length)                "
+  note_font_size 20
+  xpos -1126
+  ypos 260
+ }
+ StickyNote {
+  inputs 0
+  name StickyNote2
+  label "                min(1, height * column_cross_section / (sum(outflow) * timestep))                "
+  note_font_size 20
+  xpos -402
+  ypos 662
+ }
+ Input {
+  inputs 0
+  name InputTerrain
+  xpos -732
+  ypos -1197
+ }
+push $N29cda730
+ FrameHold {
+  first_frame {{frame-1}}
+  name FrameHold4
+  xpos 1030
+  ypos -806
+ }
+set N168cddf0 [stack 0]
+ Dot {
+  name Dot15
+  note_font_size 20
+  xpos 1064
+  ypos -583
+ }
+ Input {
+  inputs 0
+  name InputWater
+  xpos 750
+  ypos -1197
+  number 1
+ }
+ Dot {
+  name Dot73
+  note_font_size 20
+  xpos 784
+  ypos -973
+ }
+set N168e0690 [stack 0]
+ Switch {
+  inputs 2
+  which {{"start != frame"}}
+  name Switch_Sim
+  xpos 750
+  ypos -587
+ }
+set N168e54d0 [stack 0]
+ Input {
+  inputs 0
+  name InputSource
+  xpos 452
+  ypos -1197
+  number 2
+ }
+ Dot {
+  name Dot17
+  xpos 486
+  ypos -710
+ }
+set N168f24c0 [stack 0]
+ Dot {
+  name Dot30
+  xpos 602
+  ypos -710
+ }
+ MergeExpression {
+  inputs 2
+  temp_name0 total_alpha
+  temp_expr0 "Aa + Ba"
+  temp_name1 col_r
+  temp_expr1 "(Br * Ba + Ar * Aa) / total_alpha"
+  temp_name2 col_g
+  temp_expr2 "(Bg * Ba + Ag * Aa) / total_alpha"
+  temp_name3 col_b
+  temp_expr3 "(Bb * Ba + Ab * Aa) / total_alpha"
+  expr0 "isnan(col_r) ? 0 : col_r"
+  expr1 "isnan(col_g) ? 0 : col_g"
+  expr2 "isnan(col_b) ? 0 : col_b"
+  expr3 total_alpha
+  name BLEND_COL
+  xpos 568
+  ypos -587
+ }
+ Dot {
+  name Dot1
+  xpos 602
+  ypos -476
+ }
+push $N168f24c0
+ Shuffle {
+  in alpha
+  name STRIP_COL
+  xpos 452
+  ypos -587
+ }
+ Dot {
+  name Dot3
+  xpos 486
+  ypos -530
+ }
+push $N168e54d0
+ Merge2 {
+  inputs 2
+  operation plus
+  bbox B
+  name Merge2
+  xpos 750
+  ypos -534
+ }
+ Switch {
+  inputs 2
+  which {{parent.colour_flow}}
+  name Switch_Colour
+  xpos 750
+  ypos -480
+ }
+ Clamp {
+  channels rgba
+  maximum inf
+  name Clamp1
+  label "No negative water column"
+  xpos 750
+  ypos -437
+ }
+ Dot {
+  name Dot16
+  xpos 784
+  ypos -363
+ }
+set N16949c30 [stack 0]
+ Dot {
+  name Dot13
+  xpos 374
+  ypos -363
+ }
+ Shuffle {
+  in alpha
+  name Water_Height
+  label "Water height only"
+  xpos 340
+  ypos -318
+ }
+ Dot {
+  name Dot11
+  xpos 374
+  ypos -248
+ }
+set N16964270 [stack 0]
+ Merge2 {
+  inputs 2
+  operation plus
+  bbox B
+  name TOTAL_HEIGHT
+  xpos -732
+  ypos -252
+ }
+ Dot {
+  name Dot59
+  xpos -698
+  ypos -128
+ }
+set N16979550 [stack 0]
+ Dot {
+  name Dot63
+  xpos -922
+  ypos -128
+ }
+ Expression {
+  expr0 "(r - r(x-1, y)) * flow_rate_div"
+  expr1 "(g - g(x, y+1)) * flow_rate_div"
+  expr2 "(b - b(x+1, y)) * flow_rate_div"
+  expr3 "(a - a(x, y-1)) * flow_rate_div"
+  name CROSS
+  label "Height difference / pipe length"
+  xpos -956
+  ypos -61
+ }
+push $N168cddf0
+ Dot {
+  name Dot65
+  note_font_size 20
+  xpos -236
+  ypos -796
+ }
+set N29d6ba90 [stack 0]
+ Dot {
+  name Dot66
+  note_font_size 20
+  xpos -1280
+  ypos -796
+ }
+ Shuffle {
+  in FlowC
+  name Shuffle4
+  label "<center><font size = \"5\"> \[value in]\nSimulation</center>"
+  xpos -1314
+  ypos -758
+  postage_stamp true
+ }
+ Dot {
+  name Dot5
+  note_font_size 20
+  xpos -1280
+  ypos -583
+ }
+push $N168e0690
+ Dot {
+  name Dot72
+  note_font_size 20
+  xpos -92
+  ypos -973
+ }
+set N29d8ad70 [stack 0]
+ Dot {
+  name Dot70
+  note_font_size 20
+  xpos -1136
+  ypos -973
+ }
+ Shuffle {
+  in FlowC
+  name Shuffle8
+  label "<center><font size = \"5\"> \[value in]\nSTART</center>"
+  xpos -1170
+  ypos -758
+  postage_stamp true
+ }
+ Switch {
+  inputs 2
+  which {{"start != frame"}}
+  name Switch1
+  xpos -1170
+  ypos -587
+ }
+ Dot {
+  name Dot4
+  xpos -1136
+  ypos 164
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge3
+  xpos -956
+  ypos 160
+ }
+ Clamp {
+  channels rgba
+  maximum inf
+  name Clamp2
+  label "MIN 0\n"
+  xpos -956
+  ypos 186
+ }
+ Dot {
+  name Dot21
+  xpos -922
+  ypos 474
+ }
+set N29dd09e0 [stack 0]
+push $N16979550
+ Dot {
+  name Dot62
+  xpos -488
+  ypos -128
+ }
+ Expression {
+  expr0 "(r - r(x-1, y+1)) * flow_rate_div"
+  expr1 "(g - g(x+1, y+1)) * flow_rate_div"
+  expr2 "(b - b(x+1, y-1)) * flow_rate_div"
+  expr3 "(a - a(x-1, y-1)) * flow_rate_div"
+  name DIAGONAL
+  label "Height difference / pipe length"
+  xpos -522
+  ypos -62
+ }
+push $N29d6ba90
+ Shuffle {
+  in FlowD
+  name Shuffle3
+  label "<center><font size = \"5\"> \[value in]\nSimulation</center>"
+  xpos -270
+  ypos -755
+  postage_stamp true
+ }
+ Dot {
+  name Dot6
+  note_font_size 20
+  xpos -236
+  ypos -583
+ }
+push $N29d8ad70
+ Shuffle {
+  in FlowD
+  name Shuffle7
+  label "<center><font size = \"5\"> \[value in]\nSTART</center>"
+  xpos -126
+  ypos -755
+  postage_stamp true
+ }
+ Switch {
+  inputs 2
+  which {{"start != frame"}}
+  name Switch3
+  xpos -126
+  ypos -587
+ }
+ Dot {
+  name Dot8
+  xpos -92
+  ypos 164
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge4
+  xpos -522
+  ypos 160
+ }
+ Clamp {
+  channels rgba
+  maximum inf
+  name Clamp3
+  label "MIN 0"
+  xpos -522
+  ypos 186
+ }
+ Dot {
+  name Dot34
+  xpos -488
+  ypos 371
+ }
+set N29e3a490 [stack 0]
+ Dot {
+  name Dot22
+  xpos -91
+  ypos 371
+ }
+ MergeExpression {
+  inputs 2
+  channel0 rgba
+  expr0 "Ar + Ag + Ab + Aa + Br + Bg + Bb + Ba"
+  name OUTFLOW_MAX
+  label "Total outflow per pixel"
+  xpos -125
+  ypos 464
+ }
+set N29e452e0 [stack 0]
+push $N16964270
+ Dot {
+  name Dot64
+  note_font_size 20
+  xpos 374
+  ypos 582
+ }
+ MergeExpression {
+  inputs 2
+  temp_name0 scaled
+  temp_expr0 "Ba / Ar"
+  channel0 rgba
+  expr0 "isnan(scaled) ? 1 : scaled"
+  name SCALE_FACTOR
+  xpos -125
+  ypos 578
+ }
+ Clamp {
+  channels rgba
+  name Clamp4
+  label "MAX HERE LIMITS QUANTITY OF OUTFLOW,\nLOWER MEANS A COLUMN CAN'T FULL DEPLETE IN ONE GO"
+  xpos -125
+  ypos 604
+ }
+ Dot {
+  name Dot20
+  xpos -91
+  ypos 740
+ }
+set N29e73830 [stack 0]
+ Dot {
+  name Dot19
+  xpos -91
+  ypos 815
+ }
+set N29e78ba0 [stack 0]
+push $N29e3a490
+ Merge2 {
+  inputs 2
+  operation multiply
+  name RESTRICT_OUTFLOW_DIAGONAL
+  xpos -522
+  ypos 811
+ }
+ Dot {
+  name Dot33
+  xpos -488
+  ypos 1286
+ }
+set N29e8dfa0 [stack 0]
+ Dot {
+  name Dot28
+  xpos -1121
+  ypos 1286
+ }
+ Dot {
+  name Dot67
+  note_font_size 20
+  xpos -1121
+  ypos 2354
+ }
+push $N29e73830
+push $N29dd09e0
+ Merge2 {
+  inputs 2
+  operation multiply
+  name RESTRICT_OUTFLOW_CROSS
+  xpos -956
+  ypos 736
+ }
+ Dot {
+  name Dot27
+  xpos -922
+  ypos 1377
+ }
+set N29eacd80 [stack 0]
+ Dot {
+  name Dot12
+  note_font_size 20
+  xpos -1032
+  ypos 1377
+ }
+ Dot {
+  name Dot68
+  note_font_size 20
+  xpos -1032
+  ypos 2274
+ }
+push $N29eacd80
+push $N16949c30
+ Dot {
+  name Dot38
+  label "COLOUR / HEIGHT"
+  xpos 784
+  ypos 1094
+ }
+set N29ebb7f0 [stack 0]
+ Dot {
+  name Dot71
+  xpos 166
+  ypos 1094
+ }
+set N29ec05e0 [stack 0]
+ Dot {
+  name Dot18
+  xpos -40
+  ypos 1094
+ }
+set N29ec5400 [stack 0]
+ Dot {
+  name Dot31
+  xpos -206
+  ypos 1094
+ }
+ MergeExpression {
+  inputs 2
+  temp_name0 from_left
+  temp_expr0 "Ab(x-1, y)"
+  temp_name1 from_right
+  temp_expr1 "Ar(x+1, y)"
+  temp_name2 from_below
+  temp_expr2 "Ag(x, y-1)"
+  temp_name3 from_above
+  temp_expr3 "Aa(x, y+1)"
+  expr0 "from_left * Br(x-1, y) + from_right * Br(x+1, y) + from_below * Br(x, y-1) + from_above * Br(x, y+1)"
+  expr1 "from_left * Bg(x-1, y) + from_right * Bg(x+1, y) + from_below * Bg(x, y-1) + from_above * Bg(x, y+1)"
+  expr2 "from_left * Bb(x-1, y) + from_right * Bb(x+1, y) + from_below * Bb(x, y-1) + from_above * Bb(x, y+1)"
+  expr3 "from_left + from_right + from_below + from_above"
+  name INFLOW_CROSS_COLOUR
+  label "Colour from B\nWeight from A\nblue from left (x-1)\nred from right (x+1)\ngreen from down (y-1)\nalpha from up (y+1)"
+  xpos -240
+  ypos 1334
+ }
+ Dot {
+  name Dot32
+  xpos -206
+  ypos 1471
+ }
+push 0
+push $N29e8dfa0
+push $N29ec5400
+ MergeExpression {
+  inputs 2
+  temp_name0 from_topleft
+  temp_expr0 "Ab(x-1, y+1)"
+  temp_name1 from_botright
+  temp_expr1 "Ar(x+1, y-1)"
+  temp_name2 from_botleft
+  temp_expr2 "Ag(x-1, y-1)"
+  temp_name3 from_topright
+  temp_expr3 "Aa(x+1, y+1)"
+  expr0 "from_topleft * Br(x-1, y+1) + from_botright * Br(x+1, y-1) + from_botleft * Br(x-1, y-1) + from_topright * Br(x+1, y+1)"
+  expr1 "from_topleft * Bg(x-1, y+1) + from_botright * Bg(x+1, y-1) + from_botleft * Bg(x-1, y-1) + from_topright * Bg(x+1, y+1)"
+  expr2 "from_topleft * Bb(x-1, y+1) + from_botright * Bb(x+1, y-1) + from_botleft * Bb(x-1, y-1) + from_topright * Bb(x+1, y+1)"
+  expr3 "from_topleft + from_botright + from_botleft + from_topright"
+  name INFLOW_DIAGONAL_COLOUR
+  label "Colour from B\nWeight from A\nblue from topleft (x-1, y+1)\nred from botright (x+1, y-1)\ngreen from botleft (x-1, y-1)\nalpha from topright (x+1, y+1)"
+  xpos -74
+  ypos 1243
+ }
+push $N29ec05e0
+ Expression {
+  expr0 "r * a"
+  expr1 "g * a"
+  expr2 "b * a"
+  expr3 a
+  name WEIGHTED_COLOUR
+  xpos 132
+  ypos 1212
+ }
+ Merge2 {
+  inputs 3+1
+  operation plus
+  name SUM_WEIGHTED_COLOUR
+  xpos 132
+  ypos 1467
+ }
+ Expression {
+  temp_name0 col_r
+  temp_expr0 "r / a"
+  temp_name1 col_g
+  temp_expr1 "g / a"
+  temp_name2 col_b
+  temp_expr2 "b / a"
+  expr0 "isnan(col_r) ? 0 : col_r"
+  expr1 "isnan(col_g) ? 0 : col_g"
+  expr2 "isnan(col_b) ? 0 : col_b"
+  name COLOUR_OUTPUT
+  xpos 132
+  ypos 1508
+ }
+ Dot {
+  name Dot14
+  xpos 166
+  ypos 2129
+ }
+push $N29eacd80
+push $N29e8dfa0
+ Dot {
+  name Dot23
+  xpos -488
+  ypos 1554
+ }
+ MergeExpression {
+  inputs 2
+  channel0 rgba
+  expr0 "Ab(x-1,y) + Aa(x,y+1) + Ar(x+1,y) + Ag(x,y-1) + Bb(x-1,y+1) + Ba(x+1,y+1) + Br(x+1,y-1) + Bg(x-1,y-1)"
+  channel1 {-rgba.red -rgba.green -rgba.blue none}
+  channel2 {-rgba.red -rgba.green -rgba.blue none}
+  channel3 none
+  name INFLOW
+  xpos -956
+  ypos 1550
+ }
+ Dot {
+  name Dot26
+  xpos -922
+  ypos 1646
+ }
+push $N29e452e0
+ Dot {
+  name Dot24
+  xpos 483
+  ypos 474
+ }
+push $N29e78ba0
+ Merge2 {
+  inputs 2
+  operation multiply
+  name OUTFLOW
+  xpos 449
+  ypos 811
+ }
+ Merge2 {
+  inputs 2
+  operation minus
+  name HEIGHT_CHANGE
+  xpos 449
+  ypos 1642
+ }
+ Dot {
+  name Dot25
+  xpos 483
+  ypos 1893
+ }
+push $N29ebb7f0
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge8
+  xpos 750
+  ypos 1889
+ }
+ ShuffleCopy {
+  inputs 2
+  red red
+  green green
+  blue blue
+  alpha alpha2
+  name COLOUR_AND_HEIGHT
+  xpos 750
+  ypos 2125
+  disable {{"1 - parent.colour_flow"}}
+ }
+ Dot {
+  name Dot29
+  label "WATER OUT"
+  xpos 784
+  ypos 2205
+ }
+ ShuffleCopy {
+  inputs 2
+  alpha alpha2
+  black red
+  white green
+  red2 blue
+  green2 alpha
+  out2 FlowC
+  name ShuffleCopy2
+  xpos 750
+  ypos 2270
+ }
+ ShuffleCopy {
+  inputs 2
+  alpha alpha2
+  black red
+  white green
+  red2 blue
+  green2 alpha
+  out2 FlowD
+  name ShuffleCopy1
+  xpos 750
+  ypos 2350
+ }
+ Write {
+  channels all
+  file "\[value cache]"
+  file_type exr
+  metadata "all metadata"
+  first_part rgba
+  version 39517
+  name WriteWATER
+  label "DO NOT RENAME"
+  xpos 750
+  ypos 2425
+ }
+end_group
+push $Nb9a0e50
+Retime {
+ input.last 1
+ output.last 1
+ speed 2
+ time ""
+ name Retime1
+ selected true
+ xpos -153
+ ypos -291
+}
+Multiply {
+ value 0.115
+ name Multiply4
+ selected true
+ xpos -153
+ ypos -256
+}
