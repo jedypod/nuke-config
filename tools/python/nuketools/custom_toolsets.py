@@ -1,6 +1,4 @@
-# Toolsets 
-#    based on Vitaly Musatov's Shared Toolsets: https://github.com/greenvfx/toolsets
-#    allows loading and saving toolsets in the nuke-config/toolsets directory
+from __future__ import print_function
 import os
 import sys
 import nuke
@@ -9,6 +7,9 @@ import posixpath
 import random
 import string
 
+# Toolsets 
+#    based on Vitaly Musatov's Shared Toolsets: https://github.com/greenvfx/toolsets
+#    allows loading and saving toolsets in the nuke-config/toolsets directory
 
 TOOLSETS_FOLDERNAME = 'toolsets'
 
@@ -152,7 +153,7 @@ def renameToolset(fullFilePath):
     rootPath = SHARED_TOOLSET_PATH
     checkForEmptyToolsetDirectories(rootPath)
     refreshToolsetsMenu()
-    print fullFilePath
+    print(fullFilePath)
         
 def addToolsetsPanel():
     res = False

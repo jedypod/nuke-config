@@ -36,8 +36,8 @@ preferences_forced = {
 
 
 prefs = nuke.toNode('preferences')
-for knob, val in preferences_knobdefaults.items():
+for knob, val in list(preferences_knobdefaults.items()):
     nuke.knobDefault('preferences.{0}'.format(knob), val)
 
-for knob, val in preferences_forced.items():
+for knob, val in list(preferences_forced.items()):
     prefs[knob].setValue(val)

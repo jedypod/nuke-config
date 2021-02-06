@@ -29,7 +29,7 @@ def create_write_directory():
     if directory and not os.path.isdir(directory):
         try:
             os.makedirs(directory)
-        except OSError, e:
+        except (OSError, e):
             if e.errno == 17:
                 pass
 nuke.addBeforeRender(create_write_directory)

@@ -1,3 +1,5 @@
+from __future__ import print_function
+from builtins import range
 import nuke
 
 nuke.toolbar('Nodes').addCommand('Color/ColorMatrix Combine', 'colormatrix.process(nuke.selectedNodes())')
@@ -12,7 +14,7 @@ def matrix_from_node(node):
         return None
     mtx_list = node['matrix'].getValue()
     M = float3x3()
-    for i in xrange(9):
+    for i in range(9):
         M[i] = mtx_list[i]
     if node['invert'].getValue():
         M = M.inverse()
@@ -29,7 +31,7 @@ def process(nodes):
     if len(matrices) > 1:
         M = float3x3()
         num = len(matrices)
-        for i in xrange(num-1):
+        for i in range(num-1):
             A = matrices[i]
             if i == 0:
                 M = A

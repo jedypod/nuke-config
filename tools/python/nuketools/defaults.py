@@ -48,8 +48,8 @@ knob_defaults = {
         ],
     }
 }
-for knob, vals in knob_defaults.iteritems():
-    for val, nodes in vals.iteritems():
+for knob, vals in knob_defaults.items():
+    for val, nodes in vals.items():
         for node in nodes:
             nuke.knobDefault('{0}.{1}'.format(node, knob), val)
 
@@ -149,8 +149,8 @@ node_defaults = {
         'math': 'depth', 
     }
 }
-for node, vals in node_defaults.iteritems():
-    for knob, val in vals.iteritems():
+for node, vals in node_defaults.items():
+    for knob, val in vals.items():
         nuke.knobDefault('{0}.{1}'.format(node, knob), val)
 
 
@@ -161,7 +161,7 @@ defaults = {
     'shutteroffset': 'centred',
     'note_font': 'Helvetica',
 }
-for knob, val in defaults.iteritems():
+for knob, val in defaults.items():
     nuke.knobDefault(knob, val)
 
 
@@ -181,7 +181,7 @@ label_defaults = {
     'TimeOffset': '[value time_offset]',
     'Vectorfield': '[file tail [value vfield_file]]',
 }
-for node, val in label_defaults.iteritems():
+for node, val in label_defaults.items():
     nuke.knobDefault('{0}.label'.format(node), val)
 
 
@@ -197,7 +197,7 @@ favorite_dirs = {
     # 'stock': '/cave/vault/stock',
     # 'proj': '/cave/proj',
 }
-for name, path in sorted(favorite_dirs.items(), key=lambda (k, v): k):
+for name, path in sorted(list(favorite_dirs.items()), key=lambda k_v: k_v[0]):
     nuke.addFavoriteDir(name, path, nuke.IMAGE | nuke.SCRIPT | nuke.GEO | nuke.PYTHON)
 
 

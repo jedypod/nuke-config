@@ -35,7 +35,7 @@ def onAutoSave(filename):
     if not os.path.exists(autosave_dir):
         try:
             os.makedirs(autosave_dir)
-        except OSError, err:
+        except OSError as err:
             if err.errno == 13:
                 return filename
 

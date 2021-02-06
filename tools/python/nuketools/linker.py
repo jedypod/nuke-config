@@ -1,4 +1,11 @@
-import nuke, nukescripts, nuke.rotopaint as rp, _curvelib as cl
+from __future__ import print_function
+from builtins import str
+from builtins import map
+from builtins import range
+import nuke
+import nukescripts
+import nuke.rotopaint as rp
+import _curvelib as cl
 
 nuke.menu('Nuke').addCommand('Edit/Node/Create Linked Roto', 'linker.link("roto")', 'alt+o')
 nuke.menu('Nuke').addCommand('Edit/Node/Create Linked Node', 'linker.link()', 'alt+l')
@@ -14,7 +21,7 @@ def link_transform(target_node):
     target_name = target_node.name()
     nclass = target_node.Class()
     if "Tracker" not in nclass and "Transform" not in nclass:
-        print "Must select Tracker or Transform node!"
+        print("Must select Tracker or Transform node!")
         return
 
     target_node.setSelected(False)
@@ -58,7 +65,6 @@ tools.expressions.bake([node], first_frame, last_frame)''')
     target_node_knob.setValue(target_node.name())
     target_node_knob.setVisible(False)
 
-
     # # Link knobs
     trans.knob('translate').setExpression('parent.{0}.translate - parent.{0}.translate(reference_frame)'.format(target_name))
     trans.knob('rotate').setExpression('parent.{0}.rotate - parent.{0}.rotate(reference_frame)'.format(target_name))
@@ -66,9 +72,6 @@ tools.expressions.bake([node], first_frame, last_frame)''')
     trans.knob('skewX').setExpression('parent.{0}.skewX - parent.{0}.skewX(reference_frame)'.format(target_name))
     trans.knob('skewY').setExpression('parent.{0}.skewY - parent.{0}.skewY(reference_frame)'.format(target_name))
     trans.knob('center').setExpression('parent.{0}.center+parent.{0}.translate(reference_frame)'.format(target_name))
-
-    if 'Transform' in nclass:
-        trans['del_relative'].execute()
 
 
 
@@ -160,7 +163,7 @@ def link_camera(src_cam, proj_frame, expr_link, clone, index):
     proj_cam.addKnob(proj_frame_knob)
 
     ## Copy the knob values of the Source Camera
-    for knob_name, knob in src_cam.knobs().iteritems():
+    for knob_name, knob in src_cam.knobs().items():
         # For Animated knobs, copy or link the values depending on if Expression Links are enabled.
         if knob.isAnimated():
             #print "setting animated knob", knob_name
@@ -208,10 +211,10 @@ def link(link_type=None):
 
     if link_type == 'roto':
         if len(track_nodes) == 0:
-            print "Error: At least one Tracker node must be selected."
+            print("Error: At least one Tracker node must be selected.")
             return
         if len(roto_nodes) > 1 and len(track_nodes) > 1:
-            print "Error: if multiple roto nodes are selected, exactly 1 Tracker node must be selected."
+            print("Error: if multiple roto nodes are selected, exactly 1 Tracker node must be selected.")
             return
         for track_node in track_nodes:
             if len(roto_nodes) is 0:
@@ -241,13 +244,13 @@ def link(link_type=None):
                 return
             ## Parse frame string
             if "," in framestring:
-                framelist = map(int, framestring.split(','))
+                framelist = list(map(int, framestring.split(',')))
                 for i, frame in enumerate(framelist):
                     link_camera(cam_node, frame, expr_link, clone, i)
             else:
                 try:
                     framestring = int(framestring)
                 except:
-                    print "Error converting frame to integer!"
+                    print("Error converting frame to integer!")
                     return
                 link_camera(cam_node, framestring, expr_link, clone, 0)

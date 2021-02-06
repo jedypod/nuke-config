@@ -1,3 +1,6 @@
+from __future__ import print_function
+from builtins import str
+from builtins import range
 import nuke
 
 nuke.menu('Nuke').addCommand('Edit/Node/Change Knob Values', 'edit_nodes.edit_knobs()', 'ctrl+e')
@@ -150,11 +153,11 @@ def paste_knobs(checkboxes=False):
             src_knobs = src_node.knobs()
             dst_knobs = dst_node.knobs()
             intersection = dict(
-                [(item, src_knobs[item]) for item in src_knobs.keys() \
-                if item not in excluded_knobs and dst_knobs.has_key(item)]
+                [(item, src_knobs[item]) for item in list(src_knobs.keys())
+                 if item not in excluded_knobs and item in dst_knobs]
                 )
             intersect_knobs.update(intersection)
-        knobs = intersect_knobs.keys()
+        knobs = list(intersect_knobs.keys())
         panel = nuke.Panel('Choose Knobs')
         panel.setWidth(250)
         if checkboxes:
@@ -180,7 +183,7 @@ def paste_knobs(checkboxes=False):
         for dst_node in dst_nodes:
             dst_knobs = dst_node.knobs()
             for knob in chosen_knobs:
-                print 'pasting src {0} to dst {1}'.format(knob, dst_node.name())
+                print('pasting src {0} to dst {1}'.format(knob, dst_node.name()))
                 src = src_knobs[knob]
                 dst = dst_knobs[knob]
                 dst.fromScript(src.toScript())

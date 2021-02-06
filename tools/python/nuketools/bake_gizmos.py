@@ -1,4 +1,10 @@
-from __future__ import with_statement
+from __future__ import (print_function,
+                        absolute_import,
+                        division,
+                        unicode_literals,
+                        with_statement,
+                        )
+from builtins import range
 import nuke, os, re
 import nukescripts
 
@@ -75,8 +81,8 @@ def bake_gizmo( gizmo ):
     gizmo_outputs = get_outputs(gizmo)
     gizmo_inputs = gizmo.inputs()
 
-    print "INPUTS:", gizmo_inputs #[inputnodes.name() for inputnodes in gizmo_inputs]
-    print "OUTPUTS:", gizmo_outputs #[output_nodes.name() for output_nodes in gizmo_outputs]
+    print("INPUTS:", gizmo_inputs) #[inputnodes.name() for inputnodes in gizmo_inputs]
+    print("OUTPUTS:", gizmo_outputs) #[output_nodes.name() for output_nodes in gizmo_outputs]
 
     # This old method can't detect failures
     #groupName = nuke.tcl( 'global no_gizmo; set no_gizmo 1; in %s {%s -New} ; return [value [stack 0].name]' % ( parent.fullName(), gizmo.Class() ) )
@@ -90,7 +96,7 @@ def bake_gizmo( gizmo ):
 
         if gizmo_outputs:
             #RECONNECT OUTPUTS IF THERE ARE ANY
-            for node, pipes in gizmo_outputs.iteritems():
+            for node, pipes in gizmo_outputs.items():
                 for i in pipes:
                     node.setInput( i, group )
 
@@ -101,7 +107,7 @@ def bake_gizmo( gizmo ):
 
     except RuntimeError:
         # Occurs if the gizmo was sourced: "RuntimeError: This gizmo was created with a "load" or "source" command. Copy to group does not work for it."
-        print "This gizmo was created with a 'load' or 'source' command. Manually re-creating it..."
+        print("This gizmo was created with a 'load' or 'source' command. Manually re-creating it...")
         with parent:
             # gizmo.Class() fails because the gizmo class is defined as "Gizmo" - super hacky but we'll try to use the node's name
             gizmo_guess_class = re.split('[0-9]*$', gizmo.name())[0]
@@ -122,7 +128,7 @@ def bake_gizmo( gizmo ):
 
     if gizmo_outputs:
         #RECONNECT OUTPUTS IF THERE ARE ANY
-        for node, pipes in gizmo_outputs.iteritems():
+        for node, pipes in gizmo_outputs.items():
             for i in pipes:
                 node.setInput( i, group )
 
@@ -152,7 +158,7 @@ def bake_gizmos(topLevel=nuke.root(), exclude_default=True):
             if is_gizmo(n):
                 if not gizmo_is_default(n):
                     # ALWAYS BAKE CUSTOM GIZMOS
-                    print "Baking:", n.fullName()
+                    print("Baking:", n.fullName())
                     bake_gizmo(n)
                 elif not exclude_default:
                     # BAKE NON-DEFAULT GIZMOS IF REQUESTED
@@ -174,9 +180,9 @@ def bake_gizmos(topLevel=nuke.root(), exclude_default=True):
 def bake_selected_gizmos(topLevel=nuke.root(), exclude_default=True):
     nodes = [n for n in nuke.selectedNodes() if is_gizmo(n)]
     for node in nodes:
-        if not gizmo_is_default(n):
+        if not gizmo_is_default(node):
             # ALWAYS BAKE CUSTOM GIZMOS
-            print "Baking:", n.fullName()
+            print("Baking:", node.fullName())
             bake_gizmo(node)
         elif not exclude_default:
             # BAKE NON-DEFAULT GIZMOS IF REQUESTED

@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import nuke
 
 
@@ -7,7 +8,7 @@ else:
     from PySide2 import QtWidgets, QtGui, QtCore
 
 
-from QtUtils import CodeTextEdit
+from .QtUtils import CodeTextEdit
 
 
 nuke.menu('Nuke').addCommand('Edit/Node/Set Label', 'labeler.label(nodes=nuke.selectedNodes())', 'shift+a')

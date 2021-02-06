@@ -165,7 +165,7 @@ class FindReplace(QtWidgets.QDialog):
             self.infobox.setPlainText(infotext)
             return
 
-        sorted_knob_matches = sorted(self.knob_matches.items(), key=lambda (k, v): v[0].fullName())
+        sorted_knob_matches = sorted(list(self.knob_matches.items()), key=lambda k_v: k_v[1][0].fullName())
 
         infotext = ''
         for item in sorted_knob_matches:
@@ -183,7 +183,7 @@ class FindReplace(QtWidgets.QDialog):
         if not self.knob_matches or not self.replace_text.text():
             return
         nuke.Undo().begin()
-        for knob, val in self.knob_matches.items():
+        for knob, val in list(self.knob_matches.items()):
             knob.setValue(val[1])
         nuke.Undo().end()
         self.find_knobs()

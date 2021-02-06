@@ -1,17 +1,12 @@
 import nuke
-import os
+import os, pkgutil
 
-# Module to contain all User-Interface code and tools
-# Auto-import all working python files in this folder # https://stackoverflow.com/questions/1057431/how-to-load-all-modules-in-a-folder
+'''
+    nuketools module
 
+    __all__ is defined automatically for all submodules of this module
+    https://stackoverflow.com/questions/1057431/how-to-load-all-modules-in-a-folder
+'''
 
-for module in os.listdir(os.path.dirname(__file__)):
-    if module == '__init__.py' or module[-3:] != '.py':
-        continue
-    try:
-        __import__(module[:-3], locals(), globals())
-    except Exception as exc:
-        nuke.tprint('Exception occured loading module \n\t{0}\n\t{1}\n\tContinueing startup...'.format(module[:-3], exc))
-        pass
-
-del module
+__all__ = list(module for _, module, _ in pkgutil.iter_modules([os.path.dirname(__file__)]))
+nuke.tprint(__all__)

@@ -1,5 +1,7 @@
 from __future__ import with_statement
-
+from __future__ import division
+from __future__ import print_function
+from builtins import range
 import os
 import sys
 import re
@@ -55,7 +57,7 @@ if nuke.GUI:
                     nuke.EXE_PATH, write_node_names, mem, threads, ','.join(map(str, views)),
                     str(render_start), str(render_end), script_path)
 
-                print nk_cmd
+                print(nk_cmd)
 
                 if _platform == "osx":
                     cmd = '''osascript 2>/dev/null <<EOF
@@ -159,7 +161,7 @@ if nuke.GUI:
                         self._numThreads.value(), self._maxMem.value())
                 else:
                     nuke.executeMultiple(self._nodeSelection, frame_ranges, views, continueOnError = self._continueOnError.value())
-            except RuntimeError, e:
+            except RuntimeError as e:
                 if self._exceptOnError or e.args[0][0:9] != "Cancelled":   # TO DO: change this to an exception type
                     raise
             finally:

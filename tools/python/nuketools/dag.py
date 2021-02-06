@@ -1,3 +1,6 @@
+from __future__ import division
+from __future__ import print_function
+
 import nuke
 import nukescripts
 import operator, math, os
@@ -198,7 +201,7 @@ def select_similar_position(axis=1):
         same_pos_nodes = {n:n.xpos() for n in nuke.allNodes() if abs(n.ypos()- node.ypos()) < threshold}
     else:
         same_pos_nodes = {n:n.ypos() for n in nuke.allNodes() if abs(n.xpos()- node.xpos()) < threshold}
-    sorted_nodes = sorted(same_pos_nodes.items(), key=operator.itemgetter(1))
+    sorted_nodes = sorted(list(same_pos_nodes.items()), key=operator.itemgetter(1))
     for n, pos in sorted_nodes:
         n.setSelected(True)
 
@@ -217,10 +220,10 @@ def auto_place():
     # Sort by file knob value if the nodes have one
     filenodes = {n: n['file'].getValue() for n in nodes if 'file' in n.knobs()}
     if filenodes:
-        sorted_filenodes = sorted(filenodes.items(), key=operator.itemgetter(1))
+        sorted_filenodes = sorted(list(filenodes.items()), key=operator.itemgetter(1))
         filenodes_pos = {n: [n.xpos(), n.ypos()] for n in nodes if 'file' in n.knobs()}
-        ypos_sort = sorted(filenodes_pos.items(), key=lambda (k, v): v[1])
-        xpos_sort = sorted(filenodes_pos.items(), key=lambda (k, v): v[0])
+        ypos_sort = sorted(list(filenodes_pos.items()), key=lambda k_v: k_v[1][1])
+        xpos_sort = sorted(list(filenodes_pos.items()), key=lambda k_v1: k_v1[1][0])
         start_pos = [xpos_sort[0][1][0], ypos_sort[0][1][1]]
         for node, filepath in sorted_filenodes:
             node.setXYpos(start_pos[0], start_pos[1])
@@ -297,11 +300,11 @@ def align(direction):
     elif direction in vertically:
         align = 1
     else:
-        print 'Error: invalid direction specified: {0}'.format(direction)
+        print('Error: invalid direction specified: {0}'.format(direction))
         return
 
     positions = {n: get_pos(n) for n in nodes}
-    sorted_positions = sorted(positions.items(), key=lambda (k, v): v[align])
+    sorted_positions = sorted(list(positions.items()), key=lambda k_v2: k_v2[1][align])
     if direction in ['down', 'right']:
         sorted_positions.reverse()
     target = sorted_positions[0]
@@ -311,7 +314,7 @@ def align(direction):
 
     other_axis = abs(1 - align)
 
-    sorted_other_axis = sorted(positions.items(), key=lambda (k, v): v[other_axis])
+    sorted_other_axis = sorted(list(positions.items()), key=lambda k_v3: k_v3[1][other_axis])
 
     nuke.Undo().begin()
     for i in range(len(sorted_other_axis)):
@@ -359,7 +362,7 @@ def scale(axis, scale, pivot='max'):
         return
 
     positions = {n: get_pos(n) for n in nodes}
-    sort = sorted(positions.items(), key=lambda (k, v): v[axis])
+    sort = sorted(list(positions.items()), key=lambda k_v4: k_v4[1][axis])
 
     minpos = sort[0][1][axis]
     maxpos = sort[-1][1][axis]
@@ -372,15 +375,13 @@ def scale(axis, scale, pivot='max'):
         pivot_pos = (minpos - maxpos)/2 + minpos
 
     nuke.Undo().begin()
-    for node, pos in positions.iteritems():
+    for node, pos in positions.items():
         if axis:
             new_pos = (pos[1] - pivot_pos) * scale + pivot_pos
             set_pos(node, pos[0], new_pos)
             if node.Class() == 'BackdropNode':
                 bdpos = ((pos[1] + node['bdheight'].getValue()) - pivot_pos) * scale + pivot_pos - node.ypos()
-                print pos[1]
-                print new_pos
-                print bdpos
+
                 if scale > 0:
                     node['bdheight'].setValue(bdpos)
                 else:
@@ -689,7 +690,7 @@ def create_pointer():
             default_colors = {prefs['NodeColour{0:02d}Color'.format(i)].value(): prefs['NodeColourClass{0:02d}'.format(i)].value() for i in range(1, 14)}
             node_class = topnode.Class().lower()
             node_class = ''.join([i for i in node_class if not i.isdigit()])
-            for color, classes in default_colors.items():
+            for color, classes in list(default_colors.items()):
                 if node_class in classes:
                     topnode_color = color
                     break
@@ -868,7 +869,7 @@ def swap_node(nodes=None):
             swap_knob(node['reverse'])
         if 'operation' in node.knobs():
             opknob = node['operation']
-            vals = opknob.values()
+            vals = list(opknob.values())
             if vals:
                 if 'log' in vals[0]:
                     swap_knob(node['operation'])

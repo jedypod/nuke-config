@@ -1,3 +1,6 @@
+from __future__ import division
+from __future__ import absolute_import
+from __future__ import print_function
 
 import nuke
 import colorsys
@@ -7,7 +10,7 @@ if nuke.NUKE_VERSION_MAJOR < 11:
 else:
     from PySide2 import QtWidgets, QtGui, QtCore
 
-from QtUtils import CodeTextEdit
+from .QtUtils import CodeTextEdit
 
 
 nuke.menu('Nuke').addCommand('Edit/Node/Backdropper', 'backdropper.invoke()', 'shift+b')
@@ -27,7 +30,7 @@ def dec2rgb(dec, fp=True):
 def rgb2hex(rgb, fp=True):
     # Convert 8 bit integer rgb tuple to hexadecimal rgb value
     if fp:
-        rgb = (rgb[0]*255, rgb[1]*255, rgb[2]*255)
+        rgb = (int(rgb[0]*255), int(rgb[1]*255), int(rgb[2]*255))
     return '%02x%02x%02x' % rgb
 
 def hex2rgb(hexcol, fp=True):
@@ -42,7 +45,7 @@ def hex2rgb(hexcol, fp=True):
 def rgb2dec(rgb, fp=True):
     # Convert rgb 0-1 float tuple to nuke style integer hexadecimal 
     if fp:
-        rgb = (rgb[0]*255, rgb[1]*255, rgb[2]*255)
+        rgb = (int(rgb[0]*255), int(rgb[1]*255), int(rgb[2]*255))
     return int('%02x%02x%02x%02x' % (rgb[0], rgb[1], rgb[2], 1), 16)
 
 def rgb2hsv(rgb, fp=True):
@@ -357,7 +360,7 @@ class BackdropPanel(QtWidgets.QDialog):
 
         # Create backdrop and set default knob values
         self.bd = nuke.createNode('BackdropNode')
-        for knob, value in self.bd_defaults.iteritems():
+        for knob, value in self.bd_defaults.items():
             if knob in self.bd.knobs():
                 self.bd[knob].setValue(value)
 
@@ -373,10 +376,7 @@ class BackdropPanel(QtWidgets.QDialog):
             margin = (50, 60, 50) # sides, top, bottom
 
             # Set Backdrop size - XYpos is top left corner, +x is right, +y is down, bdwidth * bdheight = size
-            self.bd.setXYpos(
-                minpos[0] - screen_size[0] - margin[0],
-                minpos[1] - screen_size[1] - margin[1]
-                )
+            self.bd.setXYpos(int(minpos[0] - screen_size[0] - margin[0]), int(minpos[1] - screen_size[1] - margin[1]))
             self.bd['bdwidth'].setValue(maxpos[0]-minpos[0] + screen_size[0]*2 + margin[0]*2)
             self.bd['bdheight'].setValue(maxpos[1]-minpos[1] + screen_size[1]*2 + margin[2]+margin[1])
         
