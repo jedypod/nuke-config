@@ -1,3 +1,7 @@
+from __future__ import division
+from __future__ import print_function
+from builtins import str
+from builtins import range
 import nuke
 from nukescripts import panels
 import os
@@ -480,7 +484,7 @@ class KnobScripter(QtWidgets.QDialog):
                 else:
                     i_full = i
 
-                if i in self.unsavedKnobs.keys():
+                if i in list(self.unsavedKnobs.keys()):
                     self.current_knob_dropdown.addItem(i_full+"(*)", i)
                 else:
                     self.current_knob_dropdown.addItem(i_full, i)
@@ -493,7 +497,7 @@ class KnobScripter(QtWidgets.QDialog):
             counter += 1
         for i in self.node.knobs():
             if i in defaultKnobs:
-                if i in self.unsavedKnobs.keys():
+                if i in list(self.unsavedKnobs.keys()):
                     self.current_knob_dropdown.addItem(i+"(*)", i)
                 else:
                     self.current_knob_dropdown.addItem(i, i)
@@ -668,7 +672,7 @@ class KnobScripter(QtWidgets.QDialog):
         knobs_dropdown = self.current_knob_dropdown
         all_knobs = [knobs_dropdown.itemData(i) for i in range(knobs_dropdown.count())]
         for key in all_knobs:
-            if key in self.unsavedKnobs.keys():
+            if key in list(self.unsavedKnobs.keys()):
                 self.setKnobModified(modified = True, knob = key, changeTitle = False)
             else:
                 self.setKnobModified(modified = False, knob = key, changeTitle = False)
@@ -810,7 +814,7 @@ class KnobScripter(QtWidgets.QDialog):
                 os.makedirs(folder_path)
                 return True
             except:
-                print "Couldn't create the scripting folders.\nPlease check your OS write permissions."
+                print("Couldn't create the scripting folders.\nPlease check your OS write permissions.")
                 return False
 
     def makeScriptFile(self, name = "Untitled.py", folder = "scripts", empty = True):
@@ -820,7 +824,7 @@ class KnobScripter(QtWidgets.QDialog):
                 self.current_script_file = open(script_path, 'w')
                 return True
             except:
-                print "Couldn't create the scripting folders.\nPlease check your OS write permissions."
+                print("Couldn't create the scripting folders.\nPlease check your OS write permissions.")
                 return False
 
     def setCurrentFolder(self, folderName):
@@ -1329,7 +1333,7 @@ class KnobScripter(QtWidgets.QDialog):
     def changeClicked(self, newNode=""):
         ''' Change node '''
         try:
-            print "Changing from " + self.node.name()
+            print("Changing from " + self.node.name())
         except:
             self.node = None
             if not len(nuke.selectedNodes()):
@@ -2223,7 +2227,7 @@ class KnobScripterTextEditMain(CodeTextEdit):
         longest = 0 #len of longest match
         match_key = None
         match_snippet = ""
-        for key, val in dic.items():
+        for key, val in list(dic.items()):
             #match = re.search(r"[\s\.({\[,;=+-]"+key+r"(?:[\s)\]\"]+|$)",text)
             match = re.search(r"[\s\.({\[,;=+-]"+key+r"$",text)
             if match or text == key:
@@ -2462,20 +2466,20 @@ class KnobScripterTextEditMain(CodeTextEdit):
             sysModules =  sys.modules
             globalModules = globals()
             allModules = dict(sysModules, **globalModules)
-            allKeys = list(set(globals().keys() + sys.modules.keys()))
+            allKeys = list(set(list(globals().keys()) + list(sys.modules.keys())))
             allKeysSorted = [x for x in sorted(set(allKeys))]
 
-            if searchString == '' : 
+            if searchString == '': 
                 matching = []
-                for x in allModules :
-                    if x.startswith(searchString) :
+                for x in allModules:
+                    if x.startswith(searchString):
                         matching.append(x)
                 return matching
             else:
                 try:
-                    if sys.modules.has_key(searchString) :
+                    if searchString in sys.modules:
                         return dir(sys.modules['%s' % searchString])
-                    elif globals().has_key(searchString): 
+                    elif searchString in globals(): 
                         return dir(globals()['%s' % searchString])
                     else:
                         return []
@@ -3185,7 +3189,7 @@ class SnippetsPanel(QtWidgets.QDialog):
         Clears everything without saving and redoes the widgets etc.
         Only to be called if the panel isn't shown meaning it's closed.
         '''
-        for i in reversed(range(self.scroll_layout.count())): 
+        for i in reversed(list(range(self.scroll_layout.count()))):
             self.scroll_layout.itemAt(i).widget().deleteLater()
 
         self.snippets_dict = self.loadSnippetsDict(path = self.snippets_txt_path)

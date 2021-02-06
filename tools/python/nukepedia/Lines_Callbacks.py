@@ -1,3 +1,7 @@
+from __future__ import division
+from builtins import zip
+from builtins import str
+from builtins import range
 import nuke
 
 
@@ -11,7 +15,7 @@ def delete_pt():
     pt_num = int(nuke.thisKnob().name()[6:])
     node = nuke.thisNode()
 
-    for pt in xrange(pt_num, max_pts):
+    for pt in range(pt_num, max_pts):
         knob_name = 'pt' + str(pt)
         next_knob = 'pt' + str(pt + 1)
         node[knob_name].fromScript(node[next_knob].toScript())
@@ -37,7 +41,7 @@ def insert_pt():
     node = nuke.thisNode()
 
     # Shuffle values upwards
-    for pt in xrange(max_pts, pt_num, -1):
+    for pt in range(max_pts, pt_num, -1):
         knob_name = 'pt' + str(pt)
         prev_knob = 'pt' + str(pt - 1)
         node[knob_name].fromScript(node[prev_knob].toScript())
@@ -80,7 +84,7 @@ def initialiseNode(node, max_num=4):
 
     node.knob(node.name()).setLabel('Appearance')
 
-    knob_names = [x for x in node.knobs().keys() if x.startswith('pt')]
+    knob_names = [x for x in list(node.knobs().keys()) if x.startswith('pt')]
     knob_names.sort(key=lambda x: int(x[2:]))
 
     # Add new Tab for points

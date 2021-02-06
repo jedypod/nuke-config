@@ -1,3 +1,23 @@
+from __future__ import division
+from __future__ import print_function
+
+from builtins import object
+import nuke
+import os
+try:
+    # Prefer QtCore.Qt.py when available
+    from Qt import QtCore, QtGui, QtWidgets, Qt
+except ImportError:
+    try:
+        # PySide2 for default Nuke 11
+        from PySide2 import QtCore, QtGui, QtWidgets
+    except ImportError:
+        # Or PySide for Nuke 10
+        from PySide import QtCore, QtGui, QtGui as QtWidgets
+
+__version__ = "1.2"
+
+
 """A shortcut-key editor for Nuke's menus
 
 homepage: https://github.com/dbr/shortcuteditor-nuke
@@ -12,22 +32,6 @@ except Exception:
     import traceback
     traceback.print_exc()
 """
-
-__version__ = "1.2"
-
-
-import nuke
-import os
-try:
-    # Prefer QtCore.Qt.py when available
-    from Qt import QtCore, QtGui, QtWidgets, Qt
-except ImportError:
-    try:
-        # PySide2 for default Nuke 11
-        from PySide2 import QtCore, QtGui, QtWidgets
-    except ImportError:
-        # Or PySide for Nuke 10
-        from PySide import QtCore, QtGui, QtGui as QtWidgets
 
 
 class KeySequenceWidget(QtWidgets.QWidget):
@@ -254,7 +258,7 @@ def _find_menu_items(menu, _path = None, _top_menu_name = None):
 
     found = []
 
-    mi = menu.items()
+    mi = list(menu.items())
     for i in mi:
         if isinstance(i, nuke.Menu):
             # Sub-menu, recurse
@@ -305,7 +309,7 @@ def _load_yaml(path):
     try:
         return _load_internal()
     except Exception:
-        print "Error loading %r" % path
+        print("Error loading %r" % path)
         import traceback
         traceback.print_exc()
 
@@ -319,7 +323,7 @@ def _save_yaml(obj, path):
         if not os.path.isdir(ndir):
             try:
                 os.makedirs(ndir)
-            except OSError, e:
+            except OSError as e:
                 if e.errno != 17: # errno 17 is "already exists"
                     raise
 
@@ -333,13 +337,13 @@ def _save_yaml(obj, path):
     try:
         _save_internal()
     except Exception:
-        print "Error saving node weights"
+        print("Error saving node weights")
         import traceback
         traceback.print_exc()
 
 
 def _restore_overrides(overrides):
-    for item, key in overrides.items():
+    for item, key in list(overrides.items()):
         menu_name, _, path = item.partition("/")
         m = nuke.menu(menu_name)
         item = m.findItem(path)
@@ -352,7 +356,7 @@ def _restore_overrides(overrides):
 
 def _overrides_as_code(overrides):
     menus = {}
-    for item, key in overrides.items():
+    for item, key in list(overrides.items()):
         menu_name, _, path = item.partition("/")
 
         menus.setdefault(menu_name, []).append((path, key))
@@ -361,7 +365,7 @@ def _overrides_as_code(overrides):
     lines = []
     lines.append("def apply_key_overrides():")
     lines.append("    overrides = {")
-    for menu, all_path_key in menus.items():
+    for menu, all_path_key in list(menus.items()):
         lines.append("        'Nuke': [")
         for path, key in all_path_key:
             lines.append("            (%r, %r)," % (path, key))
@@ -571,7 +575,7 @@ class ShortcutEditorWidget(QtWidgets.QDialog):
         mb.setInformativeText("Really remove all %s key overrides?" % len(self.settings.overrides))
         mb.setDetailedText(
             "Will reset the following to defaults:\n\n"
-            + "\n".join("%s (key: %s)" % (p, k or "(blank)") for (p, k) in self.settings.overrides.items()))
+            + "\n".join("%s (key: %s)" % (p, k or "(blank)") for (p, k) in list(self.settings.overrides.items())))
 
         mb.setIcon(QtWidgets.QMessageBox.Warning)
 

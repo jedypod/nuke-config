@@ -1,3 +1,4 @@
+from builtins import range
 import nuke
 import math
 import os

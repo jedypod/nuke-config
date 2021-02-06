@@ -29,7 +29,8 @@ import channel_hotbox
 nuke.menu("Nuke").findItem("Edit").addCommand("HotBox", 'channel_hotbox.start()', "alt+q")
 
 """
-
+from __future__ import division
+from __future__ import print_function
 import math
 import nuke
 
