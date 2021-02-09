@@ -1,7 +1,4 @@
 from __future__ import print_function
-from builtins import str
-from builtins import map
-from builtins import range
 import nuke
 import nukescripts
 import nuke.rotopaint as rp

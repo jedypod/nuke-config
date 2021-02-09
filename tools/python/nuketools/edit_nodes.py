@@ -1,6 +1,4 @@
 from __future__ import print_function
-from builtins import str
-from builtins import range
 import nuke
 
 nuke.menu('Nuke').addCommand('Edit/Node/Change Knob Values', 'edit_nodes.edit_knobs()', 'ctrl+e')

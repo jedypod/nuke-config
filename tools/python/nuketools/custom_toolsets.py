@@ -1,4 +1,9 @@
 from __future__ import print_function
+# Toolsets 
+#    based on Vitaly Musatov's Shared Toolsets: https://github.com/greenvfx/toolsets
+#    allows loading and saving toolsets in the nuke-config/toolsets directory
+# TODO: Right now there are a bunch of errors with windows paths. Need to do some fixes for this.
+
 import os
 import sys
 import nuke
@@ -7,9 +12,6 @@ import posixpath
 import random
 import string
 
-# Toolsets 
-#    based on Vitaly Musatov's Shared Toolsets: https://github.com/greenvfx/toolsets
-#    allows loading and saving toolsets in the nuke-config/toolsets directory
 
 TOOLSETS_FOLDERNAME = 'toolsets'
 
@@ -75,7 +77,7 @@ class CreateToolsetsPanel(nukescripts.PythonPanel):
         self.addKnob(self.infoText)
 
         if rename == True:
-            toolSetPath = fullFilePath.replace(SHARED_TOOLSET_PATH + "/", '') 
+            toolSetPath = fullFilePath.replace(SHARED_TOOLSET_PATH + os.path.sep, '') 
             toolSetPath = toolSetPath.replace(".nk", '') 
             self.menuPath.setValue(toolSetPath)
 
@@ -84,8 +86,10 @@ class CreateToolsetsPanel(nukescripts.PythonPanel):
         filecontents = sorted(os.listdir(fullPath), key=str.lower)
         for group in filecontents:
             if os.path.isdir(os.path.join(fullPath, group)):
-                self.userFolders.append(menuPath + group)
-                self.buildFolderList(fullPath + '/' + group, menuPath + group + '/')              
+                self.userFolders.append(os.path.join(menuPath, group))
+                self.buildFolderList(
+                    os.path.join(fullPath, group), 
+                    os.path.join(menuPath, group))
 
     def createPreset(self):
         if self.renameCreateSharedToolset(str(self.menuPath.value()), False):
@@ -318,7 +322,7 @@ def createToolsetMenuItems(m, rootPath, fullPath, delete, allToolsetsList, isLoc
 
                         #TODO: get ref module name, now it is static linking
                         #current_module = sys.modules[__name__]
-                        #print current_module
+                        #print(current_module)
                         m.addCommand(group, 'custom_toolsets.toolsetLoader("%s")' %  fullFileName, "")            
                         retval = True
     return retval
