@@ -865,6 +865,8 @@ def swap_node(nodes=None):
             swap_knob(node['direction'])
         if 'invert' in node.knobs():
             swap_knob(node['invert'])
+        if 'invert_matrix' in node.knobs():
+            swap_knob(node['invert_matrix'])
         if 'reverse' in node.knobs():
             swap_knob(node['reverse'])
         if 'operation' in node.knobs():
