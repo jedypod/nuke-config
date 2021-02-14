@@ -66,7 +66,7 @@ nuke.menu('Viewer').addCommand("Swap View", "dag.swap_view()", "shift+q")
 nuke.menu('Nodes').addCommand( 'Transform/Transform', 'dag.create_transform()', 't')
 
 nuke.menu('Nodes').addCommand('Other/Create Dots', 'dag.create_dots()', 'alt+d', shortcutContext=2)
-nuke.menu('Nodes').addCommand('Other/Create Side Dots', 'dag.create_dots(side=True)', 'alt+shift+d', shortcutContext=2)
+nuke.menu('Nodes').addCommand('Other/Create Dots Branched', 'dag.create_dots(branch=True)', 'shift+d', shortcutContext=2)
 
 
 # DAG Position Commands
@@ -754,18 +754,18 @@ n['target'].setValue(t.fullName())''')
         pointer['tile_color'].setValue(topnode_color)
 
 
-def create_dots(side=False):
+def create_dots(branch=False):
     # Create dot nodes
     nodes = nuke.selectedNodes()
     dots = list()
     for node in nodes:
         unselect()
         pos = get_pos(node)
-        if not side:
+        if not branch:
             select([node])
         dot = nuke.createNode('Dot', inpanel=False)
-        if side:
-            set_pos(dot, pos[0] - grid[0], pos[1])
+        if branch:
+            set_pos(dot, pos[0] + grid[0], pos[1])
             dot.setInput(0, node)
         else:
             set_pos(dot, pos[0], pos[1] + grid[1]*2)
