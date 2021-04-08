@@ -1,0 +1,75 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name Contrast
+ addUserKnob {20 Contrast_tab l Contrast}
+ addUserKnob {41 pw l power T Power.pw}
+ addUserKnob {41 pv l pivot T Power.pv}
+ addUserKnob {6 lext l "linear extension" t "enable linear extension above pivot" +STARTLINE}
+ lext true
+ addUserKnob {26 ""}
+ addUserKnob {41 maskChannel l mask T MIX.maskChannel}
+ addUserKnob {6 invert_mask l "invert mask" -STARTLINE}
+ addUserKnob {41 mix T MIX.mix}
+}
+ Input {
+  inputs 0
+  name Inputmask
+  xpos 70
+  ypos 201
+  number 1
+ }
+ Input {
+  inputs 0
+  name Input
+  xpos -40
+  ypos 80
+ }
+set N2ed4d4e0 [stack 0]
+push $N2ed4d4e0
+ Expression {
+  temp_name0 pr
+  temp_expr0 sign(r)*pow(fabs(r/pv.r),pw.r)*pv.r
+  temp_name1 pg
+  temp_expr1 sign(g)*pow(fabs(g/pv.g),pw.g)*pv.g
+  temp_name2 pb
+  temp_expr2 sign(b)*pow(fabs(b/pv.b),pw.b)*pv.b
+  expr0 lext?r>pv.r?pw.r*(r-pv.r)+pv.r:pr:pr
+  expr1 lext?g>pv.g?pw.g*(g-pv.g)+pv.g:pg:pg
+  expr2 lext?b>pv.b?pw.b*(b-pv.b)+pv.b:pb:pb
+  name Power
+  xpos -40
+  ypos 141
+  addUserKnob {20 Params_tab l Params}
+  addUserKnob {18 pw l power R 0 4}
+  pw 1
+  addUserKnob {6 pw_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {18 pv l pivot R 0.1 2}
+  pv 0.18
+  addUserKnob {6 pv_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ }
+ Keymix {
+  inputs 3
+  invertMask {{!parent.invert_mask}}
+  bbox B
+  name MIX
+  xpos -40
+  ypos 195
+  disable {{"!\[exists parent.input1]" x27 0}}
+ }
+ Output {
+  name Output
+  xpos -40
+  ypos 260
+ }
+ StickyNote {
+  inputs 0
+  name StickyNote1
+  tile_color 0x272727ff
+  label https://www.desmos.com/calculator/anps5bs2fa
+  note_font_size 8
+  note_font_color 0xa8a8a8ff
+  xpos -77
+  ypos 108
+ }
+end_group
