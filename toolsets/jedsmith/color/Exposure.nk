@@ -1,0 +1,52 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name Exposure
+ addUserKnob {20 Exposure_tab l Exposure}
+ addUserKnob {41 channels T Multiply.channels}
+ addUserKnob {18 exposure R -6 6}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 maskChannel l mask T Keymix1.maskChannel}
+ addUserKnob {6 invert_mask l "invert mask" -STARTLINE}
+}
+ Input {
+  inputs 0
+  name Inputmask
+  xpos 70
+  ypos -160
+  number 1
+ }
+set N225dd900 [stack 0]
+ Input {
+  inputs 0
+  name Input
+  xpos -40
+  ypos -220
+ }
+set N4fa58b20 [stack 0]
+push $N225dd900
+push $N4fa58b20
+ Multiply {
+  inputs 1+1
+  channels rgb
+  value {{"pow(2, parent.exposure)"}}
+  name Multiply
+  xpos -40
+  ypos -160
+ }
+ Keymix {
+  inputs 3
+  invertMask {{!parent.invert_mask}}
+  bbox B
+  name Keymix1
+  note_font Helvetica
+  xpos -40
+  ypos -135
+  disable {{"!\[exists parent.input1]" x27 0}}
+ }
+ Output {
+  name Output
+  xpos -40
+  ypos -70
+ }
+end_group
