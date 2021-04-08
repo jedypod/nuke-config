@@ -1,0 +1,48 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Dot {
+name cam_A
+tile_color 0x9c0000ff
+label " Cam A"
+note_font "Helvetica Bold"
+note_font_size 24
+note_font_color 0x999999ff
+selected true
+xpos -10786
+ypos -2190
+}
+push 0
+Dot {
+name cam_B
+tile_color 0x9c0000ff
+label " Cam B"
+note_font "Helvetica Bold"
+note_font_size 24
+note_font_color 0x999999ff
+selected true
+xpos -10676
+ypos -2190
+}
+Camera2 {
+inputs 0
+translate {{cam_A.input.translate*(1-blend)+cam_B.input.translate*blend} {cam_A.input.translate*(1-blend)+cam_B.input.translate*blend} {cam_A.input.translate*(1-blend)+cam_B.input.translate*blend}}
+rotate {{cam_A.input.rotate*(1-blend)+cam_B.input.rotate*blend} {cam_A.input.rotate*(1-blend)+cam_B.input.rotate*blend} {cam_A.input.rotate*(1-blend)+cam_B.input.rotate*blend}}
+scaling {{cam_A.input.scaling*(1-blend)+cam_B.input.scaling*blend} {cam_A.input.scaling*(1-blend)+cam_B.input.scaling*blend} {cam_A.input.scaling*(1-blend)+cam_B.input.scaling*blend}}
+uniform_scale {{cam_A.input.uniform_scale*(1-blend)+cam_B.input.uniform_scale*blend}}
+skew {{cam_A.input.skew*(1-blend)+cam_B.input.skew*blend} {cam_A.input.skew*(1-blend)+cam_B.input.skew*blend} {cam_A.input.skew*(1-blend)+cam_B.input.skew*blend}}
+pivot {{cam_A.input.pivot*(1-blend)+cam_B.input.pivot*blend} {cam_A.input.pivot*(1-blend)+cam_B.input.pivot*blend} {cam_A.input.pivot*(1-blend)+cam_B.input.pivot*blend}}
+focal {{cam_A.input.focal*(1-blend)+cam_B.input.focal*blend}}
+haperture {{cam_A.input.haperture*(1-blend)+cam_B.input.haperture*blend}}
+vaperture {{cam_A.input.vaperture*(1-blend)+cam_B.input.vaperture*blend}}
+win_translate {{cam_A.input.win_translate*(1-blend)+cam_B.input.win_translate*blend} {cam_A.input.win_translate*(1-blend)+cam_B.input.win_translate*blend}}
+win_scale {{cam_A.input.win_scale*(1-blend)+cam_B.input.win_scale*blend} {cam_A.input.win_scale*(1-blend)+cam_B.input.win_scale*blend}}
+winroll {{cam_A.input.winroll*(1-blend)+cam_B.input.winroll*blend}}
+name CameraBlend
+note_font Helvetica
+selected true
+xpos -10700
+ypos -2070
+addUserKnob {20 Blend_tab l Blend}
+addUserKnob {7 blend t "Blend between camera A and camera B"}
+blend 1
+}
