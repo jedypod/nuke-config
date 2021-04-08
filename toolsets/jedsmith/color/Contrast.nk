@@ -25,8 +25,7 @@ Group {
   xpos -40
   ypos 80
  }
-set N2ed4d4e0 [stack 0]
-push $N2ed4d4e0
+set Nc6631e50 [stack 0]
  Expression {
   temp_name0 pr
   temp_expr0 sign(r)*pow(fabs(r/pv.r),pw.r)*pv.r
@@ -48,13 +47,15 @@ push $N2ed4d4e0
   pv 0.18
   addUserKnob {6 pv_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
  }
+push $Nc6631e50
  Keymix {
   inputs 3
-  invertMask {{!parent.invert_mask}}
+  invertMask {{parent.invert_mask}}
   bbox B
   name MIX
+  selected true
   xpos -40
-  ypos 195
+  ypos 194
   disable {{"!\[exists parent.input1]" x27 0}}
  }
  Output {

@@ -5,48 +5,49 @@ Group {
  addUserKnob {20 Exposure_tab l Exposure}
  addUserKnob {41 channels T Multiply.channels}
  addUserKnob {18 exposure R -6 6}
- addUserKnob {26 "" +STARTLINE}
+ exposure 0
+ addUserKnob {6 exposure_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {26 ""}
  addUserKnob {41 maskChannel l mask T Keymix1.maskChannel}
  addUserKnob {6 invert_mask l "invert mask" -STARTLINE}
+ addUserKnob {41 mix T Keymix1.mix}
 }
  Input {
   inputs 0
   name Inputmask
   xpos 70
-  ypos -160
+  ypos -100
   number 1
  }
-set N225dd900 [stack 0]
  Input {
   inputs 0
   name Input
   xpos -40
-  ypos -220
+  ypos -190
  }
-set N4fa58b20 [stack 0]
-push $N225dd900
-push $N4fa58b20
+set Ncd964620 [stack 0]
  Multiply {
-  inputs 1+1
   channels rgb
   value {{"pow(2, parent.exposure)"}}
   name Multiply
   xpos -40
-  ypos -160
+  ypos -130
  }
+push $Ncd964620
  Keymix {
   inputs 3
-  invertMask {{!parent.invert_mask}}
+  invertMask {{parent.invert_mask}}
   bbox B
   name Keymix1
   note_font Helvetica
+  selected true
   xpos -40
-  ypos -135
+  ypos -105
   disable {{"!\[exists parent.input1]" x27 0}}
  }
  Output {
   name Output
   xpos -40
-  ypos -70
+  ypos -40
  }
 end_group
