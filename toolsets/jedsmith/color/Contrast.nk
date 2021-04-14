@@ -7,25 +7,25 @@ Group {
  addUserKnob {41 pv l pivot T Power.pv}
  addUserKnob {6 lext l "linear extension" t "enable linear extension above pivot" +STARTLINE}
  lext true
- addUserKnob {26 ""}
- addUserKnob {41 maskChannel l mask T MIX.maskChannel}
- addUserKnob {6 invert_mask l "invert mask" -STARTLINE}
- addUserKnob {41 mix T MIX.mix}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 maskChannelMask l mask -STARTLINE T NodeWrapper.maskChannelMask}
+ addUserKnob {41 invert_mask l invert -STARTLINE T NodeWrapper.invert_mask}
+ addUserKnob {41 mix T NodeWrapper.mix}
 }
  Input {
   inputs 0
   name Inputmask
   xpos 70
-  ypos 201
+  ypos 230
   number 1
  }
  Input {
   inputs 0
   name Input
   xpos -40
-  ypos 80
+  ypos 110
  }
-set Nc6631e50 [stack 0]
+set N58c7dfd0 [stack 0]
  Expression {
   temp_name0 pr
   temp_expr0 sign(r)*pow(fabs(r/pv.r),pw.r)*pv.r
@@ -38,7 +38,7 @@ set Nc6631e50 [stack 0]
   expr2 lext?b>pv.b?pw.b*(b-pv.b)+pv.b:pb:pb
   name Power
   xpos -40
-  ypos 141
+  ypos 170
   addUserKnob {20 Params_tab l Params}
   addUserKnob {18 pw l power R 0 4}
   pw 1
@@ -47,16 +47,16 @@ set Nc6631e50 [stack 0]
   pv 0.18
   addUserKnob {6 pv_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
  }
-push $Nc6631e50
- Keymix {
-  inputs 3
-  invertMask {{parent.invert_mask}}
-  bbox B
-  name MIX
+push $N58c7dfd0
+ NodeWrapper {
+  inputs 2+1
+  channels rgb
+  invert_mask true
+  name NodeWrapper
+  note_font Helvetica
   selected true
   xpos -40
-  ypos 194
-  disable {{"!\[exists parent.input1]" x27 0}}
+  ypos 231
  }
  Output {
   name Output
@@ -70,7 +70,7 @@ push $Nc6631e50
   label https://www.desmos.com/calculator/anps5bs2fa
   note_font_size 8
   note_font_color 0xa8a8a8ff
-  xpos -77
-  ypos 108
+  xpos -78
+  ypos 141
  }
 end_group
