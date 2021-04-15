@@ -1,11 +1,14 @@
 set cut_paste_input [stack 0]
+version 12.0 v8
 push $cut_paste_input
 Group {
- name EdgeMaskAngled_
+ name FillMatte
  tile_color 0x979797ff
- addUserKnob {20 EdgeMaskAngled_tab l EdgeMaskAngled}
- addUserKnob {41 angle T Transform.angle}
- addUserKnob {41 size T Transform.size}
+ selected true
+ xpos -4220
+ ypos 17150
+ addUserKnob {20 FillMatte_tab l FillMatte}
+ addUserKnob {6 preview +STARTLINE}
  addUserKnob {41 wp T BlackWhite.wp}
  addUserKnob {41 bp T BlackWhite.bp}
  addUserKnob {41 erode T FilterErode1.size}
@@ -16,12 +19,21 @@ Group {
  addUserKnob {41 invert_mask l invert -STARTLINE T NodeWrapper.invert_mask}
  addUserKnob {41 mix T NodeWrapper.mix}
 }
- Input {
+ FilterErode {
   inputs 0
-  name Inputmask
-  xpos 70
-  ypos 440
-  number 1
+  channels alpha
+  name inside_hard_erode
+  label "\[value size]"
+  xpos -472
+  ypos 253
+ }
+ FilterErode {
+  channels alpha
+  filter gaussian
+  name inside_soft_erode
+  label "\[value size]"
+  xpos -472
+  ypos 319
  }
  Input {
   inputs 0
@@ -29,12 +41,13 @@ Group {
   xpos -40
   ypos 110
  }
+set N54defa50 [stack 0]
  Dot {
   name Dot1
   xpos -6
   ypos 204
  }
-set N55b72e70 [stack 0]
+set N53d3c3a0 [stack 0]
  Expression {
   channel0 rgba
   expr0 clamp(a/(wp-bp)-bp/(wp-bp))
@@ -44,61 +57,58 @@ set N55b72e70 [stack 0]
   addUserKnob {20 Param}
   addUserKnob {7 bp}
   addUserKnob {7 wp}
-  wp 0.295
- }
-set N55b7c780 [stack 0]
- Transform {
-  translate {{size*sin(angle*pi/180)} {size*cos(angle*pi/180)}}
-  shutteroffset centred
-  name Transform
-  xpos -260
-  ypos 230
-  addUserKnob {20 User}
-  addUserKnob {7 angle R 0 360}
-  angle 181
-  addUserKnob {7 size R 0 100}
-  size 14.5
- }
- Invert {
-  channels rgba
-  name Invert1
-  xpos -260
-  ypos 261
- }
-push $N55b7c780
- Merge2 {
-  inputs 2
-  operation multiply
-  bbox B
-  name Merge1
-  xpos -150
-  ypos 291
+  wp 0.465
  }
  FilterErode {
   channels rgba
+  size 5
   name FilterErode1
   xpos -150
-  ypos 351
+  ypos 231
  }
  Blur {
   channels rgba
+  size 3.3
   name Blur1
   xpos -150
-  ypos 381
+  ypos 261
  }
  Dot {
-  name Dot2
+  name Dot3
   xpos -116
-  ypos 444
+  ypos 286
  }
-push $N55b72e70
+set N9b44810 [stack 0]
+ Input {
+  inputs 0
+  name Inputmask
+  xpos 174
+  ypos 350
+  number 1
+ }
+push $N9b44810
+push $N53d3c3a0
+ ChannelMerge {
+  inputs 2
+  name ChannelMerge1
+  xpos -40
+  ypos 279
+ }
+push $N54defa50
  NodeWrapper {
   inputs 2+1
   channels rgba
   maskChannelMask none
   name NodeWrapper
+  xpos 70
+  ypos 350
+ }
+ Switch {
+  inputs 2
+  which {{preview}}
+  name SwitchPreview
   xpos -40
-  ypos 440
+  ypos 441
  }
  Output {
   name Output

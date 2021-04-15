@@ -2,179 +2,112 @@ set cut_paste_input [stack 0]
 push $cut_paste_input
 Group {
  name EdgeMask
- tile_color 0xcc804eff
- addUserKnob {20 EdgeMask}
- addUserKnob {7 outside_edge t "Set the size of the external edge." R 0 30}
- outside_edge 10
- addUserKnob {7 inside_edge t "Set the size of the internal edge" R 0 30}
- addUserKnob {7 outside_blur R 0 60}
- addUserKnob {4 inside_erode_type l "" -STARTLINE M {erode filter ""}}
- inside_erode_type filter
- addUserKnob {7 inside_blur R 0 60}
+ tile_color 0x979797ff
+ addUserKnob {20 EdgeMaskAngled_tab l EdgeMaskAngled}
+ addUserKnob {41 wp T BlackWhite.wp}
+ addUserKnob {41 bp T BlackWhite.bp}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {7 size_in l "size in" R 0 100}
+ addUserKnob {7 blur_in l "blur in" R 0 100}
+ addUserKnob {7 size_out l "size out" R 0 100}
+ addUserKnob {7 blur_out l "blur out" R 0 100}
  addUserKnob {26 ""}
- addUserKnob {26 pregrade l "@b; pre-grade" T ""}
- addUserKnob {41 blackpoint T PRE_GRADE.blackpoint}
- addUserKnob {41 whitepoint T PRE_GRADE.whitepoint}
- addUserKnob {7 center_offset l erode R -20 20}
+ addUserKnob {41 maskChannelMask l mask -STARTLINE T NodeWrapper.maskChannelMask}
+ addUserKnob {41 invert_mask l invert -STARTLINE T NodeWrapper.invert_mask}
+ addUserKnob {41 mix T NodeWrapper.mix}
 }
  Input {
   inputs 0
-  name InputFilter
-  xpos 280
-  ypos -9
+  name Inputmask
+  xpos 70
+  ypos 350
   number 1
  }
  Input {
   inputs 0
   name Input
-  xpos 120
-  ypos -801
- }
- Add {
-  channels rgba
-  name Add1
-  xpos 120
-  ypos -729
+  xpos -40
+  ypos 170
  }
  Dot {
   name Dot1
-  label " "
-  note_font "Helvetica Bold Bold Bold Bold"
-  note_font_size 24
-  note_font_color 0xa5a5a501
-  xpos 154
-  ypos -618
+  xpos -6
+  ypos 234
  }
-set N3bf98c80 [stack 0]
- Shuffle {
-  red white
-  green white
-  blue white
-  alpha white
-  name WHITE
-  tile_color 0xfefefeff
-  xpos 120
-  ypos -117
+set N503464f0 [stack 0]
+ Expression {
+  channel0 rgba
+  expr0 clamp(a/(wp-bp)-bp/(wp-bp))
+  name BlackWhite
+  xpos -150
+  ypos 231
+  addUserKnob {20 Param}
+  addUserKnob {7 bp}
+  addUserKnob {7 wp}
+  wp 1
  }
- Switch {
-  inputs 2
-  which {{"\[exists parent.input1]"}}
-  name MaskSwitch
-  xpos 120
-  ypos -9
- }
-push $N3bf98c80
- Dot {
-  name Dot2
-  label " "
-  note_font "Helvetica Bold Bold Bold Bold"
-  note_font_size 24
-  note_font_color 0xa5a5a501
-  xpos -166
-  ypos -618
- }
- Grade {
-  channels rgba
-  white_clamp true
-  name PRE_GRADE
-  xpos -200
-  ypos -549
- }
+set N69d666a0 [stack 0]
  Dilate {
   channels rgba
-  size {{parent.center_offset}}
-  name PRE_ERODE
-  xpos -200
-  ypos -520
- }
- Dot {
-  name Dot8
-  note_font_size 42
-  note_font_color 0x7f7f7f01
-  xpos -166
-  ypos -474
- }
-set N3c4f0260 [stack 0]
- FilterErode {
-  channels alpha
-  size {{parent.inside_edge}}
-  name FilterErode1
-  xpos -360
-  ypos -483
+  size {{-size_in}}
+  name Dilate_in
+  xpos -260
+  ypos 261
  }
  Blur {
-  channels alpha
-  size {{parent.inside_blur}}
-  name Blur1
-  xpos -360
-  ypos -447
+  channels rgba
+  size {{blur_in}}
+  name Blur_in
+  xpos -260
+  ypos 291
  }
  Invert {
-  channels alpha
-  clamp true
+  channels rgba
   name Invert1
-  xpos -360
-  ypos -399
+  xpos -260
+  ypos 321
  }
- Dot {
-  name Dot5
-  label " "
-  note_font "Helvetica Bold Bold Bold"
-  note_font_size 24
-  note_font_color 0xa5a5a501
-  xpos -326
-  ypos -330
- }
-push $N3c4f0260
- FilterErode {
-  channels alpha
-  size {{-parent.outside_edge}}
-  name FilterErode2
-  xpos -40
-  ypos -483
+push $N69d666a0
+ Dilate {
+  channels rgba
+  size {{size_out}}
+  name Dilate_out
+  selected true
+  xpos -150
+  ypos 261
  }
  Blur {
-  channels alpha
-  size {{parent.outside_blur}}
-  name Blur2
-  xpos -40
-  ypos -446
+  channels rgba
+  size {{blur_out}}
+  name Blur_out
+  xpos -150
+  ypos 291
+ }
+ Merge2 {
+  inputs 2
+  operation multiply
+  bbox B
+  name Merge1
+  xpos -150
+  ypos 321
  }
  Dot {
-  name Dot4
-  label " "
-  note_font "Helvetica Bold Bold Bold"
-  note_font_size 24
-  note_font_color 0xa5a5a501
-  xpos -6
-  ypos -330
+  name Dot2
+  xpos -116
+  ypos 354
  }
- Merge2 {
-  inputs 2
-  operation mask
-  name Merge1
-  xpos -200
-  ypos -297
- }
- Shuffle {
-  red alpha
-  green alpha
-  blue alpha
-  name Shuffle1
-  tile_color 0x222222ff
-  xpos -200
-  ypos -225
- }
- Merge2 {
-  inputs 2
-  operation mask
-  name Merge2
-  xpos -200
-  ypos -9
+push $N503464f0
+ NodeWrapper {
+  inputs 2+1
+  channels rgba
+  maskChannelMask none
+  name NodeWrapper
+  xpos -40
+  ypos 350
  }
  Output {
   name Output
-  xpos -200
-  ypos 99
+  xpos -40
+  ypos 410
  }
 end_group
