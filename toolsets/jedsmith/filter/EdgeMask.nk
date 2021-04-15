@@ -7,10 +7,11 @@ Group {
  addUserKnob {41 wp T BlackWhite.wp}
  addUserKnob {41 bp T BlackWhite.bp}
  addUserKnob {26 "" +STARTLINE}
- addUserKnob {7 size_in l "size in" R 0 100}
- addUserKnob {7 blur_in l "blur in" R 0 100}
+ addUserKnob {7 blur R 0 100}
  addUserKnob {7 size_out l "size out" R 0 100}
  addUserKnob {7 blur_out l "blur out" R 0 100}
+ addUserKnob {7 size_in l "size in" R 0 100}
+ addUserKnob {7 blur_in l "blur in" R 0 100}
  addUserKnob {26 ""}
  addUserKnob {41 maskChannelMask l mask -STARTLINE T NodeWrapper.maskChannelMask}
  addUserKnob {41 invert_mask l invert -STARTLINE T NodeWrapper.invert_mask}
@@ -25,14 +26,13 @@ Group {
  }
  Input {
   inputs 0
-  name Input
   xpos -40
-  ypos 170
+  ypos 140
  }
  Dot {
   name Dot1
   xpos -6
-  ypos 234
+  ypos 204
  }
 set N503464f0 [stack 0]
  Expression {
@@ -40,13 +40,20 @@ set N503464f0 [stack 0]
   expr0 clamp(a/(wp-bp)-bp/(wp-bp))
   name BlackWhite
   xpos -150
-  ypos 231
+  ypos 201
   addUserKnob {20 Param}
   addUserKnob {7 bp}
   addUserKnob {7 wp}
   wp 1
  }
-set N69d666a0 [stack 0]
+ Blur {
+  channels rgba
+  size {{blur}}
+  name Blur
+  xpos -150
+  ypos 231
+ }
+set N50e1e3f0 [stack 0]
  Dilate {
   channels rgba
   size {{-size_in}}
@@ -67,12 +74,11 @@ set N69d666a0 [stack 0]
   xpos -260
   ypos 321
  }
-push $N69d666a0
+push $N50e1e3f0
  Dilate {
   channels rgba
   size {{size_out}}
   name Dilate_out
-  selected true
   xpos -150
   ypos 261
  }
