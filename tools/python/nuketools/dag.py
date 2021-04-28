@@ -10,6 +10,17 @@ import random
 
 # Utilities for enhancing efficiency when interacting with Nuke's Directed Acyclic Graph
 
+# Viewer Shortcuts
+nuke.menu('Viewer').addCommand('Next Frame', 'nuke.activeViewer().frameControl(1)', 'shift+f', shortcutContext=0)
+nuke.menu('Viewer').addCommand('Previous Frame', 'nuke.activeViewer().frameControl(-1)', 'shift+d', shortcutContext=0)
+nuke.menu('Viewer').addCommand('Next Keyframe', 'nuke.activeViewer().frameControl(2)', 'alt+shift+f', shortcutContext=0)
+nuke.menu('Viewer').addCommand('Previous Keyframe', 'nuke.activeViewer().frameControl(-2)', 'alt+shift+d', shortcutContext=0)
+nuke.menu('Viewer').addCommand('Next Frame', 'nuke.activeViewer().frameControl(1)', 'shift+f', shortcutContext=0)
+nuke.menu('Viewer').addCommand('Play Forward', 'nuke.activeViewer().frameControl(5)', 'ctrl+alt+f', shortcutContext=0)
+nuke.menu('Viewer').addCommand('Play Backward', 'nuke.activeViewer().frameControl(-5)', 'ctrl+alt+d', shortcutContext=0)
+nuke.menu('Viewer').findItem('Show Overscan').setShortcut('alt+shift+o')
+
+
 
 # Register keyboard shortcuts and menu entries
 nuke.menu('Nuke').addCommand('Edit/Node/DAG/Move/Move Right', 'dag.move(1, 0, norm=False)', 'alt+meta+Right')
@@ -67,6 +78,8 @@ nuke.menu('Nodes').addCommand( 'Transform/Transform', 'dag.create_transform()', 
 
 nuke.menu('Nodes').addCommand('Other/Create Dots', 'dag.create_dots()', 'alt+d', shortcutContext=2)
 nuke.menu('Nodes').addCommand('Other/Create Dots Branched', 'dag.create_dots(branch=True)', 'shift+d', shortcutContext=2)
+
+nuke.menu('Nuke').addCommand('Edit/Node/DAG/Desat Backdrops', 'for bd in nuke.allNodes("BackdropNode"): bd["tile_color"].setValue(0x191919ff)')
 
 
 # DAG Position Commands
@@ -713,8 +726,8 @@ def create_pointer():
             target.setSelected(True)
 
         # create anchor node
-
-        anchor = nuke.createNode(AP_CLASS, 'name ___anchor_{0}{1}label "<font size=7>\[value title]"'.format(randstr, ' icon Output.png ' if AP_ICON else ' '))
+        anchor = nuke.createNode(AP_CLASS, 'name ___anchor_{0}{1}label "<font size=6>\[value title]" note_font_color 0x999999ff'.format(
+            randstr, ' icon Output.png ' if AP_ICON else ' '))
         anchor.addKnob(nuke.Tab_Knob('anchor_tab', 'anchor'))
         anchor.addKnob(nuke.String_Knob('title', 'title'))
         anchor['title'].setValue(pointer_title)
@@ -723,7 +736,8 @@ def create_pointer():
         anchor.setSelected(True)
 
         # create pointer node
-        pointer = nuke.createNode(AP_CLASS, 'name ___pointer_{0} hide_input true{1}'.format(randstr, ' icon Input.png ' if AP_ICON else ''))
+        pointer = nuke.createNode(AP_CLASS, 'name ___pointer_{0} hide_input true{1} note_font_color 0x999999ff'.format(
+            randstr, ' icon Input.png ' if AP_ICON else ''))
         pointer.addKnob(nuke.Tab_Knob('pointer_tab', 'pointer'))
         pointer.addKnob(nuke.String_Knob('target', 'target'))
         pointer['target'].setValue(anchor.fullName())
@@ -875,6 +889,9 @@ def swap_node(nodes=None):
             if vals:
                 if 'log' in vals[0]:
                     swap_knob(node['operation'])
+        if 'Roto' in node.Class():
+            if 'replace' in node.knobs():
+                swap_knob(node['replace'])
 
 
 def swap_view():
