@@ -1,0 +1,263 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+name BreakWipe
+tile_color 0x666666ff
+addUserKnob {20 BreakWipe}
+addUserKnob {4 type M {wipe dissolve}}
+addUserKnob {6 manual t "manually control wipe" +STARTLINE}
+addUserKnob {7 wipe}
+wipe 0.5
+addUserKnob {26 autowipe_label l " " T "<b>auto wipe"}
+addUserKnob {3 start_frame l start t "The frame to start the transition on"}
+start_frame 1037
+addUserKnob {22 set_current_frame l Current t "Sets the start frame to the current frame" -STARTLINE T "n = nuke.thisNode()\nn\['start_frame'].setValue(nuke.frame())"}
+addUserKnob {3 length}
+length 12
+addUserKnob {6 reverse t "reverse direction of wipe\n" -STARTLINE}
+addUserKnob {22 minus_second l -1s T "n = nuke.thisNode()\nsf = n\['start_frame']\nf = sf.getValue()\nsf.setValue(f-24)" +STARTLINE}
+addUserKnob {22 minus_length l -length t "add transition length to start frame" -STARTLINE T "n = nuke.thisNode()\nsf = n\['start_frame']\nf = sf.getValue()\nsf.setValue(f-n\['length'].getValue())"}
+addUserKnob {22 plus_length l +length t "add transition length to start frame" -STARTLINE T "n = nuke.thisNode()\nsf = n\['start_frame']\nf = sf.getValue()\nsf.setValue(f+n\['length'].getValue())"}
+addUserKnob {22 plus_second l +1s -STARTLINE T "n = nuke.thisNode()\nsf = n\['start_frame']\nf = sf.getValue()\nsf.setValue(f+24)"}
+addUserKnob {26 ""}
+addUserKnob {7 soft R 0 100}
+addUserKnob {6 line +STARTLINE}
+line true
+addUserKnob {7 line_width R 0 4}
+line_width 1
+addUserKnob {18 line_color l "line color"}
+line_color 1
+addUserKnob {6 line_color_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+}
+Input {
+inputs 0
+name InputA
+label "\[value number]"
+xpos -260
+ypos -196
+}
+set N60fe1d00 [stack 0]
+Input {
+inputs 0
+name InputB
+label "\[value number]"
+xpos 290
+ypos -195
+number 1
+}
+Reformat {
+type "to box"
+box_width {{parent.InputA.width}}
+box_height {{parent.InputA.height}}
+box_fixed true
+box_pixel_aspect {{parent.InputA.pixel_aspect}}
+resize none
+center false
+name Reformat1
+label "Resize to A"
+xpos 290
+ypos -136
+}
+set N60fe0f00 [stack 0]
+Switch {
+inputs 2
+which 1
+name SwitchReverse1
+xpos 290
+ypos -67
+disable {{!parent.reverse}}
+}
+Dot {
+name Dot4
+xpos 324
+ypos -6
+}
+set N60fd3900 [stack 0]
+Dot {
+name Dot5
+xpos -116
+ypos -6
+}
+set N60fd2b00 [stack 0]
+push $N60fd2b00
+push $N60fe0f00
+push $N60fe1d00
+Switch {
+inputs 2
+which 1
+name SwitchReverse
+selected true
+xpos -260
+ypos -66
+disable {{!parent.reverse}}
+}
+Dot {
+name Dot3
+xpos -226
+ypos 54
+}
+set N60fd1d00 [stack 0]
+Dissolve {
+inputs 2
+which {{"parent.manual ? parent.wipe : smoothstep(start, start+dt, t)"}}
+name DissolveSmooth
+label "\n"
+xpos -260
+ypos 101
+addUserKnob {20 User}
+addUserKnob {3 start l "Start Frame"}
+start {{parent.start_frame}}
+addUserKnob {7 dt l "Dissolve Time" R 0 20}
+dt {{parent.length}}
+}
+Switch {
+inputs 2
+which {{_WIPE_.trans_prog<1?0:1}}
+name SwitchActive2
+xpos -260
+ypos 170
+}
+push $N60fd1d00
+Dot {
+name Dot7
+xpos -116
+ypos 54
+}
+set N60fd0100 [stack 0]
+Dot {
+name Dot2
+xpos -6
+ypos 54
+}
+set N60fc3200 [stack 0]
+Dot {
+name Dot15
+xpos 104
+ypos 54
+}
+set N60fc2400 [stack 0]
+Rectangle {
+output alpha
+replace true
+area {{0+width*trans_prog+.000001+parent.line_width} 0 {width} {height}}
+name _WIPE_1
+xpos 70
+ypos 104
+addUserKnob {20 User}
+addUserKnob {7 trans_prog}
+trans_prog {{"parent.manual ? parent.wipe : parent.reverse ? 1 - clamp((t-parent.start_frame)/length) : clamp((t-parent.start_frame)/length)"}}
+}
+push $N60fc2400
+Rectangle {
+output alpha
+replace true
+area {{0+width*trans_prog+.000001} 0 {width} {height}}
+name _WIPE_
+xpos 180
+ypos 104
+addUserKnob {20 User}
+addUserKnob {7 trans_prog}
+trans_prog {{"parent.manual ? parent.wipe : parent.reverse ? 1 - clamp((t-parent.start_frame)/length) : clamp((t-parent.start_frame)/length)"}}
+}
+set N60faf900 [stack 0]
+Merge2 {
+inputs 2
+operation stencil
+bbox B
+name Merge2
+xpos 70
+ypos 170
+}
+push $N60fc3200
+Fill {
+color {{line_color} {line_color} {line_color} 1}
+name LineColor
+xpos -40
+ypos 171
+}
+Merge2 {
+inputs 2
+operation mask
+bbox B
+name Merge3
+xpos -40
+ypos 230
+}
+Dot {
+name Dot14
+xpos -6
+ypos 294
+}
+push $N60faf900
+Blur {
+channels alpha
+size {{soft} 0}
+name Blur1
+xpos 180
+ypos 160
+}
+Premult {
+name Premult1
+xpos 180
+ypos 230
+}
+Merge2 {
+inputs 2
+bbox B
+name Merge4
+xpos 180
+ypos 290
+disable {{!(line_width&&line&&!soft)}}
+}
+Dot {
+name Dot6
+xpos 214
+ypos 354
+}
+push $N60fd3900
+Merge2 {
+inputs 2
+bbox B
+name Merge1
+xpos 290
+ypos 350
+}
+Dot {
+name Dot1
+xpos 324
+ypos 444
+}
+push $N60fd3900
+push $N60fd0100
+Switch {
+inputs 3
+which {{"_WIPE_.trans_prog == 0 ? 0 : ( _WIPE_.trans_prog == 1 ? 1 : 2)"}}
+name SwitchActive
+xpos -150
+ypos 440
+}
+Switch {
+inputs 2
+which {{parent.type}}
+name SwitchType
+xpos -260
+ypos 440
+}
+Output {
+name Output
+xpos -260
+ypos 620
+}
+Dissolve {
+inputs 0
+which {{"parent.manual ? parent.wipe : clamp((t-start)/dt)"}}
+name DissolveLinear
+xpos -370
+ypos 104
+addUserKnob {20 User}
+addUserKnob {3 start l "Start Frame"}
+start {{parent.start_frame}}
+addUserKnob {7 dt l "Dissolve Time" R 0 20}
+dt {{parent.length}}
+}
+end_group
