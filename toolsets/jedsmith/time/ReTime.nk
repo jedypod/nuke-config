@@ -1,0 +1,100 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name ReTime
+ addUserKnob {20 ReTime}
+ addUserKnob {41 start T Kronos_CTRL.start}
+ addUserKnob {41 end -STARTLINE T Kronos_CTRL.end}
+ addUserKnob {41 use_speed l use T Kronos_CTRL.use_speed}
+ addUserKnob {41 speed -STARTLINE T Kronos_CTRL.speed}
+ addUserKnob {41 timing_frame T Kronos_CTRL.timing_frame}
+ addUserKnob {26 ""}
+ addUserKnob {26 kronos_settings_label l " " T "<b>kronos settings"}
+ addUserKnob {6 use_kronos l "use kronos" t "enable high quality kronos retime. otherwise, use timewarp" +STARTLINE}
+ use_kronos true
+ addUserKnob {41 vector_detail T Kronos_CTRL.vector_detail}
+ addUserKnob {41 strength T Kronos_CTRL.strength}
+ addUserKnob {41 shutter_samples T Kronos_CTRL.shutter_samples}
+ addUserKnob {41 shutter_time T Kronos_CTRL.shutter_time}
+ addUserKnob {41 Flicker_Compensation T Kronos_CTRL.Flicker_Compensation}
+ addUserKnob {26 _1 l "" +STARTLINE}
+ addUserKnob {26 timewarp_settings l " " T "<b>timewarp settings"}
+ addUserKnob {41 length l "input length" T TimeWarp.length}
+ addUserKnob {41 time T TimeWarp.time}
+ addUserKnob {41 filter T TimeWarp.filter}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos 290
+  ypos -619
+ }
+set Nc762b80 [stack 0]
+ Kronos {
+  input.first {{parent.Kronos_CTRL.start}}
+  input.last {{parent.Kronos_CTRL.end}}
+  retimedChannels all
+  timing2 Frame
+  timingFrame2 {{"parent.Kronos_CTRL.use_speed \\? ((t-parent.Kronos_CTRL.start)*parent.Kronos_CTRL.speed)+parent.Kronos_CTRL.start \\: parent.Kronos_CTRL.timing_frame"}}
+  showLegacyMode false
+  motionEstimation Regularized
+  vectorDetailReg {{parent.Kronos_CTRL.vector_detail}}
+  strengthReg {{parent.Kronos_CTRL.strength}}
+  Shutter 1
+  shutterSamples {{parent.Kronos_CTRL.shutter_samples}}
+  shutterTime {{parent.Kronos_CTRL.shutter_time}}
+  Advanced 1
+  flickerCompensation {{parent.Kronos_CTRL.Flicker_Compensation}}
+  legacyModeNuke9 false
+  name Kronos4
+  xpos 400
+  ypos -526
+ }
+push $Nc762b80
+ TimeWarp {
+  lookup {{"parent.Kronos_CTRL.use_speed \\? ((t-parent.Kronos_CTRL.start)*parent.Kronos_CTRL.speed)+parent.Kronos_CTRL.start \\: parent.Kronos_CTRL.timing_frame"}}
+  length {{max(1,lookup.derivative())*.5}}
+  time ""
+  name TimeWarp
+  note_font Helvetica
+  xpos 180
+  ypos -519
+ }
+ Switch {
+  inputs 2
+  which {{parent.use_kronos}}
+  name SwitchQuality
+  note_font Helvetica
+  xpos 290
+  ypos -451
+ }
+ NoOp {
+  name Kronos_CTRL
+  xpos 290
+  ypos -370
+  addUserKnob {20 User}
+  addUserKnob {3 start}
+  start 1001
+  addUserKnob {3 end -STARTLINE}
+  end 1500
+  addUserKnob {6 use_speed l use t "ignore timing frame and calculate using a speed value and the start frame instead." +STARTLINE}
+  addUserKnob {7 speed -STARTLINE R 0.1 6}
+  speed 1
+  addUserKnob {7 timing_frame R 0 900000}
+  timing_frame 1001
+  addUserKnob {7 vector_detail}
+  vector_detail 1
+  addUserKnob {7 strength}
+  strength 1
+  addUserKnob {26 ""}
+  addUserKnob {3 shutter_samples}
+  shutter_samples 1
+  addUserKnob {7 shutter_time}
+  addUserKnob {6 Flicker_Compensation +STARTLINE}
+ }
+ Output {
+  name Output1
+  xpos 290
+  ypos -290
+ }
+end_group
