@@ -1,0 +1,115 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name Despill
+ addUserKnob {20 Despill_tab l Despill}
+ addUserKnob {6 gs l "greenscreen" t "otherwise bluescreen" +STARTLINE}
+ addUserKnob {7 lc1 l "limit 1"}
+ lc1 0.5
+ addUserKnob {7 lc2 l "limit 2"}
+ lc2 0.8
+ addUserKnob {41 multiply T Multiply.value}
+ addUserKnob {26 ""}
+ addUserKnob {41 maskChannelMask l mask -STARTLINE T NodeWrapper.maskChannelMask}
+ addUserKnob {41 invert_mask l invert -STARTLINE T NodeWrapper.invert_mask}
+ addUserKnob {41 mix T NodeWrapper.mix}
+}
+ Input {
+  inputs 0
+  name Inputmask
+  xpos -810
+  ypos 567
+  number 1
+ }
+ Input {
+  inputs 0
+  name Input
+  xpos -1030
+  ypos 302
+ }
+ Dot {
+  name Dot4
+  xpos -996
+  ypos 378
+ }
+set N266bb40 [stack 0]
+ Expression {
+  temp_name0 c0
+  temp_expr0 gs?g:b
+  temp_name1 c1
+  temp_expr1 gs?r:g
+  temp_name2 c2
+  temp_expr2 gs?b:r
+  temp_name3 nc
+  temp_expr3 min(c0,(c1*lc1)+(c2*lc2))
+  expr0 r
+  expr1 gs?nc:g
+  expr2 gs?b:nc
+  name DespillExpression
+  xpos -1030
+  ypos 423
+ }
+set Na7ffb5c0 [stack 0]
+push $N266bb40
+ Dot {
+  name Dot1
+  xpos -1106
+  ypos 378
+ }
+ Merge2 {
+  inputs 2
+  operation from
+  bbox B
+  output rgb
+  name Merge
+  xpos -1140
+  ypos 423
+ }
+ Expression {
+  channel0 rgba
+  expr0 max(r,g,b)
+  name MaxRGB
+  xpos -1140
+  ypos 470
+ }
+ Multiply {
+  channels rgb
+  value 0.2
+  name Multiply
+  xpos -1140
+  ypos 519
+ }
+push $Na7ffb5c0
+ Merge2 {
+  inputs 2
+  operation plus
+  bbox B
+  output rgb
+  name Merge
+  xpos -1030
+  ypos 519
+ }
+ Dot {
+  name Dot2
+  xpos -996
+  ypos 570
+ }
+push $N266bb40
+ Dot {
+  name Dot3
+  xpos -886
+  ypos 378
+ }
+ NodeWrapper {
+  inputs 2+1
+  channels rgb
+  name NodeWrapper
+  xpos -920
+  ypos 567
+ }
+ Output {
+  name Output
+  xpos -920
+  ypos 638
+ }
+end_group
