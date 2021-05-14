@@ -7,7 +7,7 @@ addUserKnob {41 pw l power T Power.pw}
 addUserKnob {41 pv l pivot T Power.pv}
 addUserKnob {6 lext l "linear extension" t "enable linear extension above pivot" +STARTLINE}
 lext true
-addUserKnob {6 achromatic t "affect only luminance, not chrominance" +STARTLINE}
+addUserKnob {6 achromatic t "affect only luminance, preserving chrominance. disabled if pw or pv are not a single value." +STARTLINE}
 addUserKnob {26 ""}
 addUserKnob {41 maskChannelMask l mask -STARTLINE T NodeWrapper.maskChannelMask}
 addUserKnob {41 invert_mask l invert -STARTLINE T NodeWrapper.invert_mask}
@@ -56,13 +56,13 @@ temp_name0 mx
 temp_expr0 max(Ar,Ag,Ab)
 temp_name1 mc
 temp_expr1 max(Br,Bg,Bb)
-expr0 Ar*mc/mx
-expr1 Ag*mc/mx
-expr2 Ab*mc/mx
+expr0 mx==0?0:Ar*mc/mx
+expr1 mx==0?0:Ag*mc/mx
+expr2 mx==0?0:Ab*mc/mx
 name RatioPreserve
 xpos -40
 ypos 192
-disable {{!achromatic}}
+disable {{!(achromatic&&(pw.r==pw.g&&pw.r==pw.b)&&(pv.r==pv.g&&pv.g==pv.b))}}
 }
 push $N9c3fb900
 NodeWrapper {
