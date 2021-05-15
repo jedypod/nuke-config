@@ -4,6 +4,7 @@ from __future__ import print_function
 #    allows loading and saving toolsets in the nuke-config/toolsets directory
 # TODO: Right now there are a bunch of errors with windows paths. Need to do some fixes for this.
 
+from __future__ import absolute_import
 import os
 import sys
 import nuke
@@ -11,6 +12,7 @@ import nukescripts
 import posixpath
 import random
 import string
+from six.moves import range
 
 
 TOOLSETS_FOLDERNAME = 'toolsets'

@@ -1,6 +1,8 @@
+from __future__ import absolute_import
 import nuke
 import math
 import os
+from six.moves import range
 
 def simulate():
     origFrame = nuke.frame()

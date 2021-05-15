@@ -5,6 +5,7 @@ Modified to put all autosave files in <scriptdir>/autosaves folder,
 to number with 2 digits padding and to have 14 backup files max.
 '''
 
+from __future__ import absolute_import
 import os
 import glob
 import time

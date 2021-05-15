@@ -37,6 +37,7 @@ LICENSE
 
 """
 
+from __future__ import absolute_import
 import os
 import sys
 import types
@@ -61,7 +62,7 @@ Qt = sys.modules[__name__]
 Qt.QtCompat = types.ModuleType("QtCompat")
 
 try:
-    long
+    int
 except NameError:
     # Python 3 compatibility
     long = int
@@ -765,7 +766,7 @@ def _wrapinstance(ptr, base=None):
 
     """
 
-    assert isinstance(ptr, long), "Argument 'ptr' must be of type <long>"
+    assert isinstance(ptr, int), "Argument 'ptr' must be of type <long>"
     assert (base is None) or issubclass(base, Qt.QtCore.QObject), (
         "Argument 'base' must be of type <QObject>")
 
@@ -779,7 +780,7 @@ def _wrapinstance(ptr, base=None):
         raise AttributeError("'module' has no attribute 'wrapInstance'")
 
     if base is None:
-        q_object = func(long(ptr), Qt.QtCore.QObject)
+        q_object = func(int(ptr), Qt.QtCore.QObject)
         meta_object = q_object.metaObject()
         class_name = meta_object.className()
         super_class_name = meta_object.superClass().className()
@@ -793,7 +794,7 @@ def _wrapinstance(ptr, base=None):
         else:
             base = Qt.QtCore.QObject
 
-    return func(long(ptr), base)
+    return func(int(ptr), base)
 
 
 def _isvalid(object):

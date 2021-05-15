@@ -5,6 +5,7 @@ from __future__ import (print_function,
                         )
 import nuke, os, re
 import nukescripts
+from six.moves import range
 
 
 nuke.menu('Nuke').addCommand('Edit/Node/Bake Gizmos to Groups', 'bake_gizmos.bake_selected_gizmos()', 'ctrl+alt+shift+meta+g')

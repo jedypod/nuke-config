@@ -4,6 +4,7 @@ from __future__ import print_function
 
 import nuke
 import colorsys
+from six.moves import range
 
 if nuke.NUKE_VERSION_MAJOR < 11:
     from PySide import QtCore, QtGui, QtGui as QtWidgets

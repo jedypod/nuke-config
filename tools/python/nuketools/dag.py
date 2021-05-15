@@ -1,11 +1,13 @@
 from __future__ import division
 from __future__ import print_function
 
+from __future__ import absolute_import
 import nuke
 import nukescripts
 import operator, math, os
 import string
 import random
+from six.moves import range
 
 
 # Utilities for enhancing efficiency when interacting with Nuke's Directed Acyclic Graph

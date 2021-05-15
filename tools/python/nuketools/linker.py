@@ -1,8 +1,11 @@
 from __future__ import print_function
+from __future__ import absolute_import
 import nuke
 import nukescripts
 import nuke.rotopaint as rp
 import _curvelib as cl
+from six.moves import map
+from six.moves import range
 
 nuke.menu('Nuke').addCommand('Edit/Node/Create Linked Roto', 'linker.link("roto")', 'alt+o')
 nuke.menu('Nuke').addCommand('Edit/Node/Create Linked Node', 'linker.link()', 'alt+l')

@@ -1,5 +1,7 @@
 from __future__ import print_function
+from __future__ import absolute_import
 import nuke
+from six.moves import range
 
 nuke.menu('Nuke').addCommand('Edit/Node/Change Knob Values', 'edit_nodes.edit_knobs()', 'ctrl+e')
 nuke.menu('Nuke').addCommand('Edit/Node/Paste Knob Value', 'edit_nodes.paste_knobs()', 'ctrl+alt+v')

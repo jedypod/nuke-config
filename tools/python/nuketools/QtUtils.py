@@ -1,7 +1,9 @@
 from __future__ import division
 
+from __future__ import absolute_import
 import nuke
 import re
+from six.moves import range
 
 if nuke.NUKE_VERSION_MAJOR < 11:
     from PySide import QtCore, QtGui, QtGui as QtWidgets
@@ -134,7 +136,7 @@ class CodeTextEdit(QtWidgets.QPlainTextEdit):
             painter.drawText(-3, top, self.lineNumberArea.width(), self.fontMetrics().height(), QtCore.Qt.AlignRight, number)
 
             # Move to the next block
-            block = block.next()
+            block = next(block)
             top = bottom
             bottom = top + int(self.blockBoundingRect(block).height())
             blockNumber += 1

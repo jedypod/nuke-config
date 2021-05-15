@@ -1,5 +1,7 @@
 from __future__ import print_function
+from __future__ import absolute_import
 import nuke
+from six.moves import range
 
 nuke.toolbar('Nodes').addCommand('Color/ColorMatrix Combine', 'colormatrix.process(nuke.selectedNodes())')
 

@@ -1,6 +1,9 @@
 from __future__ import division
 
+from __future__ import absolute_import
 import nuke
+from six.moves import range
+from six.moves import zip
 
 
 def delete_pt():
