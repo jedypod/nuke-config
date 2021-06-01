@@ -1,0 +1,209 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name OpticalConvolve
+ addUserKnob {20 OpticalConvolve}
+ addUserKnob {4 f M {1.4 2.8 5.6 ""}}
+ f 5.6
+ addUserKnob {7 glow R 0.9 1.1}
+ glow 1.1
+ addUserKnob {7 saturation}
+ addUserKnob {3 size t "size in powers of 2. "}
+ size 8
+ addUserKnob {7 impulse t "strength of impulse - reduces glowiness" R 0 10}
+ impulse 2
+ addUserKnob {26 ""}
+ addUserKnob {2 impulse_path l "impulse path" t "parent folder containing impulse response images. make your own, or use the ones on nukepedia here: \nhttps://www.nukepedia.com/gizmos/filter/lenskernelfft_v01"}
+ impulse_path /path/to/folder
+}
+ Read {
+  inputs 0
+  file_type exr
+  file "\[value parent.impulse_path]/35mmf56_normalized_v01.exr"
+  format "3908 2602 0 0 3908 2602 1 "
+  origset true
+  version 70
+  raw true
+  auto_alpha true
+  name Read16
+  tile_color 0x989898ff
+  note_font Helvetica
+  xpos 290
+  ypos 639
+  postage_stamp false
+ }
+ Read {
+  inputs 0
+  file_type exr
+  file "\[value parent.impulse_path]/35mmf28_normalized_v01.exr"
+  format "3908 2602 0 0 3908 2602 1 "
+  origset true
+  version 70
+  raw true
+  auto_alpha true
+  in_colorspace scene_linear
+  out_colorspace scene_linear
+  name Read15
+  tile_color 0x989898ff
+  note_font Helvetica
+  xpos 180
+  ypos 639
+  postage_stamp false
+ }
+ Read {
+  inputs 0
+  file_type exr
+  file "\[value parent.impulse_path]/35mmf14_normalized_v01.exr"
+  format "3908 2602 0 0 3908 2602 1 "
+  origset true
+  version 70
+  raw true
+  auto_alpha true
+  in_colorspace scene_linear
+  out_colorspace scene_linear
+  name Read14
+  tile_color 0x989898ff
+  note_font Helvetica
+  xpos 70
+  ypos 639
+  postage_stamp false
+ }
+ Switch {
+  inputs 3
+  which {{parent.f}}
+  name Switch1
+  note_font Helvetica
+  xpos 70
+  ypos 741
+ }
+ Saturation {
+  saturation {{parent.saturation}}
+  mode Average
+  name Saturation1
+  note_font Helvetica
+  xpos 70
+  ypos 801
+ }
+ Reformat {
+  type "to box"
+  box_width 512
+  box_height {{box_width}}
+  scale 0.235
+  resize none
+  name Reformat1
+  note_font Helvetica
+  xpos 70
+  ypos 861
+ }
+set N24eee870 [stack 0]
+ Fill {
+  name Fill1
+  note_font Helvetica
+  xpos -40
+  ypos 861
+ }
+ BlackOutside {
+  name BlackOutside1
+  note_font Helvetica
+  xpos -40
+  ypos 861
+ }
+ Blur {
+  channels rgba
+  size 32
+  name Blur1
+  note_font Helvetica
+  xpos -40
+  ypos 891
+ }
+push $N24eee870
+ Merge2 {
+  inputs 2
+  operation mask
+  bbox intersection
+  name Merge1
+  note_font Helvetica
+  xpos 70
+  ypos 891
+ }
+ Gamma {
+  channels rgb
+  value {{parent.glow}}
+  name Gamma1
+  note_font Helvetica
+  xpos 70
+  ypos 951
+ }
+ Dot {
+  name Dot397
+  note_font "Helvetica Bold"
+  note_font_size 24
+  note_font_color 0xff
+  xpos 104
+  ypos 1014
+ }
+set N947a9f80 [stack 0]
+ Expression {
+  channel0 rgba
+  expr0 (x==p.x&&y==p.y)?amp:0
+  name Impulse
+  note_font Helvetica
+  xpos -40
+  ypos 1011
+  addUserKnob {20 User}
+  addUserKnob {12 p l pos}
+  p {{width/2} {height/2}}
+  addUserKnob {7 amp l amplitude R 0 10}
+  amp {{parent.impulse}}
+ }
+push $N947a9f80
+ Merge2 {
+  inputs 2
+  operation plus
+  bbox B
+  output rgb
+  name Merge38
+  note_font Helvetica
+  xpos 70
+  ypos 1041
+ }
+ Reformat {
+  type scale
+  scale {1 1.2}
+  resize distort
+  name _aspect_ratio_2
+  xpos 70
+  ypos 1100
+  disable true
+ }
+ Dot {
+  name Dot398
+  note_font "Helvetica Bold"
+  note_font_size 24
+  note_font_color 0xff
+  xpos 104
+  ypos 1134
+ }
+ Input {
+  inputs 0
+  name Input
+  xpos 510
+  ypos 620
+ }
+ Convolve2 {
+  inputs 2
+  channels rgba
+  filter_channel rgba.red
+  use_input_channels true
+  filter_bounds format
+  name Convolve1
+  note_font Helvetica
+  xpos 510
+  ypos 1131
+ }
+ Output {
+  name Output1
+  xpos 510
+  ypos 1280
+ }
+end_group
