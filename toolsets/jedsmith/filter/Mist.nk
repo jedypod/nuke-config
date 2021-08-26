@@ -1,0 +1,92 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+name Mist
+addUserKnob {20 Mist}
+addUserKnob {7 m l soft}
+m 0.1
+addUserKnob {7 pw l contrast R -1 1}
+addUserKnob {7 s l size t "convolution kernel size : range 128 to 2048"}
+s 0.1
+addUserKnob {26 ""}
+addUserKnob {41 useGPUIfAvailable l "Use GPU if available" T Convolve.useGPUIfAvailable}
+addUserKnob {41 maskChannelMask l mask -STARTLINE T Convolve.maskChannelMask}
+addUserKnob {41 invert_mask l invert -STARTLINE T Convolve.invert_mask}
+addUserKnob {41 mix T Convolve.mix}
+}
+Input {
+inputs 0
+name Inputmask
+xpos 180
+ypos -705
+number 1
+}
+Input {
+inputs 0
+name Input
+xpos 70
+ypos -802
+}
+Dot {
+name Dot1
+xpos 104
+ypos -750
+}
+set N31f74100 [stack 0]
+Reformat {
+type "to box"
+box_width {{rint(s*960+64)*2}}
+box_height {{box_width}}
+box_fixed true
+resize distort
+black_outside true
+name Reformat3
+xpos -40
+ypos -753
+}
+Expression {
+temp_name0 d0
+temp_expr0 hypot(x/width-0.5,y/height-0.5)+mn
+temp_name1 d
+temp_expr1 pow(d0,p)
+channel0 {rgba.red rgba.green rgba.blue none}
+expr0 max(0,1/(d*d)-4*(1-s))
+channel3 none
+name inverse_square
+selected true
+xpos -40
+ypos -705
+addUserKnob {20 User}
+addUserKnob {7 mn}
+mn {{max(1e-8,pow(m,1.8)*10/width)}}
+addUserKnob {7 p R 0 4}
+p {{pow(2,pw)}}
+}
+push $N31f74100
+Convolve2 {
+inputs 2+1
+channels rgba
+filter_channel rgba.red
+filter_bounds format
+name Convolve
+xpos 70
+ypos -705
+}
+Reformat {
+type "to box"
+box_width {{"\[exists input] ? input.width : root.width"}}
+box_height {{"\[exists input] ? input.height : root.height"}}
+box_fixed true
+box_pixel_aspect {{"\[exists input] ? input.pixel_aspect : root.pixel_aspect"}}
+resize none
+black_outside true
+name BboxRemove
+xpos 70
+ypos -634
+}
+Output {
+name Output
+xpos 70
+ypos -601
+}
+end_group
