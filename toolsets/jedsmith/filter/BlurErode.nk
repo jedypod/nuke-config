@@ -1,0 +1,69 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name BlurErode
+ addUserKnob {20 BlurErode}
+ addUserKnob {41 s l size T Remap.s}
+ addUserKnob {41 fa T Remap.fa}
+ addUserKnob {41 sme l smoothstep T Remap.sme}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 maskChannelMask l mask -STARTLINE T NodeWrapper.maskChannelMask}
+ addUserKnob {41 invert_mask l invert -STARTLINE T NodeWrapper.invert_mask}
+ addUserKnob {41 mix T NodeWrapper.mix}
+}
+ Input {
+  inputs 0
+  name Inputmask
+  xpos -480
+  ypos 495
+  number 1
+ }
+ Input {
+  inputs 0
+  name Input
+  xpos -700
+  ypos 398
+ }
+set Na6eb2400 [stack 0]
+ Blur {
+  channels alpha
+  size {{fabs(parent.Remap.s)}}
+  name Blur
+  xpos -700
+  ypos 441
+ }
+ Expression {
+  temp_name0 f
+  temp_expr0 clamp((bp-a)/(bp-wp))
+  temp_name1 fs
+  temp_expr1 f*f*(3-2*f)
+  channel0 rgb
+  expr3 sme?fs:f
+  name Remap
+  xpos -700
+  ypos 494
+  addUserKnob {20 Param}
+  addUserKnob {7 s l size R -100 100}
+  addUserKnob {7 fa R 1 50}
+  fa 10
+  addUserKnob {7 bp}
+  bp {{s<0?0:s/(s+fa)}}
+  addUserKnob {7 wp}
+  wp {{1-(s>0?0:-s/(-s+fa))}}
+  addUserKnob {6 sme l smoothstep +STARTLINE}
+  sme true
+ }
+push $Na6eb2400
+ NodeWrapper {
+  inputs 2+1
+  channels rgba
+  name NodeWrapper
+  xpos -590
+  ypos 495
+ }
+ Output {
+  name Output
+  xpos -700
+  ypos 566
+ }
+end_group
