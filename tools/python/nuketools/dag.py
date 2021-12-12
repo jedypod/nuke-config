@@ -77,7 +77,7 @@ nuke.menu('Viewer').addCommand("Swap View", "dag.swap_view()", "shift+q")
 nuke.menu('Nodes').addCommand( 'Transform/Transform', 'dag.create_transform()', 't')
 
 nuke.menu('Nodes').addCommand('Other/Create Dots', 'dag.create_dots()', 'alt+d', shortcutContext=2)
-nuke.menu('Nodes').addCommand('Other/Create Dots Branched', 'dag.create_dots(branch=True)', 'shift+d', shortcutContext=2)
+nuke.menu('Nodes').addCommand('Other/Create Dots Branched', 'dag.create_dots(branch=True)', 'alt+shift+d', shortcutContext=2)
 
 nuke.menu('Nuke').addCommand('Edit/Node/DAG/Desat Backdrops', 'for bd in nuke.allNodes("BackdropNode"): bd["tile_color"].setValue(0x191919ff)')
 
