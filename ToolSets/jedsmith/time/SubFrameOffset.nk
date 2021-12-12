@@ -1,0 +1,30 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name SubframeOffset
+ addUserKnob {20 Params}
+ addUserKnob {41 o l offset T TimeWarp.o}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos -1250
+  ypos -730
+ }
+ TimeWarp {
+  lookup {{t+o}}
+  length 0
+  time ""
+  filter none
+  name TimeWarp
+  xpos -1250
+  ypos -681
+  addUserKnob {20 Params}
+  addUserKnob {7 o l offset}
+ }
+ Output {
+  name Output
+  xpos -1250
+  ypos -634
+ }
+end_group
