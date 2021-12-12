@@ -1,0 +1,110 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name PDistance
+ addUserKnob {20 PDistance_tab l PDistance}
+ addUserKnob {41 in T shuffle.in}
+ addUserKnob {6 div l unpremult t "divide input p by rgba.alpha" -STARTLINE}
+ addUserKnob {41 cn l center T add.cn}
+ addUserKnob {41 cube T dist.cube}
+ addUserKnob {41 sm l smoothstep -STARTLINE T dist.sm}
+ addUserKnob {6 rgbk l "keep rgb" t "keep rgb, output generated matte in alpha channel." -STARTLINE}
+ rgbk true
+ addUserKnob {41 p l contrast T dist.p}
+ addUserKnob {41 fa l falloff T dist.fa}
+ addUserKnob {26 ""}
+ addUserKnob {41 rotate T axis.rotate}
+ addUserKnob {41 scaling l scale T axis.scaling}
+ addUserKnob {41 uniform_scale l scale T axis.uniform_scale}
+}
+ Axis2 {
+  inputs 0
+  rot_order XYZ
+  skew {1 1 1}
+  name axis
+  xpos -250
+  ypos -102
+ }
+ Input {
+  inputs 0
+  name Input
+  xpos -150
+  ypos -250
+ }
+ AddChannels {
+  channels rgba
+  name AddChannels1
+  xpos -150
+  ypos -225
+ }
+set Na7bf8800 [stack 0]
+push $Na7bf8800
+ Shuffle {
+  in none
+  in2 rgba
+  alpha alpha2
+  name shuffle
+  xpos -150
+  ypos -178
+ }
+ Unpremult {
+  name Unpremult
+  xpos -150
+  ypos -153
+  disable {{!parent.div}}
+ }
+ Add {
+  channels rgb
+  value {{-c-axis.world_matrix.3} {-c-axis.world_matrix.7} {-c-axis.world_matrix.11} {curve}}
+  name add
+  xpos -150
+  ypos -106
+  addUserKnob {20 Params}
+  addUserKnob {18 cn l center R 0 4}
+  cn 0
+  addUserKnob {6 c_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ }
+ ColorMatrix {
+  matrix {
+      {{axis.world_matrix.0} {axis.world_matrix.1} {axis.world_matrix.2}}
+      {{axis.world_matrix.4} {axis.world_matrix.5} {axis.world_matrix.6}}
+      {{axis.world_matrix.8} {axis.world_matrix.9} {axis.world_matrix.10}}
+    }
+  invert true
+  name matrix
+  xpos -150
+  ypos -82
+ }
+ Expression {
+  temp_name0 d
+  temp_expr0 cube?max(fabs(r),fabs(g),fabs(b)):sqrt(r*r+g*g+b*b)
+  temp_name1 id
+  temp_expr1 clamp(1-(fa-pow(1-d,2**p))/fa)
+  temp_name3 ids
+  temp_expr3 smoothstep(0,1,id)
+  channel0 rgba
+  expr0 sm?ids:id
+  name dist
+  xpos -150
+  ypos -58
+  addUserKnob {20 Params}
+  addUserKnob {6 cube +STARTLINE}
+  addUserKnob {7 p R -2 2}
+  addUserKnob {7 fa}
+  fa 1
+  addUserKnob {6 sm l smoothstep +STARTLINE}
+ }
+ Copy {
+  inputs 2
+  channels rgb
+  name copy
+  xpos -150
+  ypos -22
+  disable {{!parent.rgbk}}
+ }
+ Output {
+  name Output
+  xpos -150
+  ypos 62
+ }
+end_group
