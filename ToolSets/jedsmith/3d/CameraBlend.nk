@@ -1,48 +1,71 @@
 set cut_paste_input [stack 0]
 push $cut_paste_input
 Dot {
-name cam_A
-tile_color 0x9c0000ff
-label " Cam A"
-note_font "Helvetica Bold"
-note_font_size 24
-note_font_color 0x999999ff
-selected true
-xpos -10786
-ypos -2190
+ name cam_B
+ tile_color 0x9c0000ff
+ label " Cam B"
+ note_font "Helvetica Bold"
+ note_font_size 24
+ note_font_color 0x999999ff
+ selected true
+ xpos 654
+ ypos -246
 }
 push 0
 Dot {
-name cam_B
-tile_color 0x9c0000ff
-label " Cam B"
-note_font "Helvetica Bold"
-note_font_size 24
-note_font_color 0x999999ff
-selected true
-xpos -10676
-ypos -2190
+ name cam_A
+ tile_color 0x9c0000ff
+ label " Cam A"
+ note_font "Helvetica Bold"
+ note_font_size 24
+ note_font_color 0x999999ff
+ selected true
+ xpos 544
+ ypos -246
 }
 Camera2 {
-inputs 0
-translate {{cam_A.input.translate*(1-blend)+cam_B.input.translate*blend} {cam_A.input.translate*(1-blend)+cam_B.input.translate*blend} {cam_A.input.translate*(1-blend)+cam_B.input.translate*blend}}
-rotate {{cam_A.input.rotate*(1-blend)+cam_B.input.rotate*blend} {cam_A.input.rotate*(1-blend)+cam_B.input.rotate*blend} {cam_A.input.rotate*(1-blend)+cam_B.input.rotate*blend}}
-scaling {{cam_A.input.scaling*(1-blend)+cam_B.input.scaling*blend} {cam_A.input.scaling*(1-blend)+cam_B.input.scaling*blend} {cam_A.input.scaling*(1-blend)+cam_B.input.scaling*blend}}
-uniform_scale {{cam_A.input.uniform_scale*(1-blend)+cam_B.input.uniform_scale*blend}}
-skew {{cam_A.input.skew*(1-blend)+cam_B.input.skew*blend} {cam_A.input.skew*(1-blend)+cam_B.input.skew*blend} {cam_A.input.skew*(1-blend)+cam_B.input.skew*blend}}
-pivot {{cam_A.input.pivot*(1-blend)+cam_B.input.pivot*blend} {cam_A.input.pivot*(1-blend)+cam_B.input.pivot*blend} {cam_A.input.pivot*(1-blend)+cam_B.input.pivot*blend}}
-focal {{cam_A.input.focal*(1-blend)+cam_B.input.focal*blend}}
-haperture {{cam_A.input.haperture*(1-blend)+cam_B.input.haperture*blend}}
-vaperture {{cam_A.input.vaperture*(1-blend)+cam_B.input.vaperture*blend}}
-win_translate {{cam_A.input.win_translate*(1-blend)+cam_B.input.win_translate*blend} {cam_A.input.win_translate*(1-blend)+cam_B.input.win_translate*blend}}
-win_scale {{cam_A.input.win_scale*(1-blend)+cam_B.input.win_scale*blend} {cam_A.input.win_scale*(1-blend)+cam_B.input.win_scale*blend}}
-winroll {{cam_A.input.winroll*(1-blend)+cam_B.input.winroll*blend}}
-name CameraBlend
-note_font Helvetica
-selected true
-xpos -10700
-ypos -2070
-addUserKnob {20 Blend_tab l Blend}
-addUserKnob {7 blend t "Blend between camera A and camera B"}
-blend 1
+ inputs 0
+ translate {{cam_A.input.translate(afr)*(1-blend)+cam_B.input.translate(bfr)*blend} {cam_A.input.translate(afr)*(1-blend)+cam_B.input.translate(bfr)*blend} {cam_A.input.translate(afr)*(1-blend)+cam_B.input.translate(bfr)*blend}}
+ rotate {{cam_A.input.rotate(afr)*(1-blend)+cam_B.input.rotate(bfr)*blend} {cam_A.input.rotate(afr)*(1-blend)+cam_B.input.rotate(bfr)*blend} {cam_A.input.rotate(afr)*(1-blend)+cam_B.input.rotate(bfr)*blend}}
+ scaling {{cam_A.input.scaling(afr)*(1-blend)+cam_B.input.scaling(bfr)*blend} {cam_A.input.scaling(afr)*(1-blend)+cam_B.input.scaling(bfr)*blend} {cam_A.input.scaling(afr)*(1-blend)+cam_B.input.scaling(bfr)*blend}}
+ uniform_scale {{cam_A.input.uniform_scale(afr)*(1-blend)+cam_B.input.uniform_scale(bfr)*blend}}
+ skew {{cam_A.input.skew(afr)*(1-blend)+cam_B.input.skew(bfr)*blend} {cam_A.input.skew(afr)*(1-blend)+cam_B.input.skew(bfr)*blend} {cam_A.input.skew(afr)*(1-blend)+cam_B.input.skew(bfr)*blend}}
+ pivot {{cam_A.input.pivot(afr)*(1-blend)+cam_B.input.pivot(bfr)*blend} {cam_A.input.pivot(afr)*(1-blend)+cam_B.input.pivot(bfr)*blend} {cam_A.input.pivot(afr)*(1-blend)+cam_B.input.pivot(bfr)*blend}}
+ focal {{cam_A.input.focal(afr)*(1-blend)+cam_B.input.focal(bfr)*blend}}
+ haperture {{cam_A.input.haperture(afr)*(1-blend)+cam_B.input.haperture(bfr)*blend}}
+ vaperture {{cam_A.input.vaperture(afr)*(1-blend)+cam_B.input.vaperture(bfr)*blend}}
+ win_translate {{cam_A.input.win_translate(afr)*(1-blend)+cam_B.input.win_translate(bfr)*blend} {cam_A.input.win_translate(afr)*(1-blend)+cam_B.input.win_translate(bfr)*blend}}
+ win_scale {{cam_A.input.win_scale(afr)*(1-blend)+cam_B.input.win_scale(bfr)*blend} {cam_A.input.win_scale(afr)*(1-blend)+cam_B.input.win_scale(bfr)*blend}}
+ winroll {{cam_A.input.winroll(afr)*(1-blend)+cam_B.input.winroll(bfr)*blend}}
+ name CameraBlend1
+ note_font Helvetica
+ selected true
+ xpos 630
+ ypos -120
+ addUserKnob {20 Blend_tab l Blend}
+ addUserKnob {7 blend t "Blend between camera A and camera B"}
+ blend 1
+ addUserKnob {7 afr l "A frame" R 1001 1500}
+ afr 1001
+ addUserKnob {7 bfr l "B frame" R 1001 1500}
+ bfr 1001
+}
+Camera2 {
+ inputs 0
+ translate {{cam_B.input.translate+(cam_A.input.translate(fr)-cam_B.input.translate(fr))} {cam_B.input.translate+(cam_A.input.translate(fr)-cam_B.input.translate(fr))} {cam_B.input.translate+(cam_A.input.translate(fr)-cam_B.input.translate(fr))}}
+ rotate {{cam_B.input.rotate+(cam_A.input.rotate(fr)-cam_B.input.rotate(fr))} {cam_B.input.rotate+(cam_A.input.rotate(fr)-cam_B.input.rotate(fr))} {cam_B.input.rotate+(cam_A.input.rotate(fr)-cam_B.input.rotate(fr))}}
+ focal {{cam_B.input.focal+(cam_A.input.focal(fr)-cam_B.input.focal(fr))}}
+ haperture {{cam_B.input.haperture+(cam_A.input.haperture(fr)-cam_B.input.haperture(fr))}}
+ vaperture {{cam_B.input.vaperture+(cam_A.input.vaperture(fr)-cam_B.input.vaperture(fr))}}
+ win_translate {{cam_B.input.win_translate+(cam_A.input.win_translate(fr)-cam_B.input.win_translate(fr))} {cam_B.input.win_translate+(cam_A.input.win_translate(fr)-cam_B.input.win_translate(fr))}}
+ win_scale {{cam_B.input.win_scale+(cam_A.input.win_scale(fr)-cam_B.input.win_scale(fr))} {cam_B.input.win_scale+(cam_A.input.win_scale(fr)-cam_B.input.win_scale(fr))}}
+ winroll {{cam_B.input.winroll+(cam_A.input.winroll(fr)-cam_B.input.winroll(fr))}}
+ name CameraAlignRefFrame
+ note_font Helvetica
+ selected true
+ xpos 520
+ ypos -120
+ addUserKnob {20 Align_tab l Align}
+ addUserKnob {7 fr l "ref frame" R 1001 1500}
+ fr 1370
 }
