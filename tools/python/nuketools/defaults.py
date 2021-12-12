@@ -177,7 +177,8 @@ label_defaults = {
     'OneView': r'[value view]',
     'Remove': r'[value operation]:\n[value channels]\n[value channels2]\n[value channels3]\n[value channels4]',
     'Retime': r'[value input.first] -> [value output.first]\noffset: [return [expr [value output.first]-[value input.first]]]\nspeed: [value speed]',
-    'Shuffle': '',
+    'Shuffle': r'[value in]',
+    'TimeDissolve': r'[value in]-[value out]',
     'TimeOffset': '[value time_offset]',
     'Vectorfield': '[file tail [value vfield_file]]',
 }
