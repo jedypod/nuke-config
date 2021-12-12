@@ -1,0 +1,62 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+name Patch
+addUserKnob {20 Patch_tab l Patch}
+addUserKnob {41 channels T Keymix1.channels}
+addUserKnob {41 bbox T Keymix1.bbox}
+addUserKnob {41 multiply T Multiply.value}
+addUserKnob {26 ""}
+addUserKnob {41 translate T Transform.translate}
+addUserKnob {41 rotate T Transform.rotate}
+addUserKnob {41 scale T Transform.scale}
+addUserKnob {41 skewX l "skew X" T Transform.skewX}
+addUserKnob {41 skewY l "skew Y" T Transform.skewY}
+addUserKnob {41 center T Transform.center}
+addUserKnob {41 invert_matrix l invert T Transform.invert_matrix}
+addUserKnob {41 filter T Transform.filter}
+addUserKnob {26 ""}
+addUserKnob {41 maskChannel l "mask channel" T Keymix1.maskChannel}
+addUserKnob {41 invertMask l invert -STARTLINE T Keymix1.invertMask}
+addUserKnob {41 mix T Keymix1.mix}
+}
+Input {
+inputs 0
+name Inputmask
+xpos 70
+ypos 231
+number 1
+}
+Input {
+inputs 0
+name Input
+xpos -40
+ypos 134
+}
+set N33425600 [stack 0]
+Transform {
+shutteroffset centred
+name Transform
+xpos -150
+ypos 182
+}
+Multiply {
+channels {{{parent.Keymix1.channels}}}
+name Multiply
+xpos -150
+ypos 225
+}
+push $N33425600
+Keymix {
+inputs 3
+bbox B
+name Keymix1
+xpos -40
+ypos 225
+}
+Output {
+name Output
+xpos -40
+ypos 302
+}
+end_group
