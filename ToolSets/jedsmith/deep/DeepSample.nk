@@ -1,0 +1,11 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+NoOp {
+name DeepSampler
+addUserKnob {20 Params}
+addUserKnob {12 p l position}
+addUserKnob {7 v l value R 0 1000}
+v {{"\[python nuke.thisNode().deepSample('deep.front',\\ int(nuke.thisNode()\\\['p'\\].getValue()\\\[0\\]),\\ int(nuke.thisNode()\\\['p'\\].getValue()\\\[1\\]),\\ int(nuke.thisNode()\\\['n'\\].getValue()))]"}}
+addUserKnob {3 n l "sample index" t "sample index of deep data at position. \n-1 for front most"}
+n -1
+}
