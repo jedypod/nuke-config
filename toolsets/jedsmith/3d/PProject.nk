@@ -1,0 +1,129 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name PProject
+ addUserKnob {20 Params}
+ addUserKnob {41 ppos t "point position pass" T ShuffleP.in}
+ addUserKnob {6 div l unpremult t "unpremult position pass by rgba.alpha" -STARTLINE}
+ addUserKnob {3 rff l frame t "reference frame for position projection"}
+ rff 1001
+ addUserKnob {22 set_current l Current -STARTLINE T nuke.thisNode().knob('rff').setValue(nuke.frame())}
+ addUserKnob {41 filter T STMap1.filter}
+ addUserKnob {6 fr l "frustrum limit" t "remove pixels outside projection camera frustrum" +STARTLINE}
+ fr true
+}
+ Input {
+  inputs 0
+  name Inputcam
+  label "\[value number]"
+  xpos -251
+  ypos -788
+  number 1
+ }
+ Input {
+  inputs 0
+  name Inputp
+  label "\[value number]"
+  xpos -40
+  ypos -783
+  number 2
+ }
+ Shuffle {
+  in none
+  in2 rgba
+  alpha alpha2
+  name ShuffleP
+  xpos -40
+  ypos -730
+ }
+ Unpremult {
+  name Unpremult
+  xpos -40
+  ypos -704
+  disable {{!parent.div}}
+ }
+ Add {
+  channels rgb
+  value {{"-\[topnode parent.input1].world_matrix.3(rff)"} {"-\[topnode parent.input1].world_matrix.7(rff)"} {"-\[topnode parent.input1].world_matrix.11(rff)"} 0}
+  name Add1
+  xpos -40
+  ypos -658
+ }
+ ColorMatrix {
+  matrix {
+      {{"\[topnode parent.input1].world_matrix.0(rff)"} {"\[topnode parent.input1].world_matrix.1(rff)"} {"\[topnode parent.input1].world_matrix.2(rff)"}}
+      {{"\[topnode parent.input1].world_matrix.4(rff)"} {"\[topnode parent.input1].world_matrix.5(rff)"} {"\[topnode parent.input1].world_matrix.6(rff)"}}
+      {{"\[topnode parent.input1].world_matrix.8(rff)"} {"\[topnode parent.input1].world_matrix.9(rff)"} {"\[topnode parent.input1].world_matrix.10(rff)"}}
+    }
+  invert true
+  name ColorMatrix2
+  xpos -40
+  ypos -634
+ }
+ Expression {
+  temp_name0 _z
+  temp_expr0 max(0,-b)
+  temp_name1 _u
+  temp_expr1 0.5+r/htan/_z/2
+  temp_name2 _v
+  temp_expr2 0.5+g/vtan/_z/2
+  expr0 _u
+  expr1 _v
+  expr2 0
+  expr3 (_u<0||_u>1||_v<0||_v>1)?0:a
+  name Expression
+  xpos -40
+  ypos -610
+  addUserKnob {20 Params}
+  addUserKnob {7 focal R 0 100}
+  focal {{"\[topnode parent.input1].focal(rff)"}}
+  addUserKnob {7 haperture R 0 50}
+  haperture {{"\[topnode parent.input1].haperture(rff)"}}
+  addUserKnob {7 vaperture R 0 50}
+  vaperture {{haperture/(width/height)}}
+  addUserKnob {7 htan}
+  htan {{haperture/(2*focal)}}
+  addUserKnob {7 vtan}
+  vtan {{vaperture/(2*focal)}}
+ }
+set N9da4c100 [stack 0]
+push $N9da4c100
+ Input {
+  inputs 0
+  name Input
+  label "\[value number]"
+  xpos 70
+  ypos -784
+ }
+ STMap {
+  inputs 2
+  uv rgb
+  name STMap1
+  xpos 70
+  ypos -615
+ }
+ Copy {
+  inputs 2
+  from0 rgba.alpha
+  to0 mask.a
+  name Copy1
+  selected true
+  xpos 70
+  ypos -567
+  disable {{!fr}}
+ }
+ Premult {
+  channels all
+  alpha mask.a
+  name Premult1
+  selected true
+  xpos 70
+  ypos -519
+  disable {{!fr}}
+ }
+ Output {
+  name Output
+  xpos 70
+  ypos -442
+ }
+end_group
