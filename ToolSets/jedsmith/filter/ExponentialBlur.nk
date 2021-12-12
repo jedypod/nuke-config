@@ -1,0 +1,40 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name ExponentialBlur
+ addUserKnob {20 Params}
+ addUserKnob {7 amount}
+ amount 0.76
+}
+ Input {
+  inputs 0
+  name Input
+  xpos -40
+  ypos 14
+ }
+ NoTimeBlur {
+  name ntb
+  xpos -40
+  ypos 63
+ }
+ Blur {
+  channels rgba
+  size {{2**(tb.divisions*(t%1))}}
+  name Blur
+  xpos -40
+  ypos 87
+ }
+ TimeBlur {
+  shutter {{amount}}
+  shutteroffset start
+  shuttercustomoffset 0
+  name tb
+  xpos -40
+  ypos 111
+ }
+ Output {
+  name Output
+  xpos -40
+  ypos 158
+ }
+end_group
