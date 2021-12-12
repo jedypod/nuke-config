@@ -1,850 +1,98 @@
 set cut_paste_input [stack 0]
 push $cut_paste_input
 Group {
-name iBlur
-help "iBlur v1.0\n\nThis gizmo should work like the iBlur from Shake. I'm still missing a ramped blur in nuke, especially for technical stuff, where a zBlur is just not the right thing (and also too slow). \niBlur v1.0 | moritz eiche | 2011"
-tile_color 0xcc804eff
-addUserKnob {20 Controls}
-addUserKnob {41 channels t "Select the channels you want to iBlur." T Blur11.channels}
-addUserKnob {26 divider2 l " " T " "}
-addUserKnob {7 blur l "blur size" t "Higher setting means more blur. : )\n\nBlur size values are equal with Nuke's default 'Blur' or 'Defocus'." R 0 100}
-addUserKnob {4 quality t "This gizmo blurs the image in blended in slices. \nMore slices mean more accurate blur-ramp, and also more rendertime.  \n\nfast = 7 slices\naccurate = 13 slices" M {fast accurate "" ""}}
-quality accurate
-addUserKnob {7 aspect_ratio R 0.1 2}
-aspect_ratio 1
-addUserKnob {26 spacer l "  " T "  "}
-}
-BackdropNode {
-inputs 0
-name BackdropNode1
-tile_color 0x2e2e2eff
-note_font_size 42
-xpos 32
-ypos -426
-bdwidth 2731
-bdheight 633
-}
-BackdropNode {
-inputs 0
-name BackdropNode2
-tile_color 0x262626ff
-note_font_size 42
-xpos 114
-ypos -367
-bdwidth 2572
-bdheight 269
-}
-BackdropNode {
-inputs 0
-name BackdropNode3
-tile_color 0x262626ff
-note_font_size 42
-xpos 115
-ypos -83
-bdwidth 2573
-bdheight 236
-}
-Input {
-inputs 0
-name mask
-label "\[value number]"
-xpos -113
-ypos -764
-number 1
-}
-Dot {
-name Dot6
-xpos -79
-ypos -312
-}
-set N3ed760a0 [stack 0]
-Dot {
-name Dot23
-xpos 255
-ypos -312
-}
-set Nedbf6370 [stack 0]
-Dot {
-name Dot26
-xpos 454
-ypos -312
-}
-set N518730e0 [stack 0]
-Dot {
-name Dot28
-xpos 660
-ypos -312
-}
-set N5be7b6e0 [stack 0]
-Dot {
-name Dot30
-xpos 859
-ypos -312
-}
-set N508c1050 [stack 0]
-Dot {
-name Dot7
-xpos 1054
-ypos -312
-}
-set Nedbf6b30 [stack 0]
-Dot {
-name Dot5
-xpos 1242
-ypos -313
-}
-set N37ffdfc0 [stack 0]
-Dot {
-name Dot9
-xpos 1447
-ypos -313
-}
-set Na019b320 [stack 0]
-Dot {
-name Dot11
-xpos 1643
-ypos -313
-}
-set Nedbf49a0 [stack 0]
-Dot {
-name Dot13
-xpos 1843
-ypos -313
-}
-set Nedc32f50 [stack 0]
-Dot {
-name Dot15
-xpos 2045
-ypos -313
-}
-set N187450 [stack 0]
-Dot {
-name Dot17
-xpos 2243
-ypos -313
-}
-set N18bf20 [stack 0]
-Dot {
-name Dot19
-xpos 2441
-ypos -314
-}
-set N37fefbf0 [stack 0]
-Dot {
-name Dot21
-xpos 2633
-ypos -314
-}
-Grade {
-channels rgba
-blackpoint 0.9
-white_clamp true
-name Grade8
-xpos 2599
-ypos -225
-}
-Input {
-inputs 0
-name image
-label "\[value number]"
-xpos -282
-ypos -767
-}
-Dot {
-name Dot1
-xpos -248
-ypos -272
-}
-set Necbeb4f0 [stack 0]
-Dot {
-name Dot24
-xpos 161
-ypos -272
-}
-set N37fcbd90 [stack 0]
-Dot {
-name Dot27
-xpos 363
-ypos -272
-}
-set N37fd05a0 [stack 0]
-Dot {
-name Dot29
-xpos 566
-ypos -272
-}
-set N37fd5330 [stack 0]
-Dot {
-name Dot31
-xpos 765
-ypos -272
-}
-set N37fd9e60 [stack 0]
-Dot {
-name Dot3
-xpos 963
-ypos -272
-}
-set N37fde960 [stack 0]
-Dot {
-name Dot8
-xpos 1151
-ypos -273
-}
-set N37fe3430 [stack 0]
-Dot {
-name Dot10
-xpos 1356
-ypos -273
-}
-set N37fe7f00 [stack 0]
-Dot {
-name Dot12
-xpos 1552
-ypos -273
-}
-set Ne87c6230 [stack 0]
-Dot {
-name Dot14
-xpos 1752
-ypos -273
-}
-set Ne87cad00 [stack 0]
-Dot {
-name Dot16
-xpos 1954
-ypos -273
-}
-set Ne87cf7d0 [stack 0]
-Dot {
-name Dot18
-xpos 2152
-ypos -273
-}
-set Ne87d4120 [stack 0]
-Dot {
-name Dot20
-xpos 2350
-ypos -274
-}
-set Ne87d8e10 [stack 0]
-Dot {
-name Dot22
-xpos 2542
-ypos -274
-}
-Blur {
-channels {{{parent.Blur11.channels}}}
-size {{blur/10*10 i} {"size.w / parent.aspect_ratio"}}
-name Blur10
-xpos 2508
-ypos -225
-}
-push $N37fefbf0
-Grade {
-channels rgba
-blackpoint 0.8
-whitepoint 0.9
-white_clamp true
-name Grade7
-xpos 2407
-ypos -225
-}
-push $Ne87d8e10
-Blur {
-channels {{{parent.Blur11.channels}}}
-size {{blur/10*9 i} {"size.w / parent.aspect_ratio"}}
-name Blur9
-xpos 2316
-ypos -225
-}
-push $N18bf20
-Grade {
-channels rgba
-blackpoint 0.7
-whitepoint 0.8
-white_clamp true
-name Grade6
-xpos 2209
-ypos -225
-}
-push $Ne87d4120
-Blur {
-channels {{{parent.Blur11.channels}}}
-size {{blur/10*8 i} {"size.w / parent.aspect_ratio"}}
-name Blur8
-xpos 2118
-ypos -225
-}
-push $N187450
-Grade {
-channels rgba
-blackpoint 0.6
-whitepoint 0.7
-white_clamp true
-name Grade5
-xpos 2011
-ypos -225
-}
-push $Ne87cf7d0
-Blur {
-channels {{{parent.Blur11.channels}}}
-size {{blur/10*7 i} {"size.w / parent.aspect_ratio"}}
-name Blur7
-xpos 1920
-ypos -226
-}
-push $Nedc32f50
-Grade {
-channels rgba
-blackpoint 0.5
-whitepoint 0.6
-white_clamp true
-name Grade4
-xpos 1809
-ypos -225
-}
-push $Ne87cad00
-Blur {
-channels {{{parent.Blur11.channels}}}
-size {{blur/10*6 i} {"size.w / parent.aspect_ratio"}}
-name Blur6
-xpos 1718
-ypos -225
-}
-push $Nedbf49a0
-Grade {
-channels rgba
-blackpoint 0.4
-whitepoint 0.5
-white_clamp true
-name Grade3
-xpos 1609
-ypos -225
-}
-push $Ne87c6230
-Blur {
-channels {{{parent.Blur11.channels}}}
-size {{blur/10*5 i} {"size.w / parent.aspect_ratio"}}
-name Blur5
-xpos 1518
-ypos -225
-}
-push $Na019b320
-Grade {
-channels rgba
-blackpoint 0.3
-whitepoint 0.4
-white_clamp true
-name Grade2
-xpos 1413
-ypos -225
-}
-push $N37fe7f00
-Blur {
-channels {{{parent.Blur11.channels}}}
-size {{blur/10*4 i} {"size.w / parent.aspect_ratio"}}
-name Blur4
-xpos 1322
-ypos -225
-}
-push $N37ffdfc0
-Grade {
-channels rgba
-blackpoint 0.2
-whitepoint 0.3
-white_clamp true
-name Grade1
-xpos 1208
-ypos -225
-}
-push $N37fe3430
-Blur {
-channels {{{parent.Blur11.channels}}}
-size {{blur/10*3 i} {"size.w / parent.aspect_ratio"}}
-name Blur3
-xpos 1117
-ypos -225
-}
-push $Nedbf6b30
-Grade {
-channels rgba
-blackpoint 0.1
-whitepoint 0.2
-white_clamp true
-name Grade13
-xpos 1020
-ypos -225
-}
-push $N37fde960
-Blur {
-channels {{{parent.Blur11.channels}}}
-size {{blur/10*2} {"size.w / parent.aspect_ratio"}}
-name Blur2
-xpos 929
-ypos -225
-}
-push $N508c1050
-Grade {
-channels rgba
-blackpoint 0.075
-whitepoint 0.1
-white_clamp true
-name Grade14
-xpos 825
-ypos -225
-}
-push $N37fd9e60
-Blur {
-channels {{{parent.Blur11.channels}}}
-size {{blur/10} {"size.w / parent.aspect_ratio"}}
-name Blur14
-xpos 731
-ypos -225
-}
-push $N5be7b6e0
-Grade {
-channels rgba
-blackpoint 0.05
-whitepoint 0.075
-white_clamp true
-name Grade11
-xpos 626
-ypos -225
-}
-push $N37fd5330
-Blur {
-channels {{{parent.Blur11.channels}}}
-size {{blur/10/4*3} {"size.w / parent.aspect_ratio"}}
-name Blur13
-xpos 532
-ypos -225
-}
-push $N518730e0
-Grade {
-channels rgba
-blackpoint 0.025
-whitepoint 0.05
-white_clamp true
-name Grade10
-xpos 420
-ypos -225
-}
-push $N37fd05a0
-Blur {
-channels {{{parent.Blur11.channels}}}
-size {{blur/10/4*2} {"size.w / parent.aspect_ratio"}}
-name Blur12
-xpos 329
-ypos -225
-}
-push $Nedbf6370
-Grade {
-channels rgba
-whitepoint 0.025
-white_clamp true
-name Grade9
-xpos 221
-ypos -225
-}
-push $N37fcbd90
-Blur {
-channels rgba
-size {{blur/10/4} {"size.w / parent.aspect_ratio"}}
-name Blur11
-xpos 127
-ypos -225
-}
-push $Necbeb4f0
-Dot {
-name Dot25
-xpos -248
-ypos -155
-}
-set N379e02a0 [stack 0]
-Keymix {
-inputs 3
-bbox B
-name Keymix11
-xpos 127
-ypos -163
-}
-Keymix {
-inputs 3
-bbox B
-name Keymix12
-xpos 329
-ypos -163
-}
-Keymix {
-inputs 3
-bbox B
-name Keymix13
-xpos 532
-ypos -163
-}
-Keymix {
-inputs 3
-bbox B
-name Keymix14
-xpos 731
-ypos -163
-}
-Keymix {
-inputs 3
-bbox B
-name Keymix2
-xpos 929
-ypos -163
-}
-Keymix {
-inputs 3
-bbox B
-name Keymix3
-xpos 1117
-ypos -163
-}
-Keymix {
-inputs 3
-bbox B
-name Keymix4
-xpos 1322
-ypos -163
-}
-Keymix {
-inputs 3
-bbox B
-name Keymix5
-xpos 1518
-ypos -163
-}
-Keymix {
-inputs 3
-bbox B
-name Keymix6
-xpos 1718
-ypos -163
-}
-Keymix {
-inputs 3
-bbox B
-name Keymix7
-xpos 1920
-ypos -163
-}
-Keymix {
-inputs 3
-bbox B
-name Keymix8
-xpos 2118
-ypos -163
-}
-Keymix {
-inputs 3
-bbox B
-name Keymix9
-xpos 2316
-ypos -163
-}
-Keymix {
-inputs 3
-bbox B
-name Keymix10
-xpos 2508
-ypos -163
-}
-Dot {
-name Dot59
-xpos 2883
-ypos -155
-}
-push $N3ed760a0
-Dot {
-name Dot87
-xpos -79
-ypos -51
-}
-Dot {
-name Dot60
-xpos 253
-ypos -51
-}
-set N36fd0920 [stack 0]
-Dot {
-name Dot61
-xpos 452
-ypos -51
-}
-set N36ff0ac0 [stack 0]
-Dot {
-name Dot63
-xpos 857
-ypos -51
-}
-set N36ff5aa0 [stack 0]
-Dot {
-name Dot64
-xpos 1250
-ypos -52
-}
-set N36ffa710 [stack 0]
-Dot {
-name Dot66
-xpos 1646
-ypos -53
-}
-set N36ff55b0 [stack 0]
-Dot {
-name Dot68
-xpos 2046
-ypos -53
-}
-set N36d84f60 [stack 0]
-Dot {
-name Dot72
-xpos 2631
-ypos -53
-}
-Grade {
-channels rgba
-blackpoint 0.7
-white_clamp true
-name Grade27
-xpos 2597
-ypos 36
-}
-push $N379e02a0
-Dot {
-name Dot86
-xpos -248
-ypos -11
-}
-set N36d9f400 [stack 0]
-Dot {
-name Dot73
-xpos 159
-ypos -11
-}
-set N36d9eec0 [stack 0]
-Dot {
-name Dot74
-xpos 361
-ypos -11
-}
-set N36da8770 [stack 0]
-Dot {
-name Dot76
-xpos 763
-ypos -11
-}
-set N36dad380 [stack 0]
-Dot {
-name Dot77
-xpos 1159
-ypos -12
-}
-set N36da8200 [stack 0]
-Dot {
-name Dot79
-xpos 1555
-ypos -13
-}
-set N36db6830 [stack 0]
-Dot {
-name Dot81
-xpos 1955
-ypos -13
-}
-set N36dbb440 [stack 0]
-Dot {
-name Dot85
-xpos 2540
-ypos -13
-}
-Blur {
-channels {{{parent.Blur11.channels}}}
-size {{blur/10*10 i} {"size.w / parent.aspect_ratio"}}
-name Blur1
-xpos 2506
-ypos 36
-}
-push $N36d84f60
-Grade {
-channels rgba
-blackpoint 0.5
-whitepoint 0.7
-white_clamp true
-name Grade31
-xpos 2012
-ypos 35
-}
-push $N36dbb440
-Blur {
-channels {{{parent.Blur11.channels}}}
-size {{blur/10*7 i} {"size.w / parent.aspect_ratio"}}
-name Blur18
-xpos 1921
-ypos 34
-}
-push $N36ff55b0
-Grade {
-channels rgba
-blackpoint 0.3
-whitepoint 0.5
-white_clamp true
-name Grade33
-xpos 1612
-ypos 34
-}
-push $N36db6830
-Blur {
-channels {{{parent.Blur11.channels}}}
-size {{blur/10*5 i} {"size.w / parent.aspect_ratio"}}
-name Blur20
-xpos 1521
-ypos 35
-}
-push $N36ffa710
-Grade {
-channels rgba
-blackpoint 0.1
-whitepoint 0.3
-white_clamp true
-name Grade35
-xpos 1216
-ypos 35
-}
-push $N36da8200
-Blur {
-channels {{{parent.Blur11.channels}}}
-size {{blur/10*3} {"size.w / parent.aspect_ratio"}}
-name Blur22
-xpos 1125
-ypos 35
-}
-push $N36ff5aa0
-Grade {
-channels rgba
-blackpoint 0.05
-whitepoint 0.1
-white_clamp true
-name Grade36
-xpos 823
-ypos 36
-}
-push $N36dad380
-Blur {
-channels {{{parent.Blur11.channels}}}
-size {{blur/10} {"size.w / parent.aspect_ratio"}}
-name Blur23
-xpos 729
-ypos 36
-}
-push $N36ff0ac0
-Grade {
-channels rgba
-blackpoint 0.025
-whitepoint 0.05
-white_clamp true
-name Grade38
-xpos 418
-ypos 36
-}
-push $N36da8770
-Blur {
-channels {{{parent.Blur11.channels}}}
-size {{blur/10/4*2 i} {"size.w / parent.aspect_ratio"}}
-name Blur25
-xpos 327
-ypos 36
-}
-push $N36fd0920
-Grade {
-channels rgba
-whitepoint 0.025
-white_clamp true
-name Grade39
-xpos 219
-ypos 38
-}
-push $N36d9eec0
-Blur {
-channels {{{parent.Blur11.channels}}}
-size {{blur/10/4 i} {"size.w / parent.aspect_ratio"}}
-name Blur26
-xpos 125
-ypos 38
-}
-push $N36d9f400
-Dot {
-name Dot88
-xpos -248
-ypos 106
-}
-Keymix {
-inputs 3
-bbox B
-name Keymix27
-xpos 125
-ypos 98
-}
-Keymix {
-inputs 3
-bbox B
-name Keymix28
-xpos 327
-ypos 98
-}
-Keymix {
-inputs 3
-bbox B
-name Keymix30
-xpos 729
-ypos 98
-}
-Keymix {
-inputs 3
-bbox B
-name Keymix31
-xpos 1125
-ypos 97
-}
-Keymix {
-inputs 3
-bbox B
-name Keymix33
-xpos 1521
-ypos 97
-}
-Keymix {
-inputs 3
-bbox B
-name Keymix35
-xpos 1921
-ypos 97
-}
-Keymix {
-inputs 3
-bbox B
-name Keymix39
-xpos 2506
-ypos 98
-}
-Switch {
-inputs 2
-which {{quality}}
-name Switch2
-xpos 2849
-ypos 103
-}
-Dot {
-name Dot75
-xpos 3248
-ypos 106
-}
-Output {
-name Output1
-xpos 3214
-ypos 1164
-}
+ name iBlur
+ addUserKnob {20 Params}
+ addUserKnob {41 channels T Blur.channels}
+ addUserKnob {14 size R 0 100}
+ size 25.5
+ addUserKnob {7 iters l iterations +INVISIBLE R 0 20}
+ iters 10
+}
+ Input {
+  inputs 0
+  name Inputmask
+  xpos 180
+  ypos 15
+  number 1
+ }
+ Gamma {
+  channels alpha
+  value 2
+  name Gamma1
+  xpos 180
+  ypos 57
+ }
+ NoTimeBlur {
+  name ntb1
+  selected true
+  xpos 180
+  ypos 111
+ }
+ Expression {
+  temp_name0 bt
+  temp_expr0 NoOp1.bt
+  expr3 1-clamp(-(fabs(clamp(a)-bt)-bw/2)/bw*2)
+  name expr_slice
+  xpos 180
+  ypos 183
+  addUserKnob {20 User}
+  addUserKnob {7 bw}
+  bw {{1/(iters-1)*2}}
+ }
+ Input {
+  inputs 0
+  name Input
+  xpos -40
+  ypos 14
+ }
+ NoTimeBlur {
+  name ntb
+  xpos -40
+  ypos 87
+ }
+ Blur {
+  channels rgba
+  size {{parent.size*(t%1/(iters-1)*iters)**2 x78.98500061 1.19780864} {parent.size*(t%1/(iters-1)*iters)**2 x78.98500061 1.19780864}}
+  name Blur
+  xpos -40
+  ypos 135
+ }
+ Multiply {
+  inputs 1+1
+  channels {{{parent.Blur.channels}}}
+  value 0
+  name Multiply1
+  xpos -40
+  ypos 183
+ }
+ TimeBlur {
+  shutter 1
+  shutteroffset start
+  shuttercustomoffset 0
+  name tb
+  xpos -40
+  ypos 231
+ }
+ Multiply {
+  channels {{{parent.Blur.channels}}}
+  value {{input.divisions}}
+  name Multiply2
+  xpos -40
+  ypos 279
+ }
+ Output {
+  name Output
+  xpos -40
+  ypos 350
+ }
+ NoOp {
+  inputs 0
+  name NoOp1
+  xpos 290
+  ypos 183
+  addUserKnob {20 User}
+  addUserKnob {7 bt}
+  bt {{(t%1)/(iters-1)*iters}}
+ }
 end_group
