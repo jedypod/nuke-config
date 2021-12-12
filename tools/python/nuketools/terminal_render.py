@@ -108,7 +108,7 @@ if nuke.GUI:
 
             self._numThreads = nuke.Int_Knob("num_threads", "Thread limit")
             self._numThreads.setVisible(self.bg_render_knobs)
-            self._state.setKnob(self._numThreads, max(nuke.NUM_CPUS / 2, 1))
+            self._state.setKnob(self._numThreads, int(max(nuke.NUM_CPUS / 2, 1)))
             self.addKnob(self._numThreads)
 
             self._maxMem = nuke.String_Knob("max_memory", "Memory limit")
