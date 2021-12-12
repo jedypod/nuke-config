@@ -2,181 +2,56 @@ set cut_paste_input [stack 0]
 push $cut_paste_input
 Group {
  name NormalsRotate
- addUserKnob {20 NormalsRotate}
- addUserKnob {41 channels l normals T CHOOSE_NORMALS.in}
- addUserKnob {6 unpremultiply l unpremult t "Unpremult the normals" +STARTLINE}
- unpremultiply true
- addUserKnob {41 alpha l by -STARTLINE T UNPREMULT.alpha}
- addUserKnob {26 ""}
- addUserKnob {26 rotate_label l " " T "<font color=#ddd><b>Rotation"}
- addUserKnob {7 rotate_x R -180 180}
- addUserKnob {7 rotate_y R -180 180}
- addUserKnob {7 rotate_z R -180 180}
- addUserKnob {26 ""}
- addUserKnob {6 enable_alpha_output l "enable alpha output" +STARTLINE}
- enable_alpha_output true
- addUserKnob {26 mask_output_text l " " T "<font color=#ddd><b>Alpha Output<br/></b>\nCreate a directional surface mask from the normals.\n<br/> Normalizes between a 0-1 range, <br/>\nwith an optional contrast control.<br/>\nChoose which channel to output to rgba."}
- addUserKnob {7 normalize t "Normalize into a 0-1 range."}
- addUserKnob {7 contrast}
- addUserKnob {41 alpha_output l "alpha output" t "Output this channel to the alpha." T _CHOOSE_ALPHA_.from0}
- addUserKnob {6 shuffle_alpha_into_rgba l "shuffle alpha into rgba" +STARTLINE}
- addUserKnob {6 publish_node l "Publish Node" -STARTLINE +INVISIBLE}
- publish_node true
- addUserKnob {1 publish_resource_layer l "Publish Resource Layer" +INVISIBLE}
- publish_resource_layer 3D
+ addUserKnob {20 Params}
+ addUserKnob {41 n T Shuffle1.in}
+ addUserKnob {6 up l unpremult t "unpremult n layer by rgba.alpha\n" -STARTLINE}
+ addUserKnob {7 rx l x R -180 180}
+ addUserKnob {7 ry l y R -180 180}
+ addUserKnob {7 rz l z R -180 180}
 }
+ Axis2 {
+  inputs 0
+  display off
+  selectable false
+  rot_order XYZ
+  rotate {{rx} {ry} {rz}}
+  name Axis1
+  xpos 80
+  ypos 90
+ }
  Input {
   inputs 0
   name Input
-  label "\[value number]"
   xpos -40
-  ypos -1416
+  ypos -10
  }
- Dot {
-  name Dot1
-  label " "
-  note_font_size 24
-  note_font_color 0xa5a5a501
-  xpos -6
-  ypos -1286
- }
-set N97568c0 [stack 0]
  Shuffle {
   in none
   in2 rgba
   alpha alpha2
-  name CHOOSE_NORMALS
-  label "\[value in] -> \[value out]"
-  xpos 228
-  ypos -1296
-  disable {{!parent.enable_alpha_output}}
+  name Shuffle1
+  xpos -40
+  ypos 39
  }
  Unpremult {
-  name UNPREMULT
-  xpos 228
-  ypos -1250
-  disable {{!parent.unpremultiply x1036 0}}
+  name Unpremult1
+  xpos -40
+  ypos 63
+  disable {{!up}}
  }
  ColorMatrix {
   matrix {
-      {{ROTATION.world_matrix.0} {ROTATION.world_matrix.1} {ROTATION.world_matrix.2}}
-      {{ROTATION.world_matrix.4} {ROTATION.world_matrix.5} {ROTATION.world_matrix.6}}
-      {{ROTATION.world_matrix.8} {ROTATION.world_matrix.9} {ROTATION.world_matrix.10}}
+      {{Axis1.world_matrix.0} {Axis1.world_matrix.1} {Axis1.world_matrix.2}}
+      {{Axis1.world_matrix.4} {Axis1.world_matrix.5} {Axis1.world_matrix.6}}
+      {{Axis1.world_matrix.8} {Axis1.world_matrix.9} {Axis1.world_matrix.10}}
     }
-  name RotateNormals
-  xpos 236
-  ypos -1162
- }
- Premult {
-  alpha {{{parent.Unpremult.alpha}}}
-  name PREMULT
-  xpos 228
-  ypos -1090
-  disable {{parent.UNPREMULT.disable}}
- }
- Add {
-  channels rgb
-  value {{parent.normalize}}
-  unpremult {{{parent.UNPREMULT.alpha}}}
-  name Add1
-  xpos 228
-  ypos -1056
-  disable {{!parent.enable_alpha_output}}
- }
- Multiply {
-  channels rgb
-  value {{1-((parent.normalize)/2)}}
-  unpremult {{{parent.UNPREMULT.alpha}}}
-  name Multiply1
-  xpos 228
-  ypos -1016
-  disable {{!parent.enable_alpha_output}}
- }
- Gamma {
-  channels rgba
-  value {{1-parent.contrast}}
-  unpremult {{{parent.UNPREMULT.alpha}}}
-  name Gamma1
-  xpos 228
-  ypos -976
-  disable {{!parent.enable_alpha_output}}
- }
- Dot {
-  name Dot3
-  label " "
-  note_font_size 24
-  note_font_color 0xa5a5a501
-  xpos 262
-  ypos -886
- }
-set Nbf17500 [stack 0]
- Dot {
-  name Dot4
-  label " "
-  note_font_size 24
-  note_font_color 0xa5a5a501
-  xpos 128
-  ypos -886
- }
- Remove {
-  operation keep
-  channels {rgba.red rgba.green rgba.blue none}
-  name Remove1
-  xpos 94
-  ypos -810
- }
-push $Nbf17500
- Copy {
-  inputs 2
-  from0 rgba.blue
-  to0 rgba.alpha
-  name _CHOOSE_ALPHA_
-  xpos 228
-  ypos -816
-  disable {{!parent.enable_alpha_output}}
- }
- Clamp {
-  channels alpha
-  name Clamp1
-  xpos 228
-  ypos -736
-  disable {{!parent.enable_alpha_output}}
- }
- Shuffle {
-  red alpha
-  green alpha
-  blue alpha
-  name AlphaShuffler
-  xpos 228
-  ypos -650
-  disable {{!parent.enable_alpha_output}}
- }
- Remove {
-  operation keep
-  channels rgba
-  name Remove2
-  xpos 228
-  ypos -570
- }
-push $N97568c0
- Copy {
-  inputs 2
-  channels all
-  name Copy1
+  name ColorMatrix1
   xpos -40
-  ypos -582
+  ypos 110
  }
  Output {
   name Output
   xpos -40
-  ypos -410
- }
- Axis2 {
-  inputs 0
-  rot_order ZYX
-  rotate {{parent.rotate_x} {parent.rotate_y} {parent.rotate_z}}
-  name ROTATION
-  xpos 410
-  ypos -1182
+  ypos 182
  }
 end_group
