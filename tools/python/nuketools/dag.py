@@ -62,7 +62,9 @@ nuke.menu('Nuke').addCommand('Edit/Select Downstream', 'dag.select_downstream(nu
 nuke.menu('Nuke').addCommand('Edit/Select Unused Nodes', 'dag.select_unused(nuke.selectedNodes())', 'ctrl+alt+meta+shift+u', shortcutContext=2)
 
 nuke.menu('Nuke').addCommand('Edit/Node/DAG/Properties Panel Open', 'dag.open_panels()', 'a', shortcutContext=1)
+nuke.menu('Nuke').addCommand('Edit/Node/DAG/Properties Panel Open and Persist', 'dag.open_panels(persist=True)', 'meta+a', shortcutContext=1)
 nuke.menu('Nuke').addCommand('Edit/Node/DAG/Properties Panel Close', 'dag.close_panels()', 'alt+a', shortcutContext=1)
+nuke.menu('Nuke').addCommand('Edit/Node/DAG/Properties Panel Close and UnPersist', 'dag.close_panels(unpersist=True)', 'alt+shift+a', shortcutContext=1)
 
 nuke.menu('Nuke').addCommand('Edit/Node/DAG/Sort By File Knob', 'dag.auto_place()', 'l', shortcutContext=2)
 
@@ -162,14 +164,14 @@ def set_pos(node, posx, posy):
 def hide_panel():
     # Always hide control panels on node creation if node not in exceptions
     node = nuke.thisNode()
-    exceptions = ['Roto', 'RotoPaint']
+    exceptions = ['Roto', 'RotoPaint', 'Bezier']
     if node.Class() not in exceptions:
         nuke.thisNode().showControlPanel()
         nuke.thisNode().hideControlPanel()
 nuke.addOnUserCreate(hide_panel)
 
 
-def open_panels(nodes=None):
+def open_panels(nodes=None, persist=False):
     # Open properties panels
     if not nodes:
         nodes = nuke.selectedNodes()
@@ -177,6 +179,12 @@ def open_panels(nodes=None):
     if len(nodes) > 10:
         if not nuke.ask('Continuing will open {0} properties panels. \nAre you sure you want to continue?'.format(len(nodes))):
             return
+    if persist:
+        for n in nodes:
+            l = n['label']
+            lv = l.getValue()
+            if not lv.endswith('__persist'):
+                l.setValue((lv + '__persist'))
     for node in nodes:
         if node.Class() not in ignored:
             # if node.shown():
@@ -193,12 +201,25 @@ def open_panels(nodes=None):
             node.showControlPanel()
 
 
-def close_panels(nodes=None):
+def close_panels(nodes=None, unpersist=False):
     # Close all properties panels
     if not nodes:
         nodes = nuke.allNodes(recurseGroups=True)
     for node in nodes:
-        node.hideControlPanel()
+        persisted = node['label'].getValue().endswith('__persist')
+        if unpersist:
+            # close all panels and unpersist nodes 
+            node.hideControlPanel()
+            if persisted:
+                node['label'].setValue((node['label'].getValue().replace('__persist', '')))
+        else:
+            # close all non-persisted nodes
+            if persisted:
+                continue
+            node.hideControlPanel()
+
+            node.hideControlPanel()
+        
 
 
 def select_similar_position(axis=1):
