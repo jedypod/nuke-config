@@ -31,17 +31,6 @@ def hide_status_bar():
 nuke.addOnCreate(hide_status_bar, nodeClass='Root')
 
 
-# Viewer Shortcuts
-nuke.menu('Viewer').addCommand('Next Frame', 'nuke.activeViewer().frameControl(1)', 'shift+f')
-nuke.menu('Viewer').addCommand('Previous Frame', 'nuke.activeViewer().frameControl(-1)', 'shift+d')
-nuke.menu('Viewer').addCommand('Next Keyframe', 'nuke.activeViewer().frameControl(2)', 'alt+shift+f')
-nuke.menu('Viewer').addCommand('Previous Keyframe', 'nuke.activeViewer().frameControl(-2)', 'alt+shift+d')
-nuke.menu('Viewer').addCommand('Next Frame', 'nuke.activeViewer().frameControl(1)', 'shift+f')
-nuke.menu('Viewer').addCommand('Play Forward', 'nuke.activeViewer().frameControl(5)', 'ctrl+alt+f')
-nuke.menu('Viewer').addCommand('Play Backward', 'nuke.activeViewer().frameControl(-5)', 'ctrl+alt+d')
-nuke.menu('Viewer').findItem('Show Overscan').setShortcut('alt+shift+o')
-
-
 
 # Nodes
 nuke.menu('Nodes').addCommand('Merge/Merge', 'nuke.createNode("Merge2", "bbox B", inpanel=False)', 'm', shortcutContext=2)
@@ -60,7 +49,6 @@ nuke.menu('Nodes').addCommand('Merge/Premult', 'nuke.createNode("Premult", inpan
 nuke.menu('Nodes').addCommand('Merge/Keymix', 'nuke.createNode("Keymix", "channels rgba", inpanel=False)', 'alt+meta+k', shortcutContext=2)
 nuke.menu('Nodes').addCommand('Merge/Unpremult', 'nuke.createNode("Unpremult", inpanel=False)', 'alt+\\', shortcutContext=2)
 nuke.menu('Nodes').addCommand('Channel/ChannelMerge', 'nuke.createNode("ChannelMerge", "operation union", inpanel=False)', 'alt+meta+c', shortcutContext=2)
-nuke.menu('Nodes').addCommand('Filter/Blur', "nuke.createNode('Blur')", 'b', shortcutContext=2)
 nuke.menu('Nodes').addCommand('Color/ColorLookup', 'nuke.createNode("ColorLookup")', 'meta+alt+shift+c', shortcutContext=2)
 nuke.menu('Nodes').addCommand('Channel/Shuffle_', 'nuke.createNode("Shuffle")', 'h', shortcutContext=2)
 nuke.menu('Nodes').addCommand('Channel/ShuffleCopy_', 'nuke.createNode("ShuffleCopy", "label [value\ in]\ |\ [value\ in2]\ ->\ [value\ out]")', 'alt+meta+h', shortcutContext=2)
@@ -69,8 +57,10 @@ nuke.menu('Nodes').addCommand('Color/Fill', 'nuke.createNode("Fill")', shortcutC
 nuke.menu('Nodes').addCommand('Color/ClampMin', 'nuke.createNode("Clamp", "name ClampMin maximum_enable 0")', index=5, shortcutContext=2)
 nuke.menu('Nodes').addCommand('Color/GradeAlpha', 'nuke.createNode("Grade", "name Grade channels a white_clamp 1 black_clamp 1")', 'alt+shift+g', shortcutContext=2)
 nuke.menu('Nodes').addCommand('Color/HueCorrect', 'nuke.createNode("HueCorrect", "")', 'alt+shift+h', shortcutContext=2)
-nuke.menu('Nodes').addCommand('Color/Math/Multiply', 'nuke.createNode("Multiply", "channels rgba")', 'alt+m', shortcutContext=2)
-nuke.menu('Nodes').addCommand('Filter/FilterErode', 'nuke.createNode("FilterErode")', 'meta+shift+e', shortcutContext=2)
+nuke.menu('Nodes').addCommand('Color/Math/Multiply', 'nuke.createNode("Multiply", "channels rgb")', 'alt+m', shortcutContext=2)
+nuke.menu('Nodes').addCommand('Color/Math/MultiplyAlpha', 'nuke.createNode("Multiply", "channels rgba")', 'alt+shift+m', shortcutContext=2)
+nuke.menu('Nodes').addCommand('Filter/Blur', "nuke.createNode('Blur')", 'b', shortcutContext=2)
+nuke.menu('Nodes').addCommand('Filter/FilterErode', 'nuke.createNode("FilterErode")', 'alt+meta+shift+e', shortcutContext=2)
 nuke.menu('Nodes').addCommand('Filter/Dilate', 'nuke.createNode("Dilate")', 'alt+shift+e', shortcutContext=2)
 nuke.menu('Nodes').addCommand('Time/FrameHold', 'nuke.createNode("FrameHold", "first_frame {0}".format(nuke.frame()), inpanel=False)', 'meta+alt+shift+f', icon="FrameHold.png", shortcutContext=2)
 nuke.menu('Nodes').addCommand('Other/StickyNote', 'nuke.createNode("StickyNote", "tile_color 0x272727ff note_font_color 0xa8a8a8ff note_font_size 14 label <left>")', 'meta+n', shortcutContext=2)
