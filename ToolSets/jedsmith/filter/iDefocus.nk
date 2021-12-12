@@ -1,0 +1,101 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name iDefocus
+ addUserKnob {20 Params}
+ addUserKnob {41 channels T Defocus1.channels}
+ addUserKnob {7 size R 0 100}
+ size 1
+ addUserKnob {7 ar l aspect R 0.25 2}
+ ar 1
+ addUserKnob {7 iters l iterations +INVISIBLE R 0 20}
+ iters 10
+}
+ Input {
+  inputs 0
+  name Inputmask
+  xpos 180
+  ypos 15
+  number 1
+ }
+ Gamma {
+  channels alpha
+  value 2
+  name Gamma1
+  xpos 180
+  ypos 57
+ }
+ NoTimeBlur {
+  name ntb1
+  xpos 180
+  ypos 111
+ }
+ Expression {
+  temp_name0 bt
+  temp_expr0 NoOp1.bt
+  expr3 1-clamp(-(fabs(clamp(a)-bt)-bw/2)/bw*2)
+  name expr_slice
+  xpos 180
+  ypos 183
+  addUserKnob {20 User}
+  addUserKnob {7 bw}
+  bw {{1/(iters-1)*2}}
+ }
+ Input {
+  inputs 0
+  name Input
+  xpos -40
+  ypos 14
+ }
+ NoTimeBlur {
+  name ntb
+  xpos -40
+  ypos 87
+ }
+ Defocus {
+  channels rgba
+  defocus {{parent.size*(t%1/(iters-1)*iters)**2}}
+  ratio {{ar}}
+  name Defocus1
+  note_font Helvetica
+  xpos -40
+  ypos 135
+ }
+ Multiply {
+  inputs 1+1
+  channels {{{parent.Blur.channels}}}
+  value 0
+  name Multiply1
+  xpos -40
+  ypos 183
+ }
+ TimeBlur {
+  shutter 1
+  shutteroffset start
+  shuttercustomoffset 0
+  name tb
+  xpos -40
+  ypos 231
+ }
+ Multiply {
+  channels {{{parent.Blur.channels}}}
+  value {{input.divisions}}
+  name Multiply2
+  xpos -40
+  ypos 279
+ }
+ Output {
+  name Output
+  xpos -40
+  ypos 350
+ }
+ NoOp {
+  inputs 0
+  name NoOp1
+  xpos 290
+  ypos 183
+  addUserKnob {20 User}
+  addUserKnob {7 bt}
+  bt {{(t%1)/(iters-1)*iters}}
+ }
+end_group
