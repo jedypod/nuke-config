@@ -1,6 +1,5 @@
 set cut_paste_input [stack 0]
 push $cut_paste_input
-add_layer {depth_extra depth_extra.red depth_extra.green depth_extra.blue}
 Group {
  name HazeMaker_simple
  addUserKnob {20 HazeMaker}
@@ -36,9 +35,6 @@ Group {
  }
  Dot {
   name Dot57
-  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
-  note_font_size 24
-  note_font_color 0xff000000
   xpos -6
   ypos -606
  }
@@ -46,9 +42,6 @@ set Nfcf82d20 [stack 0]
  Dot {
   name Dot75
   label " "
-  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
-  note_font_size 24
-  note_font_color 0xff000000
   xpos -408
   ypos -606
  }
@@ -56,9 +49,6 @@ set N225956e0 [stack 0]
  Dot {
   name Dot58
   label " "
-  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
-  note_font_size 24
-  note_font_color 0xff000000
   xpos -676
   ypos -606
  }
@@ -125,9 +115,6 @@ push $N21905c60
  Dot {
   name Dot76
   label " "
-  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
-  note_font_size 24
-  note_font_color 0xff000000
   xpos -676
   ypos -246
  }
@@ -166,9 +153,6 @@ push $N225956e0
  Dot {
   name Dot77
   label " "
-  note_font "Helvetica Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
-  note_font_size 24
-  note_font_color 0xff000000
   xpos -408
   ypos -126
  }
