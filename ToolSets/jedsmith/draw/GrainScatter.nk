@@ -1,0 +1,428 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name GrainScatter
+ addUserKnob {20 Params}
+ addUserKnob {41 useGPUIfAvailable l "Use GPU if available" T VoroNoise.useGPUIfAvailable}
+ addUserKnob {41 vectorize l "Vectorize on CPU" -STARTLINE T VoroNoise.vectorize}
+ addUserKnob {26 ""}
+ addUserKnob {3 sample_frame l "sample frame"}
+ sample_frame 1
+ addUserKnob {22 set_current l Current t "set to current frame" -STARTLINE T "nuke.thisNode()\['sample_frame'].setValue(nuke.frame())"}
+ addUserKnob {15 box l "source area" t "Source area for scatter. Make sure there is no image detail inside this box!"}
+ box {207.25 689 612.75 1051}
+ addUserKnob {26 noise_label l " " T "<b>Voronoi Noise Settings"}
+ addUserKnob {6 overlay_pattern l "overlay pattern" +STARTLINE}
+ addUserKnob {7 cell_size l "cell size" R 0 100}
+ cell_size 60
+ addUserKnob {3 edge_blend_size l "edge blend size"}
+ edge_blend_size 5
+ addUserKnob {7 amplitude R 0 100}
+ amplitude 14
+ addUserKnob {7 frequency R 0 100}
+ frequency 6
+ addUserKnob {41 VoroNoise_Seed l Seed T VoroNoise.VoroNoise_Seed}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos 180
+  ypos -879
+ }
+ Dot {
+  name Dot14
+  xpos 214
+  ypos -750
+ }
+set Nd83e0800 [stack 0]
+ Dot {
+  name Dot16
+  xpos 434
+  ypos -750
+ }
+ Remove {
+  name Remove1
+  xpos 400
+  ypos -687
+ }
+ Dot {
+  name Dot6
+  xpos 434
+  ypos -606
+ }
+set Nd77d7200 [stack 0]
+ Dot {
+  name Dot15
+  xpos 654
+  ypos -606
+ }
+set Nd77d6b00 [stack 0]
+ Dot {
+  name Dot7
+  xpos 874
+  ypos -606
+ }
+ Noise {
+  output {rgba.red -rgba.green -rgba.blue none}
+  replace true
+  size {{parent.frequency} {"parent.frequency * pixel_aspect"}}
+  zoffset {{"x + 1000"}}
+  gamma 1
+  name Noise1
+  xpos 840
+  ypos -514
+ }
+ Noise {
+  output {-rgba.red rgba.green -rgba.blue none}
+  replace true
+  size {{parent.Noise1.size} {parent.Noise1.size}}
+  zoffset {{x}}
+  gamma 1
+  name Noise2
+  xpos 840
+  ypos -481
+ }
+ Clamp {
+  name Clamp1
+  xpos 840
+  ypos -424
+ }
+ Dot {
+  name Dot11
+  xpos 874
+  ypos -366
+ }
+push $Nd77d6b00
+ BlinkScript {
+  ProgramGroup 1
+  KernelDescription "2 \"VoroNoise\" iterate pixelWise c117be128a07c11b6d82fd34148d66b3bcac41976ec9c2082affe38e890c2c0f 2 \"src\" Read Point \"dst\" Write Point 6 \"Frequency\" Float 1 AABIQg== \"Seed\" Int 1 AAAAAA== \"aspect ratio\" Float 1 AACAPw== \"width\" Int 1 AAAAAA== \"height\" Int 1 AAAAAA== \"Randomness\" Float 1 AAAAPw== 6 \"frequency\" 1 1 \"seed\" 1 1 \"aspect_ratio\" 1 1 \"width\" 1 1 \"height\" 1 1 \"randomness\" 1 1 0"
+  kernelSource "// Voronoi.blink\n// A test implementation of libNoise's Voronoi generator using Blink\n// Ivan Busquets - August 2013\n// Modified for DasGrain by Fabian Holtz - April 2019\n\n#define X_NOISE_GEN  1619\n#define Y_NOISE_GEN  31337\n#define Z_NOISE_GEN  6971\n#define SEED_NOISE_GEN  1013\n#define SQRT_3 1.73205081\n\ninline int IntValueNoise3D (int x, int y, int z, int seed)\n\{\n  // All constants are primes and must remain prime in order for this noise\n  // function to work correctly.\n  int n = (\n      X_NOISE_GEN    * x\n    + Y_NOISE_GEN    * y\n    + Z_NOISE_GEN    * z\n    + SEED_NOISE_GEN * seed)\n    & 0x7fffffff;\n  n = (n >> 13) ^ n;\n  return (n * (n * n * 60493 + 19990303) + 1376312589) & 0x7fffffff;\n\}\n\ninline float ValueNoise3D (int x, int y, int z, int seed)\n\{\n  return 1.0 - ((float)IntValueNoise3D (x, y, z, seed) / 1073741824.0);\n\}\n\nkernel VoroNoise : ImageComputationKernel<ePixelWise>\n\{\n  Image<eRead> src;\n  Image<eWrite, eAccessPoint> dst;\n\nparam:\n  float frequency;\n  int seed;\n  float aspect_ratio;\n  int width;\n  int height;\n  float randomness;\n\n\n  void define() \{\n    defineParam(frequency, \"Frequency\", 50.0f);\n    defineParam(aspect_ratio, \"aspect ratio\", 1.0f);\n    defineParam(seed, \"Seed\", 0);\n    defineParam(randomness, \"Randomness\", 0.5f);\n  \}\n\n\n\n\n  void process(int2 pos) \{\n   float x = pos.x * aspect_ratio * frequency / width;\n   float y = pos.y * frequency / width;\n   int xInt = (x > 0.0) ? x : x - 1;\n   int yInt = (y > 0.0) ? y : y - 1;\n\n\n    float minDist = 2147483647.0;\n    float xCandidate = 0;\n    float yCandidate = 0;\n\n    float dist;\n\nfor (int yCur = yInt - 2; yCur <= yInt + 2; yCur++) \{\n      for (int xCur = xInt - 2; xCur <= xInt + 2; xCur++) \{\n\n        // Calculate the position and distance to the seed point inside of\n        // this unit cube. Limited by the randomness value\n        float xPos = xCur + (ValueNoise3D (xCur, yCur, 0, seed    ) + 1 ) * randomness + (1-randomness) - 1;\n        float yPos = yCur + (ValueNoise3D (xCur, yCur, 0, seed + 1) + 1 ) * randomness + (1-randomness) - 1;\n\n        float xDist = xPos - x;\n        float yDist = yPos - y;\n\n        dist = pow(xDist, 2) + pow(yDist, 2);\n        if (dist < minDist) \{\n          // This seed point is closer to any others found so far, so record\n          // this seed point.\n          minDist = dist;\n          xCandidate = xPos;\n          yCandidate = yPos;\n\t\}\n    \}\n\}\n\n    SampleType(dst) sample(0.0f);\n\n    sample.x = xCandidate / aspect_ratio / frequency;\n    sample.y = yCandidate / height * width / frequency;\n    sample.z = 0;\n\n    dst() = sample;\n\}\n\};"
+  rebuild ""
+  VoroNoise_Frequency {{"width / parent.cell_size"}}
+  VoroNoise_Seed {{t*5}}
+  "VoroNoise_aspect ratio" {{pixel_aspect}}
+  VoroNoise_width {{width}}
+  VoroNoise_height {{height}}
+  rebuild_finalise ""
+  name VoroNoise
+  xpos 620
+  ypos -520
+ }
+ Copy {
+  inputs 2
+  from0 rgba.red
+  to0 forward.u
+  from1 rgba.green
+  to1 forward.v
+  name Copy1
+  xpos 620
+  ypos -382
+  disable {{"parent.amplitude == 0"}}
+ }
+ IDistort {
+  uv forward
+  uv_offset 0.5
+  uv_scale {{parent.amplitude} {"uv_scale.w * pixel_aspect"}}
+  filter impulse
+  name IDistort1
+  xpos 620
+  ypos -304
+  disable {{"parent.amplitude == 0" x10 1}}
+ }
+ Dot {
+  name Dot5
+  xpos 654
+  ypos -246
+ }
+ NoTimeBlur {
+  rounding floor
+  name NoTimeBlur3
+  xpos 620
+  ypos -154
+ }
+ Transform {
+  translate {{"floor((x * size) % 1 * (size)) - int(size / 2)"} {"floor(x % 1 * (size)) - int(size/2)"}}
+  filter impulse
+  black_outside false
+  name Transform1
+  xpos 664
+  ypos -69
+  disable {{"parent.edge_blend_size < 1" x-5 1 x10 1}}
+  addUserKnob {20 User}
+  addUserKnob {3 size}
+  size {{"parent.edge_blend_size + 1"}}
+ }
+ Dot {
+  name Dot9
+  xpos 654
+  ypos 42
+ }
+set Nd77a5600 [stack 0]
+push $Nd77d7200
+ Expression {
+  expr0 "(x + .5) / width"
+  expr1 "(y + .5) / height"
+  expr2 0
+  name STMapGenerator
+  xpos 400
+  ypos -514
+ }
+ NoTimeBlur {
+  rounding floor
+  name NoTimeBlur2
+  xpos 400
+  ypos -154
+ }
+ Merge2 {
+  inputs 2
+  operation from
+  Achannels {rgba.red rgba.green -rgba.blue none}
+  Bchannels {rgba.red rgba.green -rgba.blue none}
+  output {rgba.red rgba.green -rgba.blue none}
+  name Merge2
+  xpos 400
+  ypos 38
+ }
+ Dot {
+  name Dot10
+  xpos 434
+  ypos 210
+ }
+push $Nd77a5600
+ Expression {
+  temp_name0 view_index
+  temp_expr0 "parent.parent.stereo == 1 ? \[lsearch \[value root.views] \[view]] / 2 : 0"
+  expr0 "random((r + view_index) * 1000000, 0) * (maxx - minx) + minx"
+  expr1 "random((g + view_index) * 1000000, 0) * (maxy - miny) + miny"
+  channel2 none
+  channel3 none
+  name Expression3
+  xpos 620
+  ypos 110
+  addUserKnob {20 User}
+  addUserKnob {7 frequency R 0 100}
+  frequency {{parent.parent.cell_size}}
+  addUserKnob {7 multiplier R 0 3}
+  multiplier 0.5
+  addUserKnob {15 shrink}
+  shrink {{"frequency * multiplier + ceil(parent.edge_blend_size / 2) + IDistort1.uv_scale.w / 2"} {"frequency * multiplier + ceil(parent.edge_blend_size / 2) + IDistort1.uv_scale.h / 2"} {"frequency * multiplier + floor(parent.edge_blend_size / 2) + IDistort1.uv_scale.w / 2"} {"frequency * multiplier + floor(parent.edge_blend_size / 2) + IDistort1.uv_scale.h / 2"}}
+  addUserKnob {26 ""}
+  addUserKnob {7 minx}
+  minx {{"(parent.box.x + shrink.x + .5) / width"}}
+  addUserKnob {7 maxx}
+  maxx {{"(parent.box.r - shrink.r - .5) / width"}}
+  addUserKnob {7 miny}
+  miny {{"(parent.box.y + shrink.y + .5) / height"}}
+  addUserKnob {7 maxy}
+  maxy {{"(parent.box.t - shrink.t - .5) / height"}}
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  Achannels {rgba.red rgba.green -rgba.blue none}
+  Bchannels {rgba.red rgba.green -rgba.blue none}
+  output {rgba.red rgba.green -rgba.blue none}
+  name Merge3
+  xpos 620
+  ypos 206
+ }
+ Expression {
+  expr0 "(r + (maxx - minx) - minx) % (maxx - minx) + minx"
+  expr1 "(g + (maxy - miny) - miny) % (maxy - miny) + miny"
+  channel2 none
+  channel3 none
+  name Expression7
+  xpos 620
+  ypos 278
+  addUserKnob {20 User}
+  addUserKnob {7 minx}
+  minx {{"(parent.box.x + rint(x % 1 * parent.edge_blend_size) + .5) / width"}}
+  addUserKnob {7 maxx}
+  maxx {{"(parent.box.r + rint(x % 1 * parent.edge_blend_size) - .5) / width"}}
+  addUserKnob {7 miny}
+  miny {{"(parent.box.y + rint(x % 1 * parent.edge_blend_size) + .5) / height"}}
+  addUserKnob {7 maxy}
+  maxy {{"(parent.box.t + rint(x % 1 * parent.edge_blend_size) - .5) / height"}}
+ }
+ Dot {
+  name Dot3
+  xpos 654
+  ypos 354
+ }
+set Nd7769d00 [stack 0]
+ Dot {
+  name Dot13
+  xpos 654
+  ypos 546
+ }
+push $Nd7769d00
+ Dot {
+  name Dot8
+  xpos 874
+  ypos 354
+ }
+ Blur {
+  channels rgb
+  size {{pixel_aspect} 1}
+  name Blur1
+  label "\[value size]"
+  xpos 840
+  ypos 440
+ }
+ Difference {
+  inputs 2
+  name Difference2
+  xpos 840
+  ypos 536
+ }
+ Expression {
+  channel0 {none none none rgba.alpha}
+  expr0 "a > 1e-9"
+  channel1 none
+  channel2 none
+  channel3 none
+  name Expression2
+  xpos 840
+  ypos 614
+ }
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name Shuffle1
+  label "\[value in]:\[value out]"
+  xpos 840
+  ypos 680
+ }
+ Dot {
+  name Dot4
+  xpos 874
+  ypos 762
+ }
+push $Nd7769d00
+push $Nd83e0800
+ FrameHold {
+  firstFrame {{sample_frame}}
+  name FrameHold1
+  xpos 180
+  ypos -256
+ }
+ NoTimeBlur {
+  rounding floor
+  name NoTimeBlur1
+  xpos 180
+  ypos -154
+ }
+ STMap {
+  inputs 2
+  channels rgb
+  uv rgb
+  filter impulse
+  name STMap1
+  xpos 180
+  ypos 350
+ }
+set Nd7745600 [stack 0]
+ TimeBlur {
+  divisions {{"max(Transform1.size == 1 ? 2 : pow2(Transform1.size), 1)"}}
+  shutter 1
+  shuttercustomoffset {{"1 / divisions / 2"}}
+  name TimeBlur1
+  xpos 180
+  ypos 446
+  disable {{"parent.edge_blend_size < 1"}}
+ }
+set Nd7744f00 [stack 0]
+push $Nd7745600
+ Dot {
+  name Dot1
+  xpos -6
+  ypos 354
+ }
+ Difference {
+  inputs 2
+  name Difference1
+  xpos -40
+  ypos 440
+ }
+ Expression {
+  channel0 {none none none rgba.alpha}
+  expr0 "a > 1e-10"
+  channel1 none
+  channel2 none
+  channel3 none
+  name Expression1
+  xpos -40
+  ypos 494
+ }
+ Blur {
+  channels alpha
+  size {{parent.parent.edge_blend_size}}
+  name Blur2
+  xpos -40
+  ypos 536
+ }
+ Grade {
+  channels alpha
+  blackpoint 0.5
+  white_clamp true
+  name Grade2
+  xpos -40
+  ypos 584
+ }
+ Dot {
+  name Dot2
+  xpos -6
+  ypos 666
+ }
+push $Nd7744f00
+ Grade {
+  inputs 1+1
+  white 1.4
+  black_clamp false
+  name Grade1
+  xpos 180
+  ypos 662
+  disable {{"parent.edge_blend_size < 1"}}
+ }
+ Merge2 {
+  inputs 2
+  Achannels rgb
+  Bchannels rgb
+  output rgb
+  name Merge1
+  xpos 180
+  ypos 758
+  disable {{!parent.overlay_pattern}}
+ }
+ Assert {
+  expression {{"Expression3.maxx > Expression3.minx && Expression3.maxy > Expression3.miny"}}
+  message "increase sample box size or decrease cell size"
+  name error
+  xpos 180
+  ypos 854
+ }
+ Output {
+  name Output1
+  xpos 180
+  ypos 950
+ }
+end_group
+Add {
+ channels rgb
+ value 0.18
+ name Add
+ selected true
+ xpos 4140
+ ypos 3350
+}
+FrameRange {
+ first_frame 1001
+ last_frame 1025
+ time ""
+ name FrameRange
+ label "\[value first_frame]-\[value last_frame]"
+ selected true
+ xpos 4140
+ ypos 3392
+}

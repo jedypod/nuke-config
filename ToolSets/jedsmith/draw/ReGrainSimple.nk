@@ -1,0 +1,107 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name ReGrainSimple
+ tile_color 0x7f7f7fff
+ addUserKnob {20 Params}
+ addUserKnob {41 o l offset t "offset that the grain plate was encoded with (should be 0.18 for half exr)" T Add1.o}
+ addUserKnob {41 intensity T Multiply1.value}
+ addUserKnob {41 lut l "" +STARTLINE T ColorLookup1.lut}
+}
+ Input {
+  inputs 0
+  name Input
+  label "\[value number]"
+  xpos 70
+  ypos -40
+ }
+ Dot {
+  name Dot1
+  note_font "Helvetica Bold"
+  note_font_size 24
+  note_font_color 0xff
+  xpos 104
+  ypos 138
+ }
+set Nd83ec800 [stack 0]
+ ColorLookup {
+  name ColorLookup1
+  xpos -40
+  ypos 134
+ }
+ Input {
+  inputs 0
+  name Inputgrn
+  label "\[value number]"
+  xpos -150
+  ypos -40
+  number 1
+ }
+ Reformat {
+  type "to box"
+  box_width {{Input.width}}
+  box_height {{Input.height}}
+  box_fixed true
+  box_pixel_aspect {{Input.pixel_aspect}}
+  filter Lanczos4
+  pbb true
+  name Reformat3
+  xpos -150
+  ypos 14
+ }
+ FrameHold {
+  firstFrame {{rint(input.first_frame+random(t)*(input.last_frame-input.first_frame))}}
+  name FrameHold2
+  xpos -150
+  ypos 56
+ }
+ Add {
+  channels rgb
+  value {{-o} {-o} {-o} 0}
+  name Add1
+  xpos -150
+  ypos 110
+  addUserKnob {20 User}
+  addUserKnob {18 o l offset}
+  o 0.18
+  addUserKnob {6 o_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ }
+ Merge2 {
+  inputs 2
+  operation multiply
+  bbox B
+  output rgb
+  name Merge1
+  xpos -150
+  ypos 134
+ }
+ Multiply {
+  channels rgb
+  name Multiply1
+  xpos -150
+  ypos 170
+ }
+ Dot {
+  name Dot2
+  note_font "Helvetica Bold"
+  note_font_size 24
+  note_font_color 0xff
+  xpos -116
+  ypos 210
+ }
+push $Nd83ec800
+ Merge2 {
+  inputs 2
+  operation plus
+  bbox B
+  output rgb
+  name Merge2
+  xpos 70
+  ypos 206
+ }
+ Output {
+  name Output
+  xpos 70
+  ypos 278
+ }
+end_group
