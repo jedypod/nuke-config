@@ -1,15 +1,15 @@
 set cut_paste_input [stack 0]
 push $cut_paste_input
 NoOp {
- name ___pointer___
+ name _pointer
  autolabel "\"\{0\}\\n\{1\}\".format(nuke.thisNode().name(), nuke.thisNode()\[\"label\"].evaluate()) if nuke.thisNode().setInput(0, nuke.toNode(nuke.thisNode()\[\"target\"].getValue())) else \"\""
  tile_color 0x1e1e1eff
- label "<font size=7> \[if \{\[exists input.title]\} \{return \[value input.title]\}]\n"
+ label "\n<b>\[value this.input.name]"
  note_font_color 0x66717bff
- icon Input.png
  hide_input true
  addUserKnob {20 pointer_tab l pointer}
  addUserKnob {1 target}
+ addUserKnob {22 create_target l "create target" -STARTLINE T "n = nuke.thisNode()\nnm = n\['target'].getValue()\ntn = nuke.toNode(nm)\nif tn:\n    n.setInput(0, tn)\nelse:\n    if n.isSelected():\n        n.setSelected(False)\n    d = nuke.createNode('Dot')\n    if n.isSelected():\n        d.setXYpos(n.xpos(), n.ypos()-50)\n    d.setName(nm)\n    d\['note_font_size'].setValue(14)\n    d\['label'].setValue(' *\[value name]')\n    d\['tile_color'].setValue(0xff750500)\n    n.setInput(0,d)\n    n\['label'].setValue(n\['label'].getValue())"}
  addUserKnob {22 connect_to_target l connect t "connect this pointer to target anchor" T "n = nuke.thisNode()\nt = n\['target'].getValue()\nif nuke.exists(t):\n    tn = nuke.toNode(t)\n    n.setInput(0, tn)" +STARTLINE}
  addUserKnob {22 zoom_to_target l zoom t "frame target in the dag" -STARTLINE T "t = nuke.thisNode()\['target'].getValue()\nif nuke.exists(t):\n    tn = nuke.toNode(t)\n    nuke.zoom(2.0, \[tn.xpos(), tn.ypos()])"}
  addUserKnob {22 set_target l "set target" t "set target to selected node" -STARTLINE T "n = nuke.thisNode()\nsn = nuke.selectedNodes()\nif sn:\n    t = sn\[-1]\nn\['target'].setValue(t.fullName())"}
