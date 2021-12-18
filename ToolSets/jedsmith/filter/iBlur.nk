@@ -2,6 +2,7 @@ set cut_paste_input [stack 0]
 push $cut_paste_input
 Group {
  name iBlur
+ tile_color 0xcc804eff
  addUserKnob {20 Params}
  addUserKnob {41 channels T Blur.channels}
  addUserKnob {14 size R 0 100}
