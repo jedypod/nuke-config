@@ -302,7 +302,7 @@ push $Nd7769d00
 push $Nd7769d00
 push $Nd83e0800
  FrameHold {
-  firstFrame {{sample_frame}}
+  first_frame {{sample_frame}}
   name FrameHold1
   xpos 180
   ypos -256

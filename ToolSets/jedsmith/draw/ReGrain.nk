@@ -145,7 +145,7 @@ set Ne7ff8100 [stack 0]
   mx {{0.18*2**(p+sw/2)}}
  }
  FrameHold {
-  firstFrame {{input.first_frame+fstep*t}}
+  first_frame {{input.first_frame+fstep*t}}
   name FrameHold1
   xpos -370
   ypos 129
@@ -346,7 +346,7 @@ push $Ne7f9c800
   ypos 15
  }
  FrameHold {
-  firstFrame {{rint(input.first_frame+random(t)*(input.last_frame-input.first_frame))}}
+  first_frame {{rint(input.first_frame+random(t)*(input.last_frame-input.first_frame))}}
   name FrameHold2
   xpos -590
   ypos 57

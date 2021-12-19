@@ -50,7 +50,7 @@ set Nd83ec800 [stack 0]
   ypos 14
  }
  FrameHold {
-  firstFrame {{rint(input.first_frame+random(t)*(input.last_frame-input.first_frame))}}
+  first_frame {{rint(input.first_frame+random(t)*(input.last_frame-input.first_frame))}}
   name FrameHold2
   xpos -150
   ypos 56
