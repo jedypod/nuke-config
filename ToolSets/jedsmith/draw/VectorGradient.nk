@@ -1,0 +1,14 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Expression {
+ temp_name0 u0
+ temp_expr0 r(x-1,y)-r
+ temp_name1 v0
+ temp_expr1 r(x,y-1)-r
+ temp_name2 l
+ temp_expr2 sqrt(u0**2+v0**2)
+ expr0 l==0?0:u0/l
+ expr1 l==0?0:v0/l
+ expr2 0
+ name VectorGradient
+}
