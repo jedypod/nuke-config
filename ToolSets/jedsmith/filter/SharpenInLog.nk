@@ -1,0 +1,99 @@
+set cut_paste_input [stack 0]
+version 13.0 v5
+push $cut_paste_input
+Group {
+ name Sharpen
+ note_font Helvetica
+ selected true
+ xpos -154
+ ypos -901
+ addUserKnob {20 Params}
+ addUserKnob {41 size T Blur1.size}
+ addUserKnob {7 amount}
+ amount 0.5
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 maskChannelMask l mask -STARTLINE T NodeWrapper1.maskChannelMask}
+ addUserKnob {41 invert_mask l invert -STARTLINE T NodeWrapper1.invert_mask}
+ addUserKnob {41 mix T NodeWrapper1.mix}
+}
+ Input {
+  inputs 0
+  name Inputmask
+  note_font Helvetica
+  xpos 180
+  ypos 279
+  number 1
+ }
+ Input {
+  inputs 0
+  name Input
+  xpos -40
+  ypos 14
+ }
+set N92c2cf00 [stack 0]
+ Colorspace {
+  colorspace_out AlexaV3LogC
+  name Colorspace1
+  note_font Helvetica
+  xpos -40
+  ypos 63
+ }
+set N8560b200 [stack 0]
+ Blur {
+  channels rgba
+  size 10
+  name Blur1
+  note_font Helvetica
+  xpos -150
+  ypos 87
+ }
+ Multiply {
+  channels rgb
+  value {{amount}}
+  name Multiply1
+  note_font Helvetica
+  xpos -150
+  ypos 135
+ }
+push $N8560b200
+ Multiply {
+  channels rgb
+  value {{amount+1}}
+  name Multiply2
+  note_font Helvetica
+  xpos -40
+  ypos 135
+ }
+ Merge2 {
+  inputs 2
+  operation from
+  bbox B
+  Achannels rgb
+  Bchannels rgb
+  output rgb
+  name Merge2
+  note_font Helvetica
+  xpos -40
+  ypos 183
+ }
+ Colorspace {
+  colorspace_in AlexaV3LogC
+  name Colorspace2
+  note_font Helvetica
+  xpos -40
+  ypos 231
+ }
+push $N92c2cf00
+ NodeWrapper {
+  inputs 2+1
+  name NodeWrapper1
+  note_font Helvetica
+  xpos -40
+  ypos 273
+ }
+ Output {
+  name Output
+  xpos -40
+  ypos 326
+ }
+end_group
