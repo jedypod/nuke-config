@@ -1,0 +1,95 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name iTransform
+ addUserKnob {20 iTransform}
+ addUserKnob {41 translate T Transform1.translate}
+ addUserKnob {41 rotate T Transform1.rotate}
+ addUserKnob {41 scale T Transform1.scale}
+ addUserKnob {41 skewX l "skew X" T Transform1.skewX}
+ addUserKnob {41 skewY l "skew Y" T Transform1.skewY}
+ addUserKnob {41 skew_order l "skew order" T Transform1.skew_order}
+ addUserKnob {41 center T Transform1.center}
+ addUserKnob {41 invert_matrix l invert T Transform1.invert_matrix}
+ addUserKnob {41 filter T Transform1.filter}
+}
+ Input {
+  inputs 0
+  name Inputctrl
+  xpos -260
+  ypos -9
+  number 1
+ }
+ Input {
+  inputs 0
+  name Input
+  xpos -40
+  ypos -178
+ }
+ Dot {
+  name Dot1
+  xpos -6
+  ypos -126
+ }
+set N7aab200 [stack 0]
+ Expression {
+  channel0 forward
+  expr0 x
+  channel1 forward
+  expr1 y
+  channel2 none
+  name expr_vectors
+  xpos -150
+  ypos -129
+ }
+set N7aaab00 [stack 0]
+ Transform {
+  center {960 540}
+  shutteroffset centred
+  name Transform1
+  xpos -260
+  ypos -105
+ }
+push $N7aaab00
+ Merge2 {
+  inputs 2
+  operation minus
+  Achannels forward
+  Bchannels forward
+  output forward
+  name Merge2
+  xpos -150
+  ypos -63
+ }
+ Merge2 {
+  inputs 2
+  operation multiply
+  Bchannels forward
+  output forward
+  name Merge1
+  xpos -150
+  ypos -15
+ }
+push $N7aab200
+ Copy {
+  inputs 2
+  channels forward
+  name Copy1
+  xpos -40
+  ypos -21
+ }
+ IDistort {
+  uv forward
+  blur_scale 0
+  name IDistort1
+  selected true
+  xpos -40
+  ypos 57
+  filter {{Transform1.filter}}
+ }
+ Output {
+  name Output
+  xpos -40
+  ypos 134
+ }
+end_group
