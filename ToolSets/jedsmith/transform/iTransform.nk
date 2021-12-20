@@ -33,9 +33,9 @@ Group {
  }
 set N7aab200 [stack 0]
  Expression {
-  channel0 forward
+  channel0 {forward.u -forward.v}
   expr0 x
-  channel1 forward
+  channel1 {-forward.u forward.v}
   expr1 y
   channel2 none
   name expr_vectors
