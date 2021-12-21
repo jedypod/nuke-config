@@ -4,7 +4,6 @@ Group {
  name ReGrainSimple
  tile_color 0x7f7f7fff
  addUserKnob {20 Params}
- addUserKnob {41 o l offset t "offset that the grain plate was encoded with (should be 0.18 for half exr)" T Add1.o}
  addUserKnob {41 intensity T Multiply1.value}
  addUserKnob {41 lut l "" +STARTLINE T ColorLookup1.lut}
 }
@@ -54,17 +53,6 @@ set Nd83ec800 [stack 0]
   name FrameHold2
   xpos -150
   ypos 56
- }
- Add {
-  channels rgb
-  value {{-o} {-o} {-o} 0}
-  name Add1
-  xpos -150
-  ypos 110
-  addUserKnob {20 User}
-  addUserKnob {18 o l offset}
-  o 0.18
-  addUserKnob {6 o_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
  }
  Merge2 {
   inputs 2

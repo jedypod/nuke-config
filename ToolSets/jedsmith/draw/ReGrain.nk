@@ -136,7 +136,7 @@ set Ne7ff8100 [stack 0]
   mx_e 5
   addUserKnob {7 p t "sample position in stops around 0.18\n" R -12 12}
   addUserKnob {7 sw t "sample width" R 0 2}
-  sw 2
+  sw 1
   addUserKnob {7 tg l target R 0 0.1}
   tg 0.005
   addUserKnob {7 mn}
@@ -350,17 +350,6 @@ push $Ne7f9c800
   name FrameHold2
   xpos -590
   ypos 57
- }
- Add {
-  channels rgb
-  value {{-o} {-o} {-o} 0}
-  name Add1
-  xpos -590
-  ypos 231
-  addUserKnob {20 User}
-  addUserKnob {18 o l offset}
-  o 0.18
-  addUserKnob {6 o_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
  }
  Merge2 {
   inputs 2
