@@ -139,7 +139,6 @@ def get_parent(node):
 
 
 def get_topnode(node):
-
     # return the topnode of node
     return nuke.toNode(nuke.tcl('return [value [topnode {0}].name]'.format(node.fullName())))
 
@@ -717,24 +716,14 @@ def swap_node(nodes=None):
             colorspace_out = node['colorspace_out'].value()
             node['colorspace_out'].setValue(colorspace_in)
             node['colorspace_in'].setValue(colorspace_out)
-        if 'direction' in node.knobs():
-            swap_knob(node['direction'])
-        if 'invert' in node.knobs():
-            swap_knob(node['invert'])
-        if 'invert_matrix' in node.knobs():
-            swap_knob(node['invert_matrix'])
-        if 'reverse' in node.knobs():
-            swap_knob(node['reverse'])
-        if 'operation' in node.knobs():
-            opknob = node['operation']
-            vals = list(opknob.values())
-            if vals:
-                if 'log' in vals[0]:
-                    swap_knob(node['operation'])
         if 'Roto' in node.Class():
             if 'replace' in node.knobs():
                 swap_knob(node['replace'])
-
+        
+        knobs = ['direction', 'invert', 'invert_matrix', 'reverse', 'operation']
+        for k in knobs:
+            if k in node.knobs():
+                swap_knob(node[k])
 
 def swap_view():
     views = nuke.views()
