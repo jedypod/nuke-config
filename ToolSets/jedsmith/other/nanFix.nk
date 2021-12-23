@@ -1,0 +1,35 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+name nanFix
+addUserKnob {20 Params}
+}
+Input {
+inputs 0
+name Input
+xpos -40
+ypos -34
+}
+Expression {
+temp_name0 nr
+temp_expr0 isnan(r)||isinf(r)
+temp_name1 ng
+temp_expr1 isnan(g)||isinf(g)
+temp_name2 nb
+temp_expr2 isnan(b)||isinf(b)
+temp_name3 na
+temp_expr3 nr||ng||nb
+expr0 nr?0:r
+expr1 ng?0:g
+expr2 nb?0:b
+expr3 na
+name Expression1
+xpos -40
+ypos 15
+}
+Output {
+name Output
+xpos -40
+ypos 62
+}
+end_group
