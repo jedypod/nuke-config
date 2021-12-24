@@ -1,3 +1,5 @@
+# This file is intentionally blank. It re-initializes all formats so we can start clean.
+
 # # NOTE: These defaults are now set in defaults.py
 # # I leave this file with everything commented out
 # # as an example of how to accomplish the same thing with a tcl method.
