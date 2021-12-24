@@ -45,7 +45,7 @@ import importlib
 import json
 
 
-__version__ = "1.2.5"
+__version__ = "1.3.6"
 
 # Enable support for `from Qt import *`
 __all__ = []
@@ -779,19 +779,25 @@ def _wrapinstance(ptr, base=None):
         raise AttributeError("'module' has no attribute 'wrapInstance'")
 
     if base is None:
-        q_object = func(long(ptr), Qt.QtCore.QObject)
-        meta_object = q_object.metaObject()
-        class_name = meta_object.className()
-        super_class_name = meta_object.superClass().className()
-
-        if hasattr(Qt.QtWidgets, class_name):
-            base = getattr(Qt.QtWidgets, class_name)
-
-        elif hasattr(Qt.QtWidgets, super_class_name):
-            base = getattr(Qt.QtWidgets, super_class_name)
-
-        else:
+        if Qt.IsPyQt4 or Qt.IsPyQt5:
             base = Qt.QtCore.QObject
+        else:
+            q_object = func(long(ptr), Qt.QtCore.QObject)
+            meta_object = q_object.metaObject()
+
+            while True:
+                class_name = meta_object.className()
+
+                try:
+                    base = getattr(Qt.QtWidgets, class_name)
+                except AttributeError:
+                    try:
+                        base = getattr(Qt.QtCore, class_name)
+                    except AttributeError:
+                        meta_object = meta_object.superClass()
+                        continue
+
+                break
 
     return func(long(ptr), base)
 
@@ -971,7 +977,7 @@ def _loadUi(uifile, baseinstance=None):
                                                                   parent,
                                                                   name)
                 elif class_name in self.custom_widgets:
-                    widget = self.custom_widgets[class_name](parent)
+                    widget = self.custom_widgets[class_name](parent=parent)
                 else:
                     raise Exception("Custom widget '%s' not supported"
                                     % class_name)
@@ -1024,6 +1030,7 @@ _misplaced_members = {
             "QtCompat.qInstallMessageHandler", _qInstallMessageHandler
         ],
         "QtWidgets.QStyleOptionViewItem": "QtCompat.QStyleOptionViewItemV4",
+        "QtMultimedia.QSound": "QtMultimedia.QSound",
     },
     "PyQt5": {
         "QtCore.pyqtProperty": "QtCore.Property",
@@ -1050,6 +1057,7 @@ _misplaced_members = {
             "QtCompat.qInstallMessageHandler", _qInstallMessageHandler
         ],
         "QtWidgets.QStyleOptionViewItem": "QtCompat.QStyleOptionViewItemV4",
+        "QtMultimedia.QSound": "QtMultimedia.QSound",
     },
     "PySide": {
         "QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
@@ -1084,6 +1092,7 @@ _misplaced_members = {
             "QtCompat.qInstallMessageHandler", _qInstallMessageHandler
         ],
         "QtGui.QStyleOptionViewItemV4": "QtCompat.QStyleOptionViewItemV4",
+        "QtGui.QSound": "QtMultimedia.QSound",
     },
     "PyQt4": {
         "QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
@@ -1120,6 +1129,7 @@ _misplaced_members = {
             "QtCompat.qInstallMessageHandler", _qInstallMessageHandler
         ],
         "QtGui.QStyleOptionViewItemV4": "QtCompat.QStyleOptionViewItemV4",
+        "QtGui.QSound": "QtMultimedia.QSound",
     }
 }
 
@@ -1253,16 +1263,24 @@ def _setup(module, extras):
 
     Qt.__binding__ = module.__name__
 
+    def _warn_import_error(exc, module):
+        msg = str(exc)
+        if "No module named" in msg:
+            return
+        _warn("ImportError(%s): %s" % (module, msg))
+
     for name in list(_common_members) + extras:
         try:
             submodule = _import_sub_module(
                 module, name)
-        except ImportError:
+        except ImportError as e:
             try:
                 # For extra modules like sip and shiboken that may not be
                 # children of the binding.
                 submodule = __import__(name)
-            except ImportError:
+            except ImportError as e2:
+                _warn_import_error(e, name)
+                _warn_import_error(e2, name)
                 continue
 
         setattr(Qt, "_" + name, submodule)
@@ -1668,7 +1686,12 @@ def _log(text):
 
 
 def _warn(text):
-    sys.stderr.write("Qt.py [warning]: %s\n" % text)
+    try:
+        sys.stderr.write("Qt.py [warning]: %s\n" % text)
+    except UnicodeDecodeError:
+        import locale
+        encoding = locale.getpreferredencoding()
+        sys.stderr.write("Qt.py [warning]: %s\n" % text.decode(encoding))
 
 
 def _convert(lines):
@@ -1895,7 +1918,7 @@ def _install():
             setattr(our_submodule, member, placeholder)
 
     # Enable direct import of QtCompat
-    sys.modules['Qt.QtCompat'] = Qt.QtCompat
+    sys.modules[__name__ + ".QtCompat"] = Qt.QtCompat
 
     # Backwards compatibility
     if hasattr(Qt.QtCompat, 'loadUi'):
