@@ -1,1 +1,0 @@
-# This file is intentionally blank. It re-initializes all formats so we can start clean.
