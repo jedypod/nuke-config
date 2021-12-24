@@ -1,408 +1,468 @@
 set cut_paste_input [stack 0]
 push $cut_paste_input
 Group {
- name ReGrain
- tile_color 0x7f7f7fff
- addUserKnob {20 Params}
- addUserKnob {26 out_label l "<b>output " T ""}
- addUserKnob {83 out l " " t "<br><b>Output mode</b><br><b>regrain</b>: apply grain to input. where diff = 1, plate grain will be used. Where diff = 0, grain plate will be used. Adjust diff threshold to set hardness of matte.<br><b>diff</b>: show diff between input and degrain as red overlay.<br><b>grain</b>: output grain normalized by analysis. Useful for creating grain plates." -STARTLINE M {regrain diff grain}}
- addUserKnob {41 mn l "diff thresh" t "threshold for difference between comp and degrain" T MergeDifference3.mn}
- addUserKnob {41 fa l falloff t "softness of difference between comp and degrain" T MergeDifference3.fa}
- addUserKnob {20 sampling_label l "sampling parameters (expert)" t "parameters for grain intensity analysis. defaults should be good for most cases." n 1}
- sampling_label 0
- addUserKnob {41 mn_e l "min exp" t "min sample point in stops from 0.18" T extract.mn_e}
- addUserKnob {41 mx_e l "max exp" t "max sample point in stops from 0.18" T extract.mx_e}
- addUserKnob {41 sw l "sample step" T extract.sw}
- addUserKnob {41 samples l "time samples" t "Number of frames to analyze in input framerange" T FrameHold1.samples}
- addUserKnob {6 norm l normalize t "normalize output grain" +STARTLINE}
- norm true
- addUserKnob {41 tg l target t "grain will be normalized to this target average intensity value" -STARTLINE T extract.tg}
- addUserKnob {26 ""}
- addUserKnob {41 p l position t "sample position" T extract.p}
- addUserKnob {6 prev l "preview sample" t "preview sample data (functionally useless but looks cool)" +STARTLINE}
- addUserKnob {20 endGroup n -1}
- addUserKnob {22 analyze l "Analyze Grain Response" t "Analyze grain response curve from dgrn and plt inputs." T "import nuke\nimport math\nimport re\n\ndef arange(start, end, step):\n  while start <= end:\n    yield float(start)\n    start += step\n\ndef analyze(node):\n  with node:\n    # get nodes for sampling\n    ex = nuke.toNode('extract')\n    sa = nuke.toNode('sample')\n    ct = nuke.toNode('curvetool')\n    ik = ct\['intensitydata']\n    # and their knob values we need\n    mn = ex\['mn_e'].getValue()\n    mx = ex\['mx_e'].getValue()\n    tg = ex\['tg'].getValue()\n    sw = ex\['sw'].getValue()\n    # sample frames are blended together, so it doesn't matter what frame we're on\n    fr = nuke.frame()\n\n    # get lut and reset it\n    lut = nuke.toNode('ColorLookup1')\['lut']\n    lut.fromScript('red \{curve\}\\ngreen \{curve\}\\nblue \{curve\}')\n    \n    chl = \['red', 'green', 'blue']\n    # generate sample list in stops from middle grey\n    samples = list(arange(mn, mx, sw))\n\n    task = nuke.ProgressTask('Analysis In Progress:')\n\n    for i, ch in enumerate(chl):\n      sa\['ch'].setValue(i)\n      ik.clearAnimated()\n      for s in samples:\n        if task.isCancelled():\n          return\n        task.setMessage('channel: \{0\}\\n sample: \{1\}'.format(chl\[i], s))\n        # set sample to current position\n        ex\['p'].setValue(s)\n        # get sample values from curvetool\n        nuke.execute(ct, fr, fr)\n        v = ik.getValue()\n        vn = v\[2] # alpha value for normalization\n        if vn != 0:\n          vy = (v\[0] / vn) / tg # normalize by target \n          vx = v\[1] / vn\n          \n          # vy = math.log2(vy/0.18-mn)/(mx-mn)\n          # vx = math.log2(vx/0.18-mn)/(mx-mn)\n\n          lut.setValueAt(vy, vx, i+1)\n        else:\n          # skip if no samples at the exposure in image\n          print('no samples at \{0\} stops'.format(s))\n    ex\['p'].setValue(0)\n    del task\n  # continue first and last keyframes in lut\n  lut = node\['lut']\n  lutc = re.sub(r'(x\\d.\\d+ \\d.\\d+)\[^.]*\\n', r'C \\1\}\\n', lut.toScript())\n  # lutc = re.sub(r'(\{curve )', r'\\1C ', lutc)\n  lut.fromScript(lutc)\n  \n\nanalyze(nuke.thisNode())" +STARTLINE}
- addUserKnob {41 lut l "" +STARTLINE T ColorLookup1.lut}
- addUserKnob {22 copy_lut l "Copy Curves to Selected" t "rg\['lut'].fromScript(node\['lut'].toScript())" T "n = nuke.thisNode()\nwith nuke.root():\n  tg = nuke.selectedNode()\n  if tg and 'lut' in tg.knobs():\n    tg\['lut'].fromScript(n\['lut'].toScript())\n  else:\n    nuke.message('Please select a node with a lut knob')" +STARTLINE}
+name ReGrain
+tile_color 0x7f7f7fff
+addUserKnob {20 Params}
+addUserKnob {26 out_label l "<b>output " T ""}
+addUserKnob {83 out l " " t "<br><b>Output mode</b><br><b>regrain</b>: apply grain to input. where diff = 1, plate grain will be used. Where diff = 0, grain plate will be used. Adjust diff threshold to set hardness of matte.<br><b>diff</b>: show diff between input and degrain as red overlay.<br><b>ngrain</b>: output grain normalized by analysis. Useful for creating grain plates. <br><b>grain</b>: final adapted grain used for applying regrain to denoised comp, mixed with grain plate if used." -STARTLINE M {regrain diff ngrain grain}}
+addUserKnob {41 mn l "diff thresh" t "threshold for difference between comp and degrain" T MergeDifference3.mn}
+addUserKnob {20 sampling_label l "sampling parameters (expert)" t "parameters for grain intensity analysis. defaults should be good for most cases." n 1}
+sampling_label 0
+addUserKnob {41 mn_e l "min exp" t "min sample point in stops from 0.18" T extract.mn_e}
+addUserKnob {41 mx_e l "max exp" t "max sample point in stops from 0.18" T extract.mx_e}
+addUserKnob {41 sw l "sample step" T extract.sw}
+addUserKnob {41 samples l "time samples" t "Number of frames to analyze in input framerange" T FrameHold1.samples}
+addUserKnob {41 tg l target t "grain will be normalized to this target average intensity value" T extract.tg}
+addUserKnob {26 ""}
+addUserKnob {41 p l position t "sample position" T extract.p}
+addUserKnob {6 prev l "preview sample" t "preview sample data (functionally useless but looks cool)" +STARTLINE}
+addUserKnob {6 disable_grainplate l "disable grainplate" -STARTLINE}
+addUserKnob {20 endGroup n -1}
+addUserKnob {22 analyze l "Analyze Grain Response" t "Analyze grain response curve from dgrn and plt inputs." T "import nuke\nimport math\nimport re\n\ndef arange(start, end, step):\n  while start <= end:\n    yield float(start)\n    start += step\n\ndef analyze(node):\n  with node:\n    # get nodes for sampling\n    ex = nuke.toNode('extract')\n    sa = nuke.toNode('sample')\n    ct = nuke.toNode('curvetool')\n    ik = ct\['intensitydata']\n    # and their knob values we need\n    mn = ex\['mn_e'].getValue()\n    mx = ex\['mx_e'].getValue()\n    tg = ex\['tg'].getValue()\n    sw = ex\['sw'].getValue()\n    # sample frames are blended together, so it doesn't matter what frame we're on\n    fr = nuke.frame()\n\n    # get lut and reset it\n    lut = node\['lut']\n    lut.fromScript('red \{curve\}\\ngreen \{curve\}\\nblue \{curve\}')\n    \n    chl = \['red', 'green', 'blue']\n    # generate sample list in stops from middle grey\n    samples = list(arange(mn, mx, sw))\n\n    task = nuke.ProgressTask('Analysis In Progress:')\n\n    for i, ch in enumerate(chl):\n      sa\['ch'].setValue(i)\n      ik.clearAnimated()\n      # store previous sample\n      pvy = 0\n      for s in samples:\n        if task.isCancelled():\n          return\n        task.setMessage('channel: \{0\}\\n sample: \{1\}'.format(chl\[i], s))\n        # set sample to current position\n        ex\['p'].setValue(s)\n        # get sample values from curvetool\n        nuke.execute(ct, fr, fr)\n        v = ik.getValue()\n        vn = v\[2] # alpha value for normalization\n        if vn != 0:\n          vy = (v\[0] / vn) / tg # normalize by target \n          vx = v\[1] / vn\n          \n          # vy = math.log2(vy/0.18-mn)/(mx-mn)\n          # vx = math.log2(vx/0.18-mn)/(mx-mn)\n          \n          # make sure sample values do not decrease\n          if vy > pvy:\n            lut.setValueAt(vy, vx, i+1)\n            pvy = vy\n        else:\n          # skip if no samples at the exposure in image\n          print('no samples at \{0\} stops'.format(s))\n        \n    ex\['p'].setValue(0)\n    del task\n  # continue first and last keyframes in lut\n  lut = node\['lut']\n  lutc = re.sub(r'(x\\d+.\\d+ \\d+.\\d+)\[^.]*\}', r'C \\1\}', lut.toScript())\n  # lutc = re.sub(r'(\{curve )', r'\\1C ', lutc)\n  lut.fromScript(lutc)\n  \n\nanalyze(nuke.thisNode())" +STARTLINE}
+addUserKnob {41 lut l "" +STARTLINE T LUT.lut}
+addUserKnob {22 copy_lut l "Copy Curves to Selected" t "rg\['lut'].fromScript(node\['lut'].toScript())" T "n = nuke.thisNode()\nwith nuke.root():\n  tg = nuke.selectedNode()\n  if tg and 'lut' in tg.knobs():\n    tg\['lut'].fromScript(n\['lut'].toScript())\n  else:\n    nuke.message('Please select a node with a lut knob')" +STARTLINE}
 }
- Input {
-  inputs 0
-  name Inputplt
-  label "\[value number]"
-  xpos -260
-  ypos -88
-  number 2
- }
- Dot {
-  name Dot5
-  label " scan"
-  note_font "Helvetica Bold"
-  note_font_size 24
-  note_font_color 0xff
-  xpos -226
-  ypos -30
- }
- Reformat {
-  type "to box"
-  box_width {{Input.width}}
-  box_height {{Input.height}}
-  box_fixed true
-  box_pixel_aspect {{Input.pixel_aspect}}
-  pbb true
-  name Reformat2
-  xpos -260
-  ypos 15
- }
- FrameRange {
-  first_frame {{FrameRange1.first_frame}}
-  last_frame {{FrameRange1.last_frame}}
-  time ""
-  name FrameRange3
-  label "\[value first_frame]-\[value last_frame]"
-  xpos -260
-  ypos 57
- }
-set Ne7ff9d00 [stack 0]
- Input {
-  inputs 0
-  name Inputdgrn
-  label "\[value number]"
-  xpos -150
-  ypos -88
-  number 1
- }
- Dot {
-  name Dot3
-  label " degrain"
-  note_font "Helvetica Bold"
-  note_font_size 24
-  note_font_color 0xff
-  xpos -116
-  ypos -30
- }
- Reformat {
-  type "to box"
-  box_width {{Input.width}}
-  box_height {{Input.height}}
-  box_fixed true
-  box_pixel_aspect {{Input.pixel_aspect}}
-  pbb true
-  name Reformat1
-  xpos -150
-  ypos 15
- }
- FrameRange {
-  first_frame {{FrameRange1.first_frame}}
-  last_frame {{FrameRange1.last_frame}}
-  time ""
-  name FrameRange2
-  label "\[value first_frame]-\[value last_frame]"
-  xpos -150
-  ypos 57
- }
-set Ne7ff8100 [stack 0]
- MergeExpression {
-  inputs 2
-  temp_name0 dg
-  temp_expr0 ch==0?Br:ch==1?Bg:Bb
-  temp_name1 pl
-  temp_expr1 ch==0?Ar:ch==1?Ag:Ab
-  temp_name2 gr
-  temp_expr2 fabs(pl-dg)
-  expr0 gr
-  expr1 dg
-  expr2 0
-  name sample
-  xpos -370
-  ypos 63
-  addUserKnob {20 User}
-  addUserKnob {3 ch}
-  ch 2
- }
- Expression {
-  temp_name3 xt
-  temp_expr3 g>=mn&&g<=mx
-  expr0 r*xt
-  expr1 g*xt
-  expr2 xt
-  expr3 0
-  name extract
-  xpos -370
-  ypos 87
-  addUserKnob {20 User}
-  addUserKnob {7 mn_e l "min exp" R -12 0}
-  mn_e -7
-  addUserKnob {7 mx_e l "max exp" R 0 12}
-  mx_e 5
-  addUserKnob {7 p t "sample position in stops around 0.18\n" R -12 12}
-  addUserKnob {7 sw t "sample width" R 0 2}
-  sw 1
-  addUserKnob {7 tg l target R 0 0.1}
-  tg 0.005
-  addUserKnob {7 mn}
-  mn {{0.18*2**(p-sw/2)}}
-  addUserKnob {7 mx}
-  mx {{0.18*2**(p+sw/2)}}
- }
- FrameHold {
-  first_frame {{input.first_frame+fstep*t}}
-  name FrameHold1
-  xpos -370
-  ypos 129
-  addUserKnob {20 User}
-  addUserKnob {3 samples}
-  samples 3
-  addUserKnob {7 fstep l step R 0 100}
-  fstep {{(input.last_frame-input.first_frame)/samples}}
- }
- FrameBlend {
-  channels rgb
-  numframes 11
-  startframe 0
-  endframe {{input.samples}}
-  userange true
-  name FrameBlend2
-  xpos -370
-  ypos 182
-  cached true
- }
- CurveTool {
-  avgframes 0
-  channels rgba
-  ROI {0 -6 {width x7 2104} {height x7 1136}}
-  intensitydata {{curve x84 1.405674982e-05} {curve x84 0.003617354455} {curve x84 0.0007514191614} {curve x84 0}}
-  name curvetool
-  xpos -370
-  ypos 230
- }
- Dot {
-  name Dot10
-  note_font "Helvetica Bold"
-  note_font_size 24
-  note_font_color 0xff
-  xpos -336
-  ypos 594
- }
-push $Ne7ff8100
- Dot {
-  name Dot4
-  note_font "Helvetica Bold"
-  note_font_size 24
-  note_font_color 0xff
-  xpos -116
-  ypos 138
- }
-set Ne7f9f200 [stack 0]
- Input {
-  inputs 0
-  name Input
-  label "\[value number]"
-  xpos 70
-  ypos -88
- }
- Dot {
-  name Dot7
-  label " comp"
-  note_font "Helvetica Bold"
-  note_font_size 24
-  note_font_color 0xff
-  xpos 104
-  ypos -30
- }
- FrameRange {
-  first_frame {{input.first_frame}}
-  last_frame {{input.last_frame}}
-  time ""
-  name FrameRange1
-  label "\[value first_frame]-\[value last_frame]"
-  xpos 70
-  ypos 57
- }
- Dot {
-  name Dot1
-  note_font "Helvetica Bold"
-  note_font_size 24
-  note_font_color 0xff
-  xpos 104
-  ypos 138
- }
-set Ne7f9d600 [stack 0]
- Switch {
-  inputs 2
-  which {{out==2}}
-  name Switch_norm_source
-  xpos -150
-  ypos 231
- }
- ColorLookup {
-  name ColorLookup1
-  xpos -150
-  ypos 302
- }
-set Ne7f9c800 [stack 0]
-push $Ne7f9f200
-push $Ne7ff9d00
- Merge2 {
-  inputs 2
-  operation from
-  bbox B
-  output rgb
-  name Merge95
-  xpos -260
-  ypos 135
- }
- Dot {
-  name Dot8
-  label " plate grain"
-  note_font "Helvetica Bold"
-  note_font_size 24
-  note_font_color 0xff
-  xpos -226
-  ypos 198
- }
-set Ne7f8ab00 [stack 0]
- MergeExpression {
-  inputs 2
-  expr0 Ar==0?0:Br/Ar
-  expr1 Ag==0?0:Bg/Ag
-  expr2 Ab==0?0:Bb/Ab
-  name NormalizeGrain
-  xpos -260
-  ypos 374
-  disable {{!norm}}
- }
- Dot {
-  name Dot9
-  note_font "Helvetica Bold"
-  note_font_size 24
-  note_font_color 0xff
-  xpos -226
-  ypos 546
- }
-push $Ne7f9f200
-push $Ne7f9d600
- MergeExpression {
-  inputs 2
-  temp_name0 df
-  temp_expr0 max(fabs(Ar-Br),fabs(Ag-Bg),fabs(Ab-Bb))
-  temp_name1 ex
-  temp_expr1 clamp((mn-df)/(mx-mn))
-  channel0 {rgba.red -rgba.green -rgba.blue none}
-  expr0 ex*.3+Br*.7
-  expr1 Bg
-  expr2 Bb
-  expr3 ex
-  name MergeDifference3
-  xpos -40
-  ypos 134
-  addUserKnob {20 Params}
-  addUserKnob {7 fa l falloff R 0 0.1}
-  fa 0.05
-  addUserKnob {7 mn l "diff thresh"}
-  mn 0.1
-  addUserKnob {7 mx}
-  mx {{mn+fa}}
- }
- Dot {
-  name Dot11
-  note_font "Helvetica Bold"
-  note_font_size 24
-  note_font_color 0xff
-  xpos -6
-  ypos 354
- }
-set Ne7f88f00 [stack 0]
-push $Ne7f88f00
-push $Ne7f8ab00
-push $Ne7f9c800
- Input {
-  inputs 0
-  name Inputgrn
-  label "\[value number]"
-  xpos -590
-  ypos -88
-  number 3
- }
- Dot {
-  name Dot6
-  label " grain plate"
-  note_font "Helvetica Bold"
-  note_font_size 24
-  note_font_color 0xff
-  xpos -556
-  ypos -30
- }
- Reformat {
-  type "to box"
-  box_width {{Input.width}}
-  box_height {{Input.height}}
-  box_fixed true
-  box_pixel_aspect {{Input.pixel_aspect}}
-  resize fill
-  filter Lanczos4
-  pbb true
-  name Reformat3
-  xpos -590
-  ypos 15
- }
- FrameHold {
-  first_frame {{rint(input.first_frame+random(t)*(input.last_frame-input.first_frame))}}
-  name FrameHold2
-  xpos -590
-  ypos 57
- }
- Merge2 {
-  inputs 2
-  operation multiply
-  bbox B
-  output rgb
-  name Merge1
-  xpos -590
-  ypos 302
- }
- Dot {
-  name Dot2
-  note_font "Helvetica Bold"
-  note_font_size 24
-  note_font_color 0xff
-  xpos -556
-  ypos 426
- }
- Keymix {
-  inputs 3
-  channels rgb
-  bbox B
-  name Keymix7
-  xpos -150
-  ypos 423
- }
-push $Ne7f9d600
- Merge2 {
-  inputs 2
-  operation plus
-  bbox B
-  output rgb
-  name Merge2
-  xpos 70
-  ypos 423
- }
- Switch {
-  inputs 3
-  which {{out}}
-  name Switch_out
-  xpos 70
-  ypos 542
- }
- Switch {
-  inputs 2
-  which {{prev}}
-  name Switch_prev
-  xpos 70
-  ypos 590
- }
- Output {
-  name Output
-  xpos 70
-  ypos 638
- }
+BackdropNode {
+inputs 0
+name BackdropNode1
+tile_color 0x42424201
+label "<font color=#000000><font size=7><b>analyze grain</b></font>"
+note_font Helvetica
+note_font_size 10
+note_font_color 0xffffffff
+xpos -530
+ypos -70
+bdwidth 180
+bdheight 322
+z_order -10
+}
+Input {
+inputs 0
+name Inputplt
+label "\[value number]"
+xpos -260
+ypos -160
+number 2
+}
+Dot {
+name Dot5
+label " scan"
+note_font "Helvetica Bold"
+note_font_size 24
+note_font_color 0xff
+xpos -226
+ypos -102
+}
+Reformat {
+type "to box"
+box_width {{Input.width}}
+box_height {{Input.height}}
+box_fixed true
+box_pixel_aspect {{Input.pixel_aspect}}
+pbb true
+name Reformat2
+xpos -260
+ypos -58
+}
+FrameRange {
+first_frame {{FrameRange1.first_frame}}
+last_frame {{FrameRange1.last_frame}}
+time ""
+name FrameRange3
+label "\[value first_frame]-\[value last_frame]"
+xpos -260
+ypos -16
+}
+set Nee300100 [stack 0]
+Input {
+inputs 0
+name Inputdgrn
+label "\[value number]"
+xpos -150
+ypos -160
+number 1
+}
+Dot {
+name Dot3
+label " degrain"
+note_font "Helvetica Bold"
+note_font_size 24
+note_font_color 0xff
+xpos -116
+ypos -102
+}
+Reformat {
+type "to box"
+box_width {{Input.width}}
+box_height {{Input.height}}
+box_fixed true
+box_pixel_aspect {{Input.pixel_aspect}}
+pbb true
+name Reformat1
+xpos -150
+ypos -58
+}
+FrameRange {
+first_frame {{FrameRange1.first_frame}}
+last_frame {{FrameRange1.last_frame}}
+time ""
+name FrameRange2
+label "\[value first_frame]-\[value last_frame]"
+xpos -150
+ypos -16
+}
+set Ne663a400 [stack 0]
+MergeExpression {
+inputs 2
+temp_name0 dg
+temp_expr0 ch==0?Br:ch==1?Bg:Bb
+temp_name1 pl
+temp_expr1 ch==0?Ar:ch==1?Ag:Ab
+temp_name2 gr
+temp_expr2 fabs(pl-dg)
+expr0 gr
+expr1 dg
+expr2 0
+name sample
+xpos -480
+ypos -10
+addUserKnob {20 Params}
+addUserKnob {3 ch}
+ch 2
+}
+Expression {
+temp_name3 xt
+temp_expr3 g>=mn&&g<=mx
+expr0 r*xt
+expr1 g*xt
+expr2 xt
+expr3 0
+name extract
+xpos -480
+ypos 38
+addUserKnob {20 Params}
+addUserKnob {7 mn_e l "min exp" R -12 0}
+mn_e -7
+addUserKnob {7 mx_e l "max exp" R 0 12}
+mx_e 5
+addUserKnob {7 p t "sample position in stops around 0.18\n" R -12 12}
+addUserKnob {7 sw t "sample width" R 0 2}
+sw 1
+addUserKnob {7 tg l target R 0 0.1}
+tg 0.005
+addUserKnob {7 mn}
+mn {{0.18*2**(p-sw/2)}}
+addUserKnob {7 mx}
+mx {{0.18*2**(p+sw/2)}}
+}
+FrameHold {
+first_frame {{input.first_frame+fstep*t}}
+name FrameHold1
+xpos -480
+ypos 80
+addUserKnob {20 Params}
+addUserKnob {3 samples}
+samples 3
+addUserKnob {7 fstep l step R 0 100}
+fstep {{(input.last_frame-input.first_frame)/samples}}
+}
+FrameBlend {
+channels rgb
+numframes 11
+startframe 0
+endframe {{input.samples}}
+userange true
+name FrameBlend2
+xpos -480
+ypos 134
+cached true
+}
+CurveTool {
+avgframes 0
+channels rgba
+ROI {0 -6 {width x7 2104} {height x7 1136}}
+intensitydata {{curve x1 6.471512919e-08} {curve x1 2.861452999e-05} {curve x1 4.888463903e-06} {curve x1 0}}
+name curvetool
+xpos -480
+ypos 182
+}
+Dot {
+name Dot10
+note_font "Helvetica Bold"
+note_font_size 24
+note_font_color 0xff
+xpos -446
+ypos 594
+}
+push $Ne663a400
+Dot {
+name Dot4
+note_font "Helvetica Bold"
+note_font_size 24
+note_font_color 0xff
+xpos -116
+ypos 66
+}
+set N1b151600 [stack 0]
+Input {
+inputs 0
+name Input
+label "\[value number]"
+xpos 70
+ypos -160
+}
+Dot {
+name Dot7
+label " comp"
+note_font "Helvetica Bold"
+note_font_size 24
+note_font_color 0xff
+xpos 104
+ypos -102
+}
+FrameRange {
+first_frame {{input.first_frame}}
+last_frame {{input.last_frame}}
+time ""
+name FrameRange1
+label "\[value first_frame]-\[value last_frame]"
+xpos 70
+ypos -16
+}
+Dot {
+name Dot1
+note_font "Helvetica Bold"
+note_font_size 24
+note_font_color 0xff
+xpos 104
+ypos 66
+}
+set N75a0b900 [stack 0]
+MergeExpression {
+inputs 2
+temp_name0 df
+temp_expr0 max(fabs(Ar-Br),fabs(Ag-Bg),fabs(Ab-Bb))
+temp_name1 ex
+temp_expr1 clamp((mn-df)/(mx-mn))
+channel0 {rgba.red -rgba.green -rgba.blue none}
+expr0 ex*.3+Br*.7
+expr1 Bg
+expr2 Bb
+expr3 ex
+name MergeDifference3
+xpos -40
+ypos 110
+addUserKnob {20 Params}
+addUserKnob {7 fa l falloff R 0 0.1}
+addUserKnob {7 mn l "diff thresh"}
+mn 0.05
+addUserKnob {7 mx}
+mx {{mn+fa}}
+}
+Dot {
+name Dot11
+note_font "Helvetica Bold"
+note_font_size 24
+note_font_color 0xff
+xpos -6
+ypos 330
+}
+set N75a0ab00 [stack 0]
+push $N75a0b900
+Dot {
+name Dot9
+note_font "Helvetica Bold"
+note_font_size 24
+note_font_color 0xff
+xpos 104
+ypos 282
+}
+set N75a0a400 [stack 0]
+Expression {
+expr0 LUT.lut.red(r)
+expr1 LUT.lut.green(g)
+expr2 LUT.lut.blue(b)
+name ApplyLUT2
+xpos -150
+ypos 278
+}
+set N75a09d00 [stack 0]
+Input {
+inputs 0
+name Inputgrn
+label "\[value number]"
+xpos -700
+ypos -160
+number 3
+}
+Dot {
+name Dot6
+label " grain plate"
+note_font "Helvetica Bold"
+note_font_size 24
+note_font_color 0xff
+xpos -666
+ypos -102
+}
+Reformat {
+type "to box"
+box_width {{Input.width}}
+box_height {{Input.height}}
+box_fixed true
+box_pixel_aspect {{Input.pixel_aspect}}
+resize fill
+filter Lanczos4
+pbb true
+name Reformat3
+xpos -700
+ypos -58
+}
+FrameHold {
+first_frame {{rint(input.first_frame+random(t)*(input.last_frame-input.first_frame))}}
+name FrameHold2
+xpos -700
+ypos -16
+}
+Merge2 {
+inputs 2
+operation multiply
+bbox B
+output rgb
+name Merge1
+xpos -700
+ypos 278
+}
+Dot {
+name Dot13
+label " adapted grain plate"
+note_font "Helvetica Bold"
+note_font_size 24
+note_font_color 0xff
+xpos -666
+ypos 378
+}
+Dot {
+name Dot2
+note_font "Helvetica Bold"
+note_font_size 24
+note_font_color 0xff
+xpos -666
+ypos 426
+}
+push $N75a09d00
+push $N1b151600
+Expression {
+expr0 LUT.lut.red(r)
+expr1 LUT.lut.green(g)
+expr2 LUT.lut.blue(b)
+name ApplyLUT1
+xpos -150
+ypos 134
+}
+push $N1b151600
+push $Nee300100
+Merge2 {
+inputs 2
+operation from
+bbox B
+output rgb
+name Merge95
+xpos -260
+ypos 62
+}
+MergeExpression {
+inputs 2
+expr0 Ar==0?0:Br/Ar
+expr1 Ag==0?0:Bg/Ag
+expr2 Ab==0?0:Bb/Ab
+name NormalizeGrain
+xpos -260
+ypos 134
+}
+Dot {
+name Dot12
+label " normalized plate grain"
+note_font "Helvetica Bold"
+note_font_size 24
+note_font_color 0xff
+xpos -226
+ypos 210
+}
+set N9facf00 [stack 0]
+Merge2 {
+inputs 2
+operation multiply
+bbox B
+output rgb
+name Merge3
+xpos -260
+ypos 326
+}
+Dot {
+name Dot8
+label " adapted plate grain"
+note_font "Helvetica Bold"
+note_font_size 24
+note_font_color 0xff
+xpos -226
+ypos 378
+}
+Keymix {
+inputs 3
+channels rgb
+invertMask true
+bbox B
+name Keymix7
+xpos -260
+ypos 422
+disable {{"disable_grainplate?1:!\[exists parent.input3]"}}
+}
+set Ne69ef900 [stack 0]
+Dot {
+name Dot14
+note_font "Helvetica Bold"
+note_font_size 24
+note_font_color 0xff
+xpos -226
+ypos 522
+}
+push $N9facf00
+push $N75a0ab00
+push $Ne69ef900
+push $N75a0a400
+Merge2 {
+inputs 2
+operation plus
+bbox B
+output rgb
+name Merge2
+xpos 70
+ypos 422
+}
+Switch {
+inputs 4
+which {{out}}
+name Switch_out
+xpos 70
+ypos 518
+}
+Switch {
+inputs 2
+which {{prev}}
+name Switch_prev
+xpos 70
+ypos 590
+}
+Output {
+name Output
+xpos 70
+ypos 638
+}
+push $Ne663a400
+Sampler {
+name LUT
+xpos -40
+ypos -10
+}
 end_group
