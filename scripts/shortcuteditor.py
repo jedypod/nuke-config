@@ -1,21 +1,4 @@
-from __future__ import division
 from __future__ import print_function
-
-import nuke
-import os
-try:
-    # Prefer QtCore.Qt.py when available
-    from Qt import QtCore, QtGui, QtWidgets, Qt
-except ImportError:
-    try:
-        # PySide2 for default Nuke 11
-        from PySide2 import QtCore, QtGui, QtWidgets
-    except ImportError:
-        # Or PySide for Nuke 10
-        from PySide import QtCore, QtGui, QtGui as QtWidgets
-
-__version__ = "1.2"
-
 
 """A shortcut-key editor for Nuke's menus
 
@@ -30,7 +13,27 @@ try:
 except Exception:
     import traceback
     traceback.print_exc()
+# Note: It is recommended this goes near the end of menu.py
 """
+
+__version__ = "1.2"
+
+
+import nuke
+import os
+try:
+    # Prefer Qt.py when available
+    from Qt import QtCore, QtGui, QtWidgets
+    from Qt.QtCore import Qt
+except ImportError:
+    try:
+        # PySide2 for default Nuke 11
+        from PySide2 import QtCore, QtGui, QtWidgets
+        from PySide2.QtCore import Qt
+    except ImportError:
+        # Or PySide for Nuke 10
+        from PySide import QtCore, QtGui, QtGui as QtWidgets
+        from PySide.QtCore import Qt
 
 
 class KeySequenceWidget(QtWidgets.QWidget):
@@ -46,6 +49,8 @@ class KeySequenceWidget(QtWidgets.QWidget):
 
     def __init__(self, parent=None):
         QtWidgets.QWidget.__init__(self, parent)
+
+        self.setMinimumWidth(140)
 
         layout = QtWidgets.QHBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
@@ -98,8 +103,8 @@ class KeySequenceButton(QtWidgets.QPushButton):
 
     def __init__(self, parent=None):
         QtWidgets.QPushButton.__init__(self, parent)
-        #self.setIcon(icons.get("configure"))
-        self._modifierlessAllowed = True # True allows "b" as a shortcut, False requires shift/alt/ctrl/etc
+        # self.setIcon(icons.get("configure"))
+        self._modifierlessAllowed = True  # True allows "b" as a shortcut, False requires shift/alt/ctrl/etc
         self._seq = QtGui.QKeySequence()
         self._timer = QtCore.QTimer()
         self._timer.setSingleShot(True)
@@ -145,36 +150,38 @@ class KeySequenceButton(QtWidgets.QPushButton):
             return QtWidgets.QPushButton.keyPressEvent(self, ev)
         if ev.isAutoRepeat():
             return
-        #modifiers = int(ev.modifiers() & (QtCore.Qt.SHIFT | QtCore.Qt.CTRL | QtCore.Qt.ALT | QtCore.Qt.META))
+        # modifiers = int(ev.modifiers() & (Qt.SHIFT | Qt.CTRL | Qt.ALT | Qt.META))
         modifiers = ev.modifiers()
 
         ev.accept()
+
+        all_modifiers = (-1, Qt.Key_Shift, Qt.Key_Control, Qt.Key_AltGr,
+                            Qt.Key_Alt, Qt.Key_Meta, Qt.Key_Menu)
 
         key = ev.key()
         # check if key is a modifier or a character key without modifier (and if that is allowed)
         if (
             # don't append the key if the key is -1 (garbage) or a modifier ...
-            key not in (-1, QtCore.Qt.Key_AltGr, QtCore.Qt.Key_Shift, QtCore.Qt.Key_Control,
-                            QtCore.Qt.Key_Alt, QtCore.Qt.Key_Meta, QtCore.Qt.Key_Menu)
+            key not in all_modifiers
             # or if this is the first key and without modifier and modifierless keys are not allowed
             and (self._modifierlessAllowed
                  or self._recseq.count() > 0
-                 or modifiers & ~QtCore.Qt.SHIFT
+                 or modifiers & ~Qt.SHIFT
                  or not ev.text()
-                 or (modifiers & QtCore.Qt.SHIFT
-                     and key in (QtCore.Qt.Key_Return, QtCore.Qt.Key_Space, QtCore.Qt.Key_Tab, QtCore.Qt.Key_Backtab,
-                                 QtCore.Qt.Key_Backspace, QtCore.Qt.Key_Delete, QtCore.Qt.Key_Escape)))):
+                 or (modifiers & Qt.SHIFT
+                     and key in (Qt.Key_Return, Qt.Key_Space, Qt.Key_Tab, Qt.Key_Backtab,
+                                 Qt.Key_Backspace, Qt.Key_Delete, Qt.Key_Escape)))):
 
             # change Shift+Backtab into Shift+Tab
-            if key == QtCore.Qt.Key_Backtab and modifiers & QtCore.Qt.SHIFT:
-                key = QtCore.Qt.Key_Tab | modifiers
+            if key == Qt.Key_Backtab and modifiers & Qt.SHIFT:
+                key = Qt.Key_Tab | modifiers
 
             # remove the Shift modifier if it doen't make sense..
-            elif (QtCore.Qt.Key_Exclam <= key <= QtCore.Qt.Key_At
+            elif (Qt.Key_Exclam <= key <= Qt.Key_At
                   # ... e.g ctrl+shift+! is impossible on, some,
                   # keyboards (because ! is shift+1)
-                  or QtCore.Qt.Key_Z < key <= 0x0ff):
-                key = key | (modifiers & ~int(QtCore.Qt.SHIFT))
+                  or Qt.Key_Z < key <= 0x0ff):
+                key = key | (modifiers & ~int(Qt.SHIFT))
 
             else:
                 key = key | modifiers
@@ -192,7 +199,7 @@ class KeySequenceButton(QtWidgets.QPushButton):
     def keyReleaseEvent(self, ev):
         if not self._isrecording:
             return QtWidgets.QPushButton.keyReleaseEvent(self, ev)
-        modifiers = int(ev.modifiers() & (QtCore.Qt.SHIFT | QtCore.Qt.CTRL | QtCore.Qt.ALT | QtCore.Qt.META))
+        modifiers = int(ev.modifiers() & (Qt.SHIFT | Qt.CTRL | Qt.ALT | Qt.META))
         ev.accept()
 
         self._modifiers = modifiers
@@ -211,12 +218,12 @@ class KeySequenceButton(QtWidgets.QPushButton):
             self._timer.start(600)
 
     def startRecording(self):
-        #self.setFocus(True) # because of QTBUG 17810
+        # self.setFocus(True)  # because of QTBUG 17810
         self.setDown(True)
         self.setStyleSheet("text-align: left;")
         self._isrecording = True
         self._recseq = QtGui.QKeySequence()
-        self._modifiers = int(QtWidgets.QApplication.keyboardModifiers() & (QtCore.Qt.SHIFT | QtCore.Qt.CTRL | QtCore.Qt.ALT | QtCore.Qt.META))
+        self._modifiers = int(QtWidgets.QApplication.keyboardModifiers() & (Qt.SHIFT | Qt.CTRL | Qt.ALT | Qt.META))
         self.grabKeyboard()
         self.updateDisplay()
 
@@ -236,10 +243,7 @@ class KeySequenceButton(QtWidgets.QPushButton):
         self.updateDisplay()
 
 
-
-
-
-def _find_menu_items(menu, _path = None, _top_menu_name = None):
+def _find_menu_items(menu, _path=None, _top_menu_name=None):
     """Extracts items from a given Nuke menu
 
     Returns a list of strings, with the path to each item
@@ -257,7 +261,7 @@ def _find_menu_items(menu, _path = None, _top_menu_name = None):
 
     found = []
 
-    mi = list(menu.items())
+    mi = menu.items()
     for i in mi:
         if isinstance(i, nuke.Menu):
             # Sub-menu, recurse
@@ -286,7 +290,6 @@ def _widget_with_label(towrap, text):
     layout = QtWidgets.QHBoxLayout()
     layout.setContentsMargins(0, 0, 0, 0)
     label = QtWidgets.QLabel(text)
-    label.setAlignment(QtCore.Qt.AlignRight)
     layout.addWidget(label)
     layout.addWidget(towrap)
     w.setLayout(layout)
@@ -297,7 +300,7 @@ def _load_yaml(path):
     def _load_internal():
         import json
         if not os.path.isfile(path):
-            # print "Settings file %r does not exist" % (path)
+            print("Settings file %r does not exist" % (path))
             return
         f = open(path)
         overrides = json.load(f)
@@ -323,12 +326,12 @@ def _save_yaml(obj, path):
             try:
                 os.makedirs(ndir)
             except OSError as e:
-                if e.errno != 17: # errno 17 is "already exists"
+                if e.errno != 17:  # errno 17 is "already exists"
                     raise
 
         f = open(path, "w")
         # TODO: Limit number of saved items to some sane number
-        json.dump(obj, fp = f, sort_keys=True, indent=1, separators=(',', ': '))
+        json.dump(obj, fp=f, sort_keys=True, indent=1, separators=(',', ': '))
         f.write("\n")
         f.close()
 
@@ -336,52 +339,37 @@ def _save_yaml(obj, path):
     try:
         _save_internal()
     except Exception:
-        print("Error saving node weights")
+        print("Error saving shortcuteditor settings")
         import traceback
         traceback.print_exc()
 
 
 def _restore_overrides(overrides):
-    for item, key in list(overrides.items()):
+    for item, key in overrides.items():
         menu_name, _, path = item.partition("/")
         m = nuke.menu(menu_name)
         item = m.findItem(path)
         if item is None:
             nuke.warning("WARNING: %r (menu: %r) does not exist?" % (path, menu_name))
         else:
-            #print "Restoring shortcut %r for %r (menu: %r)" % (key, path, menu_name)
             item.setShortcut(key)
 
 
 def _overrides_as_code(overrides):
     menus = {}
-    for item, key in list(overrides.items()):
+    for item, key in overrides.items():
         menu_name, _, path = item.partition("/")
 
         menus.setdefault(menu_name, []).append((path, key))
 
-
     lines = []
-    lines.append("def apply_key_overrides():")
-    lines.append("    overrides = {")
-    for menu, all_path_key in list(menus.items()):
-        lines.append("        'Nuke': [")
-        for path, key in all_path_key:
-            lines.append("            (%r, %r)," % (path, key))
-        lines.append("        ],")
-        lines.append("    }")
-        lines.append("    for menu_name, overrides in overrides:")
-        lines.append("        m = nuke.menu(menu_name)")
-        lines.append("        for path, key in overrides:")
-        lines.append("            item = m.findItem(path)")
-        lines.append("            if item is None:")
-        lines.append("                print 'WARNING: %r (menu: %r) does not exist, cannot restore key %r' % (path, menu, key)")
-        lines.append("            else:")
-        lines.append("                item.setShortcut(key)")
-        return "\n".join(lines)
-
-
-    lines.append("apply_key_overrides()")
+    for menu, things in menus.items():
+        lines.append("cur_menu = nuke.menu(%r)" % menu)
+        for path, key in things:
+            lines.append("m = cur_menu.findItem(%r)" % path)
+            lines.append("if m is not None:")
+            lines.append("    m.setShortcut(%r)" % key)
+            lines.append("")
     return "\n".join(lines)
 
 
@@ -393,7 +381,7 @@ class Overrides(object):
         settings = {
             'overrides': self.overrides,
             'version': 1,
-            }
+        }
         _save_yaml(obj=settings, path=self.settings_path)
 
     def clear(self):
@@ -416,11 +404,10 @@ class Overrides(object):
             _restore_overrides(self.overrides)
 
         else:
-            nuke.warning("Wrong version of shortcut, nothing loaded (version was %s expected 1), path was %r" % (
-                    int(settings['version']),
-                    self.settings_path))
+            nuke.warning("Wrong version of shortcut editor config, nothing loaded (version was %s expected 1), path was %r" % (
+                int(settings['version']),
+                self.settings_path))
             return
-
 
 
 class ShortcutEditorWidget(QtWidgets.QDialog):
@@ -454,9 +441,8 @@ class ShortcutEditorWidget(QtWidgets.QDialog):
 
         # By-key filter bar
         key_filter = KeySequenceWidget()
-        key_filter.keySequenceChanged.connect(self.populate)
+        key_filter.keySequenceChanged.connect(self.filter_entries)
         self.key_filter = key_filter
-
 
         search_layout.addWidget(_widget_with_label(key_filter, "Search by key"))
 
@@ -484,6 +470,11 @@ class ShortcutEditorWidget(QtWidgets.QDialog):
         layout.addWidget(button_reset)
         self.button_reset = button_reset
 
+        button_as_code = QtWidgets.QPushButton("Copy as menu.py snippet...")
+        button_as_code.clicked.connect(self.show_as_code)
+        layout.addWidget(button_as_code)
+        self.button_as_code = button_as_code
+
 
         button_close = QtWidgets.QPushButton("Close")
         button_close.clicked.connect(self.close)
@@ -506,8 +497,27 @@ class ShortcutEditorWidget(QtWidgets.QDialog):
         else:
             self._search_timer = QtCore.QTimer()
             self._search_timer.setSingleShot(True)
-            self._search_timer.timeout.connect(self.populate)
-            self._search_timer.start(200) # 200ms timeout
+            self._search_timer.timeout.connect(self.filter_entries)
+            self._search_timer.start(200)  # 200ms timeout
+
+    def filter_entries(self):
+        """Iterate through the rows in the table and hide/show according to filters
+        """
+        # We use the fact that self.list_menu() would never change to our advantage
+        menu_items = self.list_menu()
+
+        for rownum, menuitem in enumerate(menu_items):
+            # filter them, first by the input text
+            search = self.search_input.text()
+            found = search.lower() in menuitem['menupath'].lower().replace("&", "")
+
+            # ..and also filter by the shortcut, if one is specified
+            key_match = True
+            if self.key_filter.shortcut().toString() != "":
+                key_match = menuitem['menuobj'].action().shortcut() == self.key_filter.shortcut()
+
+            keep_result = all([found, key_match])
+            self.table.setRowHidden(rownum, not keep_result)
 
     def list_menu(self):
         """Gets the list-of-dicts containing all menu items
@@ -527,16 +537,6 @@ class ShortcutEditorWidget(QtWidgets.QDialog):
         # Get menu items
         menu_items = self.list_menu()
 
-        # ..and filter them, first by the input text
-        search = self.search_input.text()
-        menu_items = [x for x in menu_items
-                      if search.lower() in x['menupath'].lower().replace("&", "")]
-
-        # ..and also filter by the shortcut, if one is specified
-        if self.key_filter.shortcut().toString() != "":
-            menu_items = [x for x in menu_items
-                          if x['menuobj'].shortcut() == self.key_filter.shortcut()]
-
         # Setup table
         self.table.clear()
         self.table.setRowCount(len(menu_items))
@@ -544,23 +544,75 @@ class ShortcutEditorWidget(QtWidgets.QDialog):
 
         # Add items
         for rownum, menuitem in enumerate(menu_items):
-            shortcut = QtGui.QKeySequence(menuitem['menuobj'].shortcut())
+            shortcut = QtGui.QKeySequence(menuitem['menuobj'].action().shortcut())
 
-            w = KeySequenceWidget()
-            w.setShortcut(shortcut)
+            widget = KeySequenceWidget()
+            widget.setShortcut(shortcut)
 
-            self.table.setCellWidget(rownum, 0, w)
-            self.table.setCellWidget(rownum, 1, QtWidgets.QLabel("%s (menu: %s)" % (menuitem['menupath'], menuitem['top_menu_name'])))
+            self.table.setCellWidget(rownum, 0, widget)
+            self.table.setCellWidget(rownum, 1, QtWidgets.QLabel("%s (menu: %s)" % (menuitem['menupath'],
+                                                                                    menuitem['top_menu_name'])))
 
-            w.keySequenceChanged.connect(lambda menuitem=menuitem, w=w: self.setkey(menuitem = menuitem, shortcut_widget=w))
+            widget.keySequenceChanged.connect(lambda menu_item=menuitem, w=widget: self.setkey(menuitem=menu_item,
+                                                                                               shortcut_widget=w))
 
     def setkey(self, menuitem, shortcut_widget):
         """Called when shortcut is edited
 
         Updates the Nuke menu, and puts the key in the Overrides setting-thing
         """
-        menuitem['menuobj'].setShortcut(shortcut_widget.shortcut().toString())
-        self.settings.overrides["%s/%s" % (menuitem['top_menu_name'], menuitem['menupath'])] = shortcut_widget.shortcut().toString()
+
+        # Check if shortcut is already assigned to something else:
+        shortcut = shortcut_widget.shortcut().toString()
+        menu_items = self.list_menu()
+        for index, other_item in enumerate(menu_items):
+            if shortcut and other_item['menuobj'].action().shortcut() == shortcut and other_item is not menuitem:
+                answer = self._confirm_override(other_item, shortcut)
+                if answer is None:
+                    # Cancel editing - reset widget to original key then stop
+                    shortcut_widget.setShortcut(QtGui.QKeySequence(menuitem['menuobj'].action().shortcut()))
+                    return
+                elif answer is True:
+                    # Un-assign the shortcut first
+                    other_item['menuobj'].setShortcut('')
+                    self.settings.overrides["%s/%s" % (other_item['top_menu_name'], other_item['menupath'])] = ""
+                    self.table.cellWidget(index, 0).setShortcut(QtGui.QKeySequence(""))
+                elif answer is False:
+                    # Keep both shortcuts
+                    pass
+
+        menuitem['menuobj'].setShortcut(shortcut)
+        self.settings.overrides[
+            "%s/%s" % (menuitem['top_menu_name'], menuitem['menupath'])] = shortcut_widget.shortcut().toString()
+
+    def _confirm_override(self, menu_item, shortcut):
+        """Ask the user if they are sure they want to override the shortcut
+        """
+        mb = QtWidgets.QMessageBox(self)
+
+        mb.setText("Shortcut '%s' is already assigned to %s (Menu: %s)." % (shortcut,
+                                                                            menu_item['menupath'],
+                                                                            menu_item['top_menu_name']))
+        mb.setInformativeText("If two shortucts have same key and are in same context (e.g both Viewer shortcuts), they may not function as expected")
+        mb.setIcon(QtWidgets.QMessageBox.Warning)
+
+        mb.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Cancel)
+        mb.setDefaultButton(QtWidgets.QMessageBox.Yes)
+
+        button_yes = mb.button(QtWidgets.QMessageBox.Yes)
+        button_yes.setText('Clear existing shortcut')
+
+        button_yes = mb.button(QtWidgets.QMessageBox.No)
+        button_yes.setText('Keep both')
+
+        ret = mb.exec_()
+        # TODO: More explicit return value than Optional[bool]?
+        if ret == QtWidgets.QMessageBox.Yes:
+            return True
+        elif ret == QtWidgets.QMessageBox.No:
+            return False
+        elif ret == QtWidgets.QMessageBox.Cancel:
+            return None
 
     def reset(self):
         """Reset some or all of the key overrides
@@ -568,13 +620,13 @@ class ShortcutEditorWidget(QtWidgets.QDialog):
 
         mb = QtWidgets.QMessageBox(
             self,
-            )
+        )
 
         mb.setText("Clear all key overrides?")
         mb.setInformativeText("Really remove all %s key overrides?" % len(self.settings.overrides))
         mb.setDetailedText(
             "Will reset the following to defaults:\n\n"
-            + "\n".join("%s (key: %s)" % (p, k or "(blank)") for (p, k) in list(self.settings.overrides.items())))
+            + "\n".join("%s (key: %s)" % (p, k or "(blank)") for (p, k) in self.settings.overrides.items()))
 
         mb.setIcon(QtWidgets.QMessageBox.Warning)
 
@@ -591,6 +643,32 @@ class ShortcutEditorWidget(QtWidgets.QDialog):
         else:
             raise RuntimeError("Unhandled button")
 
+    def show_as_code(self):
+        """Show overrides as a Python snippet
+        """
+
+        mb = QtWidgets.QMessageBox(
+            self,
+        )
+
+        mb.setText("menu.py snippet exporter")
+
+        mb.setInformativeText(
+            "A Python snippet has been generated in the 'Show Details' window\n\n"
+            "This can be placed in menu.py and it can be shared with people not using the Shortcut Editor UI.\n\n"
+            "Important note: Using this snippet will act confusingly if used while Shortcut Editor UI is also installed."
+        )
+        mb.setDetailedText(
+            "# ShortcutEditor generated snippet:\n" + 
+            _overrides_as_code(self.settings.overrides)
+            + "# End ShortcutEditor generated snippet"
+        )
+        mb.setIcon(QtWidgets.QMessageBox.Warning)
+
+        mb.setStandardButtons(QtWidgets.QMessageBox.Close)
+        mb.setDefaultButton(QtWidgets.QMessageBox.Close)
+        ret = mb.exec_()
+
     def closeEvent(self, evt):
         """Save when closing the UI
         """
@@ -600,11 +678,13 @@ class ShortcutEditorWidget(QtWidgets.QDialog):
         QtWidgets.QWidget.closeEvent(self, evt)
 
     def undercursor(self):
+        """Move window to under cursor, avoiding putting it off-screen
+        """
         def clamp(val, mi, ma):
             return max(min(val, ma), mi)
 
         # Get cursor position, and screen dimensions on active screen
-        cursor = QtWidgets.QCursor().pos()
+        cursor = QtGui.QCursor().pos()
         screen = QtWidgets.QDesktopWidget().screenGeometry(cursor)
 
         # Get window position so cursor is just over text input
@@ -630,6 +710,8 @@ def load_shortcuts():
 
 
 _sew_instance = None
+
+
 def gui():
     """Launch the key-override editor GUI
 
@@ -655,9 +737,10 @@ def gui():
     def when_closed():
         global _sew_instance
         _sew_instance = None
+
     _sew_instance.closed.connect(when_closed)
 
-    modal=False
+    modal = False
     if modal:
         _sew_instance.exec_()
     else:
@@ -678,4 +761,5 @@ def nuke_setup():
     nuke.menu("Nuke").addCommand("Edit/Edit keyboard shortcuts", gui)
 
 
-nuke_setup()
+if __name__ == "__main__":
+    nuke_setup()
