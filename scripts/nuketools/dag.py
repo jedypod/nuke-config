@@ -697,8 +697,11 @@ def read_from_write():
 
 
 # Enhanced swap functionality.
-def swap_knob(knob):
-    knob.setValue(0) if knob.getValue() == 1 else knob.setValue(1)
+def swap_knob(k):
+    if isinstance(k, nuke.Enumeration_Knob):
+        if len(k.values()) > 2:
+            return
+    k.setValue(0) if k.getValue() == 1 else k.setValue(1)
 
 def swap_node(nodes=None):
     if not nodes:
