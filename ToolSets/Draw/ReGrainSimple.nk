@@ -5,7 +5,10 @@ Group {
  tile_color 0x7f7f7fff
  addUserKnob {20 Params}
  addUserKnob {41 intensity T Multiply1.value}
- addUserKnob {41 lut l "" +STARTLINE T ColorLookup1.lut}
+ addUserKnob {41 lg l log T lg2ApplyLUT.lg}
+ addUserKnob {41 mn T lg2ApplyLUT.mn}
+ addUserKnob {41 mx T lg2ApplyLUT.mx}
+ addUserKnob {41 lut l "" +STARTLINE T LUT.lut}
 }
  Input {
   inputs 0
@@ -14,19 +17,34 @@ Group {
   xpos 70
   ypos -40
  }
+set N35cbab00 [stack 0]
  Dot {
   name Dot1
-  note_font "Helvetica Bold"
-  note_font_size 24
-  note_font_color 0xff
   xpos 104
   ypos 138
  }
-set Nd83ec800 [stack 0]
- ColorLookup {
-  name ColorLookup1
+set N35cba400 [stack 0]
+ Expression {
+  temp_name0 lg2
+  temp_expr0 log(2)
+  temp_name1 lgr
+  temp_expr1 (log(r/0.18)/lg2-mn)/(mx-mn)
+  temp_name2 lgg
+  temp_expr2 (log(g/0.18)/lg2-mn)/(mx-mn)
+  temp_name3 lgb
+  temp_expr3 (log(b/0.18)/lg2-mn)/(mx-mn)
+  expr0 lg?0.18*2**(LUT.lut.red(lgr)*(mx-mn)+mn):LUT.lut.red(r)
+  expr1 lg?0.18*2**(LUT.lut.green(lgg)*(mx-mn)+mn):LUT.lut.green(g)
+  expr2 lg?0.18*2**(LUT.lut.blue(lgb)*(mx-mn)+mn):LUT.lut.blue(b)
+  name lg2ApplyLUT
   xpos -40
-  ypos 134
+  ypos 135
+  addUserKnob {20 Params}
+  addUserKnob {6 lg l log t "apply lut in log2 encoding" +STARTLINE}
+  addUserKnob {7 mn t "stops below 0.18" R -12 0}
+  mn -7
+  addUserKnob {7 mx t "stops above 0.18" R 0 12}
+  mx 5
  }
  Input {
   inputs 0
@@ -67,17 +85,14 @@ set Nd83ec800 [stack 0]
   channels rgb
   name Multiply1
   xpos -150
-  ypos 170
+  ypos 171
  }
  Dot {
   name Dot2
-  note_font "Helvetica Bold"
-  note_font_size 24
-  note_font_color 0xff
   xpos -116
   ypos 210
  }
-push $Nd83ec800
+push $N35cba400
  Merge2 {
   inputs 2
   operation plus
@@ -91,5 +106,11 @@ push $Nd83ec800
   name Output
   xpos 70
   ypos 278
+ }
+push $N35cbab00
+ Sampler {
+  name LUT
+  xpos -40
+  ypos 38
  }
 end_group
