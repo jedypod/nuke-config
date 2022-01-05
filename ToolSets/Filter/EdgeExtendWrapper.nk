@@ -1,0 +1,363 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name EdgeExtendWrapper
+ addUserKnob {20 Params}
+ addUserKnob {26 setup_label l " " T "<b>set up edge"}
+ addUserKnob {41 p l gamma T Expression1.p}
+ addUserKnob {41 bp l blackpoint T Expression1.bp}
+ addUserKnob {7 erode R 0 10}
+ erode 1
+ addUserKnob {41 blur T Erode1.blur}
+ addUserKnob {26 extend_label l " " T "<b>edge extend"}
+ addUserKnob {7 pb l pre-blur R 0 10}
+ pb 1.5
+ addUserKnob {41 s l size T EdgeExtend.s}
+ addUserKnob {41 bias T EdgeExtend.bias}
+ addUserKnob {6 pm l premult +STARTLINE}
+ pm true
+ addUserKnob {26 ""}
+ addUserKnob {41 maskChannelMask l mask -STARTLINE T NodeWrapper.maskChannelMask}
+ addUserKnob {41 invert_mask l invert -STARTLINE T NodeWrapper.invert_mask}
+ addUserKnob {41 mix T NodeWrapper.mix}
+}
+ Input {
+  inputs 0
+  name Inputmask
+  xpos 70
+  ypos 518
+  number 1
+ }
+ Input {
+  inputs 0
+  name Input
+  xpos -40
+  ypos 86
+ }
+ AddChannels {
+  channels rgba
+  name AddChannels1
+  xpos -40
+  ypos 134
+ }
+set Nce40b200 [stack 0]
+ Dot {
+  name Dot4
+  xpos -116
+  ypos 138
+ }
+set Nce40a400 [stack 0]
+ Dot {
+  name Dot1
+  xpos -226
+  ypos 138
+ }
+ Dot {
+  name Dot3
+  xpos -226
+  ypos 426
+ }
+set Nce409600 [stack 0]
+push $Nce40a400
+ Expression {
+  expr3 clamp((bp-pow(clamp(a),1/p))/(bp-1))
+  name Expression1
+  xpos -150
+  ypos 182
+  addUserKnob {20 User}
+  addUserKnob {7 bp R 0 0.999}
+  addUserKnob {7 p l gamma}
+  p 0.5
+ }
+ Erode {
+  size {{erode}}
+  name Erode1
+  xpos -150
+  ypos 224
+ }
+push $Nce40b200
+ Copy {
+  inputs 2
+  from0 rgba.alpha
+  to0 rgba.alpha
+  name Copy1
+  xpos -40
+  ypos 224
+ }
+ Premult {
+  name Premult1
+  xpos -40
+  ypos 278
+ }
+ EdgeBlur {
+  channels rgba
+  size {{pb}}
+  name EdgeBlur1
+  xpos -40
+  ypos 320
+ }
+ Group {
+  name EdgeExtend
+  xpos -40
+  ypos 374
+  addUserKnob {20 Params}
+  addUserKnob {14 s l size R 0 100}
+  s 2
+  addUserKnob {7 bias R 0.1 4}
+  bias 0.1
+  addUserKnob {3 n}
+  n 8
+  addUserKnob {22 set l "<font color=grey>set (8)" -STARTLINE T "from __future__ import with_statement\n\nnode = nuke.thisNode()\nwith node:\n  prots = \[nuke.toNode('EdgeBlur1'), nuke.toNode('Unpremult1')]\n\nn = node\['n'].getValue()\n\ndef unselect():\n  _ = \[n.setSelected(False) for n in nuke.allNodes(recurseGroups=True)]\n\ndef populate(i, last):\n  unselect()\n  \[p.setSelected(True) for p in prots]\n  nuke.nodeCopy('%clipboard')\n  unselect()\n  last.setSelected(True)\n  nuke.nodePaste('%clipboard')\n  i += 1\n  eb = nuke.toNode('EdgeBlur\{0\}'.format(i))\n  up = nuke.toNode('Unpremult\{0\}'.format(i))\n  eb\['n'].setValue(i)\n  if i < n:\n    populate(i, up)\n\nwith node:\n  last = prots\[-1]\n  populate(1, last)\n  node\['set'].setLabel('<font color=grey>set (\{0\})'.format(int(n)))\n"}
+  addUserKnob {22 clear -STARTLINE T "from __future__ import with_statement\n\nnode = nuke.thisNode()\nwith node:\n  prots = \['EdgeBlur1', 'Unpremult1']\n  print(prots)\n  for n in nuke.allNodes():\n    if n.name() not in prots and n.Class() not in \['Input', 'Output']:\n      nuke.delete(n)\nnode\['set'].setLabel('<font color=white>set')\n  \n  "}
+ }
+  Input {
+   inputs 0
+   name Input
+   xpos -1250
+   ypos 542
+  }
+  EdgeBlur {
+   channels rgba
+   size {{s*p} {s*p}}
+   edge_mult 1
+   name EdgeBlur1
+   xpos -1250
+   ypos 584
+   addUserKnob {20 Params}
+   addUserKnob {3 n}
+   n 1
+   addUserKnob {7 p}
+   p {{pow(n/parent.n,bias)}}
+  }
+  Expression {
+   temp_name0 a0
+   temp_expr0 a<=0?1:a
+   temp_name1 a1
+   temp_expr1 a/max(1e-4,a0)
+   expr0 a1*r/a0
+   expr1 a1*g/a0
+   expr2 a1*b/a0
+   expr3 a1
+   name Unpremult1
+   xpos -1250
+   ypos 638
+  }
+  EdgeBlur {
+   channels rgba
+   size {{s*p} {s*p}}
+   edge_mult 1
+   name EdgeBlur2
+   xpos -1250
+   ypos 664
+   addUserKnob {20 Params}
+   addUserKnob {3 n}
+   n 2
+   addUserKnob {7 p}
+   p {{pow(n/parent.n,bias)}}
+  }
+  Expression {
+   temp_name0 a0
+   temp_expr0 a<=0?1:a
+   temp_name1 a1
+   temp_expr1 a/max(1e-4,a0)
+   expr0 a1*r/a0
+   expr1 a1*g/a0
+   expr2 a1*b/a0
+   expr3 a1
+   name Unpremult2
+   xpos -1250
+   ypos 718
+  }
+  EdgeBlur {
+   channels rgba
+   size {{s*p} {s*p}}
+   edge_mult 1
+   name EdgeBlur3
+   xpos -1250
+   ypos 744
+   addUserKnob {20 Params}
+   addUserKnob {3 n}
+   n 3
+   addUserKnob {7 p}
+   p {{pow(n/parent.n,bias)}}
+  }
+  Expression {
+   temp_name0 a0
+   temp_expr0 a<=0?1:a
+   temp_name1 a1
+   temp_expr1 a/max(1e-4,a0)
+   expr0 a1*r/a0
+   expr1 a1*g/a0
+   expr2 a1*b/a0
+   expr3 a1
+   name Unpremult3
+   xpos -1250
+   ypos 798
+  }
+  EdgeBlur {
+   channels rgba
+   size {{s*p} {s*p}}
+   edge_mult 1
+   name EdgeBlur4
+   xpos -1250
+   ypos 824
+   addUserKnob {20 Params}
+   addUserKnob {3 n}
+   n 4
+   addUserKnob {7 p}
+   p {{pow(n/parent.n,bias)}}
+  }
+  Expression {
+   temp_name0 a0
+   temp_expr0 a<=0?1:a
+   temp_name1 a1
+   temp_expr1 a/max(1e-4,a0)
+   expr0 a1*r/a0
+   expr1 a1*g/a0
+   expr2 a1*b/a0
+   expr3 a1
+   name Unpremult4
+   xpos -1250
+   ypos 878
+  }
+  EdgeBlur {
+   channels rgba
+   size {{s*p} {s*p}}
+   edge_mult 1
+   name EdgeBlur5
+   xpos -1250
+   ypos 904
+   addUserKnob {20 Params}
+   addUserKnob {3 n}
+   n 5
+   addUserKnob {7 p}
+   p {{pow(n/parent.n,bias)}}
+  }
+  Expression {
+   temp_name0 a0
+   temp_expr0 a<=0?1:a
+   temp_name1 a1
+   temp_expr1 a/max(1e-4,a0)
+   expr0 a1*r/a0
+   expr1 a1*g/a0
+   expr2 a1*b/a0
+   expr3 a1
+   name Unpremult5
+   xpos -1250
+   ypos 958
+  }
+  EdgeBlur {
+   channels rgba
+   size {{s*p} {s*p}}
+   edge_mult 1
+   name EdgeBlur6
+   xpos -1250
+   ypos 984
+   addUserKnob {20 Params}
+   addUserKnob {3 n}
+   n 6
+   addUserKnob {7 p}
+   p {{pow(n/parent.n,bias)}}
+  }
+  Expression {
+   temp_name0 a0
+   temp_expr0 a<=0?1:a
+   temp_name1 a1
+   temp_expr1 a/max(1e-4,a0)
+   expr0 a1*r/a0
+   expr1 a1*g/a0
+   expr2 a1*b/a0
+   expr3 a1
+   name Unpremult6
+   xpos -1250
+   ypos 1038
+  }
+  EdgeBlur {
+   channels rgba
+   size {{s*p} {s*p}}
+   edge_mult 1
+   name EdgeBlur7
+   xpos -1250
+   ypos 1064
+   addUserKnob {20 Params}
+   addUserKnob {3 n}
+   n 7
+   addUserKnob {7 p}
+   p {{pow(n/parent.n,bias)}}
+  }
+  Expression {
+   temp_name0 a0
+   temp_expr0 a<=0?1:a
+   temp_name1 a1
+   temp_expr1 a/max(1e-4,a0)
+   expr0 a1*r/a0
+   expr1 a1*g/a0
+   expr2 a1*b/a0
+   expr3 a1
+   name Unpremult7
+   xpos -1250
+   ypos 1118
+  }
+  EdgeBlur {
+   channels rgba
+   size {{s*p} {s*p}}
+   edge_mult 1
+   name EdgeBlur8
+   selected true
+   xpos -1250
+   ypos 1144
+   addUserKnob {20 Params}
+   addUserKnob {3 n}
+   n 8
+   addUserKnob {7 p}
+   p {{pow(n/parent.n,bias)}}
+  }
+  Expression {
+   temp_name0 a0
+   temp_expr0 a<=0?1:a
+   temp_name1 a1
+   temp_expr1 a/max(1e-4,a0)
+   expr0 a1*r/a0
+   expr1 a1*g/a0
+   expr2 a1*b/a0
+   expr3 a1
+   name Unpremult8
+   selected true
+   xpos -1250
+   ypos 1198
+  }
+  Output {
+   name Output
+   xpos -1250
+   ypos 2558
+  }
+ end_group
+ Copy {
+  inputs 2
+  from0 rgba.alpha
+  to0 rgba.alpha
+  name Copy2
+  xpos -40
+  ypos 416
+ }
+ Premult {
+  name Premult2
+  xpos -40
+  ypos 470
+  disable {{!parent.pm}}
+ }
+push $Nce409600
+ NodeWrapper {
+  inputs 2+1
+  channels rgb
+  invert_mask true
+  name NodeWrapper
+  xpos -40
+  ypos 518
+ }
+ Output {
+  name Output
+  xpos -40
+  ypos 566
+ }
+end_group

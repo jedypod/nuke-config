@@ -1,0 +1,52 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name EdgeExtend
+ addUserKnob {20 Params}
+ addUserKnob {14 s l size R 0 100}
+ s 20
+ addUserKnob {7 bias R 0.1 4}
+ bias 1
+ addUserKnob {3 n}
+ n 5
+ addUserKnob {22 set l "<font color=white>set" -STARTLINE T "from __future__ import with_statement\n\nnode = nuke.thisNode()\nwith node:\n  prots = \[nuke.toNode('EdgeBlur1'), nuke.toNode('Unpremult1')]\n\nn = node\['n'].getValue()\n\ndef unselect():\n  _ = \[n.setSelected(False) for n in nuke.allNodes(recurseGroups=True)]\n\ndef populate(i, last):\n  unselect()\n  \[p.setSelected(True) for p in prots]\n  nuke.nodeCopy('%clipboard')\n  unselect()\n  last.setSelected(True)\n  nuke.nodePaste('%clipboard')\n  i += 1\n  eb = nuke.toNode('EdgeBlur\{0\}'.format(i))\n  up = nuke.toNode('Unpremult\{0\}'.format(i))\n  eb\['n'].setValue(i)\n  if i < n:\n    populate(i, up)\n\nwith node:\n  last = prots\[-1]\n  populate(1, last)\n  node\['set'].setLabel('<font color=grey>set (\{0\})'.format(int(n)))\n"}
+ addUserKnob {22 clear -STARTLINE T "from __future__ import with_statement\n\nnode = nuke.thisNode()\nwith node:\n  prots = \['EdgeBlur1', 'Unpremult1']\n  print(prots)\n  for n in nuke.allNodes():\n    if n.name() not in prots and n.Class() not in \['Input', 'Output']:\n      nuke.delete(n)\nnode\['set'].setLabel('<font color=white>set')\n  \n  "}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos -1250
+  ypos 542
+ }
+ EdgeBlur {
+  channels rgba
+  size {{s*p} {s*p}}
+  edge_mult 1
+  name EdgeBlur1
+  xpos -1250
+  ypos 584
+  addUserKnob {20 Params}
+  addUserKnob {3 n}
+  n 1
+  addUserKnob {7 p}
+  p {{pow(n/parent.n,bias)}}
+ }
+ Expression {
+  temp_name0 a0
+  temp_expr0 a<=0?1:a
+  temp_name1 a1
+  temp_expr1 a/max(1e-4,a0)
+  expr0 a1*r/a0
+  expr1 a1*g/a0
+  expr2 a1*b/a0
+  expr3 a1
+  name Unpremult1
+  xpos -1250
+  ypos 638
+ }
+ Output {
+  name Output
+  xpos -1250
+  ypos 2558
+ }
+end_group
