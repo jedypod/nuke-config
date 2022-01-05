@@ -1,0 +1,595 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name IBDespillKeyer
+ tile_color 0x9900ff
+ addUserKnob {20 Params}
+ addUserKnob {41 pick T pick_screen_color.color}
+ addUserKnob {4 sc l "screen color" +INVISIBLE M {red green blue ""}}
+ sc green
+ addUserKnob {41 shift T hue_rotate1.shift}
+ addUserKnob {41 w0 T despill_master.w0}
+ addUserKnob {41 w1 T despill_master.w1}
+ addUserKnob {41 spill T Multiply_respill.value}
+}
+ Input {
+  inputs 0
+  name Inputc
+  label "\[value number]"
+  xpos -2130
+  ypos -976
+  number 1
+ }
+ Input {
+  inputs 0
+  name Input
+  label "\[value number]"
+  xpos -700
+  ypos -950
+ }
+ Dot {
+  name Dot1
+  xpos -666
+  ypos -870
+ }
+set N73789600 [stack 0]
+ Dot {
+  name Dot25
+  xpos -776
+  ypos -870
+ }
+set N73788f00 [stack 0]
+ Dot {
+  name Dot57
+  xpos -996
+  ypos -870
+ }
+set N73788800 [stack 0]
+ Dot {
+  name Dot19
+  xpos -1546
+  ypos -870
+ }
+set N73788100 [stack 0]
+ Fill {
+  output rgb
+  color 0
+  name pick_screen_color
+  xpos -1800
+  ypos -873
+ }
+ Switch {
+  inputs 2
+  which {{"\[exists parent.input1]"}}
+  name Switch1
+  xpos -2130
+  ypos -873
+ }
+ Dot {
+  name Dot26
+  xpos -2096
+  ypos -798
+ }
+set N73776400 [stack 0]
+ Dot {
+  name Dot22
+  xpos -1986
+  ypos -798
+ }
+ Group {
+  name colorAngle1
+  xpos -2020
+  ypos -754
+  addUserKnob {20 User}
+  addUserKnob {41 color T Fill6.color}
+ }
+  Input {
+   inputs 0
+   name Input
+   xpos -40
+   ypos -10
+  }
+  Dot {
+   name Dot1
+   xpos -6
+   ypos 42
+  }
+set N73774800 [stack 0]
+  Dot {
+   name Dot2
+   xpos 104
+   ypos 42
+  }
+set N73774100 [stack 0]
+  Expression {
+   temp_name0 m
+   temp_expr0 (r+g+b)/3
+   expr0 r-m
+   expr1 g-m
+   expr2 b-m
+   name vec_to_plane_2
+   xpos 70
+   ypos 87
+  }
+push $N73774100
+  Fill {
+   color {1 0 0 1}
+   name Fill6
+   xpos 180
+   ypos 63
+  }
+  Expression {
+   temp_name0 m
+   temp_expr0 (r+g+b)/3
+   expr0 r-m
+   expr1 g-m
+   expr2 b-m
+   name vec_to_plane_1
+   xpos 180
+   ypos 87
+  }
+  MergeExpression {
+   inputs 2
+   temp_name0 d0
+   temp_expr0 Ar*Br+Ag*Bg+Ab*Bb
+   temp_name1 d1
+   temp_expr1 sqrt((Ar**2+Ag**2+Ab**2)*(Br**2+Bg**2+Bb**2))
+   temp_name2 div
+   temp_expr2 d0/d1<-0.999999?-0.999999:d0/d1
+   temp_name3 th
+   temp_expr3 acos(div)
+   channel0 {rgba.red rgba.green rgba.blue none}
+   expr0 (Ag*Bb-Ab*Bg)+(Ab*Br-Ar*Bb)+(Ar*Bg-Ag*Br)>0?-th:th
+   expr3 d0/d1
+   name color_angle
+   xpos 70
+   ypos 135
+  }
+push $N73774800
+  Copy {
+   inputs 2
+   from0 rgba.red
+   to0 rgba.alpha
+   name Copy2
+   xpos -40
+   ypos 129
+  }
+  Output {
+   name Output
+   xpos -40
+   ypos 220
+  }
+ end_group
+ Dot {
+  name Dot7
+  xpos -1986
+  ypos -702
+ }
+set N735c4800 [stack 0]
+ Dot {
+  name Dot23
+  xpos -1766
+  ypos -702
+ }
+set N735c4100 [stack 0]
+ Multiply {
+  channels rgba
+  value -1
+  name Multiply4
+  xpos -1800
+  ypos -393
+ }
+set N73597900 [stack 0]
+push $N735c4100
+push $N73788100
+ Copy {
+  inputs 2
+  from0 rgba.alpha
+  to0 rgba.alpha
+  name Copy3
+  xpos -1580
+  ypos -711
+ }
+set N73596b00 [stack 0]
+ Expression {
+  temp_name0 h
+  temp_expr0 shift*pi/180-a
+  temp_name1 ch
+  temp_expr1 cos(h)
+  temp_name2 sh
+  temp_expr2 sin(h)
+  temp_name3 p0
+  temp_expr3 (r+g+b)*(1-ch)/3
+  expr0 p0+r*ch+(-g/sqrt(3)+b/sqrt(3))*sh
+  expr1 p0+g*ch+(r/sqrt(3)-b/sqrt(3))*sh
+  expr2 p0+b*ch+(-r/sqrt(3)+g/sqrt(3))*sh
+  expr3 h
+  name hue_rotate1
+  xpos -1580
+  ypos -634
+  addUserKnob {20 User}
+  addUserKnob {7 shift R 0 360}
+ }
+ Dot {
+  name Dot4
+  xpos -1546
+  ypos -582
+ }
+set N73595d00 [stack 0]
+ Expression {
+  temp_name0 c0
+  temp_expr0 k==0?r:k==1?g:b
+  temp_name1 c1
+  temp_expr1 k==0?g:k==1?r:r
+  temp_name2 c2
+  temp_expr2 k==0?b:k==1?b:g
+  temp_name3 lm
+  temp_expr3 min(c0,c1*w0+c2*w1)
+  expr0 k==0?lm:r
+  expr1 k==1?lm:g
+  expr2 k==2?lm:b
+  name despill_master
+  xpos -1580
+  ypos -538
+  addUserKnob {20 Params}
+  addUserKnob {3 k l chan}
+  addUserKnob {7 w0}
+  w0 0.5
+  addUserKnob {7 w1}
+  w1 0.5
+ }
+ Copy {
+  inputs 2
+  from0 rgba.alpha
+  to0 rgba.alpha
+  name Copy4
+  xpos -1580
+  ypos -399
+ }
+ Expression {
+  temp_name0 h
+  temp_expr0 shift*pi/180-a
+  temp_name1 ch
+  temp_expr1 cos(h)
+  temp_name2 sh
+  temp_expr2 sin(h)
+  temp_name3 p0
+  temp_expr3 (r+g+b)*(1-ch)/3
+  expr0 p0+r*ch+(-g/sqrt(3)+b/sqrt(3))*sh
+  expr1 p0+g*ch+(r/sqrt(3)-b/sqrt(3))*sh
+  expr2 p0+b*ch+(-r/sqrt(3)+g/sqrt(3))*sh
+  expr3 h
+  name hue_rotate2
+  label inverse
+  xpos -1580
+  ypos -352
+  addUserKnob {20 User}
+  addUserKnob {7 shift R 0 360}
+  shift {{-parent.hue_rotate1.shift}}
+ }
+push $N73788f00
+ MergeExpression {
+  inputs 2
+  temp_name0 mx
+  temp_expr0 max(Br-Ar,Bg-Ag,Bb-Ab)
+  channel0 rgba
+  expr0 mx
+  name MergeSpillMap
+  xpos -810
+  ypos -345
+ }
+ Dot {
+  name Dot10
+  xpos -776
+  ypos -222
+ }
+set N6dd5f900 [stack 0]
+ Dot {
+  name Dot11
+  xpos -886
+  ypos -222
+ }
+ Multiply {
+  channels rgba
+  value {{parent.Multiply_respill.value} {parent.Multiply_respill.value} {parent.Multiply_respill.value} {parent.Multiply_respill.value}}
+  name Multiply_respill1
+  xpos -920
+  ypos 167
+ }
+ Dot {
+  name Dot12
+  xpos -886
+  ypos 234
+ }
+push $N73595d00
+ Expression {
+  temp_name0 n
+  temp_expr0 max(r,g,b)
+  expr0 n==0?0:r/n
+  expr1 n==0?0:g/n
+  expr2 n==0?0:b/n
+  name RGB_Ratios
+  xpos -1250
+  ypos -586
+ }
+ Expression {
+  temp_name0 c0
+  temp_expr0 k==0?r:k==1?g:b
+  temp_name1 c1
+  temp_expr1 k==0?g:k==1?r:r
+  temp_name2 c2
+  temp_expr2 k==0?b:k==1?b:g
+  temp_name3 lm
+  temp_expr3 c0-(c1*w0+c2*w1)
+  channel0 rgba
+  expr0 lm
+  name despill3
+  xpos -1250
+  ypos -538
+  addUserKnob {20 Params}
+  addUserKnob {3 k l chan}
+  k {{parent.despill_master.k}}
+  addUserKnob {7 w0}
+  w0 {{parent.despill_master.w0}}
+  addUserKnob {7 w1}
+  w1 {{parent.despill_master.w1}}
+ }
+ Expression {
+  channel0 rgba
+  expr0 clamp((a-e0)/(e1-e0))
+  name LinearRemap15
+  xpos -1250
+  ypos -490
+  addUserKnob {20 Param}
+  addUserKnob {7 e0 R 0 4}
+  addUserKnob {7 e1 R 0 4}
+  e1 0.6
+ }
+ Invert {
+  channels rgba
+  name Invert23
+  xpos -1250
+  ypos -441
+ }
+push $N73788800
+ Expression {
+  temp_name0 L
+  temp_expr0 w.0*r+w.1*g+w.2*b
+  channel0 rgba
+  expr0 L
+  channel1 none
+  channel2 none
+  channel3 none
+  name Luminance_Weights11
+  label "Rec.2020 Luminance"
+  xpos -1030
+  ypos -712
+  addUserKnob {20 Param}
+  addUserKnob {35 weight_presets l "" +STARTLINE M {weights/ACEScg "knobs this \{w \{0.26806405 0.67246455 0.05947147\}\}" weights/Rec.2020 "knobs this \{w \{0.26270026 0.67799819 0.05930173\}\}" weights/P3D65 "knobs this \{w \{0.22897467 0.69173867 0.07928693\}\}" weights/Rec.709 "knobs this \{w \{0.21263911 0.71516877 0.07219233\}\}" "weights/Red WideGamut RGB" "knobs this \{w \{0.28669411 0.84297919 -0.12967324\}\}" "weights/Alexa Wide Gamut" "knobs this \{w \{0.2919538 0.82384098 -0.11579483\}\}" "weights/Sony S-Gamut3.Cine" "knobs this \{w \{0.21507585 0.88506854 -0.10014433\}\}" "weights/Filmlight E-Gamut" "knobs this \{w \{0.28013074 0.82020682 -0.10033739\}\}" "weights/DaVinci Wide Gamut" "knobs this \{w \{0.27411851 0.87363189 -0.14775042\}\}"}}
+  addUserKnob {78 w l "" t "luminance weighting" -STARTLINE n 3}
+  w {0.26270026 0.67799819 0.05930173}
+ }
+ Expression {
+  channel0 rgba
+  expr0 clamp((r-e0)/(e1-e0))
+  name LinearRemap8
+  xpos -1030
+  ypos -634
+  addUserKnob {20 Param}
+  addUserKnob {7 e0 R 0 4}
+  addUserKnob {7 e1 R 0 4}
+  e1 0.5
+ }
+ Merge2 {
+  inputs 2
+  operation multiply
+  bbox B
+  name Merge86
+  xpos -1030
+  ypos -441
+ }
+ Dot {
+  name Dot14
+  xpos -996
+  ypos 90
+ }
+push $N73776400
+ Dot {
+  name Dot13
+  xpos -2096
+  ypos -126
+ }
+set N6dd31d00 [stack 0]
+ Dot {
+  name Dot9
+  xpos -2096
+  ypos 18
+ }
+push $N73597900
+push $N735c4800
+ Expression {
+  temp_name0 h
+  temp_expr0 shift*pi/180-a
+  temp_name1 ch
+  temp_expr1 cos(h)
+  temp_name2 sh
+  temp_expr2 sin(h)
+  temp_name3 p0
+  temp_expr3 (r+g+b)*(1-ch)/3
+  expr0 p0+r*ch+(-g/sqrt(3)+b/sqrt(3))*sh
+  expr1 p0+g*ch+(r/sqrt(3)-b/sqrt(3))*sh
+  expr2 p0+b*ch+(-r/sqrt(3)+g/sqrt(3))*sh
+  expr3 h
+  name hue_rotate3
+  xpos -2020
+  ypos -634
+  addUserKnob {20 User}
+  addUserKnob {7 shift R 0 360}
+  shift {{parent.hue_rotate1.shift}}
+ }
+ Expression {
+  temp_name0 c0
+  temp_expr0 k==0?r:k==1?g:b
+  temp_name1 c1
+  temp_expr1 k==0?g:k==1?r:r
+  temp_name2 c2
+  temp_expr2 k==0?b:k==1?b:g
+  temp_name3 lm
+  temp_expr3 min(c0,c1*w0+c2*w1)
+  expr0 k==0?lm:r
+  expr1 k==1?lm:g
+  expr2 k==2?lm:b
+  name despill2
+  xpos -2020
+  ypos -538
+  addUserKnob {20 Params}
+  addUserKnob {3 k l chan}
+  k {{parent.despill_master.k}}
+  addUserKnob {7 w0}
+  w0 {{parent.despill_master.w0}}
+  addUserKnob {7 w1}
+  w1 {{parent.despill_master.w1}}
+ }
+ Copy {
+  inputs 2
+  from0 rgba.alpha
+  to0 rgba.alpha
+  name Copy6
+  xpos -2020
+  ypos -399
+ }
+ Expression {
+  temp_name0 h
+  temp_expr0 shift*pi/180-a
+  temp_name1 ch
+  temp_expr1 cos(h)
+  temp_name2 sh
+  temp_expr2 sin(h)
+  temp_name3 p0
+  temp_expr3 (r+g+b)*(1-ch)/3
+  expr0 p0+r*ch+(-g/sqrt(3)+b/sqrt(3))*sh
+  expr1 p0+g*ch+(r/sqrt(3)-b/sqrt(3))*sh
+  expr2 p0+b*ch+(-r/sqrt(3)+g/sqrt(3))*sh
+  expr3 h
+  name hue_rotate4
+  label inverse
+  xpos -2020
+  ypos -353
+  addUserKnob {20 User}
+  addUserKnob {7 shift R 0 360}
+  shift {{-parent.hue_rotate1.shift}}
+ }
+push $N6dd31d00
+ MergeExpression {
+  inputs 2
+  temp_name0 mx
+  temp_expr0 max(Br-Ar,Bg-Ag,Bb-Ab)
+  channel0 rgba
+  expr0 mx
+  name MergeSpillMap1
+  xpos -2020
+  ypos -130
+ }
+push $N6dd5f900
+ MergeExpression {
+  inputs 2
+  temp_name3 n
+  temp_expr3 Ar==0?0:Br/Ar
+  channel0 rgb
+  expr0 n
+  expr3 max(0,1-n)
+  name MergeDivideReverse
+  label normalize
+  xpos -810
+  ypos -136
+ }
+ Merge2 {
+  inputs 2
+  operation multiply
+  bbox B
+  output rgb
+  name Merge44
+  xpos -810
+  ypos 14
+ }
+set N6dcfa400 [stack 0]
+ Merge2 {
+  inputs 2
+  operation plus
+  bbox B
+  Achannels alpha
+  Bchannels alpha
+  output alpha
+  name Merge1
+  xpos -810
+  ypos 80
+ }
+ Dot {
+  name Dot15
+  xpos -776
+  ypos 162
+ }
+push $N6dcfa400
+push $N73789600
+ Merge2 {
+  inputs 2
+  operation from
+  bbox B
+  output rgb
+  name Merge46
+  xpos -700
+  ypos 14
+ }
+ Copy {
+  inputs 2
+  from0 rgba.alpha
+  to0 rgba.alpha
+  name Copy1
+  selected true
+  xpos -700
+  ypos 153
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  bbox B
+  output rgb
+  name Merge47
+  xpos -700
+  ypos 231
+ }
+ Output {
+  name Output
+  xpos -700
+  ypos 350
+ }
+push $N73789600
+ Multiply {
+  channels rgba
+  value 0
+  name Multiply_respill
+  xpos -590
+  ypos -874
+ }
+push $N73596b00
+ Expression {
+  temp_name0 M
+  temp_expr0 max(r,g,b)
+  temp_name1 C
+  temp_expr1 M-min(r,g,b)
+  temp_name2 H
+  temp_expr2 ((C==0?0:r==M?((g-b)/C+6)%6:g==M?(b-r)/C+2:b==M?(r-g)/C+4:0)+shift)%6
+  temp_name3 X
+  temp_expr3 C*(1-fabs(H%2-1))
+  expr0 (H<1?C:H<2?X:H<3?0:H<4?0:H<5?X:C)+min(r,g,b)
+  expr1 (H<1?X:H<2?C:H<3?C:H<4?X:H<5?0:0)+min(r,g,b)
+  expr2 (H<1?0:H<2?0:H<3?X:H<4?C:H<5?C:X)+min(r,g,b)
+  expr3 H
+  name hue_shift3
+  xpos -1470
+  ypos -634
+  addUserKnob {20 HueRotate_tab l HueRotate}
+  addUserKnob {7 shift R 0 6}
+  shift 0.22
+ }
+end_group
