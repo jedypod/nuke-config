@@ -1,404 +1,67 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
 Group {
-name Displacer
-addUserKnob {20 "" l Glass}
-addUserKnob {7 displace l Displace R 0 20}
-displace 0.07
-addUserKnob {41 size_1 l "smooth vectors" T Blur1.size}
-addUserKnob {7 abberation l Abberation}
-addUserKnob {26 "" l Defocus}
-addUserKnob {6 useDef l "Apply Defocus" -STARTLINE}
-addUserKnob {41 size T ZBlur1.size}
-addUserKnob {41 max_size l maximum T ZBlur1.max_size}
-addUserKnob {41 shape l "filter shape" T ZBlur1.shape}
+ name Displacer
+ addUserKnob {20 Displacer_tab l Displacer}
+ addUserKnob {41 uv_scale l scale T IDistort1.uv_scale}
+ addUserKnob {41 blur T Blur1.size}
+ addUserKnob {41 filter T IDistort1.filter}
 }
-Input {
-inputs 0
-name InputControlMatte
-label "\[value number]"
-xpos -40
-ypos -664
-number 1
-}
-Dot {
-name Dot8
-note_font_size 42
-note_font_color 0x7f7f7f01
-xpos -6
-ypos -582
-}
-set Ndca91b40 [stack 0]
-Dot {
-name Dot9
-note_font_size 42
-note_font_color 0x7f7f7f01
-xpos -446
-ypos -582
-}
-Dot {
-name Dot12
-label " "
-note_font "Helvetica Bold Bold Bold Bold Bold Bold"
-note_font_size 24
-note_font_color 0xff000000
-xpos -446
-ypos 882
-}
-Input {
-inputs 0
-name InputIMG
-label "\[value number]"
-xpos 840
-ypos -658
-}
-Dot {
-name Dot14
-label " "
-note_font "Helvetica Bold Bold Bold Bold Bold"
-note_font_size 24
-note_font_color 0xff000000
-xpos 874
-ypos -54
-}
-set Ndcad84f0 [stack 0]
-Dot {
-name Dot11
-label " "
-note_font "Helvetica Bold Bold Bold Bold Bold Bold"
-note_font_size 24
-note_font_color 0xff000000
-xpos 1424
-ypos -54
-}
-Dot {
-name Dot1
-xpos 1424
-ypos 714
-}
-push $Ndca91b40
-push $Ndca91b40
-Copy {
-inputs 2
-from0 rgba.alpha
-to0 rgba.alpha
-name CONTROL_MATTE_CHANNEL
-xpos -40
-ypos -496
-disable {{hasError}}
-}
-set Ndcc9b860 [stack 0]
-Dot {
-name Dot2
-xpos 104
-ypos -486
-}
-set Ndcacd1d0 [stack 0]
-Transform {
-translate {0 -1}
-center {320 240}
-name down
-xpos 70
-ypos -250
-}
-push $Ndcc9b860
-Dot {
-name Dot4
-xpos -116
-ypos -486
-}
-Transform {
-translate {0 1}
-center {320 240}
-name up
-xpos -150
-ypos -298
-}
-push $Ndcacd1d0
-Dot {
-name Dot5
-xpos 214
-ypos -486
-}
-Transform {
-translate {1 0}
-center {320 240}
-name right
-xpos 180
-ypos -346
-}
-push $Ndcc9b860
-Shuffle {
-in alpha
-green black
-blue black
-out rgb
-name Shuffle1
-xpos -40
-ypos -442
-}
-Transform {
-translate {-1 0}
-center {320 240}
-name left
-xpos -40
-ypos -394
-}
-Copy {
-inputs 2
-from0 rgba.alpha
-to0 rgba.green
-name Copy2
-xpos -40
-ypos -352
-}
-Copy {
-inputs 2
-from0 rgba.alpha
-to0 rgba.blue
-name Copy3
-xpos -40
-ypos -304
-}
-Copy {
-inputs 2
-from0 rgba.alpha
-to0 rgba.alpha
-name Copy4
-xpos -40
-ypos -256
-}
-Expression {
-temp_name0 l
-temp_expr0 red
-temp_name1 r
-temp_expr1 green
-temp_name2 u
-temp_expr2 blue
-temp_name3 d
-temp_expr3 alpha
-channel0 {forward.u -forward.v none -backward.u}
-expr0 (l-r)*width
-channel1 {-forward.u forward.v none -backward.u}
-expr1 (d-u)*width
-channel2 depth
-expr2 (abs(l-r)+abs(d-u))*width/2
-name Expression1
-xpos -40
-ypos -154
-}
-Blur {
-channels forward
-size 16
-crop false
-name Blur1
-xpos -40
-ypos -88
-}
-set Ndc582b40 [stack 0]
-Dot {
-name Dot3
-label " "
-note_font "Helvetica Bold Bold Bold Bold Bold"
-note_font_size 24
-note_font_color 0xff000000
-xpos -6
-ypos 90
-}
-Dot {
-name Dot15
-label " "
-note_font "Helvetica Bold Bold Bold Bold Bold"
-note_font_size 24
-note_font_color 0xff000000
-xpos 654
-ypos 90
-}
-set Ndc594a10 [stack 0]
-Dot {
-name Dot7
-xpos 654
-ypos 162
-}
-push $Ndc594a10
-push $Ndcad84f0
-Copy {
-inputs 2
-from0 -rgba.alpha
-to0 -rgba.alpha
-channels forward
-name Copy1
-xpos 840
-ypos 74
-}
-Copy {
-inputs 2
-from0 -rgba.alpha
-to0 -rgba.alpha
-channels depth
-name Copy8
-xpos 840
-ypos 146
-}
-ZBlur {
-channels rgba
-math -linear
-size 2
-max_size 12
-shape 1
-name ZBlur1
-xpos 840
-ypos 254
-disable {{!parent.useDef x1012 1}}
-}
-set Ndc299590 [stack 0]
-Dot {
-name Dot13
-label " "
-note_font "Helvetica Bold Bold Bold Bold Bold"
-note_font_size 24
-note_font_color 0xff000000
-xpos 874
-ypos 330
-}
-set Ndc2a8150 [stack 0]
-Dot {
-name Dot10
-label Abberation
-note_font "Helvetica Bold Bold Bold Bold Bold"
-note_font_size 24
-note_font_color 0xff000000
-xpos 1094
-ypos 330
-}
-set Ndc2acc20 [stack 0]
-IDistort {
-channels {-rgba.red -rgba.green rgba.blue rgba.alpha}
-uv forward
-uv_scale {{parent.displace/(1+parent.abberation/10)}}
-name IDistort3
-xpos 1170
-ypos 392
-}
-Shuffle {
-red black
-green black
-alpha black
-name Shuffle5
-tile_color 0xff00
-label Blue
-xpos 1170
-ypos 440
-}
-push 0
-push $Ndc2acc20
-IDistort {
-channels {rgba.red -rgba.green -rgba.blue rgba.alpha}
-uv forward
-uv_scale {{parent.displace/(1-parent.abberation/10)}}
-name IDistort1
-xpos 950
-ypos 392
-}
-Shuffle {
-green black
-blue black
-alpha black
-name Shuffle3
-tile_color 0xff000000
-label Red
-xpos 950
-ypos 440
-}
-push $Ndc2acc20
-IDistort {
-channels {-rgba.red rgba.green -rgba.blue rgba.alpha}
-uv forward
-uv_scale {{parent.displace}}
-name IDistort2
-xpos 1060
-ypos 392
-}
-Shuffle {
-red black
-blue black
-name Shuffle4
-tile_color 0xff0000
-label "Green + Alpha"
-xpos 1060
-ypos 440
-}
-Merge2 {
-inputs 3+1
-operation plus
-bbox B
-output rgb
-name Merge2
-xpos 1060
-ypos 542
-}
-push $Ndc2a8150
-IDistort {
-channels rgba
-uv forward
-uv_scale {{parent.displace}}
-blur_scale 0
-name IDistort4
-xpos 840
-ypos 398
-}
-Switch {
-inputs 2
-which {{parent.abberation!=0}}
-name Switch1
-xpos 840
-ypos 542
-}
-set Ndc19af70 [stack 0]
-Copy {
-inputs 2
-from0 -rgba.alpha
-to0 -rgba.alpha
-channels depth
-name Copy5
-xpos 840
-ypos 698
-}
-Merge2 {
-inputs 2
-operation mask
-bbox B
-name Merge1
-xpos 840
-ypos 878
-}
-set Ndc1b0bc0 [stack 0]
-Output {
-name Output1
-xpos 840
-ypos 1334
-}
-push $Ndc582b40
-Shuffle {
-in forward
-name Shuffle2
-label "\[value in]"
-xpos 70
-ypos -88
-}
-push $Ndc1b0bc0
-push 0
-push $Ndc19af70
-push $Ndc299590
-push $Ndc1b0bc0
-Viewer {
-inputs 5
-frame_range 1001-1100
-fps 23.97602463
-colour_sample_bbox {0.3580607474 -0.1734813154 0.3586448729 -0.1728971899}
-samplepoints {{-0.1395833343 -0.2552083433}
-  }
-input_process false
-name Viewer1
-xpos 1390
-ypos 1334
-}
+ Input {
+  inputs 0
+  name Inputctrl
+  xpos -150
+  ypos 87
+  number 1
+ }
+ Expression {
+  temp_name0 u0
+  temp_expr0 a(x+1,y)-a(x-1,y)
+  temp_name1 v0
+  temp_expr1 a(x,y+1)-a(x,y-1)
+  temp_name2 l
+  temp_expr2 sqrt(u0**2+v0**2)
+  expr0 u0*width
+  expr1 v0*width
+  expr2 0
+  expr3 l
+  name VectorGradient4x
+  xpos -150
+  ypos 134
+ }
+ Blur {
+  channels rgba
+  name Blur1
+  xpos -150
+  ypos 183
+ }
+ Input {
+  inputs 0
+  name Input
+  xpos -40
+  ypos 86
+ }
+ MergeExpression {
+  inputs 2
+  channel0 {forward.u -forward.v}
+  expr0 Ar
+  channel1 forward
+  expr1 Ag
+  expr3 Aa
+  name MergeExpression1
+  xpos -40
+  ypos 183
+ }
+ IDistort {
+  channels rgba
+  uv forward
+  name IDistort1
+  xpos -40
+  ypos 231
+ }
+ Output {
+  name Output
+  xpos -40
+  ypos 278
+ }
 end_group
