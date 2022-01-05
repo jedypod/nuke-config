@@ -1,0 +1,24 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Expression {
+ temp_name0 rr
+ temp_expr0 (r-bp.r)/(wp.r-bp.r)
+ temp_name1 rg
+ temp_expr1 (g-bp.g)/(wp.g-bp.g)
+ temp_name2 rb
+ temp_expr2 (b-bp.b)/(wp.b-bp.b)
+ temp_name3 ra
+ temp_expr3 (a-bp.a)/(wp.a-bp.a)
+ expr0 cl?clamp(rr):rr
+ expr1 cl?clamp(rg):rg
+ expr2 cl?clamp(rb):rb
+ expr3 cl?clamp(ra):ra
+ name Remap2x
+ addUserKnob {20 Params}
+ addUserKnob {6 cl l clamp +STARTLINE}
+ cl true
+ addUserKnob {19 bp l blackpoint}
+ bp 0
+ addUserKnob {19 wp l whitepoint}
+ wp 1
+}

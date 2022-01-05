@@ -4,70 +4,52 @@ Group {
  name Vignette
  addUserKnob {20 Vignette}
  addUserKnob {41 center -STARTLINE T Distance.p}
- addUserKnob {41 profile l "" +STARTLINE T Profile.lut}
- addUserKnob {41 grade T Grade.value}
- addUserKnob {41 scale T SCALE.scale}
+ addUserKnob {7 sx l "scale x" R 0 4}
+ sx 1
+ addUserKnob {7 sy l "scale y" R 0 4}
+ sy 1
+ addUserKnob {41 lut l "" +STARTLINE T Profile.lut}
 }
  Input {
   inputs 0
   name Input
   xpos 510
-  ypos -160
+  ypos -130
  }
- Dot {
-  name Dot11
-  xpos 544
-  ypos -66
- }
-set N13c7b990 [stack 0]
  Expression {
   channel0 rgba
-  expr0 "sqrt(pow2(x-p.x) + pow2(y-p.y))/width*2"
+  expr0 "sqrt(pow2((x-p.0)/s.0) + pow2((y-p.1)/s.1))/width*2"
   channel1 none
   channel2 none
   channel3 none
   name Distance
-  xpos 400
-  ypos -70
-  addUserKnob {20 User}
-  addUserKnob {12 p l "" +STARTLINE}
+  xpos 510
+  ypos -82
+  addUserKnob {20 Params}
+  addUserKnob {78 p n 2}
   p {{width/2} {height/2}}
+  addUserKnob {78 s n 2}
+  s {{sx} {sy}}
  }
  ColorLookup {
-  lut {master {curve C 1 S x0.4627837539 0.9475553036 x1.386325836 -0.003523349762}
+  lut {master {curve C 1 k x0.5 1 s0 S x0.7901861072 0.7296831608 x1 0 s0}
     red {}
     green {}
     blue {}
     alpha {}}
   name Profile
-  xpos 400
-  ypos -40
+  xpos 510
+  ypos -34
  }
  Invert {
   channels rgba
-  name Invert3
-  xpos 400
-  ypos -10
- }
- Reformat {
-  type scale
-  scale {1 1}
-  name SCALE
-  xpos 400
-  ypos 21
- }
-push $N13c7b990
- Multiply {
-  inputs 1+1
-  channels rgb
-  value 0
-  name Grade
+  name Invert1
   xpos 510
-  ypos 20
+  ypos 14
  }
  Output {
   name Output
   xpos 510
-  ypos 110
+  ypos 62
  }
 end_group

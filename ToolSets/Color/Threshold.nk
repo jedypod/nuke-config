@@ -1,15 +1,12 @@
 set cut_paste_input [stack 0]
 push $cut_paste_input
 Expression {
- expr0 "r > threshold ? 1 : 0"
- expr1 "g > threshold ? 1 : 0"
- expr2 "b > threshold ? 1 : 0"
- expr3 "a > threshold ? 1 : 0"
+ expr0 r>th?1:0
+ expr1 g>th?1:0
+ expr2 b>th?1:0
+ expr3 a>th?1:0
  name _THRESHOLD_
- selected true
- xpos -8200
- ypos -729
- addUserKnob {20 User}
- addUserKnob {7 threshold}
- threshold 0.99
+ addUserKnob {20 Params}
+ addUserKnob {7 th}
+ th 0.99
 }

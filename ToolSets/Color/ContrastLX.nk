@@ -1,10 +1,11 @@
 set cut_paste_input [stack 0]
 push $cut_paste_input
 Group {
-name Contrast
-addUserKnob {20 Contrast_tab l Contrast}
+name ContrastLX
+addUserKnob {20 ContrastLX_tab l ContrastLX}
 addUserKnob {41 cn l contrast T Expression.cn}
 addUserKnob {41 pv l pivot T Expression.pv}
+addUserKnob {41 lx l "linear extension" T Expression.lx}
 addUserKnob {26 ""}
 addUserKnob {41 maskChannelMask l mask -STARTLINE T Expression.maskChannelMask}
 addUserKnob {41 invert_mask l invert -STARTLINE T Expression.invert_mask}
@@ -27,17 +28,22 @@ Expression {
 inputs 1+1
 temp_name0 m
 temp_expr0 max(r,g,b)/p
-temp_name1 s
-temp_expr1 m>0?pow(m,c-1):1
+temp_name1 sc
+temp_expr1 pow(m,c-1)
+temp_name2 s
+temp_expr2 m>0?lx?m<1?sc:(c*(m-1)+1)/m:sc:1
 expr0 r*s
 expr1 g*s
 expr2 b*s
 name Expression
+selected true
 xpos -40
-ypos 206
+ypos 208
 addUserKnob {20 Params_tab l Params}
 addUserKnob {7 cn l contrast R -2 2}
 addUserKnob {7 pv l pivot R -4 4}
+addUserKnob {6 lx l "linear extension" t "linear extension above pivot" +STARTLINE}
+lx true
 addUserKnob {7 c t contrast R 0 4}
 c {{pow(2,cn)}}
 addUserKnob {7 p R 0 4}

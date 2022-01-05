@@ -1,10 +1,9 @@
 set cut_paste_input [stack 0]
 push $cut_paste_input
 Group {
-name Contrast
-addUserKnob {20 Contrast_tab l Contrast}
-addUserKnob {41 cn l contrast T Expression.cn}
-addUserKnob {41 pv l pivot T Expression.pv}
+name ToeCompressParabolic
+addUserKnob {20 ToeCompressParabolic_tab l ToeCompressParabolic}
+addUserKnob {41 f l toe T Expression.f}
 addUserKnob {26 ""}
 addUserKnob {41 maskChannelMask l mask -STARTLINE T Expression.maskChannelMask}
 addUserKnob {41 invert_mask l invert -STARTLINE T Expression.invert_mask}
@@ -14,34 +13,29 @@ Input {
 inputs 0
 name Inputmask
 xpos 70
-ypos 206
+ypos 182
 number 1
 }
 Input {
 inputs 0
 name Input
 xpos -40
-ypos 182
+ypos 134
 }
 Expression {
 inputs 1+1
 temp_name0 m
-temp_expr0 max(r,g,b)/p
+temp_expr0 max(r,g,b)
 temp_name1 s
-temp_expr1 m>0?pow(m,c-1):1
+temp_expr1 m<=0?1:f>0?(m*m/(m+f))/m:((m+sqrt(m*(4*-f+m)))/2)/m
 expr0 r*s
 expr1 g*s
 expr2 b*s
 name Expression
 xpos -40
-ypos 206
-addUserKnob {20 Params_tab l Params}
-addUserKnob {7 cn l contrast R -2 2}
-addUserKnob {7 pv l pivot R -4 4}
-addUserKnob {7 c t contrast R 0 4}
-c {{pow(2,cn)}}
-addUserKnob {7 p R 0 4}
-p {{0.18*pow(2,pv)}}
+ypos 182
+addUserKnob {20 Params}
+addUserKnob {7 f l toe R -0.05 0.05}
 }
 Output {
 name Output

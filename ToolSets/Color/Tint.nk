@@ -1,0 +1,53 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name Tint
+ addUserKnob {20 Tint_tab l Tint}
+ addUserKnob {41 channels T Multiply.channels}
+ addUserKnob {41 value T Multiply.value}
+ addUserKnob {26 ""}
+ addUserKnob {41 maskChannelMask l mask T Multiply.maskChannelMask}
+ addUserKnob {41 invert_mask l invert -STARTLINE T Multiply.invert_mask}
+ addUserKnob {41 mix T Multiply.mix}
+}
+ Input {
+  inputs 0
+  name Inputmask
+  xpos 70
+  ypos 134
+  number 1
+ }
+set Na7123900 [stack 0]
+push $Na7123900
+ Input {
+  inputs 0
+  name Input
+  xpos -40
+  ypos 86
+ }
+ Multiply {
+  inputs 1+1
+  channels rgb
+  name Multiply
+  xpos -40
+  ypos 135
+ }
+ Multiply {
+  inputs 1+1
+  channels {{{parent.Multiply.channels}}}
+  value {{1/((parent.Multiply.value.r+parent.Multiply.value.g+parent.Multiply.value.b)/3)}}
+  maskChannelInput {{{parent.Multiply.maskChannelInput}}}
+  invert_mask {{parent.Multiply.invert_mask}}
+  fringe {{parent.Multiply.fringe}}
+  invert_unpremult {{parent.Multiply.invert_unpremult}}
+  mix {{parent.Multiply.mix}}
+  name Multiply_n
+  xpos -40
+  ypos 183
+ }
+ Output {
+  name Output
+  xpos -40
+  ypos 230
+ }
+end_group
