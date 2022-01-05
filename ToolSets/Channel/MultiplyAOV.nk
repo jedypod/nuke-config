@@ -1,0 +1,119 @@
+set cut_paste_input [stack 0]
+version 12.2 v4
+push $cut_paste_input
+Group {
+name MultiplyAOV3
+tile_color 0x7198ffff
+label "\[value aov]"
+selected true
+xpos 1853
+ypos 21300
+addUserKnob {20 MultiplyAOV_tab l MultiplyAOV}
+addUserKnob {41 aov T Shuffle.in}
+addUserKnob {41 multiply T Multiply.value}
+}
+Input {
+inputs 0
+name Inputmask
+note_font Helvetica
+xpos 290
+ypos 447
+number 1
+}
+Input {
+inputs 0
+name Input
+xpos -40
+ypos -10
+}
+Dot {
+name Dot1
+xpos -6
+ypos 66
+}
+set Ne59b4800 [stack 0]
+push $Ne59b4800
+Dot {
+name Dot2
+xpos -226
+ypos 66
+}
+Shuffle {
+in none
+name Shuffle
+label "\[value in]"
+xpos -260
+ypos 87
+}
+Dot {
+name Dot3
+xpos -226
+ypos 186
+}
+set N6992f200 [stack 0]
+Multiply {
+channels rgb
+name Multiply
+xpos -260
+ypos 255
+}
+Dot {
+name Dot4
+xpos -226
+ypos 306
+}
+Dot {
+name Dot5
+xpos -116
+ypos 306
+}
+set N6992d600 [stack 0]
+push $N6992d600
+push $N6992f200
+push $Ne59b4800
+Merge2 {
+inputs 2
+operation from
+bbox B
+output rgb
+name Merge1
+xpos -40
+ypos 183
+}
+Merge2 {
+inputs 2
+operation plus
+bbox B
+output rgb
+name Merge2
+xpos -40
+ypos 303
+}
+ShuffleCopy {
+inputs 2
+red red
+green green
+blue blue
+alpha alpha2
+out {{{parent.Shuffle.in}}}
+name ShuffleCopy1
+label "\[value in] | \[value in2] -> \[value out]"
+xpos -40
+ypos 356
+}
+Keymix {
+inputs 3
+invertMask true
+bbox B
+name Keymix1
+note_font Helvetica
+xpos 83
+ypos 441
+disable {{"!\[exists parent.input1]"}}
+}
+Output {
+name Output
+xpos -40
+ypos 556
+}
+end_group
