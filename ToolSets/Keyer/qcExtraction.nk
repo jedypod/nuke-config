@@ -1,0 +1,86 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name qcExtraction
+ tile_color 0x9900ff
+ addUserKnob {20 Params}
+ addUserKnob {7 ex l exposure R -6 6}
+ addUserKnob {41 _m l tint T Multiply1._m}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {6 che l checkerboard +STARTLINE}
+ addUserKnob {41 boxsize l size T CheckerBoard1.boxsize}
+ addUserKnob {41 linewidth l "line width" T CheckerBoard1.linewidth}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos -1250
+  ypos 494
+ }
+set Ne3015600 [stack 0]
+ CheckerBoard2 {
+  inputs 0
+  format "2048 2048 0 0 2048 2048 1 square_2K"
+  boxsize 12
+  color0 {{parent.Fill1.color.r}}
+  color1 {{parent.Fill1.color.r*2}}
+  color2 {{color0}}
+  color3 {{color1}}
+  linecolor {{color1*2}}
+  centerlinecolor 0
+  centerlinewidth 0
+  name CheckerBoard1
+  xpos -1498
+  ypos 526
+  postage_stamp false
+ }
+ Reformat {
+  type "to box"
+  box_width {{parent.width}}
+  box_height {{parent.height}}
+  box_fixed true
+  box_pixel_aspect {{parent.pixel_aspect}}
+  filter impulse
+  name Reformat1
+  xpos -1495
+  ypos 567
+ }
+push $Ne3015600
+ Fill {
+  color {{0.18*2**ex} {0.18*2**ex} {0.18*2**ex} 1}
+  name Fill1
+  xpos -1360
+  ypos 528
+ }
+ Switch {
+  inputs 2
+  which {{che}}
+  name Switch1
+  xpos -1360
+  ypos 567
+ }
+ Multiply {
+  channels rgb
+  value {{_m/n} {_m/n} {_m/n} {_m/n}}
+  name Multiply1
+  xpos -1360
+  ypos 615
+  addUserKnob {20 Params}
+  addUserKnob {18 _m R 0 4}
+  _m 1
+  addUserKnob {6 _m_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {7 n R 0 4}
+  n {{(_m.r+_m.g+_m.b)/3}}
+ }
+ Merge2 {
+  inputs 2
+  name Merge1
+  xpos -1250
+  ypos 663
+ }
+ Output {
+  name Output
+  xpos -1250
+  ypos 727
+ }
+end_group

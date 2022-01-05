@@ -1,0 +1,65 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name Extract
+ tile_color 0x1caf1cff
+ addUserKnob {20 Params}
+ addUserKnob {41 mxrgb l "max rgb" T epr_extract.mxrgb}
+ addUserKnob {41 rw l "red weight" T epr_extract.rw}
+ addUserKnob {41 gw l "green weight" T epr_extract.gw}
+ addUserKnob {41 bw l "blue weight" T epr_extract.bw}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 sm l smoothstep T epr_extract.sm}
+ addUserKnob {41 invert -STARTLINE T epr_extract.invert}
+ addUserKnob {6 keep_rgb l "keep rgb" t "output result in alpha channel only" -STARTLINE}
+ addUserKnob {41 z0 T epr_extract.z0}
+ addUserKnob {41 z1 T epr_extract.z1}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos -810
+  ypos 542
+ }
+ Expression {
+  temp_name0 n
+  temp_expr0 mxrgb?max(r,g,b):(r*rw+g*gw+b*bw)/(rw+gw+bw)
+  temp_name1 f
+  temp_expr1 clamp((n-p.0)/(p.1-p.0))
+  temp_name2 fs
+  temp_expr2 sm?f*f*(3-2*f):f
+  channel0 {rgba.red -rgba.green -rgba.blue none}
+  expr3 invert?1-fs:fs
+  name epr_extract
+  xpos -810
+  ypos 590
+  addUserKnob {20 Params}
+  addUserKnob {6 mxrgb l "max rgb" +STARTLINE}
+  addUserKnob {7 rw l "red weight"}
+  addUserKnob {7 gw l "green weight"}
+  gw {{1-(rw+bw)}}
+  addUserKnob {7 bw l "blue weight"}
+  addUserKnob {7 z0 R -7 7}
+  z0 -1
+  addUserKnob {7 z1 R -7 7}
+  z1 1
+  addUserKnob {6 sm l smoothstep +STARTLINE}
+  addUserKnob {6 invert +STARTLINE}
+  addUserKnob {78 p n 2}
+  p {{0.18*pow(2,z0)} {0.18*pow(2,z1)}}
+ }
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name Shuffle1
+  xpos -810
+  ypos 615
+  disable {{parent.keep_rgb}}
+ }
+ Output {
+  name Output
+  xpos -810
+  ypos 662
+ }
+end_group

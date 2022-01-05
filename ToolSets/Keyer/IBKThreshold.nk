@@ -1,0 +1,98 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name IBKThreshold
+ tile_color 0x9900ff
+ addUserKnob {20 Params}
+ addUserKnob {83 st l screen M {green blue}}
+ st blue
+ addUserKnob {41 shift l "hue shift" T hue_shift3.shift}
+ addUserKnob {7 w0 l "red weight" R 0 1.5}
+ w0 1
+ addUserKnob {7 w1 l "blue/green weight" R 0 1.5}
+ w1 1
+ addUserKnob {7 chstr l "chroma strength" R 0 2}
+ chstr 1
+ addUserKnob {7 shstr l "shadow strength" R -0.2 0.2}
+ addUserKnob {26 ""}
+ addUserKnob {7 erode R 0 10}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos -40
+  ypos -34
+ }
+set Nf4f45d00 [stack 0]
+ Expression {
+  temp_name0 M
+  temp_expr0 max(r,g,b)
+  temp_name1 C
+  temp_expr1 M-min(r,g,b)
+  temp_name2 H
+  temp_expr2 ((C==0?0:r==M?((g-b)/C+6)%6:g==M?(b-r)/C+2:b==M?(r-g)/C+4:0)+shift)%6
+  temp_name3 X
+  temp_expr3 C*(1-fabs(H%2-1))
+  expr0 (H<1?C:H<2?X:H<3?0:H<4?0:H<5?X:C)+min(r,g,b)
+  expr1 (H<1?X:H<2?C:H<3?C:H<4?X:H<5?0:0)+min(r,g,b)
+  expr2 (H<1?0:H<2?0:H<3?X:H<4?C:H<5?C:X)+min(r,g,b)
+  expr3 H
+  name hue_shift3
+  xpos -150
+  ypos 14
+  addUserKnob {20 HueRotate_tab l HueRotate}
+  addUserKnob {7 shift R 0 6}
+ }
+ Grade {
+  multiply {1 {st==0?chstr:1} {st==1?chstr:1} 1}
+  add {{shstr}}
+  black_clamp false
+  name Grade1
+  xpos -150
+  ypos 38
+ }
+set Nf4f44f00 [stack 0]
+push $Nf4f44f00
+push $Nf4f44f00
+ IBK {
+  inputs 3
+  screen_type {{st}}
+  red_weight {{w0}}
+  blue_green_weight {{w1}}
+  ss false
+  name IBK2
+  xpos -150
+  ypos 62
+ }
+ Erode {
+  size {{-erode}}
+  name Erode1
+  xpos -150
+  ypos 105
+ }
+ Invert {
+  channels alpha
+  name Invert1
+  xpos -150
+  ypos 152
+ }
+push $Nf4f45d00
+ Copy {
+  inputs 2
+  from0 rgba.alpha
+  to0 rgba.alpha
+  name Copy1
+  xpos -40
+  ypos 152
+ }
+ Premult {
+  name Premult1
+  xpos -40
+  ypos 206
+ }
+ Output {
+  name Output
+  xpos -40
+  ypos 254
+ }
+end_group

@@ -1,0 +1,74 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name IBKExtract7
+ tile_color 0x9900ff
+ addUserKnob {20 Params}
+ addUserKnob {83 st l screen M {green blue}}
+ st blue
+ addUserKnob {41 pick T Fill1.color}
+ addUserKnob {26 ""}
+ addUserKnob {7 w l weight}
+ w 0.5
+ addUserKnob {7 l l limit}
+ l 1
+ addUserKnob {6 sre l "luminance match" +STARTLINE}
+ addUserKnob {7 sr l range}
+ sr 1
+ addUserKnob {7 ll l level}
+ addUserKnob {41 autolevels T IBK.autolevels}
+ addUserKnob {41 yellow -STARTLINE T IBK.yellow}
+ addUserKnob {41 cyan -STARTLINE T IBK.cyan}
+ addUserKnob {41 magenta -STARTLINE T IBK.magenta}
+ addUserKnob {41 rgbal l "rgba legal" -STARTLINE T IBK.rgbal}
+}
+ Input {
+  inputs 0
+  name Inputc
+  xpos -150
+  ypos 182
+  number 1
+ }
+ Input {
+  inputs 0
+  name Input
+  xpos -40
+  ypos 182
+ }
+set N22141d00 [stack 0]
+ Fill {
+  output rgb
+  name Fill1
+  xpos -99
+  ypos 206
+ }
+ Switch {
+  inputs 2
+  which {{"\[exists parent.input1]"}}
+  name Switch1
+  xpos -150
+  ypos 230
+ }
+push $N22141d00
+push $N22141d00
+ IBK {
+  inputs 3
+  screen_type {{st}}
+  red_weight {{w*l}}
+  blue_green_weight {{(1-w)*l}}
+  lm_enable {{sre}}
+  level {{sr}}
+  luma {{ll}}
+  ll_enable true
+  rgbal true
+  name IBK
+  selected true
+  xpos -40
+  ypos 230
+ }
+ Output {
+  name Output
+  xpos -40
+  ypos 278
+ }
+end_group
