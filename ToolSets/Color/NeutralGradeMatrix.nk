@@ -1,0 +1,105 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name NeutralGradeMatrix
+ tile_color 0x6c9de1ff
+ addUserKnob {20 Params}
+ addUserKnob {26 ColorMatrix_label l "@b;ColorMatrix" T " "}
+ addUserKnob {41 matrix T ColorMatrix.matrix}
+ addUserKnob {22 reset_mtx l Reset T "nuke.thisNode()\['matrix'].setValue(\[1,0,0,0,1,0,0,0,1])" +STARTLINE}
+ addUserKnob {26 ""}
+ addUserKnob {26 match_label l "@b;Match" T ""}
+ addUserKnob {18 msrc l "src color"}
+ msrc 0.18
+ addUserKnob {6 msrc_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {18 mdst l "dst color"}
+ mdst 0.18
+ addUserKnob {6 mdst_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {18 bp l blackpoint t "this value will be subtracted from the offset" R -0.1 0.1}
+ addUserKnob {6 bp_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {22 set_blackpoint l "Set Blackpoint" t "Set blackpoint based on selected region in the viewer." T "node = nuke.thisNode()\nbpp = node\['bpp'].getValue()\n\nnuke.root().begin()\n\n# Get viewer and connected node to calculate format resolution\navn = nuke.activeViewer().node()\nif avn.input(0):\n    vn = viewer.input(0)\n    if not nuke.selectedNodes():\n        vn.setSelected(1)\nelse:\n    vn = nuke.activeViewer().node()\n\n# Get selected sample area\nbbox = nuke.activeViewer().node()\['colour_sample_bbox'].value()\nar = float(vn.width() * vn.pixelAspect()) / float(vn.height())\nc0 = \[(bbox\[0]*0.5+0.5) * vn.width(), (((bbox\[1] * 0.5) + (0.5/ar)) * ar) * vn.height()]\nc1 = \[(bbox\[2]*0.5+0.5) * vn.width(), (((bbox\[3] * 0.5) + (0.5/ar)) * ar) * vn.height()]\na = \[c1\[0] - c0\[0], c1\[1] - c0\[1]]\nc = \[c0\[0] + (a\[0]/2), c0\[1] + (a\[1] / 2)]\n\n# Reset blackpoint and add knob\nnode\['bp'].setValue(\[0, 0, 0])\nadd = node\['add'].getValue()\nnode\['add'].setValue(\[0, 0, 0])\n\n# Sample input colors within box\ncs = \[\n    node.sample('rgba.red', c\[0], c\[1], a\[0], a\[1]), \n    node.sample('rgba.green', c\[0], c\[1], a\[0], a\[1]), \n    node.sample('rgba.blue', c\[0], c\[1], a\[0], a\[1])\n    ]\n\nif bpp:\n    av = (cs\[0] + cs\[1] + cs\[2]) / 3.0\n    cs = \[v - av for v in cs]\n\n# Set blackpoint to sampled value\nnode\['bp'].setValue(cs)\nnode\['add'].setValue(add)\n" +STARTLINE}
+ addUserKnob {6 bpp l neutralize t "Set Blackpoint will only neutralize the RGB values." -STARTLINE}
+ bpp true
+ addUserKnob {22 reset_match l Reset T "n = nuke.thisNode()\nn\['bp'].setValue(0)\nn\['add'].setValue(0)\nn\['msrc'].setValue(0.18)\nn\['mdst'].setValue(0.18)" +STARTLINE}
+ addUserKnob {26 grade_label l "@b; grade" T " "}
+ addUserKnob {7 ex l exposure t "adjust exposure in stops" R -4 4}
+ addUserKnob {18 _m l tint R 0 4}
+ _m 1
+ addUserKnob {6 _m_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {18 add R -0.1 0.1}
+ addUserKnob {6 add_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {22 reset_grade l Reset T "n = nuke.thisNode()\nn\['ex'].setValue(0)\nn\['_m'].setValue(1)\nn\['add'].setValue(0)" +STARTLINE}
+ addUserKnob {26 ""}
+ addUserKnob {26 cdl_calc_label l " " T "<b>calculated slope offset</b>"}
+ addUserKnob {41 slope T OCIOCDLTransform.slope}
+ addUserKnob {41 offset T OCIOCDLTransform.offset}
+ addUserKnob {26 ""}
+ addUserKnob {6 invert t "Invert the color transform." +STARTLINE}
+ addUserKnob {41 export_cc l "Export CC" T OCIOCDLTransform.export_cc}
+ addUserKnob {22 export_spimtx l "Export spimtx" t "Export spimtx format describing the NeutralGradeMatrix.\n\nSupports saturation, primaries multiply, offset." T "from __future__ import print_function\nfrom __future__ import with_statement\nimport nuke\n\ndef mtx_mult(a, b):\n    # multiply two 3x3 matrices and return the result\n    a = \[a\[0:3], a\[3:6], a\[6:9]]\n    b = \[b\[0:3], b\[3:6], b\[6:9]]\n    c = \[\[sum(a * b for a, b in zip(a_row, b_col)) for b_col in zip(*b)] for a_row in a]\n    return c\[0] + c\[1] + c\[2]\n\ndef export_spimtx(output_path=None):\n    # export an spimtx file given the color transformations specified on the NeutralGradeMatrix node.\n    node = nuke.thisNode()\n    nuke.root().begin()\n    spimtx_calibration_only = node\['spimtx_calibration_only'].getValue()\n\n    if not output_path:\n        output_path = nuke.getFilename('output_path')\n    if not output_path:\n        print('Error: no output path specified. Exiting...')\n        return\n\n    with node:\n        cdltransform = nuke.toNode('OCIOCDLTransform')\n    \n    mtx = node\['matrix'].getValue()\n\n    if spimtx_calibration_only:\n        dst_mtx = mtx\n        offset = \[0, 0, 0]\n        slope = \[1, 1, 1]\n    else:\n        offset = cdltransform\['offset'].getValue()\n        slope = cdltransform\['slope'].getValue()\n        mult_mtx = \[slope\[0], 0, 0, 0, slope\[1], 0, 0, 0, slope\[2]]\n        dst_mtx = mtx_mult(mult_mtx, mtx)\n\n    output_spimtx_string = '\{0\} \{1\} \{2\} \{3\} \{4\} \{5\} \{6\} \{7\} \{8\} \{9\} \{10\} \{11\}'.format(\n        dst_mtx\[0],\n        dst_mtx\[1],\n        dst_mtx\[2],\n        int(round(offset\[0] * 65535)),\n        dst_mtx\[3],\n        dst_mtx\[4],\n        dst_mtx\[5],\n        int(round(offset\[1] * 65535)),\n        dst_mtx\[6],\n        dst_mtx\[7],\n        dst_mtx\[8],\n        int(round(offset\[2] * 65535))\n        )\n\n    # Create spimtx file\n    spimtx_file = open(output_path, 'w+')\n    spimtx_file.write(output_spimtx_string)\n    spimtx_file.close()\n\n\nif __name__=='__main__':\n    export_spimtx()" +STARTLINE}
+ addUserKnob {6 spimtx_calibration_only l "calibration only" t "only export the colormatrix calibration to the spimtx file. \n\notherwise export the entire NeutralGradeMatrix to the spimtx file." -STARTLINE}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos -370
+  ypos -562
+ }
+ Dot {
+  name Dot1
+  xpos -336
+  ypos -486
+ }
+set Nb88b6400 [stack 0]
+ OCIOCDLTransform {
+  slope {{parent.OCIOCDLTransform.slope} {parent.OCIOCDLTransform.slope} {parent.OCIOCDLTransform.slope}}
+  offset {{parent.OCIOCDLTransform.offset} {parent.OCIOCDLTransform.offset} {parent.OCIOCDLTransform.offset}}
+  direction inverse
+  working_space scene_linear
+  name OCIOCDLTransform_inverse
+  xpos -260
+  ypos -442
+ }
+ ColorMatrix {
+  matrix {
+      {{parent.ColorMatrix.matrix} {parent.ColorMatrix.matrix} {parent.ColorMatrix.matrix}}
+      {{parent.ColorMatrix.matrix} {parent.ColorMatrix.matrix} {parent.ColorMatrix.matrix}}
+      {{parent.ColorMatrix.matrix} {parent.ColorMatrix.matrix} {parent.ColorMatrix.matrix}}
+    }
+  invert true
+  name ColorMatrix_invert
+  xpos -260
+  ypos -370
+ }
+push $Nb88b6400
+ ColorMatrix {
+  matrix {
+      {1 0 0}
+      {0 1 0}
+      {0 0 1}
+    }
+  name ColorMatrix
+  xpos -370
+  ypos -442
+ }
+ OCIOCDLTransform {
+  slope {{mdst/msrc*(_m/((_m.r+_m.g+_m.b)/3))*2**ex} {mdst/msrc*(_m/((_m.r+_m.g+_m.b)/3))*2**ex} {mdst/msrc*(_m/((_m.r+_m.g+_m.b)/3))*2**ex}}
+  offset {{add-bp} {add-bp} {add-bp}}
+  working_space scene_linear
+  name OCIOCDLTransform
+  xpos -370
+  ypos -370
+ }
+ Switch {
+  inputs 2
+  which {{parent.invert}}
+  name Switch_inverse
+  xpos -370
+  ypos -274
+ }
+ Output {
+  name Output
+  xpos -370
+  ypos -202
+ }
+end_group
