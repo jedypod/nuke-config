@@ -1,0 +1,626 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name Filler
+ tile_color 0x3e3e3eff
+ note_font_color 0xc3c3c3ff
+ selected true
+ xpos -8641
+ ypos -3418
+ addUserKnob {20 Params}
+ addUserKnob {41 size l pre-blur T EdgeBlur1.size}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos -1250
+  ypos 542
+ }
+ EdgeBlur {
+  channels rgba
+  size 2.1
+  name EdgeBlur1
+  xpos -1250
+  ypos 585
+ }
+ Dot {
+  name Dot1
+  xpos -1216
+  ypos 642
+ }
+set N8b127200 [stack 0]
+ Matrix {
+  channels rgba
+  matrix {
+      {1 1 1}
+      {1 1 1}
+      {1 1 1}
+    }
+  normalize true
+  name Matrix1
+  xpos -1470
+  ypos 638
+ }
+ Reformat {
+  type scale
+  scale 0.49
+  resize fit
+  center false
+  filter impulse
+  name HalfScale1
+  xpos -1470
+  ypos 662
+  disable {{input.height<2}}
+ }
+ Expression {
+  temp_name0 a0
+  temp_expr0 a<=0?1:a
+  temp_name1 a1
+  temp_expr1 a/max(1e-4,a0)
+  expr0 a1*r/a0
+  expr1 a1*g/a0
+  expr2 a1*b/a0
+  expr3 a1
+  name Unpremult1
+  xpos -1470
+  ypos 686
+ }
+set N8b125d00 [stack 0]
+ Matrix {
+  channels rgba
+  matrix {
+      {1 1 1}
+      {1 1 1}
+      {1 1 1}
+    }
+  normalize true
+  name Matrix2
+  xpos -1470
+  ypos 734
+ }
+ Reformat {
+  type scale
+  scale 0.49
+  resize fit
+  center false
+  filter impulse
+  name HalfScale2
+  xpos -1470
+  ypos 758
+  disable {{input.height<2}}
+ }
+ Expression {
+  temp_name0 a0
+  temp_expr0 a<=0?1:a
+  temp_name1 a1
+  temp_expr1 a/max(1e-4,a0)
+  expr0 a1*r/a0
+  expr1 a1*g/a0
+  expr2 a1*b/a0
+  expr3 a1
+  name Unpremult2
+  xpos -1470
+  ypos 782
+ }
+set N8b124800 [stack 0]
+ Matrix {
+  channels rgba
+  matrix {
+      {1 1 1}
+      {1 1 1}
+      {1 1 1}
+    }
+  normalize true
+  name Matrix3
+  xpos -1470
+  ypos 830
+ }
+ Reformat {
+  type scale
+  scale 0.49
+  resize fit
+  center false
+  filter impulse
+  name HalfScale3
+  xpos -1470
+  ypos 854
+  disable {{input.height<2}}
+ }
+ Expression {
+  temp_name0 a0
+  temp_expr0 a<=0?1:a
+  temp_name1 a1
+  temp_expr1 a/max(1e-4,a0)
+  expr0 a1*r/a0
+  expr1 a1*g/a0
+  expr2 a1*b/a0
+  expr3 a1
+  name Unpremult3
+  xpos -1470
+  ypos 878
+ }
+set N8b0fb200 [stack 0]
+ Matrix {
+  channels rgba
+  matrix {
+      {1 1 1}
+      {1 1 1}
+      {1 1 1}
+    }
+  normalize true
+  name Matrix4
+  xpos -1470
+  ypos 926
+ }
+ Reformat {
+  type scale
+  scale 0.49
+  resize fit
+  center false
+  filter impulse
+  name HalfScale4
+  xpos -1470
+  ypos 950
+  disable {{input.height<2}}
+ }
+ Expression {
+  temp_name0 a0
+  temp_expr0 a<=0?1:a
+  temp_name1 a1
+  temp_expr1 a/max(1e-4,a0)
+  expr0 a1*r/a0
+  expr1 a1*g/a0
+  expr2 a1*b/a0
+  expr3 a1
+  name Unpremult4
+  xpos -1470
+  ypos 974
+ }
+set N8b0f9d00 [stack 0]
+ Matrix {
+  channels rgba
+  matrix {
+      {1 1 1}
+      {1 1 1}
+      {1 1 1}
+    }
+  normalize true
+  name Matrix5
+  xpos -1470
+  ypos 1022
+ }
+ Reformat {
+  type scale
+  scale 0.49
+  resize fit
+  center false
+  filter impulse
+  name HalfScale5
+  xpos -1470
+  ypos 1046
+  disable {{input.height<2}}
+ }
+ Expression {
+  temp_name0 a0
+  temp_expr0 a<=0?1:a
+  temp_name1 a1
+  temp_expr1 a/max(1e-4,a0)
+  expr0 a1*r/a0
+  expr1 a1*g/a0
+  expr2 a1*b/a0
+  expr3 a1
+  name Unpremult5
+  xpos -1470
+  ypos 1070
+ }
+set N8b0f8800 [stack 0]
+ Matrix {
+  channels rgba
+  matrix {
+      {1 1 1}
+      {1 1 1}
+      {1 1 1}
+    }
+  normalize true
+  name Matrix6
+  xpos -1470
+  ypos 1118
+ }
+ Reformat {
+  type scale
+  scale 0.49
+  resize fit
+  center false
+  filter impulse
+  name HalfScale6
+  xpos -1470
+  ypos 1142
+  disable {{input.height<2}}
+ }
+ Expression {
+  temp_name0 a0
+  temp_expr0 a<=0?1:a
+  temp_name1 a1
+  temp_expr1 a/max(1e-4,a0)
+  expr0 a1*r/a0
+  expr1 a1*g/a0
+  expr2 a1*b/a0
+  expr3 a1
+  name Unpremult6
+  xpos -1470
+  ypos 1166
+ }
+set N8b0b3200 [stack 0]
+ Matrix {
+  channels rgba
+  matrix {
+      {1 1 1}
+      {1 1 1}
+      {1 1 1}
+    }
+  normalize true
+  name Matrix7
+  xpos -1470
+  ypos 1214
+ }
+ Reformat {
+  type scale
+  scale 0.49
+  resize fit
+  center false
+  filter impulse
+  name HalfScale7
+  xpos -1470
+  ypos 1238
+  disable {{input.height<2}}
+ }
+ Expression {
+  temp_name0 a0
+  temp_expr0 a<=0?1:a
+  temp_name1 a1
+  temp_expr1 a/max(1e-4,a0)
+  expr0 a1*r/a0
+  expr1 a1*g/a0
+  expr2 a1*b/a0
+  expr3 a1
+  name Unpremult7
+  xpos -1470
+  ypos 1262
+ }
+set N8b0b1d00 [stack 0]
+ Matrix {
+  channels rgba
+  matrix {
+      {1 1 1}
+      {1 1 1}
+      {1 1 1}
+    }
+  normalize true
+  name Matrix8
+  xpos -1470
+  ypos 1310
+ }
+ Reformat {
+  type scale
+  scale 0.49
+  resize fit
+  center false
+  filter impulse
+  name HalfScale8
+  xpos -1470
+  ypos 1334
+  disable {{input.height<2}}
+ }
+ Expression {
+  temp_name0 a0
+  temp_expr0 a<=0?1:a
+  temp_name1 a1
+  temp_expr1 a/max(1e-4,a0)
+  expr0 a1*r/a0
+  expr1 a1*g/a0
+  expr2 a1*b/a0
+  expr3 a1
+  name Unpremult8
+  xpos -1470
+  ypos 1358
+ }
+set N8b0b0800 [stack 0]
+ Matrix {
+  channels rgba
+  matrix {
+      {1 1 1}
+      {1 1 1}
+      {1 1 1}
+    }
+  normalize true
+  name Matrix9
+  xpos -1470
+  ypos 1406
+ }
+ Reformat {
+  type scale
+  scale 0.49
+  resize fit
+  center false
+  filter impulse
+  name HalfScale9
+  xpos -1470
+  ypos 1430
+  disable {{input.height<2}}
+ }
+ Expression {
+  temp_name0 a0
+  temp_expr0 a<=0?1:a
+  temp_name1 a1
+  temp_expr1 a/max(1e-4,a0)
+  expr0 a1*r/a0
+  expr1 a1*g/a0
+  expr2 a1*b/a0
+  expr3 a1
+  name Unpremult9
+  xpos -1470
+  ypos 1454
+ }
+set N8b067200 [stack 0]
+ Matrix {
+  channels rgba
+  matrix {
+      {1 1 1}
+      {1 1 1}
+      {1 1 1}
+    }
+  normalize true
+  name Matrix10
+  xpos -1470
+  ypos 1502
+ }
+ Reformat {
+  type scale
+  scale 0.49
+  resize fit
+  center false
+  filter impulse
+  name HalfScale10
+  xpos -1470
+  ypos 1526
+  disable {{input.height<2}}
+ }
+ Expression {
+  temp_name0 a0
+  temp_expr0 a<=0?1:a
+  temp_name1 a1
+  temp_expr1 a/max(1e-4,a0)
+  expr0 a1*r/a0
+  expr1 a1*g/a0
+  expr2 a1*b/a0
+  expr3 a1
+  name Unpremult10
+  xpos -1470
+  ypos 1550
+ }
+ Reformat {
+  type "to box"
+  box_width {{parent.width}}
+  box_height {{parent.height}}
+  box_fixed true
+  box_pixel_aspect {{parent.pixel_aspect}}
+  scale 0.5
+  filter notch
+  name Interpolate2
+  xpos -1360
+  ypos 1550
+ }
+push $N8b067200
+ Reformat {
+  type "to box"
+  box_width {{parent.width}}
+  box_height {{parent.height}}
+  box_fixed true
+  box_pixel_aspect {{parent.pixel_aspect}}
+  scale 0.5
+  filter notch
+  name Interpolate3
+  xpos -1360
+  ypos 1454
+ }
+push $N8b0b0800
+ Reformat {
+  type "to box"
+  box_width {{parent.width}}
+  box_height {{parent.height}}
+  box_fixed true
+  box_pixel_aspect {{parent.pixel_aspect}}
+  scale 0.5
+  filter notch
+  name Interpolate4
+  xpos -1360
+  ypos 1358
+ }
+push $N8b0b1d00
+ Reformat {
+  type "to box"
+  box_width {{parent.width}}
+  box_height {{parent.height}}
+  box_fixed true
+  box_pixel_aspect {{parent.pixel_aspect}}
+  scale 0.5
+  filter notch
+  name Interpolate5
+  xpos -1360
+  ypos 1262
+ }
+push $N8b0b3200
+ Reformat {
+  type "to box"
+  box_width {{parent.width}}
+  box_height {{parent.height}}
+  box_fixed true
+  box_pixel_aspect {{parent.pixel_aspect}}
+  scale 0.5
+  filter notch
+  name Interpolate6
+  xpos -1360
+  ypos 1166
+ }
+push $N8b0f8800
+ Reformat {
+  type "to box"
+  box_width {{parent.width}}
+  box_height {{parent.height}}
+  box_fixed true
+  box_pixel_aspect {{parent.pixel_aspect}}
+  scale 0.5
+  filter notch
+  name Interpolate7
+  xpos -1360
+  ypos 1070
+ }
+push $N8b0f9d00
+ Reformat {
+  type "to box"
+  box_width {{parent.width}}
+  box_height {{parent.height}}
+  box_fixed true
+  box_pixel_aspect {{parent.pixel_aspect}}
+  scale 0.5
+  filter notch
+  name Interpolate8
+  xpos -1360
+  ypos 974
+ }
+push $N8b0fb200
+ Reformat {
+  type "to box"
+  box_width {{parent.width}}
+  box_height {{parent.height}}
+  box_fixed true
+  box_pixel_aspect {{parent.pixel_aspect}}
+  scale 0.5
+  filter notch
+  name Interpolate9
+  xpos -1360
+  ypos 878
+ }
+push $N8b124800
+ Reformat {
+  type "to box"
+  box_width {{parent.width}}
+  box_height {{parent.height}}
+  box_fixed true
+  box_pixel_aspect {{parent.pixel_aspect}}
+  scale 0.5
+  filter notch
+  name Interpolate10
+  xpos -1360
+  ypos 782
+ }
+push $N8b125d00
+ Reformat {
+  type "to box"
+  box_width {{parent.width}}
+  box_height {{parent.height}}
+  box_fixed true
+  box_pixel_aspect {{parent.pixel_aspect}}
+  scale 0.5
+  filter notch
+  name Interpolate1
+  xpos -1360
+  ypos 686
+ }
+push $N8b127200
+ Merge2 {
+  inputs 2
+  operation under
+  bbox B
+  name Merge1
+  xpos -1250
+  ypos 686
+  disable {{input1.input.input.input.height<2}}
+ }
+ Merge2 {
+  inputs 2
+  operation under
+  bbox B
+  name Merge10
+  xpos -1250
+  ypos 782
+  disable {{input1.input.input.input.height<2}}
+ }
+ Merge2 {
+  inputs 2
+  operation under
+  bbox B
+  name Merge9
+  xpos -1250
+  ypos 878
+  disable {{input1.input.input.input.height<2}}
+ }
+ Merge2 {
+  inputs 2
+  operation under
+  bbox B
+  name Merge8
+  xpos -1250
+  ypos 974
+  disable {{input1.input.input.input.height<2}}
+ }
+ Merge2 {
+  inputs 2
+  operation under
+  bbox B
+  name Merge7
+  xpos -1250
+  ypos 1070
+  disable {{input1.input.input.input.height<2}}
+ }
+ Merge2 {
+  inputs 2
+  operation under
+  bbox B
+  name Merge6
+  xpos -1250
+  ypos 1166
+  disable {{input1.input.input.input.height<2}}
+ }
+ Merge2 {
+  inputs 2
+  operation under
+  bbox B
+  name Merge5
+  xpos -1250
+  ypos 1262
+  disable {{input1.input.input.input.height<2}}
+ }
+ Merge2 {
+  inputs 2
+  operation under
+  bbox B
+  name Merge4
+  xpos -1250
+  ypos 1358
+  disable {{input1.input.input.input.height<2}}
+ }
+ Merge2 {
+  inputs 2
+  operation under
+  bbox B
+  name Merge3
+  xpos -1250
+  ypos 1454
+  disable {{input1.input.input.input.height<2}}
+ }
+ Merge2 {
+  inputs 2
+  operation under
+  bbox B
+  name Merge2
+  xpos -1250
+  ypos 1550
+  disable {{input1.input.input.input.height<2}}
+ }
+ Output {
+  name Output
+  xpos -1250
+  ypos 1622
+ }
+end_group
