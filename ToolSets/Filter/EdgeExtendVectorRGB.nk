@@ -1,7 +1,7 @@
 set cut_paste_input [stack 0]
 push $cut_paste_input
 Group {
- name EdgeExtendVectorRGB
+ name EdgeExtendVectorRGB3
  addUserKnob {20 HardenAlpha t "The idea is to harden the input alpha's edge, so that the edge extend starts extending pixels that accurately represent the FG color.\n\nIn most circumstances, a crushing grade and a little erode does the trick. Not always though!"}
  addUserKnob {6 view_alpha l "view alpha" +STARTLINE}
  addUserKnob {41 blackpoint T _ALPHA_CRUSHER_.blackpoint}
@@ -49,7 +49,7 @@ Group {
   xpos -116
   ypos 498
  }
-set N11c775d0 [stack 0]
+set Na6a92400 [stack 0]
  Dot {
   name Dot2
   note_font_size 42
@@ -57,7 +57,7 @@ set N11c775d0 [stack 0]
   xpos 104
   ypos 498
  }
-set Nd5cd640 [stack 0]
+set Na6a91d00 [stack 0]
  Dot {
   name Dot7
   label " "
@@ -81,7 +81,7 @@ set Nd5cd640 [stack 0]
   xpos 290
   ypos 1382
  }
-push $N11c775d0
+push $Na6a92400
  AddChannels {
   channels alpha
   name AddChannels2
@@ -95,7 +95,7 @@ push $N11c775d0
   xpos -666
   ypos 570
  }
-set N11ab9550 [stack 0]
+set Nb586ab00 [stack 0]
  Dot {
   name Dot4
   note_font_size 42
@@ -103,7 +103,7 @@ set N11ab9550 [stack 0]
   xpos -666
   ypos 810
  }
-set Nd5e4ca0 [stack 0]
+set Nb586a400 [stack 0]
  Dot {
   name Dot43
   note_font_size 42
@@ -111,7 +111,7 @@ set Nd5e4ca0 [stack 0]
   xpos -666
   ypos 1026
  }
-set N11c78490 [stack 0]
+set Nb5869d00 [stack 0]
  Dot {
   name Dot6
   label " "
@@ -121,7 +121,7 @@ set N11c78490 [stack 0]
   xpos -666
   ypos 1386
  }
-push $N11ab9550
+push $Nb586ab00
  Dot {
   name Dot44
   note_font_size 42
@@ -129,7 +129,7 @@ push $N11ab9550
   xpos -336
   ypos 570
  }
-set Nd64af80 [stack 0]
+set Nb5868f00 [stack 0]
  Grade {
   channels alpha
   white_clamp true
@@ -152,7 +152,7 @@ set Nd64af80 [stack 0]
   xpos -370
   ypos 704
  }
-set Nd60a590 [stack 0]
+set N9fe38100 [stack 0]
  Shuffle {
   red alpha
   green alpha
@@ -162,7 +162,7 @@ set Nd60a590 [stack 0]
   xpos -370
   ypos 800
  }
-set Nd646980 [stack 0]
+set Naeda7200 [stack 0]
  Dot {
   name Dot1
   note_font_size 42
@@ -170,8 +170,8 @@ set Nd646980 [stack 0]
   xpos -336
   ypos 1290
  }
-push $Nd64af80
-push $Nd5cd640
+push $Nb5868f00
+push $Na6a91d00
  Copy {
   inputs 2
   from0 rgba.alpha
@@ -199,8 +199,8 @@ push $Nd5cd640
   xpos 104
   ypos 1242
  }
-push $Nd646980
-push $Nd5e4ca0
+push $Naeda7200
+push $Nb586a400
  Merge2 {
   inputs 2
   operation stencil
@@ -216,9 +216,9 @@ push $Nd5e4ca0
   xpos -446
   ypos 1170
  }
-push $N11c78490
-push $Nd60a590
-push $N11c775d0
+push $Nb5869d00
+push $N9fe38100
+push $Na6a92400
  Copy {
   inputs 2
   from0 rgba.alpha
@@ -248,11 +248,10 @@ push $N11c775d0
   xpos -150
   ypos 872
  }
-set N119645f0 [stack 0]
  Group {
   name ExtendEdgeVector1
   help "Push rgb pixels outwards using vectors generated perpedicular to a control matte edge."
-  xpos -260
+  xpos -150
   ypos 944
   addUserKnob {20 User}
   addUserKnob {4 premult l "input is" M {premultiplied unpremultiplied}}
@@ -280,7 +279,7 @@ set N119645f0 [stack 0]
    xpos 874
    ypos 570
   }
-set N119d8610 [stack 0]
+set Na7d4a400 [stack 0]
   Unpremult {
    name Unpremult11
    xpos 950
@@ -295,10 +294,10 @@ set N119d8610 [stack 0]
    xpos 950
    ypos 650
   }
-set Nc4414f0 [stack 0]
-push $Nc4414f0
-push $Nc4414f0
-push $Nc4414f0
+set Na7d49600 [stack 0]
+push $Na7d49600
+push $Na7d49600
+push $Na7d49600
   Group {
    inputs 2
    name ExtendEdge
@@ -316,7 +315,7 @@ push $Nc4414f0
     xpos 556
     ypos -426
    }
-set N9ee6c30 [stack 0]
+set Na7d48800 [stack 0]
    Dot {
     name Dot1
     xpos 707
@@ -360,14 +359,14 @@ set N9ee6c30 [stack 0]
      xpos -172
      ypos -250
     }
-set N119a4830 [stack 0]
+set N729c1600 [stack 0]
     Position {
      translate {0 1}
      name Position2
      xpos -63
      ypos -106
     }
-push $N119a4830
+push $N729c1600
     Merge2 {
      inputs 2
      operation minus
@@ -375,14 +374,14 @@ push $N119a4830
      xpos -103
      ypos -28
     }
-push $N119a4830
+push $N729c1600
     Position {
      translate {1 0}
      name Position1
      xpos -285
      ypos -98
     }
-push $N119a4830
+push $N729c1600
     Merge2 {
      inputs 2
      operation minus
@@ -409,8 +408,8 @@ push $N119a4830
      addUserKnob {7 height l Height}
      height 1
     }
-set N11984170 [stack 0]
-push $N11984170
+set Nc32d4f00 [stack 0]
+push $Nc32d4f00
     Expression {
      channel0 rgb
      expr0 sqrt((r*r)+(g*g)+(b*b))
@@ -439,7 +438,7 @@ push $N11984170
     xpos 440
     ypos -296
    }
-push $N9ee6c30
+push $Na7d48800
    ShuffleCopy {
     inputs 2
     red red
@@ -481,10 +480,10 @@ push $N9ee6c30
    xpos 1280
    ypos 758
   }
-set N119b4530 [stack 0]
-push $N119b4530
-push $N119b4530
-push $N119b4530
+set Na052dd00 [stack 0]
+push $Na052dd00
+push $Na052dd00
+push $Na052dd00
   Group {
    inputs 2
    name ExtendEdge1
@@ -502,7 +501,7 @@ push $N119b4530
     xpos 556
     ypos -426
    }
-set N9a7e270 [stack 0]
+set Na052cf00 [stack 0]
    Dot {
     name Dot1
     xpos 707
@@ -546,14 +545,14 @@ set N9a7e270 [stack 0]
      xpos -172
      ypos -250
     }
-set Nd66b240 [stack 0]
+set N90b41d00 [stack 0]
     Position {
      translate {0 1}
      name Position2
      xpos -63
      ypos -106
     }
-push $Nd66b240
+push $N90b41d00
     Merge2 {
      inputs 2
      operation minus
@@ -561,14 +560,14 @@ push $Nd66b240
      xpos -103
      ypos -28
     }
-push $Nd66b240
+push $N90b41d00
     Position {
      translate {1 0}
      name Position1
      xpos -285
      ypos -98
     }
-push $Nd66b240
+push $N90b41d00
     Merge2 {
      inputs 2
      operation minus
@@ -595,8 +594,8 @@ push $Nd66b240
      addUserKnob {7 height l Height}
      height 1
     }
-set N23af6140 [stack 0]
-push $N23af6140
+set Na8b01600 [stack 0]
+push $Na8b01600
     Expression {
      channel0 rgb
      expr0 sqrt((r*r)+(g*g)+(b*b))
@@ -625,7 +624,7 @@ push $N23af6140
     xpos 440
     ypos -296
    }
-push $N9a7e270
+push $Na052cf00
    ShuffleCopy {
     inputs 2
     red red
@@ -667,10 +666,10 @@ push $N9a7e270
    xpos 1500
    ypos 830
   }
-set N224168b0 [stack 0]
-push $N224168b0
-push $N224168b0
-push $N224168b0
+set Na0e0e400 [stack 0]
+push $Na0e0e400
+push $Na0e0e400
+push $Na0e0e400
   Group {
    inputs 2
    name ExtendEdge2
@@ -688,7 +687,7 @@ push $N224168b0
     xpos 556
     ypos -426
    }
-set N224290e0 [stack 0]
+set Na0e0d600 [stack 0]
    Dot {
     name Dot1
     xpos 707
@@ -732,14 +731,14 @@ set N224290e0 [stack 0]
      xpos -172
      ypos -250
     }
-set N2245ac10 [stack 0]
+set N6f226400 [stack 0]
     Position {
      translate {0 1}
      name Position2
      xpos -63
      ypos -106
     }
-push $N2245ac10
+push $N6f226400
     Merge2 {
      inputs 2
      operation minus
@@ -747,14 +746,14 @@ push $N2245ac10
      xpos -103
      ypos -28
     }
-push $N2245ac10
+push $N6f226400
     Position {
      translate {1 0}
      name Position1
      xpos -285
      ypos -98
     }
-push $N2245ac10
+push $N6f226400
     Merge2 {
      inputs 2
      operation minus
@@ -781,8 +780,8 @@ push $N2245ac10
      addUserKnob {7 height l Height}
      height 1
     }
-set N119f7760 [stack 0]
-push $N119f7760
+set N6e731d00 [stack 0]
+push $N6e731d00
     Expression {
      channel0 rgb
      expr0 sqrt((r*r)+(g*g)+(b*b))
@@ -811,7 +810,7 @@ push $N119f7760
     xpos 440
     ypos -296
    }
-push $N224290e0
+push $Na0e0d600
    ShuffleCopy {
     inputs 2
     red red
@@ -853,10 +852,10 @@ push $N224290e0
    xpos 1720
    ypos 902
   }
-set N11a669e0 [stack 0]
-push $N11a669e0
-push $N11a669e0
-push $N11a669e0
+set Na654eb00 [stack 0]
+push $Na654eb00
+push $Na654eb00
+push $Na654eb00
   Group {
    inputs 2
    name ExtendEdge3
@@ -874,7 +873,7 @@ push $N11a669e0
     xpos 556
     ypos -426
    }
-set N11a79400 [stack 0]
+set Na654dd00 [stack 0]
    Dot {
     name Dot1
     xpos 707
@@ -918,14 +917,14 @@ set N11a79400 [stack 0]
      xpos -172
      ypos -250
     }
-set N980b1b0 [stack 0]
+set Na55c2b00 [stack 0]
     Position {
      translate {0 1}
      name Position2
      xpos -63
      ypos -106
     }
-push $N980b1b0
+push $Na55c2b00
     Merge2 {
      inputs 2
      operation minus
@@ -933,14 +932,14 @@ push $N980b1b0
      xpos -103
      ypos -28
     }
-push $N980b1b0
+push $Na55c2b00
     Position {
      translate {1 0}
      name Position1
      xpos -285
      ypos -98
     }
-push $N980b1b0
+push $Na55c2b00
     Merge2 {
      inputs 2
      operation minus
@@ -967,8 +966,8 @@ push $N980b1b0
      addUserKnob {7 height l Height}
      height 1
     }
-set N9859920 [stack 0]
-push $N9859920
+set N729ae400 [stack 0]
+push $N729ae400
     Expression {
      channel0 rgb
      expr0 sqrt((r*r)+(g*g)+(b*b))
@@ -997,7 +996,7 @@ push $N9859920
     xpos 440
     ypos -296
    }
-push $N11a79400
+push $Na654dd00
    ShuffleCopy {
     inputs 2
     red red
@@ -1039,10 +1038,10 @@ push $N11a79400
    xpos 1940
    ypos 974
   }
-set N98c8cd0 [stack 0]
-push $N98c8cd0
-push $N98c8cd0
-push $N98c8cd0
+set Nb600b200 [stack 0]
+push $Nb600b200
+push $Nb600b200
+push $Nb600b200
   Group {
    inputs 2
    name ExtendEdge4
@@ -1060,7 +1059,7 @@ push $N98c8cd0
     xpos 556
     ypos -426
    }
-set N98db7a0 [stack 0]
+set Nb600a400 [stack 0]
    Dot {
     name Dot1
     xpos 707
@@ -1104,14 +1103,14 @@ set N98db7a0 [stack 0]
      xpos -172
      ypos -250
     }
-set N990d2d0 [stack 0]
+set N9d17f200 [stack 0]
     Position {
      translate {0 1}
      name Position2
      xpos -63
      ypos -106
     }
-push $N990d2d0
+push $N9d17f200
     Merge2 {
      inputs 2
      operation minus
@@ -1119,14 +1118,14 @@ push $N990d2d0
      xpos -103
      ypos -28
     }
-push $N990d2d0
+push $N9d17f200
     Position {
      translate {1 0}
      name Position1
      xpos -285
      ypos -98
     }
-push $N990d2d0
+push $N9d17f200
     Merge2 {
      inputs 2
      operation minus
@@ -1153,8 +1152,8 @@ push $N990d2d0
      addUserKnob {7 height l Height}
      height 1
     }
-set N995bcd0 [stack 0]
-push $N995bcd0
+set N20c06b00 [stack 0]
+push $N20c06b00
     Expression {
      channel0 rgb
      expr0 sqrt((r*r)+(g*g)+(b*b))
@@ -1183,7 +1182,7 @@ push $N995bcd0
     xpos 440
     ypos -296
    }
-push $N98db7a0
+push $Nb600a400
    ShuffleCopy {
     inputs 2
     red red
@@ -1225,10 +1224,10 @@ push $N98db7a0
    xpos 2050
    ypos 1046
   }
-set N12ddfb40 [stack 0]
-push $N12ddfb40
-push $N12ddfb40
-push $N12ddfb40
+set Na0ddb900 [stack 0]
+push $Na0ddb900
+push $Na0ddb900
+push $Na0ddb900
   Group {
    inputs 2
    name ExtendEdge5
@@ -1246,7 +1245,7 @@ push $N12ddfb40
     xpos 556
     ypos -426
    }
-set N12df2580 [stack 0]
+set Na0ddab00 [stack 0]
    Dot {
     name Dot1
     xpos 707
@@ -1290,14 +1289,14 @@ set N12df2580 [stack 0]
      xpos -172
      ypos -250
     }
-set N12e240b0 [stack 0]
+set Na429f900 [stack 0]
     Position {
      translate {0 1}
      name Position2
      xpos -63
      ypos -106
     }
-push $N12e240b0
+push $Na429f900
     Merge2 {
      inputs 2
      operation minus
@@ -1305,14 +1304,14 @@ push $N12e240b0
      xpos -103
      ypos -28
     }
-push $N12e240b0
+push $Na429f900
     Position {
      translate {1 0}
      name Position1
      xpos -285
      ypos -98
     }
-push $N12e240b0
+push $Na429f900
     Merge2 {
      inputs 2
      operation minus
@@ -1339,8 +1338,8 @@ push $N12e240b0
      addUserKnob {7 height l Height}
      height 1
     }
-set N12e72ab0 [stack 0]
-push $N12e72ab0
+set Na3b43200 [stack 0]
+push $Na3b43200
     Expression {
      channel0 rgb
      expr0 sqrt((r*r)+(g*g)+(b*b))
@@ -1369,7 +1368,7 @@ push $N12e72ab0
     xpos 440
     ypos -296
    }
-push $N12df2580
+push $Na0ddab00
    ShuffleCopy {
     inputs 2
     red red
@@ -1411,10 +1410,10 @@ push $N12df2580
    xpos 2270
    ypos 1118
   }
-set N12ee2190 [stack 0]
-push $N12ee2190
-push $N12ee2190
-push $N12ee2190
+set N73bb8100 [stack 0]
+push $N73bb8100
+push $N73bb8100
+push $N73bb8100
   Group {
    inputs 2
    name ExtendEdge6
@@ -1432,7 +1431,7 @@ push $N12ee2190
     xpos 556
     ypos -426
    }
-set N12ef4b40 [stack 0]
+set Nc5d1f200 [stack 0]
    Dot {
     name Dot1
     xpos 707
@@ -1476,14 +1475,14 @@ set N12ef4b40 [stack 0]
      xpos -172
      ypos -250
     }
-set N12f26780 [stack 0]
+set Nc5d1c100 [stack 0]
     Position {
      translate {0 1}
      name Position2
      xpos -63
      ypos -106
     }
-push $N12f26780
+push $Nc5d1c100
     Merge2 {
      inputs 2
      operation minus
@@ -1491,14 +1490,14 @@ push $N12f26780
      xpos -103
      ypos -28
     }
-push $N12f26780
+push $Nc5d1c100
     Position {
      translate {1 0}
      name Position1
      xpos -285
      ypos -98
     }
-push $N12f26780
+push $Nc5d1c100
     Merge2 {
      inputs 2
      operation minus
@@ -1525,8 +1524,8 @@ push $N12f26780
      addUserKnob {7 height l Height}
      height 1
     }
-set N12f75180 [stack 0]
-push $N12f75180
+set Na78e3900 [stack 0]
+push $Na78e3900
     Expression {
      channel0 rgb
      expr0 sqrt((r*r)+(g*g)+(b*b))
@@ -1555,7 +1554,7 @@ push $N12f75180
     xpos 440
     ypos -296
    }
-push $N12ef4b40
+push $Nc5d1f200
    ShuffleCopy {
     inputs 2
     red red
@@ -1597,10 +1596,10 @@ push $N12ef4b40
    xpos 2490
    ypos 1190
   }
-set N12fe4860 [stack 0]
-push $N12fe4860
-push $N12fe4860
-push $N12fe4860
+set Nb563c800 [stack 0]
+push $Nb563c800
+push $Nb563c800
+push $Nb563c800
   Group {
    inputs 2
    name ExtendEdge7
@@ -1618,7 +1617,7 @@ push $N12fe4860
     xpos 556
     ypos -426
    }
-set N242c92a0 [stack 0]
+set N919ab900 [stack 0]
    Dot {
     name Dot1
     xpos 707
@@ -1662,14 +1661,14 @@ set N242c92a0 [stack 0]
      xpos -172
      ypos -250
     }
-set N242fadd0 [stack 0]
+set N919a8800 [stack 0]
     Position {
      translate {0 1}
      name Position2
      xpos -63
      ypos -106
     }
-push $N242fadd0
+push $N919a8800
     Merge2 {
      inputs 2
      operation minus
@@ -1677,14 +1676,14 @@ push $N242fadd0
      xpos -103
      ypos -28
     }
-push $N242fadd0
+push $N919a8800
     Position {
      translate {1 0}
      name Position1
      xpos -285
      ypos -98
     }
-push $N242fadd0
+push $N919a8800
     Merge2 {
      inputs 2
      operation minus
@@ -1711,8 +1710,8 @@ push $N242fadd0
      addUserKnob {7 height l Height}
      height 1
     }
-set N243497d0 [stack 0]
-push $N243497d0
+set Na305c100 [stack 0]
+push $Na305c100
     Expression {
      channel0 rgb
      expr0 sqrt((r*r)+(g*g)+(b*b))
@@ -1741,7 +1740,7 @@ push $N243497d0
     xpos 440
     ypos -296
    }
-push $N242c92a0
+push $N919ab900
    ShuffleCopy {
     inputs 2
     red red
@@ -1783,10 +1782,10 @@ push $N242c92a0
    xpos 2600
    ypos 1262
   }
-set N243b94b0 [stack 0]
-push $N243b94b0
-push $N243b94b0
-push $N243b94b0
+set Na5a4cf00 [stack 0]
+push $Na5a4cf00
+push $Na5a4cf00
+push $Na5a4cf00
   Group {
    inputs 2
    name ExtendEdge8
@@ -1804,7 +1803,7 @@ push $N243b94b0
     xpos 556
     ypos -426
    }
-set N243cbef0 [stack 0]
+set Na5a4c100 [stack 0]
    Dot {
     name Dot1
     xpos 707
@@ -1848,14 +1847,14 @@ set N243cbef0 [stack 0]
      xpos -172
      ypos -250
     }
-set N243fda20 [stack 0]
+set Nc7fe0f00 [stack 0]
     Position {
      translate {0 1}
      name Position2
      xpos -63
      ypos -106
     }
-push $N243fda20
+push $Nc7fe0f00
     Merge2 {
      inputs 2
      operation minus
@@ -1863,14 +1862,14 @@ push $N243fda20
      xpos -103
      ypos -28
     }
-push $N243fda20
+push $Nc7fe0f00
     Position {
      translate {1 0}
      name Position1
      xpos -285
      ypos -98
     }
-push $N243fda20
+push $Nc7fe0f00
     Merge2 {
      inputs 2
      operation minus
@@ -1897,8 +1896,8 @@ push $N243fda20
      addUserKnob {7 height l Height}
      height 1
     }
-set N2444c420 [stack 0]
-push $N2444c420
+set N8852c800 [stack 0]
+push $N8852c800
     Expression {
      channel0 rgb
      expr0 sqrt((r*r)+(g*g)+(b*b))
@@ -1927,7 +1926,7 @@ push $N2444c420
     xpos 440
     ypos -296
    }
-push $N243cbef0
+push $Na5a4c100
    ShuffleCopy {
     inputs 2
     red red
@@ -1969,10 +1968,10 @@ push $N243cbef0
    xpos 2820
    ypos 1334
   }
-set N244bc100 [stack 0]
-push $N244bc100
-push $N244bc100
-push $N244bc100
+set N72965600 [stack 0]
+push $N72965600
+push $N72965600
+push $N72965600
   Group {
    inputs 2
    name ExtendEdge9
@@ -1990,7 +1989,7 @@ push $N244bc100
     xpos 556
     ypos -426
    }
-set N244ceb40 [stack 0]
+set N72964800 [stack 0]
    Dot {
     name Dot1
     xpos 707
@@ -2034,14 +2033,14 @@ set N244ceb40 [stack 0]
      xpos -172
      ypos -250
     }
-set N22601570 [stack 0]
+set Na5ae1600 [stack 0]
     Position {
      translate {0 1}
      name Position2
      xpos -63
      ypos -106
     }
-push $N22601570
+push $Na5ae1600
     Merge2 {
      inputs 2
      operation minus
@@ -2049,14 +2048,14 @@ push $N22601570
      xpos -103
      ypos -28
     }
-push $N22601570
+push $Na5ae1600
     Position {
      translate {1 0}
      name Position1
      xpos -285
      ypos -98
     }
-push $N22601570
+push $Na5ae1600
     Merge2 {
      inputs 2
      operation minus
@@ -2083,8 +2082,8 @@ push $N22601570
      addUserKnob {7 height l Height}
      height 1
     }
-set N2264ff70 [stack 0]
-push $N2264ff70
+set N9476cf00 [stack 0]
+push $N9476cf00
     Expression {
      channel0 rgb
      expr0 sqrt((r*r)+(g*g)+(b*b))
@@ -2113,7 +2112,7 @@ push $N2264ff70
     xpos 440
     ypos -296
    }
-push $N244ceb40
+push $N72964800
    ShuffleCopy {
     inputs 2
     red red
@@ -2155,16 +2154,16 @@ push $N244ceb40
    xpos 3040
    ypos 1406
   }
-push $N244bc100
-push $N243b94b0
-push $N12fe4860
-push $N12ee2190
-push $N12ddfb40
-push $N98c8cd0
-push $N11a669e0
-push $N224168b0
-push $N119b4530
-push $N119d8610
+push $N72965600
+push $Na5a4cf00
+push $Nb563c800
+push $N73bb8100
+push $Na0ddb900
+push $Nb600b200
+push $Na654eb00
+push $Na0e0e400
+push $Na052dd00
+push $Na7d4a400
   Switch {
    inputs 11
    which {{parent.slices}}
@@ -2181,7 +2180,7 @@ push $N119d8610
    xpos 2084
    ypos 2418
   }
-set N226d10b0 [stack 0]
+set Na2b44f00 [stack 0]
   Shuffle {
    in forward
    blue black
@@ -2190,7 +2189,7 @@ set N226d10b0 [stack 0]
    xpos 2270
    ypos 2414
   }
-set N226d6140 [stack 0]
+set Na2b44800 [stack 0]
   Expression {
    expr0 (r+1)/2
    expr1 (g+1)/2
@@ -2198,8 +2197,8 @@ set N226d6140 [stack 0]
    xpos 2270
    ypos 2558
   }
-push $N226d6140
-push $N226d10b0
+push $Na2b44800
+push $Na2b44f00
   Switch {
    inputs 3
    which {{parent.output}}
@@ -2207,7 +2206,7 @@ push $N226d10b0
    xpos 2050
    ypos 2558
   }
-push $N119d8610
+push $Na7d4a400
   Dot {
    name Dot22
    xpos 874
@@ -2280,13 +2279,5 @@ push $N119d8610
   name Output1
   xpos -150
   ypos 1502
- }
-push $N119645f0
- EdgeExtend {
-  sourceIsPremultiplied true
-  name EdgeExtend1
-  note_font Helvetica
-  xpos -40
-  ypos 945
  }
 end_group
