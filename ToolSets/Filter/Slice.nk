@@ -1,194 +1,67 @@
 set cut_paste_input [stack 0]
+push $cut_paste_input
 Group {
- name DepthSlice
- tile_color 0xcc804eff
- addUserKnob {20 DepthSlice}
- addUserKnob {41 depth t "Choose the depth channel to use for slicing." T CHAN_SEL.Zchan}
- addUserKnob {41 channel t "Channel to output depth." -STARTLINE T OUTPUT_LAYER.out}
- addUserKnob {26 "" +STARTLINE}
- addUserKnob {4 method t "choose the type of output: slice, near slice, or far slice." M {slice near far}}
- addUserKnob {41 slice_center T CalculateSlice.slice_center}
- addUserKnob {41 slice_width T CalculateSlice.slice_width}
- addUserKnob {41 feather T CalculateSlice.feather}
- addUserKnob {4 interpolation t "Choose the interpolation type for the feather." M {linear smooth0 smooth1 smooth cubic quadratic ""}}
+name Slice
+addUserKnob {20 Params}
+addUserKnob {41 ch T Copy1.from0}
+addUserKnob {41 c l center T range.c}
+addUserKnob {41 w l width T range.w}
+addUserKnob {41 fa_s l "falloff start" T range.fa_s}
+addUserKnob {41 fa_e l "falloff end" T range.fa_e}
+addUserKnob {41 ss l smoothstep T range.ss}
 }
- BackdropNode {
-  inputs 0
-  name BackdropNode1
-  tile_color 0x4c4c4c01
-  label "<left><font size=6><b>DepthSlice</b></font>\nblackpoint_OUT = 1/(1-blackpoint)*<INPUT>-1/(1-blackpoint)*blackpoint\nwhitepoint_OUT = 1/whitepoint*<INPUT>)\n\nFirst we get 1/depth near and far for specified center:\nnear = 1/(max((slice_center-a), 0)+1)\nfar = 1/(max((a-slice_center), 0)+1)\n\nThe we calculate a depth slice, and near slice and a far slice with the specified center, slice width, and feather.\n\nCenter is the distance from camera to center the slice. \nSlice width is the width in input units of the slice. \nFeather is what percentage of that width to feather off to the center. 1 = feather from center to center +/- slice_width / 2."
-  note_font_size 24
-  note_font_color 0x1e1e1eff
-  xpos -1491
-  ypos -880
-  bdwidth 1226
-  bdheight 759
- }
- ZBlur {
-  inputs 0
-  channels rgba
-  shape 1
-  name CHAN_SEL
-  xpos -1380
-  ypos -690
- }
- Input {
-  inputs 0
-  name Input
-  xpos -442
-  ypos -930
- }
- AddChannels {
-  channels rgba
-  channels2 depth
-  name AddChannels1
-  xpos -442
-  ypos -850
- }
- Dot {
-  name Dot1
-  label " "
-  note_font "Helvetica Bold Bold"
-  note_font_size 24
-  note_font_color 1
-  xpos -408
-  ypos -726
- }
-set Naab2a90 [stack 0]
- Dot {
-  name Dot2
-  label " "
-  note_font "Helvetica Bold Bold"
-  note_font_size 24
-  note_font_color 1
-  xpos -1212
-  ypos -726
- }
-set N32d42210 [stack 0]
-push $N32d42210
- Copy {
-  inputs 2
-  from0 {{{CHAN_SEL.Zchan}}}
-  to0 rgba.alpha
-  name COPY_DEPTH
-  xpos -1246
-  ypos -697
- }
- Expression {
-  temp_name0 near
-  temp_expr0 "1/(max((slice_center-a), 0)+1)"
-  temp_name1 far
-  temp_expr1 "1/(max((a-slice_center), 0)+1)"
-  expr0 "clamp(1/feather*((1-1/min(near, far)/(slice_width+1))))"
-  expr1 clamp(1/feather*((1-1/far/(slice_width+1))))
-  expr2 clamp(1/feather*((1-1/near/(slice_width+1))))
-  channel3 none
-  name CalculateSlice
-  xpos -1246
-  ypos -641
-  addUserKnob {20 Params}
-  addUserKnob {7 slice_center t "The Center to take the depth slice from" R 1 500}
-  slice_center 100
-  addUserKnob {7 slice_width t "The slice width - falloff is extra" R 1 100}
-  slice_width 25
-  addUserKnob {7 feather t "The amount of falloff"}
-  feather 1
- }
- Expression {
-  channel0 rgba
-  expr0 "parent.method == 2 ? b : parent.method == 1 ? g : r"
-  name OUTPUT_TYPE
-  xpos -1246
-  ypos -599
-  addUserKnob {20 User}
-  addUserKnob {7 output_method}
- }
- Dot {
-  name Dot8
-  label " "
-  note_font "Helvetica Bold Bold Bold Bold"
-  note_font_size 24
-  note_font_color 0xff000000
-  xpos -1212
-  ypos -526
- }
-set N36531250 [stack 0]
- Expression {
-  channel3 rgba
-  expr3 clamp((a**3),0,1)
-  name Cubic
-  xpos -576
-  ypos -490
- }
-push $N36531250
- Expression {
-  channel3 rgba
-  expr3 clamp(pow2(a),0,1)
-  name Quadratic
-  xpos -710
-  ypos -490
- }
-push $N36531250
- Expression {
-  channel3 rgba
-  expr3 smoothstep(0,1,a)
-  name Smooth
-  xpos -844
-  ypos -490
- }
-push $N36531250
- ColorLookup {
-  lut {master {curve C 0 k 1 s0}
-    red {}
-    green {}
-    blue {}
-    alpha {}}
-  name Smooth1_
-  xpos -978
-  ypos -490
- }
-push $N36531250
- ColorLookup {
-  lut {master {curve C k 0 s0 L 1}
-    red {}
-    green {}
-    blue {}
-    alpha {}}
-  name Smooth0_1
-  xpos -1112
-  ypos -490
- }
-push $N36531250
- Switch {
-  inputs 6
-  which {{parent.interpolation}}
-  name _INTERPOLATION_
-  xpos -1246
-  ypos -370
- }
- Dot {
-  name Dot3
-  label " "
-  note_font "Helvetica Bold Bold"
-  note_font_size 24
-  note_font_color 1
-  xpos -1212
-  ypos -246
- }
-push $Naab2a90
- ShuffleCopy {
-  inputs 2
-  red red
-  green green
-  blue blue
-  out alpha
-  name OUTPUT_LAYER
-  xpos -442
-  ypos -250
- }
- Output {
-  name Output
-  xpos -442
-  ypos -90
- }
+Input {
+inputs 0
+name Input
+xpos 290
+ypos -754
+}
+AddChannels {
+channels rgba
+channels2 depth
+name AddChannels1
+xpos 290
+ypos -729
+}
+set Ncf730100 [stack 0]
+push $Ncf730100
+Copy {
+inputs 2
+from0 depth.Z
+to0 rgba.red
+name Copy1
+xpos 290
+ypos -705
+}
+Expression {
+temp_name0 f
+temp_expr0 r<p.0?clamp((r-s.0)/(s.1-s.0)):clamp((r-p.1)/(p.0-p.1))
+temp_name1 fs
+temp_expr1 f*f*(3-2*f)
+channel0 rgba
+expr0 ss?fs:f
+name range
+xpos 290
+ypos -634
+addUserKnob {20 Params}
+addUserKnob {7 c l center R 0 1000}
+c 50
+addUserKnob {7 w l width R 0 100}
+w 10
+addUserKnob {7 fa_s l "falloff start" R 0 100}
+fa_s 10
+addUserKnob {7 fa_e l "falloff end" R 0 100}
+fa_e 10
+addUserKnob {78 s n 2}
+s {{s.1-fa_s} {c-w/2}}
+addUserKnob {78 p n 2}
+p {{c+w/2} {p.0+fa_e}}
+addUserKnob {6 ss l smoothstep +STARTLINE}
+ss true
+}
+Output {
+name Output
+xpos 290
+ypos -586
+}
 end_group
