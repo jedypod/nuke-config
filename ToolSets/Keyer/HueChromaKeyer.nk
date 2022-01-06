@@ -1,0 +1,148 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+name HueChromaKey
+tile_color 0x9900ff
+addUserKnob {20 Params}
+addUserKnob {22 si l sample t "sample input pixels in selected region" T "# Get viewer and connected node to calculate format resolution\nn = nuke.thisNode()\nv = nuke.activeViewer()\nvn = v.node().input(v.activeInput())\n\n# Get selected sample area\nbbi = v.node()\['colour_sample_bbox'].value()\nar = float(vn.width() * vn.pixelAspect()) / float(vn.height())\nca = \[(bbi\[0]*0.5+0.5) * vn.width(), (((bbi\[1] * 0.5) + (0.5/ar)) * ar) * vn.height()]\ncb = \[(bbi\[2]*0.5+0.5) * vn.width(), (((bbi\[3] * 0.5) + (0.5/ar)) * ar) * vn.height()]\narea = \[cb\[0] - ca\[0], cb\[1] - ca\[1]]\ncn = \[ca\[0] + (area\[0]/2), ca\[1] + (area\[1] / 2)]\n\nhc = nuke.toNode(n.fullName() + '.hue_chroma')\n\nhue = hc.sample('rgba.red', cn\[0], cn\[1], area\[0], area\[1])\nchr = hc.sample('rgba.alpha', cn\[0], cn\[1], area\[0], area\[1])\n\nn\['h_cn'].setValue(hue%6)\nn\['cn'].setValue(chr)" +STARTLINE}
+addUserKnob {6 krgb l "keep rgb" -STARTLINE}
+krgb true
+addUserKnob {26 extract_hue_label l " " T "<b>extract hue"}
+addUserKnob {41 h_cn l center T extract_hue.cn}
+addUserKnob {41 h_w l width T extract_hue.w}
+addUserKnob {41 h_fa l falloff T extract_hue.fa}
+addUserKnob {6 ce l "" +STARTLINE +STARTLINE}
+ce true
+addUserKnob {26 extract_chroma_label l "  " -STARTLINE T "<b>extract chroma"}
+addUserKnob {41 cn l center T extract_chroma.cn}
+addUserKnob {41 w l width T extract_chroma.w}
+addUserKnob {41 fa l falloff T extract_chroma.fa}
+addUserKnob {6 invert +STARTLINE}
+}
+Input {
+inputs 0
+name Input
+selected true
+xpos 1170
+ypos 614
+}
+set N27f69600 [stack 0]
+Expression {
+temp_name0 n0
+temp_expr0 max(r,g,b)
+temp_name1 n
+temp_expr1 n0==0?1:n0
+expr0 r/n
+expr1 g/n
+expr2 b/n
+name rgb_ratios
+xpos 1170
+ypos 662
+}
+Expression {
+temp_name0 mn
+temp_expr0 min(r,g,b)
+temp_name1 mx
+temp_expr1 max(r,g,b)
+temp_name2 C
+temp_expr2 mx==0?0:(mx-mn)/mx
+channel0 {rgba.red rgba.green rgba.blue none}
+expr0 (C==0?0:r==mx?((g-b)/C+6)%6:g==mx?(b-r)/C+2:b==mx?(r-g)/C+4:0)
+expr3 C
+name hue_chroma
+xpos 1170
+ypos 710
+}
+set N5a417200 [stack 0]
+Expression {
+temp_name0 h
+temp_expr0 a
+channel0 rgba
+expr0 (h<e1?clamp((h-e0)/(e1-e0)):clamp((h-e3)/(e2-e3)))
+name extract_chroma
+xpos 1060
+ypos 782
+addUserKnob {20 Param}
+addUserKnob {7 cn l center}
+cn 0.8
+addUserKnob {7 w l width R 0 0.5}
+w 0.2
+addUserKnob {7 fa l falloff}
+fa 0.5
+addUserKnob {7 e0}
+e0 {{e1-max(1e-3,fa/2)}}
+addUserKnob {7 e1}
+e1 {{cn-w/2}}
+addUserKnob {7 e2}
+e2 {{cn+w/2}}
+addUserKnob {7 e3}
+e3 {{e2+max(1e-3,fa/2)}}
+}
+push $N5a417200
+Expression {
+temp_name0 h0
+temp_expr0 r-cn+2
+temp_name1 h
+temp_expr1 h0<0?6+h0:h0%6
+channel0 rgba
+expr0 (h<e1?clamp((h-e0)/(e1-e0)):clamp((h-e3)/(e2-e3)))
+name extract_hue
+xpos 1170
+ypos 782
+addUserKnob {20 Param}
+addUserKnob {7 cn l center R 0 6}
+cn 2
+addUserKnob {7 w l width R 0 2}
+w 0.2
+addUserKnob {7 fa l falloff}
+fa 0.5
+addUserKnob {7 e0 R 0 4}
+e0 {{e1-fa/2}}
+addUserKnob {7 e1 R 0 4}
+e1 {{2-w/2}}
+addUserKnob {7 e2 R 0 4}
+e2 {{2+w/2}}
+addUserKnob {7 e3 R 0 4}
+e3 {{e2+fa/2}}
+}
+Merge2 {
+inputs 2
+operation multiply
+bbox B
+name Merge25
+xpos 1170
+ypos 854
+disable {{!ce}}
+}
+Invert {
+channels rgba
+name Invert1
+xpos 1170
+ypos 902
+disable {{!invert}}
+}
+set N5a415600 [stack 0]
+push $N27f69600
+Copy {
+inputs 2
+from0 rgba.alpha
+to0 rgba.alpha
+name Copy1
+note_font Helvetica
+xpos 1280
+ypos 897
+}
+push $N5a415600
+Switch {
+inputs 2
+which {{krgb}}
+name Switch1
+xpos 1170
+ypos 951
+}
+Output {
+name Output
+xpos 1170
+ypos 1022
+}
+end_group
