@@ -1,0 +1,24 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+MotionBlur {
+ shutterSamples {{ss}}
+ shutterTime {{st}}
+ motionEstimation {{me}}
+ vectorDetailReg {{vd}}
+ resampleType {{f}}
+ matteChannel {{mc}}
+ name MotionBlur
+ xpos 620
+ ypos -682
+ addUserKnob {20 Params}
+ addUserKnob {3 ss l "shutter samples"}
+ ss 12
+ addUserKnob {7 st l "shutter time"}
+ st 0.5
+ addUserKnob {4 me l motion M {Regularized Local}}
+ addUserKnob {7 vd l "vector detail"}
+ vd 0.3
+ addUserKnob {4 f l filter M {bilinear lanczos4 lanczos6}}
+ addUserKnob {4 mc l matte M {none "source alpha" "source alpha inverted" "matte luminance" "matte inverted luminance" "matte alpha" "matte inverted alpha"}}
+ mc 3
+}
