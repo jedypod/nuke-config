@@ -1,0 +1,11 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Switch {
+ which {{(t-f)*tw}}
+ name TimeSwitch
+ addUserKnob {20 TimeTab l Time}
+ addUserKnob {3 f l "start frame"}
+ f 1001
+ addUserKnob {7 tw R 0 4}
+ tw 1
+}

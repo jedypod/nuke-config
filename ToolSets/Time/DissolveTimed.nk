@@ -1,0 +1,13 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Dissolve {
+which {{smoothstep(start,start+ln,t)}}
+name DissolveTimed
+label "[value start]"
+addUserKnob {20 Params}
+addUserKnob {3 start l start}
+start 1001
+addUserKnob {22 set_cur l Current -STARTLINE T "nuke.thisNode()['start'].setValue(nuke.frame())"}
+addUserKnob {3 ln l length R 0 100 +STARTLINE}
+ln 10
+}

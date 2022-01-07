@@ -1,0 +1,11 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Switch {
+ which {{t>f}}
+ name SwitchTimed
+ label "\[value f]"
+ addUserKnob {20 Params}
+ addUserKnob {3 f l frame}
+ f 1001
+ addUserKnob {22 set_cur l Current -STARTLINE T "nuke.thisNode()['f'].setValue(nuke.frame())"}
+}

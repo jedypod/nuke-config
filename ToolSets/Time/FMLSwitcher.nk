@@ -1,13 +1,24 @@
 set cut_paste_input [stack 0]
 push $cut_paste_input
 Group {
- name FML_SWITCHER
+ name FML_SWITCHER30
  tile_color 0xb0a45dff
  addUserKnob {20 FMLSwitcher}
  addUserKnob {3 start_frame}
  start_frame 1001
+ addUserKnob {41 f l every -STARTLINE T frame_switcher.f}
+ addUserKnob {6 override t "specify fml frames manually" +STARTLINE}
+ addUserKnob {22 set_man_fml l set -STARTLINE T "n = nuke.thisNode()\nfr = n.frameRange()\nn\['first'].setValue(fr.first())\nn\['last'].setValue(fr.last())\nn\['middle'].setValue(int((first + last) / 2))"}
+ addUserKnob {3 first l fml}
+ first 977
+ addUserKnob {3 middle l "" -STARTLINE}
+ middle 1109
+ addUserKnob {3 last l "" -STARTLINE}
+ last 1242
  addUserKnob {4 frame_label l "frame label" M {first middle last}}
  frame_label {{frame_switcher.which}}
+ addUserKnob {2 font}
+ font /usr/share/fonts/dejavu/DejaVuSans.ttf
 }
  Input {
   inputs 0
@@ -20,10 +31,10 @@ Group {
   xpos -676
   ypos -526
  }
-set N3f8b51c0 [stack 0]
+set Nf04cab00 [stack 0]
  Text {
   message "x\[frame] - last"
-  font /Volumes/af/tools/common/nuke/slate/font/Futura.ttc
+  font "\[value parent.font]"
   yjustify bottom
   box {56 46 1767 1342}
   center {1178 895}
@@ -32,15 +43,15 @@ set N3f8b51c0 [stack 0]
   ypos -450
  }
  FrameHold {
-  first_frame {{last_frame}}
+  first_frame {{override?last:last_frame}}
   name LAST
   xpos -576
   ypos -376
  }
-push $N3f8b51c0
+push $Nf04cab00
  Text {
   message "x\[frame] - middle"
-  font /Volumes/af/tools/common/nuke/slate/font/Futura.ttc
+  font "\[value parent.font]"
   yjustify bottom
   box {56 46 1767 1342}
   center {1178 895}
@@ -49,15 +60,15 @@ push $N3f8b51c0
   ypos -450
  }
  FrameHold {
-  first_frame {{"floor((first_frame + last_frame)/2)"}}
+  first_frame {{"override?middle:floor((first_frame + last_frame)/2)"}}
   name MIDDLE
   xpos -710
   ypos -376
  }
-push $N3f8b51c0
+push $Nf04cab00
  Text {
   message "x\[frame] - first"
-  font /Volumes/af/tools/common/nuke/slate/font/Futura.ttc
+  font "\[value parent.font]"
   yjustify bottom
   box {56 46 1767 1342}
   center {1178 895}
@@ -66,17 +77,20 @@ push $N3f8b51c0
   ypos -450
  }
  FrameHold {
-  first_frame {{first_frame}}
+  first_frame {{override?first:first_frame}}
   name FIRST
   xpos -844
   ypos -376
  }
  Switch {
   inputs 3
-  which {{(t-start_frame)%3}}
+  which {{((t-start_frame)/f)%f}}
   name frame_switcher
   xpos -710
-  ypos -290
+  ypos -291
+  addUserKnob {20 Params}
+  addUserKnob {3 f l every}
+  f 4
  }
  Output {
   name Output

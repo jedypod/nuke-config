@@ -1,12 +1,11 @@
 set cut_paste_input [stack 0]
 push $cut_paste_input
-SmartVector {
+VectorGenerator {
+ motionEstimation {{moe}}
  vectorDetailReg {{vd}}
  strengthReg {{vds}}
- matteChannel {{mc}}
  output {{outp}}
- inpainting {{ip}}
- matteDilation {{mtd}}
+ matteChannel {{mc}}
  Advanced 1
  flickerCompensation {{flc}}
  Tolerances 1
@@ -14,17 +13,14 @@ SmartVector {
  weightGreen {{wg}}
  weightBlue {{wb}}
  addUserKnob {20 Params}
+ addUserKnob {4 moe l "motion estimation" M {regularized local}}
  addUserKnob {7 vd l "vector detail"}
  vd 1
  addUserKnob {7 vds l strength R 0 1.5}
  vds 1.5
- addUserKnob {4 mc l matte M {none "source alpha" "source alpha inverted" "matte luminance" "matte inverted luminance" "matte alpha" "matte inverted alpha"}}
  addUserKnob {4 outp l output M {fg bg}}
- addUserKnob {6 ip l "inpaint matte region" +STARTLINE}
- ip true
- addUserKnob {7 mtd R 0 100}
- mtd 53
- addUserKnob {6 flc l "flicker compensation" +STARTLINE} 
+ addUserKnob {4 mc l matte M {none "source alpha" "source alpha inverted" "matte luminance" "matte inverted luminance" "matte alpha" "matte inverted alpha"}}
+ addUserKnob {6 flc l "flicker compensation" +STARTLINE}
  addUserKnob {7 wr l "weight red"}
  wr 0.3
  addUserKnob {7 wg l "weight green"}
