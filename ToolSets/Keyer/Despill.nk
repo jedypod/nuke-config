@@ -11,6 +11,7 @@ Group {
  addUserKnob {41 w l weight T despill1.w}
  addUserKnob {41 lm l limit T despill1.lm}
  addUserKnob {41 tg l target T Target.tg}
+ tg 0
 }
  Input {
   inputs 0
@@ -47,7 +48,7 @@ set Ne1d08100 [stack 0]
   k {{st}}
   addUserKnob {7 w l weight}
   w 0.5
-  addUserKnob {7 lm l limit}
+  addUserKnob {7 lm l limit R 0 1.5}
   lm 1
  }
 set N2661f900 [stack 0]
@@ -137,7 +138,7 @@ push $N2661cf00
  MergeExpression {
   inputs 2
   temp_name3 n
-  temp_expr3 Ar==0?0:Ar/Br
+  temp_expr3 Br==0?0:Ar/Br
   channel0 rgb
   expr0 n
   expr3 max(0,1-n)
