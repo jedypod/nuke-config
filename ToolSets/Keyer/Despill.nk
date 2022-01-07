@@ -47,7 +47,7 @@ set Ne1d08100 [stack 0]
   k {{st}}
   addUserKnob {7 w l weight}
   w 0.5
-  addUserKnob {7 lm l limit R 0 1.2}
+  addUserKnob {7 lm l limit}
   lm 1
  }
 set N2661f900 [stack 0]
