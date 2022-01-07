@@ -535,7 +535,7 @@ push $N8b127200
   name Merge1
   xpos -1250
   ypos 686
-  disable {{input1.input.input.input.height<2}}
+  disable {{input1.input.input.disable}}
  }
  Merge2 {
   inputs 2
@@ -544,7 +544,7 @@ push $N8b127200
   name Merge10
   xpos -1250
   ypos 782
-  disable {{input1.input.input.input.height<2}}
+  disable {{input1.input.input.disable}}
  }
  Merge2 {
   inputs 2
@@ -553,7 +553,7 @@ push $N8b127200
   name Merge9
   xpos -1250
   ypos 878
-  disable {{input1.input.input.input.height<2}}
+  disable {{input1.input.input.disable}}
  }
  Merge2 {
   inputs 2
@@ -562,7 +562,7 @@ push $N8b127200
   name Merge8
   xpos -1250
   ypos 974
-  disable {{input1.input.input.input.height<2}}
+  disable {{input1.input.input.disable}}
  }
  Merge2 {
   inputs 2
@@ -571,7 +571,7 @@ push $N8b127200
   name Merge7
   xpos -1250
   ypos 1070
-  disable {{input1.input.input.input.height<2}}
+  disable {{input1.input.input.disable}}
  }
  Merge2 {
   inputs 2
@@ -580,7 +580,7 @@ push $N8b127200
   name Merge6
   xpos -1250
   ypos 1166
-  disable {{input1.input.input.input.height<2}}
+  disable {{input1.input.input.disable}}
  }
  Merge2 {
   inputs 2
@@ -589,7 +589,7 @@ push $N8b127200
   name Merge5
   xpos -1250
   ypos 1262
-  disable {{input1.input.input.input.height<2}}
+  disable {{input1.input.input.disable}}
  }
  Merge2 {
   inputs 2
@@ -598,7 +598,7 @@ push $N8b127200
   name Merge4
   xpos -1250
   ypos 1358
-  disable {{input1.input.input.input.height<2}}
+  disable {{input1.input.input.disable}}
  }
  Merge2 {
   inputs 2
@@ -607,7 +607,7 @@ push $N8b127200
   name Merge3
   xpos -1250
   ypos 1454
-  disable {{input1.input.input.input.height<2}}
+  disable {{input1.input.input.disable}}
  }
  Merge2 {
   inputs 2
@@ -616,7 +616,7 @@ push $N8b127200
   name Merge2
   xpos -1250
   ypos 1550
-  disable {{input1.input.input.input.height<2}}
+  disable {{input1.input.input.disable}}
  }
  Output {
   name Output
