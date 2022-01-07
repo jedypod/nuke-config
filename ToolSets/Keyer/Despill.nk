@@ -3,32 +3,33 @@ push $cut_paste_input
 Group {
  name Despill
  tile_color 0x9900ff
- addUserKnob {20 Despill_tab l Despill}
+ addUserKnob {20 Params}
  addUserKnob {83 st l screen M {red green blue}}
  st blue
- addUserKnob {41 w l weight T expr_despill.w}
- addUserKnob {41 l l limit T expr_despill.l}
- addUserKnob {41 _m l spill T MergeExpression1._m}
+ addUserKnob {41 pick T Fill1.color}
  addUserKnob {26 ""}
- addUserKnob {41 maskChannelMask l mask -STARTLINE T NodeWrapper.maskChannelMask}
- addUserKnob {41 invert_mask l invert -STARTLINE T NodeWrapper.invert_mask}
- addUserKnob {41 mix T NodeWrapper.mix}
+ addUserKnob {41 w l weight T despill1.w}
+ addUserKnob {41 lm l limit T despill1.lm}
+ addUserKnob {41 tg l target T Target.tg}
 }
  Input {
   inputs 0
-  name Inputmask
-  xpos -920
-  ypos 422
-  number 1
- }
- Input {
-  inputs 0
   name Input
-  xpos -1030
-  ypos 326
+  xpos -40
+  ypos 62
  }
-set Na7310f00 [stack 0]
-push $Na7310f00
+ Dot {
+  name Dot1
+  xpos -6
+  ypos 138
+ }
+set Ne1d08800 [stack 0]
+ Dot {
+  name Dot2
+  xpos -116
+  ypos 138
+ }
+set Ne1d08100 [stack 0]
  Expression {
   temp_name0 c0
   temp_expr0 k==0?r:k==1?g:b
@@ -36,49 +37,147 @@ push $Na7310f00
   temp_expr1 k==0?g:k==1?r:r
   temp_name2 c2
   temp_expr2 k==0?b:k==1?b:g
-  temp_name3 lm
-  temp_expr3 min(c0,(c1*w+c2*(1-w))*l)
-  expr0 k==0?lm:r
-  expr1 k==1?lm:g
-  expr2 k==2?lm:b
-  expr3 k
-  name expr_despill
-  xpos -1030
-  ypos 374
+  channel0 rgba
+  expr0 c0-(c1*w+c2*(1-w))*lm
+  name despill1
+  xpos -150
+  ypos 182
   addUserKnob {20 Params}
-  addUserKnob {3 k l chan}
+  addUserKnob {3 k l ch}
   k {{st}}
-  addUserKnob {7 w l weight R 0 1.2}
+  addUserKnob {7 w l weight}
   w 0.5
-  addUserKnob {7 l l limit R 0 1.2}
-  l 1
+  addUserKnob {7 lm l limit R 0 1.2}
+  lm 1
+ }
+set N2661f900 [stack 0]
+ Input {
+  inputs 0
+  name Inputc
+  xpos -370
+  ypos 62
+  number 1
+ }
+push $Ne1d08100
+ Fill {
+  output rgb
+  color 0
+  name Fill1
+  xpos -260
+  ypos 134
+ }
+ Switch {
+  inputs 2
+  which {{"\[exists parent.input1]"}}
+  name Switch
+  xpos -370
+  ypos 134
+ }
+ Dot {
+  name Dot5
+  xpos -336
+  ypos 186
+ }
+set N2661d600 [stack 0]
+ Expression {
+  temp_name0 c0
+  temp_expr0 k==0?r:k==1?g:b
+  temp_name1 c1
+  temp_expr1 k==0?g:k==1?r:r
+  temp_name2 c2
+  temp_expr2 k==0?b:k==1?b:g
+  channel0 rgba
+  expr0 c0-(c1*w+c2*(1-w))*lm
+  name despill2
+  xpos -260
+  ypos 182
+  addUserKnob {20 Params}
+  addUserKnob {3 k l ch}
+  k {{parent.despill1.k}}
+  addUserKnob {7 w l weight}
+  w {{parent.despill1.w}}
+  addUserKnob {7 lm l limit}
+  lm {{parent.despill1.lm}}
+ }
+set N2661cf00 [stack 0]
+ Expression {
+  expr0 r==0?0:tg.r/r
+  expr1 g==0?0:tg.g/g
+  expr2 b==0?0:tg.b/b
+  name Target
+  xpos -260
+  ypos 230
+  addUserKnob {20 Params}
+  addUserKnob {18 tg l target R 0 4}
+  tg 0
+  addUserKnob {6 tg_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
  }
  MergeExpression {
   inputs 2
-  temp_name0 sp
-  temp_expr0 max(Ar-Br,Ag-Bg,Ab-Bb)
-  expr0 r+sp*_m.r
-  expr1 g+sp*_m.g
-  expr2 b+sp*_m.b
-  expr3 sp
-  name MergeExpression1
-  xpos -1030
-  ypos 398
-  addUserKnob {20 Params}
-  addUserKnob {18 _m l spill R 0 4}
-  addUserKnob {6 _m_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  expr0 max(0,Ar*Br)
+  expr1 max(0,Ag*Bg)
+  expr2 max(0,Ab*Bb)
+  name MergeMultiply1
+  xpos -260
+  ypos 278
  }
-push $Na7310f00
- NodeWrapper {
-  inputs 2+1
-  channels rgb
-  name NodeWrapper
-  xpos -1030
-  ypos 422
+ Dot {
+  name Dot4
+  xpos -226
+  ypos 378
+ }
+push $N2661d600
+ Dot {
+  name Dot6
+  xpos -336
+  ypos 330
+ }
+push $N2661f900
+push $N2661cf00
+ MergeExpression {
+  inputs 2
+  temp_name3 n
+  temp_expr3 Ar==0?0:Ar/Br
+  channel0 rgb
+  expr0 n
+  expr3 max(0,1-n)
+  name MergeDivide
+  xpos -150
+  ypos 278
+ }
+ MergeExpression {
+  inputs 2
+  expr0 max(0,Ar*r)
+  expr1 max(0,Ag*g)
+  expr2 max(0,Ab*b)
+  expr3 clamp(a)
+  name MergeMultiply
+  xpos -150
+  ypos 326
+ }
+push $Ne1d08800
+ MergeExpression {
+  inputs 2
+  expr0 r-Ar
+  expr1 g-Ag
+  expr2 b-Ab
+  expr3 Aa
+  name MergeFrom
+  xpos -40
+  ypos 326
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  bbox B
+  output rgb
+  name Merge4
+  xpos -40
+  ypos 374
  }
  Output {
   name Output
-  xpos -1030
-  ypos 470
+  xpos -40
+  ypos 446
  }
 end_group
