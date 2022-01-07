@@ -1,0 +1,64 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name ChromaticAberration
+ addUserKnob {20 Params}
+ addUserKnob {41 sr l red T Transform_R.s}
+ addUserKnob {41 sg l green T Transform_G.s}
+ addUserKnob {41 sb l blue T Transform_B.s}
+ addUserKnob {7 ar l aspect}
+ addUserKnob {41 filter T Transform_R.filter}
+ addUserKnob {41 invert_matrix l invert -STARTLINE T Transform_R.invert_matrix}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos -40
+  ypos 14
+ }
+ TransformMasked {
+  channels {rgba.red -rgba.green -rgba.blue none}
+  scale {{s+1} {s*ar+1}}
+  center {{width/2} {height/2}}
+  shutteroffset centred
+  name Transform_R
+  selected true
+  xpos -40
+  ypos 62
+  addUserKnob {20 Params}
+  addUserKnob {7 s l red R -0.005 0.005}
+  s 0.0008
+ }
+ TransformMasked {
+  channels {-rgba.red rgba.green -rgba.blue none}
+  scale {{s+1} {s*ar+1}}
+  center {{width/2} {height/2}}
+  invert_matrix {{Transform_R.invert_matrix}}
+  filter {{Transform_R.filter}}
+  shutteroffset centred
+  name Transform_G
+  xpos -40
+  ypos 110
+  addUserKnob {20 Params}
+  addUserKnob {7 s l green R -0.005 0.005}
+ }
+ TransformMasked {
+  channels {-rgba.red -rgba.green rgba.blue none}
+  scale {{s+1} {s*ar+1}}
+  center {{width/2} {height/2}}
+  invert_matrix {{Transform_R.invert_matrix}}
+  filter {{Transform_R.filter}}
+  shutteroffset centred
+  name Transform_B
+  xpos -40
+  ypos 158
+  addUserKnob {20 Params}
+  addUserKnob {7 s l blue R -0.005 0.005}
+  s -0.00115
+ }
+ Output {
+  name Output
+  xpos -40
+  ypos 206
+ }
+end_group
