@@ -55,7 +55,7 @@ push $Na7bf8800
  }
  Add {
   channels rgb
-  value {{-c-axis.world_matrix.3} {-c-axis.world_matrix.7} {-c-axis.world_matrix.11} {curve}}
+  value {{-cn-axis.world_matrix.3} {-cn-axis.world_matrix.7} {-cn-axis.world_matrix.11} {curve}}
   name add
   xpos -150
   ypos -106
