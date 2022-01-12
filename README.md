@@ -5,6 +5,7 @@ It provides tools and scripts to improve efficiency and quality of life while do
 
 # About
 - [scripts](/scripts) contains python scripts.
+  - [nuketools](/scripts/nuketools) is a python package containing multiple modules all of which will be automatically imported with nuketools.
 - [ToolSets](/ToolSets) contains a collection of Nuke tools, mostly written by me.
 
 # [Wiki](https://github.com/jedypod/nuke-config/wiki)
