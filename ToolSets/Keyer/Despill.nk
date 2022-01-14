@@ -11,7 +11,8 @@ Group {
  addUserKnob {41 w l weight T despill1.w}
  addUserKnob {41 lm l limit T despill1.lm}
  addUserKnob {41 tg l target T Target.tg}
- tg 0
+ tg 0.2
+ addUserKnob {6 oa l "out alpha" +STARTLINE}
 }
  Input {
   inputs 0
@@ -110,7 +111,7 @@ set N2661cf00 [stack 0]
   ypos 230
   addUserKnob {20 Params}
   addUserKnob {18 tg l target R 0 4}
-  tg 0
+  tg 0.2
   addUserKnob {6 tg_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
  }
  MergeExpression {
@@ -162,7 +163,7 @@ push $Ne1d08800
   expr0 r-Ar
   expr1 g-Ag
   expr2 b-Ab
-  expr3 Aa
+  expr3 oa?Aa:Ba
   name MergeFrom
   xpos -40
   ypos 326
