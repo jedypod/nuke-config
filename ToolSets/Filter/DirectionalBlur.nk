@@ -1,0 +1,54 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name DirectionalBlur
+ tile_color 0xcc804eff
+ addUserKnob {20 Params}
+ addUserKnob {41 channels T Blur1.channels}
+ addUserKnob {41 blur T Blur1.blur}
+ addUserKnob {41 filter T Blur1.filter}
+ addUserKnob {41 rt l rotate T Transform1.rt}
+ addUserKnob {41 center T Transform1.center}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 mix T Blur1.mix}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos -40
+  ypos -34
+ }
+ Transform {
+  rotate {{rt}}
+  center {1112 938}
+  shutteroffset centred
+  name Transform1
+  xpos -40
+  ypos 15
+  addUserKnob {20 Params}
+  addUserKnob {7 rt l rotate R 0 180}
+ }
+ Blur {
+  channels rgba
+  size {{blur} 0}
+  filter box
+  name Blur1
+  xpos -40
+  ypos 39
+  addUserKnob {20 Params}
+  addUserKnob {7 blur R 0 200}
+ }
+ Transform {
+  rotate {{-parent.Transform1.rotate}}
+  center {{parent.Transform1.center} {parent.Transform1.center}}
+  shutteroffset centred
+  name Transform2
+  xpos -40
+  ypos 63
+ }
+ Output {
+  name Output
+  xpos -40
+  ypos 110
+ }
+end_group
