@@ -1,7 +1,7 @@
 set cut_paste_input [stack 0]
 push $cut_paste_input
 Group {
- name IBKeyExtract
+ name IBKeyer
  tile_color 0x9900ff
  addUserKnob {20 Params}
  addUserKnob {83 st l screen M {red green blue}}
