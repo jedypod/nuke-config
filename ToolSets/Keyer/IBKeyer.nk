@@ -1,0 +1,233 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name IBKeyExtract
+ tile_color 0x9900ff
+ addUserKnob {20 Params}
+ addUserKnob {83 st l screen M {red green blue}}
+ st blue
+ addUserKnob {41 pick t "if no cleanplate, pick a solid color" T pick_screen_color.color}
+ addUserKnob {26 ""}
+ addUserKnob {41 w0 l bias T despill.w0}
+ addUserKnob {41 lm l limit T despill.lm}
+ addUserKnob {41 spill T multiply_spill.value}
+ addUserKnob {26 ""}
+ addUserKnob {6 lma l "add luminance" t "merge luminance of despill to alpha" +STARTLINE}
+ lma true
+ addUserKnob {7 wp t whitepoint R 0.5 1.5}
+ wp 1
+ addUserKnob {7 bp t blackpoint}
+}
+ Input {
+  inputs 0
+  name Inputc
+  label "\[value number]"
+  xpos -370
+  ypos -88
+  number 1
+ }
+ Input {
+  inputs 0
+  name Input
+  label "\[value number]"
+  xpos -40
+  ypos -88
+ }
+ Dot {
+  name Dot5
+  xpos -6
+  ypos -6
+ }
+set Nc4fb4100 [stack 0]
+ Fill {
+  output rgb
+  color 0.5
+  name pick_screen_color
+  xpos -150
+  ypos -10
+ }
+ Switch {
+  inputs 2
+  which {{"\[exists parent.input1]"}}
+  name sw_screen
+  xpos -370
+  ypos -10
+ }
+ Dot {
+  name Dot9
+  xpos -336
+  ypos 66
+ }
+set N2624e400 [stack 0]
+ Expression {
+  temp_name0 c0
+  temp_expr0 k==0?r:k==1?g:b
+  temp_name1 c1
+  temp_expr1 k==0?g:k==1?r:r
+  temp_name2 c2
+  temp_expr2 k==0?b:k==1?b:g
+  temp_name3 xt
+  temp_expr3 c0-(c1*w0+c2*(1-w0))*lm
+  channel0 {rgba.red rgba.green rgba.blue none}
+  expr0 xt
+  expr3 max(c1,c2)
+  name despill1
+  xpos -260
+  ypos 62
+  addUserKnob {20 Params}
+  addUserKnob {3 k l chan}
+  k {{st}}
+  addUserKnob {7 w0 l bias}
+  w0 {{parent.despill.w0}}
+  addUserKnob {7 lm l limit}
+  lm {{parent.despill.lm}}
+ }
+set N2624dd00 [stack 0]
+push $Nc4fb4100
+ Expression {
+  temp_name0 c0
+  temp_expr0 k==0?r:k==1?g:b
+  temp_name1 c1
+  temp_expr1 k==0?g:k==1?r:r
+  temp_name2 c2
+  temp_expr2 k==0?b:k==1?b:g
+  temp_name3 l
+  temp_expr3 c0-(c1*w0+c2*(1-w0))*lm
+  channel0 rgba
+  expr0 l
+  name despill
+  xpos -150
+  ypos 62
+  addUserKnob {20 Params}
+  addUserKnob {3 k l chan}
+  k {{st}}
+  addUserKnob {7 w0 l bias}
+  w0 0.5
+  addUserKnob {7 lm l limit}
+  lm 1
+ }
+ MergeExpression {
+  inputs 2
+  temp_name3 n
+  temp_expr3 Ar==0?0:Br/Ar
+  channel0 rgb
+  expr0 n
+  expr3 max(0,1-n)
+  name MergeDivideReverse
+  label normalize
+  xpos -150
+  ypos 104
+ }
+set N2624c100 [stack 0]
+ Dot {
+  name Dot10
+  xpos -116
+  ypos 162
+ }
+set N2ba23900 [stack 0]
+push $N2624dd00
+ Merge2 {
+  inputs 2
+  operation multiply
+  bbox B
+  output rgb
+  name Merge3
+  xpos -260
+  ypos 158
+ }
+ Multiply {
+  channels rgb
+  value 0
+  name multiply_spill
+  xpos -260
+  ypos 302
+ }
+ Dot {
+  name Dot4
+  xpos -226
+  ypos 378
+ }
+push $N2624c100
+push $N2624e400
+ Merge2 {
+  inputs 2
+  operation multiply
+  bbox B
+  name Merge1
+  xpos -370
+  ypos 110
+ }
+ Clamp {
+  channels rgba
+  maximum_enable false
+  name ClampMin
+  xpos -370
+  ypos 158
+ }
+ Dot {
+  name Dot3
+  xpos -336
+  ypos 210
+ }
+push $Nc4fb4100
+ Merge2 {
+  inputs 2
+  operation from
+  bbox B
+  output rgb
+  name Merge2
+  xpos -40
+  ypos 206
+ }
+set Nc1a13200 [stack 0]
+push $N2ba23900
+ MergeExpression {
+  inputs 2
+  temp_name0 L
+  temp_expr0 w.0*Ar+w.1*Ag+w.2*Ab
+  temp_name1 ex
+  temp_expr1 clamp((L-e0)/(e1-e0))
+  expr0 A
+  expr3 a+ex-a*ex
+  name Luminance3
+  xpos -150
+  ypos 254
+  disable {{!lma x2 0}}
+  addUserKnob {20 Param}
+  addUserKnob {78 w n 3}
+  w {0.26 {1-(this.0+this.2)} 0.07}
+  addUserKnob {7 e0 R 0 4}
+  e0 {{bp}}
+  addUserKnob {7 e1 R 0 4}
+  e1 {{wp}}
+ }
+ Clamp {
+  channels rgba
+  name Clamp1
+  xpos -150
+  ypos 303
+ }
+push $Nc1a13200
+ Copy {
+  inputs 2
+  from0 rgba.alpha
+  to0 rgba.alpha
+  name Copy18
+  xpos -40
+  ypos 296
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  bbox B
+  output rgb
+  name Merge4
+  xpos -40
+  ypos 374
+ }
+ Output {
+  name Output
+  xpos -40
+  ypos 422
+ }
+end_group

@@ -8,7 +8,7 @@ Group {
  st blue
  addUserKnob {41 pick T Fill1.color}
  addUserKnob {26 ""}
- addUserKnob {41 w l weight T despill1.w}
+ addUserKnob {41 w l bias T despill1.w}
  addUserKnob {41 lm l limit T despill1.lm}
  addUserKnob {41 tg l target T Target.tg}
  tg 0.2
@@ -47,7 +47,7 @@ set Ne1d08100 [stack 0]
   addUserKnob {20 Params}
   addUserKnob {3 k l ch}
   k {{st}}
-  addUserKnob {7 w l weight}
+  addUserKnob {7 w l bias}
   w 0.5
   addUserKnob {7 lm l limit R 0 1.5}
   lm 1

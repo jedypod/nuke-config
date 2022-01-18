@@ -1,7 +1,7 @@
 set cut_paste_input [stack 0]
 push $cut_paste_input
 Group {
-name HueChromaKey
+name HChKeyer
 tile_color 0x9900ff
 addUserKnob {20 Params}
 addUserKnob {22 si l sample t "sample input pixels in selected region" T "# Get viewer and connected node to calculate format resolution\nn = nuke.thisNode()\nv = nuke.activeViewer()\nvn = v.node().input(v.activeInput())\n\n# Get selected sample area\nbbi = v.node()\['colour_sample_bbox'].value()\nar = float(vn.width() * vn.pixelAspect()) / float(vn.height())\nca = \[(bbi\[0]*0.5+0.5) * vn.width(), (((bbi\[1] * 0.5) + (0.5/ar)) * ar) * vn.height()]\ncb = \[(bbi\[2]*0.5+0.5) * vn.width(), (((bbi\[3] * 0.5) + (0.5/ar)) * ar) * vn.height()]\narea = \[cb\[0] - ca\[0], cb\[1] - ca\[1]]\ncn = \[ca\[0] + (area\[0]/2), ca\[1] + (area\[1] / 2)]\n\nhc = nuke.toNode(n.fullName() + '.hue_chroma')\n\nhue = hc.sample('rgba.red', cn\[0], cn\[1], area\[0], area\[1])\nchr = hc.sample('rgba.alpha', cn\[0], cn\[1], area\[0], area\[1])\n\nn\['h_cn'].setValue(hue%6)\nn\['cn'].setValue(chr)" +STARTLINE}

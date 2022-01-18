@@ -8,19 +8,15 @@ Group {
  st blue
  addUserKnob {41 pick T Fill1.color}
  addUserKnob {26 ""}
- addUserKnob {7 w l weight}
+ addUserKnob {7 w l bias t "bias primary hue angle"}
  w 0.5
- addUserKnob {7 l l limit}
- l 1
- addUserKnob {6 sre l "luminance match" +STARTLINE}
- addUserKnob {7 sr l range}
+ addUserKnob {7 lm l limit}
+ lm 1
+ addUserKnob {6 sre l "add luminance" t "add luminance key of rgb to alpha" +STARTLINE}
+ addUserKnob {7 sr l range t "range of key"}
  sr 1
- addUserKnob {7 ll l level}
- addUserKnob {41 autolevels T IBK.autolevels}
- addUserKnob {41 yellow -STARTLINE T IBK.yellow}
- addUserKnob {41 cyan -STARTLINE T IBK.cyan}
- addUserKnob {41 magenta -STARTLINE T IBK.magenta}
- addUserKnob {41 rgbal l "rgba legal" -STARTLINE T IBK.rgbal}
+ addUserKnob {7 ll l level t "level of key"}
+ addUserKnob {41 rgbal l "rgba legal" t "sometimes disable with white objects over bluescreen." T IBK.rgbal}
 }
  Input {
   inputs 0
@@ -54,8 +50,8 @@ push $N22141d00
  IBK {
   inputs 3
   screen_type {{st}}
-  red_weight {{w*l}}
-  blue_green_weight {{(1-w)*l}}
+  red_weight {{w*lm}}
+  blue_green_weight {{(1-w)*lm}}
   lm_enable {{sre}}
   level {{sr}}
   luma {{ll}}
