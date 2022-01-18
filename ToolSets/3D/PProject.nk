@@ -8,6 +8,7 @@ Group {
  addUserKnob {3 rff l frame t "reference frame for position projection"}
  rff 1001
  addUserKnob {22 set_current l Current -STARTLINE T nuke.thisNode().knob('rff').setValue(nuke.frame())}
+ addUserKnob {22 create_fh l "Create FrameHold" t "create framehold node on input" -STARTLINE T "node = nuke.thisNode()\nnuke.root().begin()\ni = node.input(0)\n_ = \[n.setSelected(False) for n in nuke.allNodes()]\ni.setSelected(True)\nfh = nuke.createNode('FrameHold')\nfh\['first_frame'].setValue(node\['rff'].getValue())"}
  addUserKnob {41 filter T STMap1.filter}
  addUserKnob {6 fr l "frustrum limit" t "remove pixels outside projection camera frustrum" +STARTLINE}
  fr true
@@ -66,7 +67,7 @@ Group {
   temp_name1 _u
   temp_expr1 0.5+r/htan/_z/2
   temp_name2 _v
-  temp_expr2 0.5+g/vtan/_z/2
+  temp_expr2 0.5+g/vtan/_z/2*pixel_aspect
   expr0 _u
   expr1 _v
   expr2 0
