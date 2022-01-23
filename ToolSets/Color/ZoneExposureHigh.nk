@@ -3,10 +3,10 @@ push $cut_paste_input
 Group {
  name ZoneExposureHigh
  addUserKnob {20 ZoneExposureHigh_tab l ZoneExposureHigh}
- addUserKnob {41 he l exposure t "Exposure in stops for region above pivot." T Expression.ex}
- addUserKnob {41 hp l pivot t "Pivot point in stops around middle grey." T Expression.pv}
- addUserKnob {41 hf l falloff t "Softness or size of the transition from between pivot and linear section of exposure change." T Expression.f}
- addUserKnob {26 ""}
+ addUserKnob {41 he l exposure t "Exposure in stops for region above pivot." T exp_high.ex}
+ addUserKnob {41 hp l pivot t "Pivot point in stops around middle grey." T exp_high.pv}
+ addUserKnob {41 hf l falloff t "Softness or size of the transition from between pivot and linear section of exposure change." T exp_high.fa}
+ addUserKnob {41 invert t "Invert direction." T exp_high.invert} addUserKnob {26 ""}
  addUserKnob {41 maskChannelMask l mask -STARTLINE T Expression.maskChannelMask}
  addUserKnob {41 invert_mask l invert -STARTLINE T Expression.invert_mask}
  addUserKnob {41 mix T Expression.mix}
@@ -24,42 +24,46 @@ Group {
   xpos -1250
   ypos -154
  }
- Expression {
+  Expression {
   inputs 1+1
-  temp_name0 m
-  temp_expr0 max(r,g,b)
-  temp_name1 s
-  temp_expr1 m<_t?1:m>x1?(_m*(m-x1)+y1)/m:(_a*pow(m,p+1)+_b)/m
+  temp_name0 n
+  temp_expr0 "max(r,g,b) "
+  temp_name1 sf
+  temp_expr1 n>x1?(_m*(n-x1)+y1)/n:(_a*pow(n,p)+_b)/n
+  temp_name2 si
+  temp_expr2 n>y1?((_m*x1-y1+n)/_m)/n:pow((n-_b)/_a,1/p)/n
+  temp_name3 s
+  temp_expr3 n<t0?1:invert?si:sf
   expr0 r*s
   expr1 g*s
   expr2 b*s
-  name Expression
-  label https://www.desmos.com/calculator/ipvby05bjx
-  selected true
+  name exp_high
   xpos -1250
   ypos -106
   addUserKnob {20 Params}
+  addUserKnob {26 lnk l " " T "<b><style> a:link \{ color: #ccc \}</style><a href=https://www.desmos.com/calculator/ylq5yvkhoq>desmos</a>\n"}
   addUserKnob {7 ex l exposure R -4 4}
   addUserKnob {7 pv l pivot R -4 4}
   pv -1
-  addUserKnob {7 f l falloff}
-  f 0.75
-  addUserKnob {7 fm}
-  fm {{1.2*pow(0.14,f)}}
+  addUserKnob {7 fa l falloff}
+  fa 0.75
+  addUserKnob {6 invert +STARTLINE}
+  addUserKnob {7 f R 0 4}
+  f {{5*pow(fa,1.6)+1}}
   addUserKnob {7 p R 0 10}
-  p {{ex*fm}}
-  addUserKnob {7 _a R -10 10}
-  _a {{pow(_t,-p)/(p+1)}}
-  addUserKnob {7 _b R -10 10}
-  _b {{_t-_a*pow(_t,p+1)}}
+  p {{fabs(ex+f)<1e-8?1e-8:(ex+f)/f}}
   addUserKnob {7 _m R 0 10}
   _m {{pow(2,ex)}}
+  addUserKnob {7 t0}
+  t0 {{0.18*pow(2,pv)}}
+  addUserKnob {7 _a R -10 10}
+  _a {{pow(t0,1-p)/p}}
+  addUserKnob {7 _b R -10 10}
+  _b {{t0*(1-1/p)}}
   addUserKnob {7 x1 R -10 10}
-  x1 {{pow((_a*p+_a)/_m,-1/p)}}
+  x1 {{t0*pow(2,f)}}
   addUserKnob {7 y1 R -10 10}
-  y1 {{_a*pow((_a*p+_a)/_m,-(p+1)/p)+_b}}
-  addUserKnob {7 _t}
-  _t {{0.18*pow(2,pv)}}
+  y1 {{_a*pow(x1,p)+_b}}
  }
  Output {
   name Output

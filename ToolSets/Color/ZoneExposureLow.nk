@@ -3,10 +3,10 @@ push $cut_paste_input
 Group {
  name ZoneExposureLow
  addUserKnob {20 ZoneExposureLow_tab l ZoneExposureLow}
- addUserKnob {41 le l exposure t "Exposure in stops for region below pivot." T Expression.ex}
- addUserKnob {41 lp l pivot t "Pivot point in stops around middle grey." T Expression.pv}
- addUserKnob {41 lf l falloff t "Softness or size of the transition from between pivot and section with exposure change." T Expression.f}
- addUserKnob {26 ""}
+ addUserKnob {41 le l exposure t "Exposure in stops for region below pivot." T exp_low.ex}
+ addUserKnob {41 lp l pivot t "Pivot point in stops around middle grey." T exp_low.pv}
+ addUserKnob {41 lf l falloff t "Softness or size of the transition from between pivot and section with exposure change." T exp_low.fa}
+addUserKnob {26 ""}
  addUserKnob {41 maskChannelMask l mask -STARTLINE T Expression.maskChannelMask}
  addUserKnob {41 invert_mask l invert -STARTLINE T Expression.invert_mask}
  addUserKnob {41 mix T Expression.mix}
@@ -29,34 +29,31 @@ Group {
   temp_name0 m
   temp_expr0 max(r,g,b)
   temp_name1 s
-  temp_expr1 m>_t?1:_t*pow(m/_t,p)*(_a*m+_b)+_c
+  temp_expr1 m>t0?1:pow(m,p)*(_a*m+_b)+_c
   expr0 r*s
   expr1 g*s
   expr2 b*s
-  name Expression
-  label https://www.desmos.com/calculator/duje2zbvfb
+  name exp_low
   xpos -1250
   ypos -106
   addUserKnob {20 Params}
-  addUserKnob {7 ex l exposure R -6 6}
+  addUserKnob {7 ex l exposure R -4 4}
   addUserKnob {7 pv l pivot R -3 3}
   pv 1
-  addUserKnob {7 f l falloff}
-  f 0.75
-  addUserKnob {7 fm R 1 6}
-  fm {{4+max(0,ex-2)/4}}
+  addUserKnob {7 fa l falloff}
+  fa 0.75
+  addUserKnob {7 f}
+  f {{6-5*fa}}
   addUserKnob {7 p R 0 10}
-  p {{ex>0?min(4,(fm-(fm-1)*f)*pow(0.453,ex)):4-3.22*f}}
+  p {{min(f/2,f/2*pow(0.5,ex))}}
+  addUserKnob {7 t0}
+  t0 {{0.18*pow(2,pv)}}
   addUserKnob {7 _a R -10 10}
-  _a {{(-2*_b*_t-_c+_k)/(3*_t*_t)}}
+  _a {{p*(_c-1)/(t0**(p+1))}}
   addUserKnob {7 _b R -10 10}
-  _b {{-(2*_c+_k-3)/_t}}
+  _b {{(1-_c)*(p+1)/(t0**p)}}
   addUserKnob {7 _c R 0 10}
   _c {{pow(2,ex)}}
-  addUserKnob {7 _k R -10 10}
-  _k {{(_c-1)*p+(2-_c)}}
-  addUserKnob {7 _t}
-  _t {{0.18*pow(2,pv)}}
  }
  Output {
   name Output
