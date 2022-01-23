@@ -1,0 +1,75 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name LocalContrast
+ addUserKnob {20 LocalContrast}
+ addUserKnob {41 con l contrast T Contrast.con}
+ addUserKnob {41 size T Blur1.size}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos 1170
+  ypos -778
+ }
+ Colorspace {
+  colorspace_out AlexaV3LogC
+  name Colorspace3
+  xpos 1170
+  ypos -729
+ }
+ Dot {
+  name Dot1
+  xpos 1204
+  ypos -678
+ }
+set Nc2870800 [stack 0]
+ Blur {
+  channels rgba
+  size 40
+  name Blur1
+  xpos 1060
+  ypos -681
+ }
+push $Nc2870800
+ MergeExpression {
+  inputs 2
+  channel0 rgba
+  expr0 max(Ar-r,Ag-g,Ab-b)
+  name Laplacian
+  xpos 1060
+  ypos -633
+ }
+push $Nc2870800
+ MergeExpression {
+  inputs 2
+  temp_name0 n
+  temp_expr0 max(r,g,b)/.8
+  temp_name1 s
+  temp_expr1 n<0?1:pow(n,p-1)
+  temp_name2 f
+  temp_expr2 Ar
+  expr0 r*(1-f)+r*s*f
+  expr1 g*(1-f)+g*s*f
+  expr2 b*(1-f)+b*s*f
+  expr3 pv
+  name Contrast
+  xpos 1170
+  ypos -633
+  addUserKnob {20 Params}
+  addUserKnob {7 con l contrast R -4 4}
+  addUserKnob {7 p R 0 4}
+  p {{2**con}}
+ }
+ Colorspace {
+  colorspace_in AlexaV3LogC
+  name Colorspace2
+  xpos 1170
+  ypos -585
+ }
+ Output {
+  name Output
+  xpos 1170
+  ypos -538
+ }
+end_group
