@@ -359,9 +359,14 @@ set Naa450800 [stack 0]
   xpos -810
   ypos -106
  }
- FrameHold {
-  first_frame {{rint(input.first_frame+random(t)*(input.last_frame-input.first_frame))}}
-  name FrameHold2
+ TimeClip {
+  time ""
+  first {{input.first_frame}}
+  before loop
+  last {{input.last_frame}}
+  after loop
+  origset true
+  name TimeClip1
   xpos -810
   ypos -64
  }
