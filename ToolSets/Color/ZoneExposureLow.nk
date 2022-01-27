@@ -6,7 +6,7 @@ Group {
  addUserKnob {41 le l exposure t "Exposure in stops for region below pivot." T exp_low.ex}
  addUserKnob {41 lp l pivot t "Pivot point in stops around middle grey." T exp_low.pv}
  addUserKnob {41 lf l falloff t "Softness or size of the transition from between pivot and section with exposure change." T exp_low.fa}
-addUserKnob {26 ""}
+ addUserKnob {26 ""}
  addUserKnob {41 maskChannelMask l mask -STARTLINE T Expression.maskChannelMask}
  addUserKnob {41 invert_mask l invert -STARTLINE T Expression.invert_mask}
  addUserKnob {41 mix T Expression.mix}
@@ -37,6 +37,7 @@ addUserKnob {26 ""}
   xpos -1250
   ypos -106
   addUserKnob {20 Params}
+  label https://www.desmos.com/calculator/oz8eyxoo9k
   addUserKnob {7 ex l exposure R -4 4}
   addUserKnob {7 pv l pivot R -3 3}
   pv 1
