@@ -1,27 +1,32 @@
 set cut_paste_input [stack 0]
 push $cut_paste_input
 Group {
- name IBK
+ name IBKey
  tile_color 0x9900ff
  addUserKnob {20 Params}
  addUserKnob {83 st l screen M {green blue}}
  st blue
- addUserKnob {41 pick T Fill1.color}
+ addUserKnob {41 pick t "pick screen color if no cleanplate connected" T Fill1.color}
  addUserKnob {26 ""}
- addUserKnob {7 w l bias t "bias primary hue angle"}
+ addUserKnob {7 w l bias t "hue bias from primary hue angle"}
  w 0.5
- addUserKnob {7 lm l limit}
+ addUserKnob {7 lm l limit t "inverse despill threshold"}
  lm 1
- addUserKnob {6 sre l "add luminance" t "add luminance key of rgb to alpha" +STARTLINE}
+ addUserKnob {26 ""}
+ addUserKnob {20 lma_tab l "" +STARTLINE n -2}
+ addUserKnob {20 lma_grp l "add luminance"}
+ addUserKnob {6 sre l enable t "add luminance key of despilled rgb to alpha" +STARTLINE}
+ addUserKnob {41 rgbal l "rgba legal" t "sometimes disable with white objects over bluescreen." -STARTLINE T IBK.rgbal}
  addUserKnob {7 sr l range t "range of key"}
  sr 1
  addUserKnob {7 ll l level t "level of key"}
- addUserKnob {41 rgbal l "rgba legal" t "sometimes disable with white objects over bluescreen." T IBK.rgbal}
+ ll 1
+ addUserKnob {20 endGroup n -3}
 }
  Input {
   inputs 0
   name Inputc
-  xpos -150
+  xpos -260
   ypos 182
   number 1
  }
@@ -29,14 +34,22 @@ Group {
   inputs 0
   name Input
   xpos -40
-  ypos 182
+  ypos 134
  }
-set N22141d00 [stack 0]
+ Dot {
+  name Dot1
+  note_font "Helvetica Bold"
+  note_font_size 24
+  note_font_color 0xff
+  xpos -6
+  ypos 186
+ }
+set N145db900 [stack 0]
  Fill {
   output rgb
   name Fill1
-  xpos -99
-  ypos 206
+  xpos -150
+  ypos 182
  }
  Switch {
   inputs 2
@@ -45,8 +58,8 @@ set N22141d00 [stack 0]
   xpos -150
   ypos 230
  }
-push $N22141d00
-push $N22141d00
+push $N145db900
+push $N145db900
  IBK {
   inputs 3
   screen_type {{st}}
