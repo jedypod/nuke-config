@@ -1,37 +1,38 @@
 set cut_paste_input [stack 0]
 push $cut_paste_input
 Group {
- name IBKThreshold
+ name IBColor
  tile_color 0x9900ff
  addUserKnob {20 Params}
  addUserKnob {83 st l screen M {green blue}}
  st blue
- addUserKnob {7 w l bias t "bias primary hue angle"}
+ addUserKnob {6 oa l "out alpha" t "output alpha channel" -STARTLINE}
+ addUserKnob {7 w l bias t "hue bias from primary hue angle"}
  w 0.5
  addUserKnob {7 chstr l "chroma strength" R 0 1.5}
  chstr 1
  addUserKnob {7 shstr l "shadow strength" R -0.2 0.2}
  addUserKnob {26 ""}
- addUserKnob {7 erode R 0 10}
+ addUserKnob {7 erode R 0 20}
 }
  Input {
   inputs 0
   name Input
-  xpos -40
-  ypos -34
+  xpos -150
+  ypos -82
  }
-set Nf4f45d00 [stack 0]
+set N145a4800 [stack 0]
  Grade {
   multiply {1 {st==0?chstr:1} {st==1?chstr:1} 1}
   add {{shstr}}
   black_clamp false
   name Grade1
-  xpos -150
-  ypos 38
+  xpos -260
+  ypos -34
  }
-set Nf4f44f00 [stack 0]
-push $Nf4f44f00
-push $Nf4f44f00
+set N145a4100 [stack 0]
+push $N145a4100
+push $N145a4100
  IBK {
   inputs 3
   screen_type {{st}}
@@ -39,38 +40,50 @@ push $Nf4f44f00
   blue_green_weight {{w*2}}
   ss false
   name IBK1
-  xpos -150
-  ypos 62
+  xpos -260
+  ypos 14
  }
  Erode {
   size {{-erode}}
   name Erode1
-  xpos -150
-  ypos 105
+  xpos -260
+  ypos 56
  }
- Invert {
-  channels alpha
-  name Invert1
-  xpos -150
-  ypos 152
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name Shuffle1
+  xpos -260
+  ypos 111
  }
-push $Nf4f45d00
- Copy {
+set N14543900 [stack 0]
+push $N14543900
+push $N145a4800
+ Fill {
+  output alpha
+  name Fill1
+  xpos -150
+  ypos 57
+ }
+ Merge2 {
   inputs 2
-  from0 rgba.alpha
-  to0 rgba.alpha
-  name Copy1
-  xpos -40
-  ypos 152
+  operation stencil
+  bbox B
+  name Merge1
+  xpos -150
+  ypos 111
  }
- Premult {
-  name Premult1
-  xpos -40
-  ypos 206
+ Switch {
+  inputs 2
+  which {{oa}}
+  name Switch1
+  xpos -150
+  ypos 159
  }
  Output {
   name Output
-  xpos -40
-  ypos 254
+  xpos -150
+  ypos 230
  }
 end_group
