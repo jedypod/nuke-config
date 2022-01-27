@@ -1,18 +1,25 @@
 set cut_paste_input [stack 0]
 push $cut_paste_input
 Group {
- name Despill
+ name IBDespill
  tile_color 0x9900ff
- addUserKnob {20 Params}
+ addUserKnob {20 IBDespill_tab l IBDespill}
  addUserKnob {83 st l screen M {red green blue}}
  st blue
- addUserKnob {41 pick T Fill1.color}
+ addUserKnob {6 oa l "out alpha" t "output alpha from despill calculation" -STARTLINE}
+ oa true
+ addUserKnob {41 pick t "pick screen color if no cleanplate connected" T Fill1.color}
+ addUserKnob {41 w l bias "hue bias from primary hue angle" T despill1.w}
+ addUserKnob {41 lm l limit t "inverse despill threshold" T despill1.lm}
  addUserKnob {26 ""}
- addUserKnob {41 w l bias T despill1.w}
- addUserKnob {41 lm l limit T despill1.lm}
- addUserKnob {41 tg l target T Target.tg}
- tg 0.2
- addUserKnob {6 oa l "out alpha" +STARTLINE}
+ addUserKnob {20 despill_grp l "" +STARTLINE n -2}
+ addUserKnob {20 despill_tab l target}
+ addUserKnob {41 tg l target "respill target color" T Target.tg}
+ addUserKnob {20 ee_tab l "edge extend"}
+ addUserKnob {6 ee l enable t "use edge extend for edge despill color" +STARTLINE}
+ addUserKnob {7 ees l size t "edge extend size" R 0 100}
+ ees 10
+ addUserKnob {20 endGroup n -3}
 }
  Input {
   inputs 0
@@ -25,13 +32,13 @@ Group {
   xpos -6
   ypos 138
  }
-set Ne1d08800 [stack 0]
+set N34257900 [stack 0]
  Dot {
   name Dot2
   xpos -116
   ypos 138
  }
-set Ne1d08100 [stack 0]
+set N34257200 [stack 0]
  Expression {
   temp_name0 c0
   temp_expr0 k==0?r:k==1?g:b
@@ -43,7 +50,7 @@ set Ne1d08100 [stack 0]
   expr0 c0-(c1*w+c2*(1-w))*lm
   name despill1
   xpos -150
-  ypos 182
+  ypos 230
   addUserKnob {20 Params}
   addUserKnob {3 k l ch}
   k {{st}}
@@ -52,15 +59,15 @@ set Ne1d08100 [stack 0]
   addUserKnob {7 lm l limit R 0 1.5}
   lm 1
  }
-set N2661f900 [stack 0]
+set N34256b00 [stack 0]
  Input {
   inputs 0
   name Inputc
-  xpos -370
+  xpos -480
   ypos 62
   number 1
  }
-push $Ne1d08100
+push $N34257200
  Fill {
   output rgb
   color 0
@@ -72,15 +79,15 @@ push $Ne1d08100
   inputs 2
   which {{"\[exists parent.input1]"}}
   name Switch
-  xpos -370
+  xpos -480
   ypos 134
  }
  Dot {
   name Dot5
-  xpos -336
-  ypos 186
+  xpos -446
+  ypos 234
  }
-set N2661d600 [stack 0]
+set N34254800 [stack 0]
  Expression {
   temp_name0 c0
   temp_expr0 k==0?r:k==1?g:b
@@ -91,8 +98,8 @@ set N2661d600 [stack 0]
   channel0 rgba
   expr0 c0-(c1*w+c2*(1-w))*lm
   name despill2
-  xpos -260
-  ypos 182
+  xpos -370
+  ypos 230
   addUserKnob {20 Params}
   addUserKnob {3 k l ch}
   k {{parent.despill1.k}}
@@ -101,41 +108,21 @@ set N2661d600 [stack 0]
   addUserKnob {7 lm l limit}
   lm {{parent.despill1.lm}}
  }
-set N2661cf00 [stack 0]
- Expression {
-  expr0 r==0?0:tg.r/r
-  expr1 g==0?0:tg.g/g
-  expr2 b==0?0:tg.b/b
-  name Target
-  xpos -260
-  ypos 230
-  addUserKnob {20 Params}
-  addUserKnob {18 tg l target R 0 4}
-  tg 0.2
-  addUserKnob {6 tg_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
- }
- MergeExpression {
-  inputs 2
-  expr0 max(0,Ar*Br)
-  expr1 max(0,Ag*Bg)
-  expr2 max(0,Ab*Bb)
-  name MergeMultiply1
-  xpos -260
-  ypos 278
- }
+set N34254100 [stack 0]
  Dot {
-  name Dot4
-  xpos -226
-  ypos 378
+  name Dot11
+  xpos -336
+  ypos 522
  }
-push $N2661d600
+set N34223900 [stack 0]
+push $N34254800
  Dot {
   name Dot6
-  xpos -336
-  ypos 330
+  xpos -446
+  ypos 354
  }
-push $N2661f900
-push $N2661cf00
+push $N34256b00
+push $N34254100
  MergeExpression {
   inputs 2
   temp_name3 n
@@ -144,7 +131,7 @@ push $N2661cf00
   expr0 n
   expr3 max(0,1-n)
   name MergeDivide
-  xpos -150
+  xpos -260
   ypos 278
  }
  MergeExpression {
@@ -154,19 +141,96 @@ push $N2661cf00
   expr2 max(0,Ab*b)
   expr3 clamp(a)
   name MergeMultiply
-  xpos -150
-  ypos 326
+  xpos -260
+  ypos 350
  }
-push $Ne1d08800
+push $N34257900
  MergeExpression {
   inputs 2
   expr0 r-Ar
   expr1 g-Ag
   expr2 b-Ab
-  expr3 oa?Aa:Ba
+  expr3 Aa
   name MergeFrom
   xpos -40
-  ypos 326
+  ypos 350
+ }
+ Dot {
+  name Dot9
+  xpos -6
+  ypos 426
+ }
+set N34221600 [stack 0]
+ Premult {
+  name Premult1
+  xpos -260
+  ypos 422
+ }
+ Blur {
+  channels rgba
+  size {{ees}}
+  name Blur1
+  xpos -260
+  ypos 446
+ }
+ Unpremult {
+  name Unpremult1
+  xpos -260
+  ypos 470
+ }
+ MergeExpression {
+  inputs 2
+  expr0 Ar==0?0:Br/Ar
+  expr1 Ag==0?0:Bg/Ag
+  expr2 Ab==0?0:Bb/Ab
+  name MergeDivideReverse1
+  xpos -260
+  ypos 518
+ }
+push $N34223900
+ Expression {
+  expr0 r==0?0:tg.r/r
+  expr1 g==0?0:tg.g/g
+  expr2 b==0?0:tg.b/b
+  name Target
+  xpos -370
+  ypos 590
+  addUserKnob {20 Params}
+  addUserKnob {18 tg l target R 0 4}
+  tg 0.1
+  addUserKnob {6 tg_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ }
+ Switch {
+  inputs 2
+  which {{ee}}
+  name SwitchEdgeExtend
+  xpos -260
+  ypos 591
+ }
+ MergeExpression {
+  inputs 2
+  expr0 max(0,Ar*Br)
+  expr1 max(0,Ag*Bg)
+  expr2 max(0,Ab*Bb)
+  name MergeMultiply1
+  xpos -150
+  ypos 590
+ }
+ Dot {
+  name Dot4
+  xpos -116
+  ypos 666
+ }
+push $N34257900
+push $N34221600
+ Copy {
+  inputs 2
+  from0 rgba.alpha
+  to0 rgba.alpha
+  name Copy1
+  xpos -40
+  ypos 585
+  disable {{oa}}
  }
  Merge2 {
   inputs 2
@@ -175,11 +239,11 @@ push $Ne1d08800
   output rgb
   name Merge4
   xpos -40
-  ypos 374
+  ypos 662
  }
  Output {
   name Output
   xpos -40
-  ypos 446
+  ypos 758
  }
 end_group
