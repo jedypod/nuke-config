@@ -1,0 +1,11 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+PointsTo3D {
+name PointBuilder
+addUserKnob {20 Set}
+addUserKnob {83 tg l " " M {A B C}}
+tg 0
+addUserKnob {22 set t "set specified point to center of selected position in active viewer." T "n = nuke.thisNode()\n\nar = n.width() * n.pixelAspect() / float(n.height())\n\nbbox = nuke.activeViewer().node()\['colour_sample_bbox'].value()\nc0 = \[(bbox\[0]*0.5+0.5) * n.width(), (((bbox\[1] * 0.5) + (0.5/ar)) * ar) * n.height()]\nc1 = \[(bbox\[2]*0.5+0.5) * n.width(), (((bbox\[3] * 0.5) + (0.5/ar)) * ar) * n.height()]\na = \[c1\[0] - c0\[0], c1\[1] - c0\[1]]\nc = \[c0\[0] + (a\[0]/2), c0\[1] + (a\[1] / 2)]\n\nlts = \['A', 'B', 'C']\ntg = int(n\['tg'].getValue())\nlt = lts\[tg]\nn\['point\{0\}'.format(lt)].setValue(c)\nn\['ref_time\{0\}'.format(lt)].setValue(nuke.frame())\nn\['tg'].setValue(min(2,tg+1))" +STARTLINE}
+addUserKnob {22 calc t "calculate 3d point from 3 specified 2d points.\n\nfor 3d point calculation, you only need to execute a single frame." -STARTLINE T "n = nuke.thisNode()\nf = nuke.frame()\nnuke.execute(n, f, f)"}
+addUserKnob {22 axis t "create axis with current 3d point" -STARTLINE T "n = nuke.thisNode()\na = nuke.createNode('Axis')\na\['translate'].setValue(n\['point3d'].getValue())\na\['label'].setValue(n\['label'].getValue())"}
+}
