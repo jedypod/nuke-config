@@ -7,14 +7,14 @@ Group {
  addUserKnob {83 st l screen M {red green blue}}
  st blue
  addUserKnob {6 oa l "out alpha" t "output alpha from despill calculation" -STARTLINE}
- oa true
+ oa 1
  addUserKnob {41 pick t "pick screen color if no cleanplate connected" T Fill1.color}
- addUserKnob {41 w l bias "hue bias from primary hue angle" T despill1.w}
+ addUserKnob {41 w l bias t "hue bias from primary hue angle" T despill1.w}
  addUserKnob {41 lm l limit t "inverse despill threshold" T despill1.lm}
  addUserKnob {26 ""}
  addUserKnob {20 despill_grp l "" +STARTLINE n -2}
  addUserKnob {20 despill_tab l target}
- addUserKnob {41 tg l target "respill target color" T Target.tg}
+ addUserKnob {41 tg l target t "respill target color" T Target.tg}
  addUserKnob {20 ee_tab l "edge extend"}
  addUserKnob {6 ee l enable t "use edge extend for edge despill color" +STARTLINE}
  addUserKnob {7 ees l size t "edge extend size" R 0 100}
