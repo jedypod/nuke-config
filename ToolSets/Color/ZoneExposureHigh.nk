@@ -42,7 +42,7 @@ Group {
   ypos -106
   label https://www.desmos.com/calculator/ylq5yvkhoq
   addUserKnob {20 Params}
-  addUserKnob {7 ex l exposure R -4 4}
+  addUserKnob {7 ex l exposure R -6 6}
   addUserKnob {7 pv l pivot R -4 4}
   pv -1
   addUserKnob {7 fa l falloff}
