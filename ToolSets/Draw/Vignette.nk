@@ -9,6 +9,7 @@ Group {
  addUserKnob {7 sy l "scale y" R 0 4}
  sy 1
  addUserKnob {41 lut l "" +STARTLINE T Profile.lut}
+ addUserKnob {6 invert +STARTLINE}
 }
  Input {
   inputs 0
@@ -46,6 +47,7 @@ Group {
   name Invert1
   xpos 510
   ypos 14
+  disable {{invert}}
  }
  Output {
   name Output
