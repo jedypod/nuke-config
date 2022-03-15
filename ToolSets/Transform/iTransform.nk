@@ -3,6 +3,7 @@ push $cut_paste_input
 Group {
  name iTransform
  addUserKnob {20 iTransform}
+ addUserKnob {41 channels T IDistort1.channels}
  addUserKnob {41 translate T Transform1.translate}
  addUserKnob {41 rotate T Transform1.rotate}
  addUserKnob {41 scale T Transform1.scale}
