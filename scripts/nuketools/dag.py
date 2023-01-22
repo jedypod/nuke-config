@@ -142,8 +142,8 @@ def get_parent(node):
 
 
 def get_topnode(node):
-    # return the topnode of node
-    return nuke.toNode(nuke.tcl('return [value [topnode {0}].name]'.format(node.fullName())))
+    # find and return topnode of node
+    return node if not node.input(0) else get_topnode(node.input(0))
 
 
 def get_pos(node):
