@@ -114,7 +114,11 @@ def edit_knobs():
                 if create_expression:
                     knob.setExpression(str(values[0]))
                 else:
-                    knob.setValue(values[0])
+                    try: 
+                        v = int(values[0])
+                    except TypeError:
+                        nuke.message('Enter an integer to set Enumeration_Knobs')
+                    knob.setValue(int(values[0]))
             elif isinstance(knob, (nuke.XYZ_Knob, nuke.XY_Knob, nuke.WH_Knob, nuke.UV_Knob, nuke.Array_Knob)):
                 if knob.singleValue():
                     if values[0] and not values[1] and not values[2] and not values[3]:
