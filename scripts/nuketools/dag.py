@@ -15,7 +15,6 @@ nuke.menu('Viewer').addCommand('Next Frame', 'nuke.activeViewer().frameControl(1
 nuke.menu('Viewer').addCommand('Previous Frame', 'nuke.activeViewer().frameControl(-1)', 'shift+d', shortcutContext=0)
 nuke.menu('Viewer').addCommand('Next Keyframe', 'nuke.activeViewer().frameControl(2)', 'alt+shift+f', shortcutContext=0)
 nuke.menu('Viewer').addCommand('Previous Keyframe', 'nuke.activeViewer().frameControl(-2)', 'alt+shift+d', shortcutContext=0)
-nuke.menu('Viewer').addCommand('Next Frame', 'nuke.activeViewer().frameControl(1)', 'shift+f', shortcutContext=0)
 nuke.menu('Viewer').addCommand('Play Forward', 'nuke.activeViewer().frameControl(5)', 'ctrl+alt+f', shortcutContext=0)
 nuke.menu('Viewer').addCommand('Play Backward', 'nuke.activeViewer().frameControl(-5)', 'ctrl+alt+d', shortcutContext=0)
 nuke.menu('Viewer').findItem('Show Overscan').setShortcut('alt+shift+o')
@@ -49,17 +48,21 @@ nuke.menu('Nuke').addCommand('Edit/Node/DAG/Snap to Grid', 'dag.snap_to_grid()',
 nuke.menu('Nuke').addCommand('Edit/Node/DAG/Connect Selected to Closest', 'dag.connect_to_closest()', 'meta+shift+y', shortcutContext=2)
 nuke.menu('Nuke').addCommand('Edit/Node/DAG/Connect Closest to Selected', 'dag.connect_to_closest(direction=1)', 'alt+meta+shift+y', shortcutContext=2)
 nuke.menu('Nuke').addCommand('Edit/Node/DAG/Paste To Selected', 'dag.paste_to_selected()', 'alt+v', shortcutContext=2)
-nuke.menu('Nuke').addCommand('Edit/Node/DAG/Read from Write', 'dag.read_from_write()', 'ctrl+r', shortcutContext=2)
+#nuke.menu('Nuke').addCommand('Edit/Node/DAG/Read from Write', 'dag.read_from_write()', 'alt+r', shortcutContext=2)
 
 nuke.menu('Nuke').addCommand('Edit/Select Similar/Select Similar Class', 'nuke.selectSimilar(nuke.MATCH_CLASS)', 'alt+meta+shift+s', shortcutContext=2)
 nuke.menu('Nuke').addCommand('Edit/Select Similar/Select Similar Color', 'nuke.selectSimilar(nuke.MATCH_COLOR)', 'alt+meta+shift+c', shortcutContext=2)
 nuke.menu('Nuke').addCommand('Edit/Select Similar/Select Similar Y Position', 'dag.select_similar_position(axis=1)', 'alt+meta+shift+v', shortcutContext=2)
-nuke.menu('Nuke').addCommand('Edit/Select Similar/Select Similar X Position', 'dag.select_similar_position(axis=0)', 'ctrl+alt+meta+shift+v', shortcutContext=2)
+nuke.menu('Nuke').addCommand('Edit/Select Similar/Select Similar X Position', 'dag.select_similar_position(axis=0)', '', shortcutContext=2)
+nuke.menu('Nuke').addCommand('Edit/Select Similar/Select Similar Y Topnode Position', 'dag.select_same_vertical_pos_as_topnode()', 'ctrl+alt+meta+shift+v', shortcutContext=2)
+nuke.menu('Nuke').addCommand('Edit/Select Lowest at X Position', 'dag.select_lowest(nodes=nuke.selectedNodes())', 'alt+meta+shift+l', shortcutContext=2)
 nuke.menu('Nuke').addCommand('Edit/Select Upstream', 'dag.select_upstream(nuke.selectedNodes())', 'alt+meta+shift+u', shortcutContext=2)
 nuke.menu('Nuke').addCommand('Edit/Invert Selection', 'nuke.invertSelection()', 'alt+meta+shift+i', shortcutContext=2)
 nuke.menu('Nuke').addCommand('Edit/Select Connected Nodes', 'dag.select_connected(nuke.selectedNodes())', 'alt+meta+shift+o', shortcutContext=2)
 nuke.menu('Nuke').addCommand('Edit/Select Downstream', 'dag.select_downstream(nuke.selectedNodes())', 'alt+meta+shift+p', shortcutContext=2)
 nuke.menu('Nuke').addCommand('Edit/Select Unused Nodes', 'dag.select_unused(nuke.selectedNodes())', 'ctrl+alt+meta+shift+u', shortcutContext=2)
+nuke.menu('Nuke').addCommand('Edit/Select First Downstream', 'dag.select_first_connected(nodes=nuke.selectedNodes(), downstream=True)', 'ctrl+alt+meta+down', shortcutContext=2)
+nuke.menu('Nuke').addCommand('Edit/Select First Upstream', 'dag.select_first_connected(nodes=nuke.selectedNodes(), downstream=False)', 'ctrl+alt+meta+up', shortcutContext=2)
 
 nuke.menu('Nuke').addCommand('Edit/Node/DAG/Properties Panel Open', 'dag.open_panels()', 'a', shortcutContext=1)
 nuke.menu('Nuke').addCommand('Edit/Node/DAG/Properties Panel Open and Persist', 'dag.open_panels(persist=True)', 'meta+a', shortcutContext=1)
@@ -82,6 +85,8 @@ nuke.menu('Nodes').addCommand('Other/Create Dots', 'dag.create_dots()', 'alt+d',
 nuke.menu('Nodes').addCommand('Other/Create Dots Branched', 'dag.create_dots(branch=True)', 'alt+shift+d', shortcutContext=2)
 
 nuke.menu('Nuke').addCommand('Edit/Node/DAG/Desat Backdrops', 'for bd in nuke.allNodes("BackdropNode"): bd["tile_color"].setValue(0x191919ff)')
+
+nuke.menu('Nuke').addCommand('Edit/Node/Set Label', 'dag.set_label()', 'shift+a')
 
 
 # DAG Position Commands
@@ -106,8 +111,6 @@ nuke.menu('Nuke').addCommand('Edit/Bookmark/Save Position 6', 'nukescripts.bookm
 # nuke.menu('Nuke').addCommand('Edit/Paste', 'nuke.nodePaste("%clipboard%")', 'ctrl+shift+v', index=6)
 
 nuke.menu('Nodes').addCommand('Other/Create Pointer', 'dag.create_pointer()', 'alt+t')
-
-
 
 
 
@@ -219,7 +222,17 @@ def close_panels(nodes=None, unpersist=False):
 
             node.hideControlPanel()
         
-
+def set_label():
+    nodes = nuke.selectedNodes()
+    l = nodes[-1]['label'].getValue()
+    p = nuke.Panel('Set Label')
+    # p.addMultilineTextInput('', l) # multiline, but can't hit enter to accept
+    p.addSingleLineInput('', l)
+    r = p.show()
+    if r:
+        l = p.value('')
+        for n in nodes:
+            n['label'].setValue(l)
 
 def select_similar_position(axis=1):
     nodes = nuke.selectedNodes()
@@ -238,6 +251,48 @@ def select_similar_position(axis=1):
     for n, pos in sorted_nodes:
         n.setSelected(True)
 
+def get_similar_position(axis=1):
+    nodes = nuke.selectedNodes()
+    if not nodes:
+        return
+    node = nodes[0]
+    prev_selected = nodes[1:]
+    threshold = 1
+    unselect()
+    select(prev_selected)
+    if axis:
+        same_pos_nodes = {n:n.xpos() for n in nuke.allNodes() if abs(n.ypos()- node.ypos()) < threshold}
+    else:
+        same_pos_nodes = {n:n.ypos() for n in nuke.allNodes() if abs(n.xpos()- node.xpos()) < threshold}
+    sorted_nodes = sorted(list(same_pos_nodes.items()), key=operator.itemgetter(1))
+    return [n[0] for n in sorted_nodes]
+
+def select_same_vertical_pos_as_topnode():
+    # Select all nodes at same Y pos which have a topnode at the same Ypos as the topnode of the current node
+    start_node = nuke.selectedNode()
+    topnode = get_topnode(start_node)
+    nodes = get_similar_position(axis=1)
+    selected_nodes = list()
+    for node in nodes:
+        if get_topnode(node).ypos() == topnode.ypos():
+            selected_nodes.append(node)
+    unselect()
+    select(selected_nodes)
+def select_lowest(nodes=nuke.selectedNodes()):
+    # Select the lowest connected node at the same x position
+    unselect()
+    connected_nodes = connected(nodes, upstream=False, downstream=True)
+    for node in nodes:
+        same_xpos_nodes = {n:get_pos(n)[1] for n in connected_nodes if get_pos(n)[0] == get_pos(node)[0]}
+        sorted_nodes = sorted(list(same_xpos_nodes.items()), key=operator.itemgetter(1))
+        lowest = sorted_nodes[-1][0]
+        # print("Lowest:", lowest.name())
+        lowest.setSelected(True)
+    # sort selected by xpos
+    nodes = {n:get_pos(n)[0] for n in nuke.selectedNodes()}
+    sorted_nodes = sorted(list(nodes.items()), key=operator.itemgetter(1))
+    unselect()
+    _ = [n[0].setSelected(True) for n in sorted_nodes]
 
 def snap_to_grid():
     # Snap selected nodes to grid
@@ -260,7 +315,7 @@ def auto_place():
         start_pos = [xpos_sort[0][1][0], ypos_sort[0][1][1]]
         for node, filepath in sorted_filenodes:
             node.setXYpos(start_pos[0], start_pos[1])
-            start_pos = (start_pos[0] + grid[0]*2, start_pos[1])
+            start_pos = (start_pos[0] + grid[0], start_pos[1])
 
     # Normal autoplace for nodes without file knob
     normal_nodes = [n for n in nodes if 'file' not in n.knobs()]
@@ -557,6 +612,27 @@ def select_unused(nodes):
     return unused_nodes
 
 
+def first_connected(node, downstream=True):
+    # return first upstream or downstream nodes of node
+    if not downstream:
+        if not node.input(0):
+            return node
+        else:
+            return node.input(0)
+    else:
+        deps = nuke.dependentNodes(nuke.INPUTS, node)
+        if deps:
+            return deps[0]
+        else:
+            return node
+
+def select_first_connected(nodes=nuke.selectedNodes(), downstream=True):
+    unselect()
+    for node in nodes:
+        n = first_connected(node, downstream)
+        if n:
+            n.setSelected(True)
+
 
 
 
@@ -620,7 +696,7 @@ def create_dots(branch=False):
             select([node])
         dot = nuke.createNode('Dot', inpanel=False)
         if branch:
-            set_pos(dot, pos[0] + grid[0], pos[1])
+            set_pos(dot, pos[0] - grid[0], pos[1])
             dot.setInput(0, node)
         else:
             set_pos(dot, pos[0], pos[1] + grid[1]*2)
