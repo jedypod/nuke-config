@@ -6,15 +6,15 @@ Group {
  addUserKnob {20 CalibrateMacbeth}
  addUserKnob {26 macbeth_position_label l "@b;Macbeth Position" T ""}
  addUserKnob {7 sample_size l "sample size" R 5 100}
- sample_size 30
+ sample_size 50
  addUserKnob {12 TL}
- TL {530 598}
+ TL {820 1070}
  addUserKnob {12 TR -STARTLINE}
- TR {916 578}
+ TR {1155 1105}
  addUserKnob {12 BL}
- BL {516 316}
+ BL {828 756}
  addUserKnob {12 BR -STARTLINE}
- BR {900 298}
+ BR {1174 782}
  addUserKnob {6 output_compare l "output in compare mode" t "inverts the cornerpin for a good view of the macbeth chart for comparing src and dst" +STARTLINE}
  addUserKnob {6 disable_overlay l "disable overlay" t "Removes the destination colorchecker values overlayed over the source." +STARTLINE}
  addUserKnob {4 colorchecker_type l ColorChecker t "Choose the Macbeth ColorChecker Chart model. If it was manufactured after November 2014 the pigments changed, and the colors are slightly altered." M {ColorChecker2014 ColorChecker2005 ""}}
@@ -22,7 +22,7 @@ Group {
  addUserKnob {41 colorspace T ColorChecker.colorspace}
  addUserKnob {6 chroma_only l "calibrate chromaticities only" t "Do not change the brightness of the input image after calibration." +STARTLINE}
  chroma_only true
- addUserKnob {22 calculate l Calculate T "import nuke\n\ndef colorsample(node, pos, size):\n    # sample rgb pixel value\n    # :param: node - node object to sample\n    # :param: pos - list containing x and y position as float values\n    # :param: size - box size to average in sample\n    return \[node.sample(chan, pos\[0], pos\[1], size, size) for chan in \['red', 'green', 'blue']]\n\n\ndef calc_mtx():\n    # calculate colormatrix to match src macbeth chart to dst macbeth chart\n    node = nuke.thisNode()\n\n    # make sure numpy is importable\n    if node\['use_system_python'].getValue():\n        import sys\n        sys.path.insert(0, '/lib64/python2.7/site-packages')\n    try:\n        import numpy as np\n    except ImportError:\n        nuke.message('numpy required. make sure it is installed correctly and importable.')\n        return\n\n    size = node\['sample_size'].getValue()\n    chroma_only = node\['chroma_only'].getValue()\n    \n    node.begin()\n    src = nuke.toNode('Normalize')\n    dst = nuke.toNode('macbeth_points')\n    norm_node = nuke.toNode('Normalize')\n\n    node\['reset'].execute()\n\n    # If chroma_only, normalize colorchecker to dst grey before sampling\n    if chroma_only:\n        src_grey = colorsample(src, dst\['p44'].getValue(), size)\n        dst_grey = colorsample(dst, dst\['p44'].getValue(), size)\n        \n        # with rec709 luminance weighting\n        src_lum = (src_grey\[0]*0.2126 + src_grey\[1]*0.7152 + src_grey\[2]*0.0722)\n        dst_lum = (dst_grey\[0]*0.2126 + dst_grey\[1]*0.7152 + dst_grey\[2]*0.0722)\n        norm_node\['src'].setValue(src_lum)\n        norm_node\['dst'].setValue(dst_lum)\n\n        print 'source grey: \{0\} | \{1\}\\ndst grey: \{2\} | lum: \{3\}'.format(src_grey, src_lum,\n            dst_grey, dst_lum)\n    \n    src_patches = list()\n    dst_patches = list()\n    points = \['p11', 'p12', 'p13', 'p14', 'p15', 'p16', 'p21', 'p22', 'p23', 'p24', 'p25', \n        'p26', 'p31', 'p32', 'p33', 'p34', 'p35', 'p36', 'p41', 'p42', 'p43', 'p44', 'p45', 'p46']\n\n    for point in points:\n        src_value = colorsample(src, dst\[point].getValue(), size)\n        dst_value = colorsample(dst, dst\[point].getValue(), size)\n\n        src_patches.append(src_value)\n        dst_patches.append(dst_value)\n\n        print 'source: \{0\}'.format(src_value)\n        print 'destination: \{0\}'.format(dst_value)\n\n    # Calculate multivariate Rinear Regression to fit source matrix to target matrix\n    # https://en.wikipedia.org/wiki/General_linear_model\n    # https://docs.scipy.org/doc/numpy/reference/generated/numpy.linalg.lstsq.html\n    # \n    # https://github.com/colour-science/colour-nuke/blob/master/colour_nuke/notebooks/mmColorTarget_dependencies.ipynb\n    # Source chromaticities are based on XRite ColorChecker 2005 values as described here: \n    # https://github.com/colour-science/colour/blob/cdbffd063b0c44bb32d752b01647137871434851/colour/characterisation/dataset/colour_checkers/chromaticity_coordinates.py#L114-L114\n    # http://www.babelcolor.com/colorchecker.htm\n    # http://www.babelcolor.com/colorchecker-2.htm#CCP2_beforeVSafter\n    # https://github.com/colour-science/colour-nuke/blob/master/colour_nuke/scripts/colour_rendition_chart.nk\n\n    np_matrix = np.transpose(np.linalg.lstsq(np.array(src_patches), np.array(dst_patches))\[0])\n    matrix = np.ravel(np_matrix).tolist()\n    node\['matrix'].setValue(matrix)\n    nuke.root().begin()\n\nif __name__=='__main__':\n    calc_mtx()" +STARTLINE}
+ addUserKnob {22 calculate l Calculate T "from __future__ import print_function\nimport nuke\n\ndef colorsample(node, pos, size):\n    # sample rgb pixel value\n    # :param: node - node object to sample\n    # :param: pos - list containing x and y position as float values\n    # :param: size - box size to average in sample\n    return \[node.sample(chan, pos\[0], pos\[1], size, size) for chan in \['red', 'green', 'blue']]\n\n\ndef calc_mtx():\n    # calculate colormatrix to match src macbeth chart to dst macbeth chart\n    node = nuke.thisNode()\n\n    # make sure numpy is importable\n    if node\['specify_python_path'].getValue():\n        import sys\n        sys.path.insert(0, node\['python_path'].getValue())\n    try:\n        import numpy as np\n    except ImportError as e:\n        nuke.message('numpy required. make sure it is installed correctly and importable.\\n\{0\}'.format(e))\n        return\n\n    size = node\['sample_size'].getValue()\n    chroma_only = node\['chroma_only'].getValue()\n    \n    node.begin()\n    src = nuke.toNode('Normalize')\n    dst = nuke.toNode('macbeth_points')\n    norm_node = nuke.toNode('Normalize')\n\n    node\['reset'].execute()\n\n    # If chroma_only, normalize colorchecker to dst grey before sampling\n    if chroma_only:\n        src_grey = colorsample(src, dst\['p44'].getValue(), size)\n        dst_grey = colorsample(dst, dst\['p44'].getValue(), size)\n        \n        # with rec709 luminance weighting\n        src_lum = (src_grey\[0]*0.2126 + src_grey\[1]*0.7152 + src_grey\[2]*0.0722)\n        dst_lum = (dst_grey\[0]*0.2126 + dst_grey\[1]*0.7152 + dst_grey\[2]*0.0722)\n        norm_node\['src'].setValue(src_lum)\n        norm_node\['dst'].setValue(dst_lum)\n\n        print('source grey: \{0\} | \{1\}\\ndst grey: \{2\} | lum: \{3\}'.format(src_grey, src_lum, dst_grey, dst_lum))\n    \n    src_patches = list()\n    dst_patches = list()\n    points = \['p11', 'p12', 'p13', 'p14', 'p15', 'p16', 'p21', 'p22', 'p23', 'p24', 'p25', \n        'p26', 'p31', 'p32', 'p33', 'p34', 'p35', 'p36', 'p41', 'p42', 'p43', 'p44', 'p45', 'p46']\n\n    for point in points:\n        src_value = colorsample(src, dst\[point].getValue(), size)\n        dst_value = colorsample(dst, dst\[point].getValue(), size)\n\n        src_patches.append(src_value)\n        dst_patches.append(dst_value)\n\n        print('source: \{0\}'.format(src_value))\n        print('destination: \{0\}'.format(dst_value))\n\n    # Calculate multivariate Rinear Regression to fit source matrix to target matrix\n    # https://en.wikipedia.org/wiki/General_linear_model\n    # https://docs.scipy.org/doc/numpy/reference/generated/numpy.linalg.lstsq.html\n    # \n    # https://github.com/colour-science/colour-nuke/blob/master/colour_nuke/notebooks/mmColorTarget_dependencies.ipynb\n    # Source chromaticities are based on XRite ColorChecker 2005 values as described here: \n    # https://github.com/colour-science/colour/blob/cdbffd063b0c44bb32d752b01647137871434851/colour/characterisation/dataset/colour_checkers/chromaticity_coordinates.py#L114-L114\n    # http://www.babelcolor.com/colorchecker.htm\n    # http://www.babelcolor.com/colorchecker-2.htm#CCP2_beforeVSafter\n    # https://github.com/colour-science/colour-nuke/blob/master/colour_nuke/scripts/colour_rendition_chart.nk\n\n    np_matrix = np.transpose(np.linalg.lstsq(np.array(src_patches), np.array(dst_patches))\[0])\n    matrix = np.ravel(np_matrix).tolist()\n    node\['matrix'].setValue(matrix)\n    nuke.root().begin()\n\nif __name__=='__main__':\n    calc_mtx()" +STARTLINE}
  addUserKnob {26 ""}
  addUserKnob {26 output_matrix_label l "@b;Output Matrix" T ""}
  addUserKnob {41 matrix T ColorMatrix.matrix}
@@ -31,10 +31,12 @@ Group {
  addUserKnob {22 create_mtx l "Create MTX" t "Create a ColorMatrix node." T "import os\nnode = nuke.thisNode()\nnode.begin()\nnorm = nuke.toNode('Normalize')\n\nnuke.root().begin()\n_ = \[n.setSelected(False) for n in nuke.allNodes(recurseGroups=True)]\n\ncolormatrix = nuke.createNode('ColorMatrix')\ncolormatrix.setXYpos(node.xpos()-120, node.ypos())\ncolormatrix\['matrix'].setValue(node\['matrix'].getValue())\ntopnode = nuke.toNode(nuke.tcl('full_name \[topnode \{0\}]'.format(node.fullName())))\nif 'file' in topnode.knobs():\n\tfilename = os.path.basename(topnode\['file'].getValue())\nelse:\n\tfilename = topnode.name()\nif node\['chroma_only'].getValue():\n    colormatrix\['label'].setValue('\{0\} \\ncalibrate: \{1\}'.format(filename, node\['colorspace'].value()))\n    # Create mult as well for optional exposure adjustment\n    exp = nuke.createNode('Multiply')\n    exp\['channels'].setValue('rgb')\n    exp.setXYpos(colormatrix.xpos(), colormatrix.ypos() + 60)\n    exp\['value'].setValue(norm\['value'].getValue())\n    colormatrix.setSelected(True)\nelse:\n    colormatrix\['label'].setValue('\{0\} \\ncalibrate w/ exposure: \{1\}'.format(filename, node\['colorspace'].value()))" +STARTLINE}
  addUserKnob {22 set_selected l "Set Selected" t "Set matrix knob on selected node." -STARTLINE T "node = nuke.thisNode()\nnuke.root().begin()\n\ncolormatrix = nuke.selectedNode()\nif 'matrix' in colormatrix.knobs():\n    colormatrix\['matrix'].setValue(node\['matrix'].getValue())\n"}
  addUserKnob {20 info l Info}
- addUserKnob {26 info_label l "" +STARTLINE T "<b>About</b><br/>\nCalibrate an image containing a macbeth colorchecker chart<br/>\nto match the gamut of the given colorspace.<br/>\nRequires the numpy python module. Make sure it is importable<br/>\nin nuke. You can enable \"use system python path\" if you have it installed<br/>\nin a system directory.<br/>\nNote that this technique is not a magic solution. <br/>\nIn order for the calibration to be accurate, the illuminant in the scene<br/>\nneeds to be CIE Illuminant D65. The more the quality of the light varies<br/>\nfrom this, the more error will be in the result.\n<br/><br/><b>Usage</b><br/>\n- Align cornerpin to match patches to macbeth chart <br/>\n- Set sample size to get a good sample on source macbeth chart. <br/>\n- Choose target colorspace. <br/>\n- Disable calibrate chromaticities only if you want to adjust exposure as well.<br/>\n- Click calculate<br/>\n- Evaluate results: Output in compare mode to get a better view.<br/>\n- Toggle bypass matrix to compare before/after.<br/>\n- Click Create MTX to create a new colormatrix node<br/>\n- Or click Set Selected to set an existing colormatrix node.<br/>\n\n<br/><br/><b>Information</b><br/>\nBased on Marco Meyer's mmColorTarget tool.<br/>\nwww.marcomeyer-vfx.de<br/>\n<br/>\nRebuild and simplify. <br/>Calibrate to known gamuts only. <br/>\nAdd option to not change exposure.<br/>\nCreated by Jed Smith - <a href=\"gist.github.com/jedypod\">gist.github.com/jedypod</a>"}
+ addUserKnob {26 info_label l "" +STARTLINE T "<b>About</b><br/>\nCalibrate an image containing a macbeth colorchecker chart<br/>\nto match the gamut of the given colorspace.<br/>\nRequires the numpy python module. Make sure it is importable<br/>\nin nuke. You can enter a custom python path to search for numpy.<br/>\nThis is the directory to the site-packages folder that contains the numpy module.<br/><br/>\nNote that this technique is not a magic solution. <br/>\nIn order for the calibration to be accurate, the illuminant in the scene<br/>\nneeds to be CIE Illuminant D65. The more the spectral power distribution <br/>\nof the light varies from this, the more error will be in the result.\n<br/><br/><b>Usage</b><br/>\n- Align cornerpin to match patches to macbeth chart <br/>\n- Set sample size to get a good sample on source macbeth chart. <br/>\n- Choose target colorspace. <br/>\n- Disable calibrate chromaticities only if you want to adjust exposure as well.<br/>\n- Click calculate<br/>\n- Evaluate results: Output in compare mode to get a better view.<br/>\n- Toggle bypass matrix to compare before/after.<br/>\n- Click Create MTX to create a new colormatrix node<br/>\n- Or click Set Selected to set an existing colormatrix node.<br/>\n\n<br/><br/><b>Information</b><br/>\nBased on Marco Meyer's mmColorTarget tool.<br/>\nwww.marcomeyer-vfx.de<br/>\n<br/>\nRebuild and simplify. <br/>Calibrate to known gamuts only. <br/>\nAdd option to not change exposure.<br/>\nCreated by Jed Smith - <a href=\"gist.github.com/jedypod\">gist.github.com/jedypod</a>"}
  addUserKnob {26 ""}
- addUserKnob {6 use_system_python l "use system python path" t "search system python path for modules - useful if numpy is not importable from nuke." +STARTLINE}
- use_system_python true
+ addUserKnob {6 specify_python_path l "" t "search specified python path for numpy module" -STARTLINE}
+ specify_python_path true
+ addUserKnob {1 python_path l "python path" t "enter the directory of the site-packages folder that contains the numpy module" -STARTLINE}
+ python_path /opt/sidefx/hfs19.0.455/python/lib/python3.7/site-packages
 }
  Group {
   inputs 0
@@ -42,8 +44,8 @@ Group {
   tile_color 0xffbf00ff
   label "Colorspace: \[value colorspace]"
   selected true
-  xpos 620
-  ypos -1215
+  xpos -590
+  ypos -1191
   postage_stamp true
   addUserKnob {20 colour_rendition_chart_Tab l "Colour Rendition Chart"}
   addUserKnob {41 colorspace T XYZ_D50_to_RGB.colorspace}
@@ -67,7 +69,7 @@ Group {
    box_width {{parent.patch_resolution}}
    box_height {{parent.patch_resolution}}
    box_fixed true
-   filter Impulse
+   filter impulse
    black_outside true
    name Reformat1
    xpos 840
@@ -86,30 +88,30 @@ Group {
    addUserKnob {14 box_size R 0 100}
    box_size {{parent.parent.sample_size}}
   }
-set N8742fe0 [stack 0]
-push $N8742fe0
-push $N8742fe0
-push $N8742fe0
-push $N8742fe0
-push $N8742fe0
-push $N8742fe0
-push $N8742fe0
-push $N8742fe0
-push $N8742fe0
-push $N8742fe0
-push $N8742fe0
-push $N8742fe0
-push $N8742fe0
-push $N8742fe0
-push $N8742fe0
-push $N8742fe0
-push $N8742fe0
-push $N8742fe0
-push $N8742fe0
-push $N8742fe0
-push $N8742fe0
-push $N8742fe0
-push $N8742fe0
+set N819f900 [stack 0]
+push $N819f900
+push $N819f900
+push $N819f900
+push $N819f900
+push $N819f900
+push $N819f900
+push $N819f900
+push $N819f900
+push $N819f900
+push $N819f900
+push $N819f900
+push $N819f900
+push $N819f900
+push $N819f900
+push $N819f900
+push $N819f900
+push $N819f900
+push $N819f900
+push $N819f900
+push $N819f900
+push $N819f900
+push $N819f900
+push $N819f900
   ContactSheet {
    inputs 24
    width {{"rint(parent.patch_resolution * 6 + gap * 7)"}}
@@ -124,10 +126,6 @@ push $N8742fe0
   }
   Dot {
    name Dot1
-   label " "
-   note_font "Helvetica Bold"
-   note_font_size 24
-   note_font_color 0xa5a5a501
    xpos 874
    ypos -150
   }
@@ -150,15 +148,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.304243 0.4178 0.346225978 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob "bluish green"
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 6
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -175,7 +169,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -195,15 +189,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.2419361345 0.2304 0.3343865546 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob "blue flower"
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 5
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -220,7 +210,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -240,15 +230,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.1090570127 0.1325 0.05295287842 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob foliage
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 4
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -265,7 +251,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -285,15 +271,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.1680159151 0.1836 0.2571374005 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob "blue sky"
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 3
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -310,7 +292,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -330,15 +312,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.3917872596 0.3495 0.1922063301 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob "light skin"
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 2
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -355,7 +333,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
      xpos 262
@@ -398,7 +376,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
      selected true
@@ -421,15 +399,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.4878619607 0.4357 0.06062597696 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob "orange yellow"
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 12
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -446,7 +420,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -466,15 +440,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.3536913738 0.4446 0.08948817891 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob "yellow green"
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 11
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -491,7 +461,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -511,15 +481,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.08518142627 0.0637 0.1077664384 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob purple
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 10
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -536,7 +502,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -556,15 +522,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.2967692026 0.1938 0.101548121 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob "moderate red"
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 9
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -581,7 +543,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -601,15 +563,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.1232397911 0.1126 0.2988230769 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob "purplish blue"
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 8
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -626,7 +584,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -646,15 +604,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.407146979 0.3118 0.04998027127 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob orange
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 7
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -671,7 +625,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -691,15 +645,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.1360512736 0.193 0.3093873635 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob cyan
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 18
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -716,7 +666,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -736,15 +686,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.3108419271 0.2009 0.2356539062 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob magenta
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 17
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -761,7 +707,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -781,15 +727,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.5934253697 0.5981 0.07188823405 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob yellow
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 16
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -806,7 +748,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
      xpos 262
@@ -828,15 +770,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.2163881926 0.1257 0.03847493188 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob red
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 15
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -853,7 +791,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -873,15 +811,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.1498500397 0.2318 0.07900178855 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob green
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 14
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -898,7 +832,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -918,15 +852,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.0685786052 0.0575 0.2137559102 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob blue
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 13
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -943,7 +873,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -963,15 +893,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.02994814815 0.0311 0.02687947413 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob "black 2 (1.5 D)"
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 24
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -988,7 +914,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
      xpos 262
@@ -1010,15 +936,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.08464157272 0.0883 0.07593103157 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob "neutral 3.5 (1.05 D)"
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 23
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -1035,7 +957,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -1055,15 +977,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.1843836267 0.1915 0.1591820341 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob "neutral 5 (.70 D)"
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 22
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -1080,7 +998,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -1100,15 +1018,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.3480877967 0.3632 0.3029540352 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob "neutral 6.5 (.44 D)"
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 21
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -1125,7 +1039,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -1145,15 +1059,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.56571875 0.5894 0.4894125 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob "neutral 8 (.23 D)"
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 20
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -1170,7 +1080,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -1190,15 +1100,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.877922367 0.9131 0.7397425998 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob "white 9.5 (.05 D)"
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 19
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -1215,7 +1121,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
      xpos 262
@@ -1257,22 +1163,19 @@ push $N8742fe0
    Group {
     inputs 0
     name bluish_green
-    xpos 622
+    selected true
+    xpos 620
     ypos -321
     postage_stamp true
     addUserKnob {20 sample_Tab l Sample}
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.30451114 0.4143554688 0.344352688 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob "bluish green"
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 6
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -1289,9 +1192,11 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
+     xpos 262
+     ypos 125
     }
     Output {
      name Output
@@ -1309,15 +1214,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.2419823988 0.2287175998 0.3282104382 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob "blue flower"
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 5
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -1334,7 +1235,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -1354,15 +1255,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.1114392339 0.1346792679 0.05239320311 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob foliage
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 4
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -1379,7 +1276,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -1399,15 +1296,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.1652470004 0.1785519348 0.2546024121 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob "blue sky"
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 3
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -1424,7 +1317,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -1444,15 +1337,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.3811104477 0.336202304 0.1852590702 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob "light skin"
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 2
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -1469,7 +1358,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
      xpos 262
@@ -1512,7 +1401,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
      xpos 290
@@ -1534,15 +1423,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.4769723742 0.4293377578 0.06005041429 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob "orange yellow"
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 12
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -1559,7 +1444,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -1579,15 +1464,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.3427379502 0.4331759409 0.08330791241 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob "yellow green"
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 11
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -1604,7 +1485,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -1624,15 +1505,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.08353888545 0.06276662955 0.1042075686 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob purple
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 10
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -1649,7 +1526,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -1669,15 +1546,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.2915036416 0.188999956 0.09736350318 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob "moderate red"
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 9
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -1694,7 +1567,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -1714,15 +1587,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.1200518326 0.1091090233 0.2874447494 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob "purplish blue"
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 8
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -1739,7 +1608,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -1759,15 +1628,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.4073691399 0.3126416159 0.05130591012 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob orange
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 7
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -1784,7 +1649,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -1804,15 +1669,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.1247966941 0.180609913 0.2913392383 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob cyan
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 18
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -1829,7 +1690,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -1849,15 +1710,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.299122798 0.1895114577 0.2213469194 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob magenta
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 17
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -1874,7 +1731,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -1894,15 +1751,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.5888922356 0.5992976803 0.07077420003 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob yellow
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 16
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -1919,7 +1772,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
      xpos 262
@@ -1941,15 +1794,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.2143728424 0.127800835 0.03868150726 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob red
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 15
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -1966,7 +1815,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -1986,15 +1835,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.1413517689 0.2233437582 0.07287461742 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob green
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 14
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -2011,7 +1856,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -2031,15 +1876,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.06809095613 0.05596214063 0.2077405936 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob blue
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 13
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -2056,7 +1897,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -2076,15 +1917,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.03042544265 0.03151319431 0.02656724434 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob "black 2 (1.5 D)"
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 24
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -2101,7 +1938,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
      xpos 262
@@ -2123,15 +1960,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.08448968042 0.08817234828 0.07391630753 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob "neutral 3.5 (1.05 D)"
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 23
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -2148,7 +1981,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -2168,15 +2001,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.1835495863 0.1906228754 0.1566717383 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob "neutral 5 (.70 D)"
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 22
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -2193,7 +2022,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -2213,15 +2042,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.3495921991 0.3648652066 0.3013565492 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob "neutral 6.5 (.44 D)"
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 21
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -2238,7 +2063,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -2258,15 +2083,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.5665335579 0.5899709702 0.4828473821 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob "neutral 8 (.23 D)"
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 20
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -2283,7 +2104,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
     }
@@ -2303,15 +2124,11 @@ push $N8742fe0
     addUserKnob {19 colour_RGBA_Color_Knob l Colour}
     colour_RGBA_Color_Knob {0.8436985288 0.8806903203 0.6936778752 1}
     addUserKnob {6 colour_RGBA_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 colour_RGBA_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {1 name_Text_Knob l Name}
     name_Text_Knob "white 9.5 (.05 D)"
     addUserKnob {1 index_Text_Knob l Index}
     index_Text_Knob 19
     addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1 l "panel dropped state" -STARTLINE +HIDDEN}
-    addUserKnob {6 label_colour_RGB_Color_Knob_panelDropped_1_1 l "panel dropped state" -STARTLINE +HIDDEN}
     addUserKnob {3 resolution}
     resolution {{parent.patch_resolution}}
    }
@@ -2328,7 +2145,7 @@ push $N8742fe0
      box_width {{parent.resolution}}
      box_height {{parent.resolution}}
      box_fixed true
-     filter Impulse
+     filter impulse
      black_outside true
      name Reformat1
      xpos 262
@@ -2367,6 +2184,7 @@ push $N8742fe0
   }
   Group {
    name XYZ_D50_to_RGB
+   selected true
    xpos 1170
    ypos -274
    addUserKnob {20 XYZ_D50_to_RGB_Tab l "XYZ D50 to RGB"}
@@ -2381,7 +2199,7 @@ push $N8742fe0
     xpos -3560
     ypos 1033
    }
-set Nd9d61b0 [stack 0]
+set Nf3d29d00 [stack 0]
    Group {
     name XYZ_D50_to_sRGB
     xpos -3560
@@ -2423,7 +2241,7 @@ set Nd9d61b0 [stack 0]
      ypos -72
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_Xtreme_RGB
     xpos -3709
@@ -2465,7 +2283,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_V-Gamut
     xpos -3859
@@ -2507,7 +2325,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_SMPTE-C_RGB
     xpos -4009
@@ -2549,7 +2367,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_S-Gamut3.Cine
     xpos -4159
@@ -2591,7 +2409,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_S-Gamut3
     xpos -4309
@@ -2633,7 +2451,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_S-Gamut
     xpos -4459
@@ -2675,7 +2493,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_Russell_RGB
     xpos -4609
@@ -2717,7 +2535,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_Rec._709
     xpos -4759
@@ -2759,7 +2577,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_Rec._2020
     xpos -4909
@@ -2801,7 +2619,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_ROMM_RGB
     xpos -5059
@@ -2843,7 +2661,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_RIMM_RGB
     xpos -5209
@@ -2885,7 +2703,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_REDcolor4
     xpos -5359
@@ -2927,7 +2745,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_REDcolor3
     xpos -5509
@@ -2969,7 +2787,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_REDcolor2
     xpos -5659
@@ -3011,7 +2829,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_REDcolor
     xpos -5809
@@ -3053,7 +2871,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_ProPhoto_RGB
     xpos -5959
@@ -3095,7 +2913,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_Pal/Secam_RGB
     xpos -6109
@@ -3137,7 +2955,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_NTSC_RGB
     xpos -6259
@@ -3179,7 +2997,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_Max_RGB
     xpos -6409
@@ -3221,7 +3039,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_Ekta_Space_PS_5
     xpos -6559
@@ -3263,7 +3081,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_ERIMM_RGB
     xpos -6709
@@ -3305,7 +3123,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_ECI_RGB_v2
     xpos -6859
@@ -3347,7 +3165,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_Don_RGB_4
     xpos -7009
@@ -3389,7 +3207,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_DRAGONcolor2
     xpos -7159
@@ -3431,7 +3249,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_DRAGONcolor
     xpos -7309
@@ -3473,7 +3291,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_DCI-P3+
     xpos -7459
@@ -3515,7 +3333,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_DCI-P3
     xpos -7609
@@ -3557,7 +3375,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_ColorMatch_RGB
     xpos -7759
@@ -3599,7 +3417,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_Cinema_Gamut
     xpos -7909
@@ -3641,7 +3459,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_CIE_RGB
     xpos -8059
@@ -3683,7 +3501,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_Beta_RGB
     xpos -8209
@@ -3725,7 +3543,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_Best_RGB
     xpos -8359
@@ -3767,7 +3585,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_Apple_RGB
     xpos -8509
@@ -3809,7 +3627,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_Adobe_Wide_Gamut_RGB
     xpos -8659
@@ -3851,7 +3669,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_Adobe_RGB_(1998)
     xpos -8809
@@ -3893,7 +3711,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_ALEXA_Wide_Gamut_RGB
     xpos -8959
@@ -3935,7 +3753,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_ACESproxy
     xpos -9109
@@ -3977,7 +3795,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_ACEScg
     xpos -9259
@@ -4019,7 +3837,7 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_ACEScc
     xpos -9409
@@ -4061,9 +3879,10 @@ push $Nd9d61b0
      ypos -74
     }
    end_group
-push $Nd9d61b0
+push $Nf3d29d00
    Group {
     name XYZ_D50_to_ACES2065-1
+    selected true
     xpos -9559
     ypos 1143
     addUserKnob {20 XYZ_D50_to_RGB_Tab l "XYZ D50 to ACES2065-1"}
@@ -4095,7 +3914,7 @@ push $Nd9d61b0
        }
      name XYZ_to_ACES2065-1_ColorMatrix
      xpos 0
-     ypos -98
+     ypos -99
     }
     Output {
      name Output
@@ -4146,39 +3965,35 @@ push $Nd9d61b0
    gl_color 0x767676ff
    label "<pre>\n<font size=6><b>COLOUR RENDITION CHART v2.1</b><font>\n\ncolour-science.org - July 17, 2019\n\nThis file defines the X-Rite ColorChecker 2005 (ColorChecker24 - Before November 2014) and 2014 (ColorChecker24 - After November 2014) Classic Colour Rendition Charts.\n\nReference samples colours are converted from CIE XYZ tristimulus values (derived from XRite L*a*b* D50 data \[1]\[2]) to RGB colourspace.\n\nMatrices converting from CIE XYZ tristimulus to RGB colourspace were computed using CAT02 chromatic adaptation transform.\n\nThe following RGB colourspaces are implemented:\n\n- ACES2065-1\n- ACEScc\n- ACEScct\n- ACEScg\n- ACESproxy\n- ALEXA Wide Gamut\n- Adobe RGB (1998)\n- Adobe Wide Gamut RGB\n- Apple RGB\n- Best RGB\n- Beta RGB\n- CIE RGB\n- Cinema Gamut\n- ColorMatch RGB\n- DCDM XYZ\n- DCI-P3\n- DCI-P3+\n- DJI D-Gamut\n- DRAGONcolor\n- DRAGONcolor2\n- Don RGB 4\n- ECI RGB v2\n- ERIMM RGB\n- Ekta Space PS 5\n- F-Gamut\n- FilmLight E-Gamut\n- ITU-R BT.2020\n- ITU-R BT.470 - 525\n- ITU-R BT.470 - 625\n- ITU-R BT.709\n- Max RGB\n- NTSC (1953)\n- NTSC (1987)\n- P3-D65\n- Pal/Secam\n- ProPhoto RGB\n- Protune Native\n- REDWideGamutRGB\n- REDcolor\n- REDcolor2\n- REDcolor3\n- REDcolor4\n- RIMM RGB\n- ROMM RGB\n- Russell RGB\n- S-Gamut\n- S-Gamut3\n- S-Gamut3.Cine\n- SMPTE 240M\n- SMPTE C\n- Sharp RGB\n- V-Gamut\n- Xtreme RGB\n- sRGB\n\nRendered colour rendition charts can be downloaded at those urls: https://github.com/colour-science/colour-nuke/tree/master/colour_nuke/resources/images/ColorChecker2005\nhttps://github.com/colour-science/colour-nuke/tree/master/colour_nuke/resources/images/ColorChecker2014\n\nMore information is available here: https://github.com/colour-science/colour/tree/develop/colour/models/dataset\n\nLatest version of the file will always be available at this url: https://github.com/colour-science/colour-nuke/blob/master/colour_nuke/scripts/colour_rendition_chart.nk\n\n\[1] BabelColor. (2012). ColorChecker RGB and spectra. Retrieved from http://www.babelcolor.com/download/ColorChecker_RGB_and_spectra.xls\n\[2] X-Rite. (2015). New color specifications for\n    ColorChecker SG and Classic Charts. Retrieved October 29, 2018,\n    from http://xritephoto.com/ph_product_overview.aspx?ID=938&Action=Support&SupportID=5884#\n\n\n"
    note_font_size 14
-   xpos 1419
-   ypos -519
+   xpos 1922
+   ypos -639
   }
  end_group
  Dot {
   name Dot3
   label " "
-  note_font "Helvetica Bold"
-  note_font_size 24
-  note_font_color 0xa5a5a501
-  xpos 654
+  xpos -556
   ypos -1038
  }
-set N141950c0 [stack 0]
+set Nf36e6b00 [stack 0]
  Shuffle {
   in2 mask
   alpha red2
   name Shuffle1
   label "\[value in] -> \[value out]"
-  xpos 620
+  xpos -590
   ypos -856
  }
  Premult {
-  alpha mask.a
   name Premult1
-  xpos 620
-  ypos -808
+  xpos -590
+  ypos -802
  }
-set N141aa980 [stack 0]
+set Nf36e5d00 [stack 0]
  Input {
   inputs 0
   name Input
-  xpos -40
+  xpos 70
   ypos -1378
  }
  ColorMatrix {
@@ -4188,27 +4003,21 @@ set N141aa980 [stack 0]
       {0 0 1}
     }
   name ColorMatrix
-  xpos -40
+  xpos 70
   ypos -1282
   disable {{parent.bypass_mtx}}
  }
  Dot {
   name Dot1
   label " "
-  note_font "Helvetica Bold"
-  note_font_size 24
-  note_font_color 0xa5a5a501
-  xpos -6
+  xpos 104
   ypos -1206
  }
-set N141c43a0 [stack 0]
+set Nf36e4800 [stack 0]
  Dot {
   name Dot5
   label " "
-  note_font "Helvetica Bold"
-  note_font_size 24
-  note_font_color 0xa5a5a501
-  xpos 214
+  xpos -116
   ypos -1206
  }
  CornerPin2D {
@@ -4223,7 +4032,7 @@ set N141c43a0 [stack 0]
   from3 {{parent.TR} {parent.TR}}
   from4 {{parent.TL} {parent.TL}}
   name CornerPin2D1
-  xpos 180
+  xpos -150
   ypos -1162
  }
  Reformat {
@@ -4235,37 +4044,31 @@ set N141c43a0 [stack 0]
   center false
   black_outside true
   name ReformatBox
-  xpos 180
+  xpos -150
   ypos -1114
  }
  Dot {
   name Dot6
   label " "
-  note_font "Helvetica Bold"
-  note_font_size 24
-  note_font_color 0xa5a5a501
-  xpos 214
+  xpos -116
   ypos -1038
  }
-set N141efe80 [stack 0]
+set Nf36be400 [stack 0]
  Merge2 {
   inputs 2
   bbox B
   name Merge2
-  xpos 180
+  xpos -150
   ypos -802
   disable {{parent.disable_overlay}}
  }
  Dot {
   name Dot2
   label " "
-  note_font "Helvetica Bold"
-  note_font_size 24
-  note_font_color 0xa5a5a501
-  xpos 214
+  xpos -116
   ypos -486
  }
-push $N141aa980
+push $Nf36e5d00
  CornerPin2D {
   to1 {{parent.BL} {parent.BL}}
   to2 {{parent.BR} {parent.BR}}
@@ -4278,7 +4081,7 @@ push $N141aa980
   from3 {{input.width} {input.height}}
   from4 {0 {input.height}}
   name CornerPin2D2
-  xpos 620
+  xpos -590
   ypos -730
  }
  Reformat {
@@ -4290,24 +4093,21 @@ push $N141aa980
   resize none
   center false
   name Reformat1
-  xpos 620
+  xpos -590
   ypos -682
  }
  Dot {
   name Dot4
   label " "
-  note_font "Helvetica Bold"
-  note_font_size 24
-  note_font_color 0xa5a5a501
-  xpos 654
+  xpos -556
   ypos -630
  }
-push $N141c43a0
+push $Nf36e4800
  Merge2 {
   inputs 2
   bbox B
   name Merge1
-  xpos -40
+  xpos 70
   ypos -634
   disable {{parent.disable_overlay}}
  }
@@ -4315,18 +4115,30 @@ push $N141c43a0
   inputs 2
   which {{parent.output_compare}}
   name Compare
-  xpos -40
+  xpos 70
   ypos -490
  }
  Output {
   name Output
-  xpos -40
+  xpos 70
   ypos -370
  }
-push $N141950c0
+push $Nf36be400
+ Multiply {
+  channels rgb
+  value {{dst/src}}
+  name Normalize
+  xpos -260
+  ypos -1042
+  addUserKnob {20 Normalize}
+  addUserKnob {7 src R 0 4}
+  addUserKnob {7 dst R 0 4}
+  dst 0.1906265074
+ }
+push $Nf36e6b00
  NoOp {
   name macbeth_points
-  xpos 510
+  xpos -480
   ypos -1042
   addUserKnob {20 macbeth_points}
   addUserKnob {12 p11}
@@ -4380,18 +4192,5 @@ push $N141950c0
   p45 {{"(input.width / 6) * 5 - (input.width / 12)"} {"(input.height / 4) * 1 - (input.height / 4 / 2)"}}
   addUserKnob {12 p46}
   p46 {{"(input.width / 6) * 6 - (input.width / 12)"} {"(input.height / 4) * 1 - (input.height / 4 / 2)"}}
- }
-push $N141efe80
- Multiply {
-  channels rgb
-  value {{dst/src}}
-  name Normalize
-  xpos 290
-  ypos -1042
-  addUserKnob {20 Normalize}
-  addUserKnob {7 src R 0 4}
-  src 0.18
-  addUserKnob {7 dst R 0 4}
-  dst 0.18
  }
 end_group
