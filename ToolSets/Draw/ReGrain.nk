@@ -182,7 +182,6 @@ set Naa49b200 [stack 0]
   name FrameBlend2
   xpos -590
   ypos 134
-  cached true
  }
  CurveTool {
   avgframes 0
@@ -252,9 +251,9 @@ set Naa474100 [stack 0]
   temp_name0 df
   temp_expr0 max(fabs(Ar-Br),fabs(Ag-Bg),fabs(Ab-Bb))
   channel0 {rgba.red -rgba.green -rgba.blue none}
-  expr0 ex+Br*(1-ex)
-  expr1 Bg*(1-ex)
-  expr2 Bb*(1-ex)
+  expr0 r
+  expr1 g
+  expr2 b
   expr3 clamp((mn-df)/(mx-mn))
   name MergeDifference
   xpos -40
@@ -369,7 +368,7 @@ set Naa450800 [stack 0]
   name TimeClip1
   xpos -810
   ypos -64
- }
+  }
  Merge2 {
   inputs 2
   operation multiply
