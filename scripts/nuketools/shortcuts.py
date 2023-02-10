@@ -27,7 +27,8 @@ nuke.menu('Nuke').addCommand('File/Hide Status Bar', 'import hiero; hiero.ui.mai
 # using a more normal approach...
 def hide_status_bar():
     import hiero
-    hiero.ui.mainStatusBar.hide()
+    if 'mainStatusBar' in dir(hiero.ui):
+        hiero.ui.mainStatusBar.hide()
 nuke.addOnCreate(hide_status_bar, nodeClass='Root')
 
 
