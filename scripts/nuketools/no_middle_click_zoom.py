@@ -1,7 +1,7 @@
 from __future__ import print_function
 import nuke
 
-from PySide2 import QtWidgets, QtGui, QtCore, QtOpenGL
+from Qt import QtWidgets, QtGui, QtCore, QtOpenGL
 
 # https://www.pixelmania.se/fixing-an-annoying-nuke-feature/
 
