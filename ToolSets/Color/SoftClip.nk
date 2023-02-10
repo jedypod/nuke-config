@@ -1,0 +1,65 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name SoftClip
+ addUserKnob {20 SoftClip_t l SoftClip}
+ addUserKnob {83 mode t "<b>desaturate</b>\napplies compression per-channel.\ndesaturates and skews hue towards\nCMY as compression increases.\n\n<b>ratio preserving</b>\nkeeps rgb ratios of input, but\nreduces intensity by the compression\namount specified in threshold.r and limit.r" M {desaturate "ratio preserving"}}
+ addUserKnob {18 th l threshold t "starting value for compression. \n\npixels below this threshold will not be affected." R 0 50}
+ th 0.18
+ addUserKnob {6 th_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {18 lm l limit t "max value allowed. \n\npixel values above limit will be compressed between threshold and limit." R 1 50}
+ lm 1
+ addUserKnob {6 lm_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+ addUserKnob {41 invert T CompressHyperbolicConstraint.invert}
+}
+ Input {
+  inputs 0
+  name Input
+  xpos 730
+  ypos 566
+ }
+ Expression {
+  temp_name0 sr
+  temp_expr0 r<t0.r?r:invert?r<s1.r?_b.r-_a.r/(r-s1.r):1e4:_a.r/(_b.r-r)+s1.r
+  temp_name1 sg
+  temp_expr1 g<t0.g?g:invert?g<s1.g?_b.g-_a.g/(g-s1.g):1e4:_a.g/(_b.g-g)+s1.g
+  temp_name2 sb
+  temp_expr2 b<t0.b?b:invert?b<s1.b?_b.b-_a.b/(b-s1.b):1e4:_a.b/(_b.b-b)+s1.b
+  temp_name3 sc
+  temp_expr3 max(r,g,b)==0?1:(invert?max(r,g,b)<s1.r?_b.r-_a.r/(max(r,g,b)-s1.r):1e4:_a.r/(_b.r-max(r,g,b))+s1.r)/max(r,g,b)
+  expr0 mode?max(r,g,b)<t0.r?r:r*sc:sr
+  expr1 mode?max(r,g,b)<t0.r?g:g*sc:sg
+  expr2 mode?max(r,g,b)<t0.r?b:b*sc:sb
+  expr3 sc
+  name CompressHyperbolicConstraint
+  label https://www.desmos.com/calculator/mbbbwoqprr
+  xpos 730
+  ypos 610
+  addUserKnob {20 Params}
+  addUserKnob {18 t0 t "compression begins at t0, linear below"}
+  t0 {{th<lm?th:lm}}
+  addUserKnob {6 t0_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {18 w0 t "input w0 is compressed to output w1" R 1 50}
+  w0 1000
+  addUserKnob {6 w0_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {18 w1 R 1 50}
+  w1 {{lm} {lm} {lm}}
+  addUserKnob {6 w1_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {26 ""}
+  addUserKnob {18 s1 R 1 1.2}
+  s1 {{(w0*w1-t0*(2*w1-t0))/(w0-w1)} {(w0*w1-t0*(2*w1-t0))/(w0-w1)} {(w0*w1-t0*(2*w1-t0))/(w0-w1)}}
+  addUserKnob {6 s1_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {18 _a R 0 4}
+  _a {{(t0-s1)**2} {(t0-s1)**2} {(t0-s1)**2}}
+  addUserKnob {6 _a_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {18 _b R 0 4}
+  _b {{2*t0-s1} {2*t0-s1} {2*t0-s1}}
+  addUserKnob {6 _b_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
+  addUserKnob {6 invert +STARTLINE}
+ }
+ Output {
+  name Output
+  xpos 730
+  ypos 662
+ }
+end_group
