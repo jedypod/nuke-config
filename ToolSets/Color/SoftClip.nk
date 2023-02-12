@@ -3,13 +3,11 @@ push $cut_paste_input
 Group {
  name SoftClip
  addUserKnob {20 SoftClip_t l SoftClip}
- addUserKnob {83 mode t "<b>desaturate</b>\napplies compression per-channel.\ndesaturates and skews hue towards\nCMY as compression increases.\n\n<b>ratio preserving</b>\nkeeps rgb ratios of input, but\nreduces intensity by the compression\namount specified in threshold.r and limit.r" M {desaturate "ratio preserving"}}
+ addUserKnob {83 mode t "<b>dechroma</b>\napplies compression per-channel.\ndesaturates and skews hue towards\nCMY as compression increases.\n\n<b>ratio preserving</b>\nkeeps rgb ratios of input, but\nreduces intensity by the compression\namount specified in threshold.r and limit.r" M {dechroma "ratio preserving"}}
  addUserKnob {18 th l threshold t "starting value for compression. \n\npixels below this threshold will not be affected." R 0 50}
  th 0.18
- addUserKnob {6 th_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
  addUserKnob {18 lm l limit t "max value allowed. \n\npixel values above limit will be compressed between threshold and limit." R 1 50}
  lm 1
- addUserKnob {6 lm_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
  addUserKnob {41 invert T CompressHyperbolicConstraint.invert}
 }
  Input {
@@ -30,7 +28,6 @@ Group {
   expr0 mode?max(r,g,b)<t0.r?r:r*sc:sr
   expr1 mode?max(r,g,b)<t0.r?g:g*sc:sg
   expr2 mode?max(r,g,b)<t0.r?b:b*sc:sb
-  expr3 sc
   name CompressHyperbolicConstraint
   label https://www.desmos.com/calculator/mbbbwoqprr
   xpos 730
