@@ -1,0 +1,62 @@
+set cut_paste_input [stack 0]
+push $cut_paste_input
+Group {
+ name PowerLift
+ help "<b>PowerLift</b>\nOffset shadow values below threshold by the offset amount.\n\n"
+ addUserKnob {20 PowerLift_t l PowerLift}
+ addUserKnob {41 t0 l threshold t "Values above threshold will not be affected." T LiftToeParabolic.t0}
+ addUserKnob {41 offset t "Amount to offset shadows by. \n\nHas maximum effect in shadows and is smoothly reduced with a quadratic function as pixel values approach threshold." T LiftToeParabolic.offset}
+ addUserKnob {41 invert T LiftToeParabolic.invert}
+ addUserKnob {26 ""}
+ addUserKnob {41 maskChannelMask l mask -STARTLINE T LiftToeParabolic.maskChannelMask}
+ addUserKnob {41 invert_mask l invert -STARTLINE T LiftToeParabolic.invert_mask}
+}
+ Input {
+  inputs 0
+  name Inputmask
+  xpos -700
+  ypos 15
+  number 1
+ }
+ Input {
+  inputs 0
+  name Input
+  xpos -810
+  ypos -34
+ }
+ Expression {
+  inputs 1+1
+  expr0 r>t0.r?b:y0.r>0?a0.r*sqrt(b0.r+4*_a.r*b)-c0.r:r*(_a.r*r+_b.r)+_c.r
+  expr1 g>t0.g?b:y0.g>0?a0.g*sqrt(b0.g+4*_a.g*b)-c0.g:g*(_a.g*g+_b.g)+_c.g
+  expr2 b>t0.b?b:y0.b>0?a0.b*sqrt(b0.b+4*_a.b*b)-c0.b:b*(_a.b*b+_b.b)+_c.b
+  name LiftToeParabolic
+  label "https://www.desmos.com/calculator/nszlv6f4ve\nhttps://colab.research.google.com/drive/1BlaygFPMn7HSuYvfavUY-py3zDm-cMoc?usp=sharing"
+  xpos -810
+  ypos 2
+  addUserKnob {20 Params_t l Params}
+  addUserKnob {18 t0}
+  t0 0.5
+  addUserKnob {18 offset R -0.2 0.2}
+  offset 0
+  addUserKnob {18 y0 R -0.2 0.2}
+  y0 {{offset>t0?t0-1e-3:offset<-t0?-t0+1e-3:invert?-offset:offset} {offset>t0?t0-1e-3:offset<-t0?-t0+1e-3:invert?-offset:offset} {offset>t0?t0-1e-3:offset<-t0?-t0+1e-3:invert?-offset:offset}}
+  addUserKnob {18 _c R -0.5 0.5}
+  _c {{t0*(1-_b)/2} {t0*(1-_b)/2} {t0*(1-_b)/2}}
+  addUserKnob {18 _a}
+  _a {{(1-_b)/(2*t0)} {(1-_b)/(2*t0)} {(1-_b)/(2*t0)}}
+  addUserKnob {18 _b}
+  _b {{(t0**2+fabs(y0)**2)/((t0-fabs(y0))**2)} {(t0**2+fabs(y0)**2)/((t0-fabs(y0))**2)} {(t0**2+fabs(y0)**2)/((t0-fabs(y0))**2)}}
+  addUserKnob {18 a0}
+  a0 {{1/(2*_a)} {1/(2*_a)} {1/(2*_a)}}
+  addUserKnob {18 b0}
+  b0 {{_b*_b-4*_a*_c} {_b*_b-4*_a*_c} {_b*_b-4*_a*_c}}
+  addUserKnob {18 c0}
+  c0 {{_b*a0} {_b*a0} {_b*a0}}
+  addUserKnob {6 invert +STARTLINE}
+ }
+ Output {
+  name Output
+  xpos -810
+  ypos 62
+ }
+end_group
