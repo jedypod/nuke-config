@@ -26,8 +26,8 @@ Group {
  }
  Expression {
   inputs 1+1
-  expr0 r>t0.r?b:y0.r>0?a0.r*sqrt(b0.r+4*_a.r*b)-c0.r:r*(_a.r*r+_b.r)+_c.r
-  expr1 g>t0.g?b:y0.g>0?a0.g*sqrt(b0.g+4*_a.g*b)-c0.g:g*(_a.g*g+_b.g)+_c.g
+  expr0 r>t0.r?r:y0.r>0?a0.r*sqrt(b0.r+4*_a.r*b)-c0.r:r*(_a.r*r+_b.r)+_c.r
+  expr1 g>t0.g?g:y0.g>0?a0.g*sqrt(b0.g+4*_a.g*b)-c0.g:g*(_a.g*g+_b.g)+_c.g
   expr2 b>t0.b?b:y0.b>0?a0.b*sqrt(b0.b+4*_a.b*b)-c0.b:b*(_a.b*b+_b.b)+_c.b
   name LiftToeParabolic
   label "https://www.desmos.com/calculator/nszlv6f4ve\nhttps://colab.research.google.com/drive/1BlaygFPMn7HSuYvfavUY-py3zDm-cMoc?usp=sharing"
