@@ -1,15 +1,28 @@
 set cut_paste_input [stack 0]
 push $cut_paste_input
 Group {
- name SoftClip
- addUserKnob {20 SoftClip_t l SoftClip}
+ name SoftShoulder
+ addUserKnob {20 SoftShoulder_t l SoftShoulder}
  addUserKnob {83 mode t "<b>dechroma</b>\napplies compression per-channel.\ndesaturates and skews hue towards\nCMY as compression increases.\n\n<b>ratio preserving</b>\nkeeps rgb ratios of input, but\nreduces intensity by the compression\namount specified in threshold.r and limit.r" M {dechroma "ratio preserving"}}
  addUserKnob {18 th l threshold t "starting value for compression. \n\npixels below this threshold will not be affected." R 0 50}
- th 0.18
+ th 35
+ addUserKnob {6 th_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
  addUserKnob {18 lm l limit t "max value allowed. \n\npixel values above limit will be compressed between threshold and limit." R 1 50}
- lm 1
+ lm 50
+ addUserKnob {6 lm_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
  addUserKnob {41 invert T CompressHyperbolicConstraint.invert}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 maskChannelMask l mask -STARTLINE T CompressHyperbolicConstraint.maskChannelMask}
+ addUserKnob {41 invert_mask l invert -STARTLINE T CompressHyperbolicConstraint.invert_mask}
+ addUserKnob {41 mix T CompressHyperbolicConstraint.mix}
 }
+ Input {
+  inputs 0
+  name Inputmask
+  xpos 840
+  ypos 615
+  number 1
+ }
  Input {
   inputs 0
   name Input
@@ -17,6 +30,7 @@ Group {
   ypos 566
  }
  Expression {
+  inputs 1+1
   temp_name0 sr
   temp_expr0 r<t0.r?r:invert?r<s1.r?_b.r-_a.r/(r-s1.r):1e4:_a.r/(_b.r-r)+s1.r
   temp_name1 sg
@@ -31,7 +45,7 @@ Group {
   name CompressHyperbolicConstraint
   label https://www.desmos.com/calculator/mbbbwoqprr
   xpos 730
-  ypos 610
+  ypos 608
   addUserKnob {20 Params}
   addUserKnob {18 t0 t "compression begins at t0, linear below"}
   t0 {{th<lm?th:lm}}
