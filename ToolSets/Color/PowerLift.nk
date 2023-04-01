@@ -10,6 +10,7 @@ Group {
  addUserKnob {26 ""}
  addUserKnob {41 maskChannelMask l mask -STARTLINE T LiftToeParabolic.maskChannelMask}
  addUserKnob {41 invert_mask l invert -STARTLINE T LiftToeParabolic.invert_mask}
+ addUserKnob {41 mix T LiftToeParabolic.mix}
 }
  Input {
   inputs 0
