@@ -1,15 +1,19 @@
 set cut_paste_input [stack 0]
 push $cut_paste_input
 NoOp {
-name Pointer1
-autolabel "'*\{0\}\\n\{1\}'.format(nuke.thisNode()\['target'].value(), nuke.thisNode()\['label'].value()) if nuke.thisNode().setInput(0, nuke.toNode(nuke.thisNode()\['target'].value())) else ''"
-tile_color 0x1e1e1eff
-note_font_color 0xccccccff
-hide_input true
-addUserKnob {20 Pointer_tab l Pointer}
-addUserKnob {1 target}
-addUserKnob {22 create_target l Create t "Create target node" -STARTLINE T "n = nuke.thisNode()\nsn = nuke.selectedNode()\nnm = n\['target'].getValue()\nif not nm:\n  nm = nuke.getInput('Enter Name:', sn.name())\n  n\['target'].setValue(nm)\ntn = nuke.toNode(nm)\nif tn:\n    n.setInput(0, tn)\nelse:\n    if n.isSelected():\n        n.setSelected(False)\n    d = nuke.createNode('Dot')\n    if n.isSelected():\n        d.setXYpos(n.xpos(), n.ypos()-50)\n    d.setName(nm)\n    d\['note_font_size'].setValue(14)\n    d\['label'].setValue(' &\[value name]')\n    d\['tile_color'].setValue(0xff750500)\n    n.setInput(0,d)\n    n\['label'].setValue(n\['label'].getValue())\n\n# set color\ntn = nuke.toNode(nuke.tcl('value \[topnode].name'))\nc = tn\['tile_color'].value()\nif c == 0:\n  c = nuke.defaultNodeColor(tn.Class())\nn\['tile_color'].setValue(c)\n# self destruct\nn.removeKnob(n\['create_target']) "}
-addUserKnob {22 set_target l Set t "Set target to selected node" T "nuke.thisNode()\['target'].setValue(nuke.selectedNode().name())" +STARTLINE}
-addUserKnob {22 set_color l Color t "Set color to topnode" -STARTLINE T "tn = nuke.toNode(nuke.tcl('value \[topnode].name'))\nc = tn\['tile_color'].value()\nif c == 0:\n  c = nuke.defaultNodeColor(tn.Class())\nnuke.thisNode()\['tile_color'].setValue(c)"}
-addUserKnob {22 zoom_to_target l Zoom t "Frame target in dag" -STARTLINE T "t = nuke.thisNode()\['target'].getValue()\nif nuke.exists(t):\n    tn = nuke.toNode(t)\n    nuke.zoom(2.0, \[tn.xpos(), tn.ypos()])"}
+ name Pointer
+ autolabel "'Pointer -> \{\}\\n\{\}'.format(nuke.thisNode()\['anchor'].value(), nuke.thisNode()\['label'].evaluate().replace(nuke.root()\['project_directory'].evaluate() or '', '')) if nuke.thisNode().setInput(0, nuke.toNode(nuke.thisNode()\['anchor'].value())) else ''"
+ tile_color 0x6b6b6b00
+ label "\[if \{\[exists input0]\} \{\} else \{return \"<font color=red><b>NO ANCHOR: \[value anchor]</font>\"\}]"
+ note_font "Helvetica Bold"
+ note_font_size 14
+ note_font_color 0xccccccff
+ hide_input true
+ addUserKnob {20 Pointer_tab l Pointer}
+ addUserKnob {1 anchor t "Connected to node with this name. Toggle Alt+E to reconnect."}
+ addUserKnob {22 set_anchor l "Set Anchor" t "Set anchor to selected node, or create a new anchor with a specified name." -STARTLINE T "import re\n\nn = nuke.thisNode()\ndef create_anchor(aname):\n  a = nuke.createNode('NoOp', 'name \{\} note_font \"Helvetica Bold\" note_font_size 14'.format(aname))\n  a.addKnob(nuke.Tab_Knob('Anchor_tab', 'Anchor'))\n  n.setInput(0, a)\n  return a\n\nsnodes = nuke.selectedNodes()\nsnode = snodes\[-1] if snodes else None\n\naname = n\['anchor'].value()\nif aname == '':\n  aname = nuke.getInput('Anchor Name:')\n  if not aname:\n    aname = ''\naname = re.sub('\[^A-Za-z0-9]+|^\\d', '_', aname)\nn\['anchor'].setValue(aname)\n\nanode = nuke.toNode(aname)\nif anode:\n  # specified anode already exists, just use it\n  n.setInput(0, anode)\nelse:\n  # create new anchor\n  if snode and snode != n:\n    if snode.Class() in ('NoOp', 'Dot'): # use as Anchor\n      n\['anchor'].setValue(snode.name())\n      n.setInput(0, snode)\n    else: \n      # Create new anchor aname attached to selected node\n      a = create_anchor(aname)\n  else:\n    \n    _ = \[n.setSelected(False) for n in nuke.allNodes()]\n    a = create_anchor(aname)\n    a.setXYpos(n.xpos()+120, n.ypos())\n\nn\['set_color'].execute()\n"}
+ addUserKnob {22 connect l Connect t "Connect this Pointer node to its anchor (This will happen automatically if the autolabel knob is triggered (on cut or paste or nuke script open, OR if you toggle expression links with Alt+E)" T "n = nuke.thisNode()\nn.setInput(0, nuke.toNode(n\['anchor'].getValue()))" +STARTLINE}
+ addUserKnob {22 connect_all l "Connect All" t "Connect ALL Pointer nodes to their anchors if they are not already connected.\n\nNote: you can also use Alt+E to trigger the autolabel knob on all nodes and achieve the same thing! :D" -STARTLINE T "for n in nuke.allNodes():\n  if n\['autolabel'].getValue() != '' and ('anchor' in n.knobs() and 'connect' in n.knobs()):\n    n\['connect'].execute()"}
+ addUserKnob {22 set_color l Color t "Set color of pointer based on anchor" -STARTLINE T "tn = nuke.toNode(nuke.tcl('value \[topnode].name'))\nc = nuke.thisNode().input(0)\['tile_color'].value()\nif c == 0:\n  c = tn\['tile_color'].value()\n  if c == 0:\n    c = nuke.defaultNodeColor(tn.Class())\nnuke.thisNode()\['tile_color'].setValue(c)"}
+ addUserKnob {22 zoom_to_anchor l Zoom t "Frame anchor node in the DAG" -STARTLINE T "t = nuke.thisNode()\['anchor'].getValue()\nif nuke.exists(t):\n    tn = nuke.toNode(t)\n    nuke.zoom(2.0, \[tn.xpos(), tn.ypos()])"}
 }
