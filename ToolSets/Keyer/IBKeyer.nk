@@ -5,24 +5,24 @@ Group {
  tile_color 0x9900ff
  addUserKnob {20 Params}
  addUserKnob {83 st l screen M {red green blue}}
- st blue
+ st green
  addUserKnob {41 pick t "if no cleanplate, pick a solid color" T pick_screen_color.color}
  addUserKnob {26 ""}
  addUserKnob {41 w0 l bias T despill.w0}
  addUserKnob {41 lm l limit T despill.lm}
- addUserKnob {41 spill T multiply_spill.value}
+ addUserKnob {41 spill l respill t "Add this constant to the screen after screen subtraction. Enable premult " T multiply_spill.value}
+ addUserKnob {6 premult +STARTLINE}
+ premult true
  addUserKnob {26 ""}
- addUserKnob {6 lma l "add luminance" t "merge luminance of despill to alpha" +STARTLINE}
- lma true
- addUserKnob {7 wp t whitepoint R 0.5 1.5}
- wp 1
- addUserKnob {7 bp t blackpoint}
+ addUserKnob {6 nge l "near grey extract" t "Extract near achromatic and add to the alpha" +STARTLINE}
+ nge true
+ addUserKnob {41 s0 l amount T screen_level.s0}
 }
  Input {
   inputs 0
   name Inputc
   label "\[value number]"
-  xpos -370
+  xpos -480
   ypos -88
   number 1
  }
@@ -38,27 +38,26 @@ Group {
   xpos -6
   ypos -6
  }
-set Nc4fb4100 [stack 0]
+set N1f45c490 [stack 0]
  Fill {
   output rgb
-  color 0.5
   name pick_screen_color
-  xpos -150
+  xpos -260
   ypos -10
  }
  Switch {
   inputs 2
   which {{"\[exists parent.input1]"}}
   name sw_screen
-  xpos -370
+  xpos -480
   ypos -10
  }
  Dot {
   name Dot9
-  xpos -336
+  xpos -446
   ypos 66
  }
-set N2624e400 [stack 0]
+set N2145dff0 [stack 0]
  Expression {
   temp_name0 c0
   temp_expr0 k==0?r:k==1?g:b
@@ -72,7 +71,7 @@ set N2624e400 [stack 0]
   expr0 xt
   expr3 max(c1,c2)
   name despill1
-  xpos -260
+  xpos -370
   ypos 62
   addUserKnob {20 Params}
   addUserKnob {3 k l chan}
@@ -82,8 +81,8 @@ set N2624e400 [stack 0]
   addUserKnob {7 lm l limit}
   lm {{parent.despill.lm}}
  }
-set N2624dd00 [stack 0]
-push $Nc4fb4100
+set N20c5b320 [stack 0]
+push $N1f45c490
  Expression {
   temp_name0 c0
   temp_expr0 k==0?r:k==1?g:b
@@ -96,8 +95,8 @@ push $Nc4fb4100
   channel0 rgba
   expr0 l
   name despill
-  xpos -150
-  ypos 62
+  xpos -260
+  ypos 65
   addUserKnob {20 Params}
   addUserKnob {3 k l chan}
   k {{st}}
@@ -115,99 +114,141 @@ push $Nc4fb4100
   expr3 max(0,1-n)
   name MergeDivideReverse
   label normalize
-  xpos -150
-  ypos 104
+  xpos -260
+  ypos 91
  }
-set N2624c100 [stack 0]
+ Clamp {
+  channels rgba
+  maximum_enable false
+  name ClampMin
+  xpos -260
+  ypos 123
+ }
+set N2185c7e0 [stack 0]
  Dot {
   name Dot10
-  xpos -116
+  xpos -226
   ypos 162
  }
-set N2ba23900 [stack 0]
-push $N2624dd00
+set N1ed5b130 [stack 0]
+push $N20c5b320
  Merge2 {
   inputs 2
   operation multiply
   bbox B
   output rgb
   name Merge3
-  xpos -260
+  xpos -370
   ypos 158
  }
  Multiply {
   channels rgb
   value 0
   name multiply_spill
-  xpos -260
-  ypos 302
+  xpos -370
+  ypos 300
  }
  Dot {
   name Dot4
-  xpos -226
+  xpos -336
   ypos 378
  }
-push $N2624c100
-push $N2624e400
+push $N2185c7e0
+push $N2145dff0
  Merge2 {
   inputs 2
   operation multiply
   bbox B
   name Merge1
-  xpos -370
-  ypos 110
- }
- Clamp {
-  channels rgba
-  maximum_enable false
-  name ClampMin
-  xpos -370
-  ypos 158
+  xpos -480
+  ypos 123
  }
  Dot {
   name Dot3
-  xpos -336
+  xpos -446
   ypos 210
  }
-push $Nc4fb4100
- Merge2 {
-  inputs 2
-  operation from
-  bbox B
-  output rgb
-  name Merge2
-  xpos -40
-  ypos 206
+push $N1f45c490
+ Dot {
+  name Dot1
+  xpos -6
+  ypos 162
  }
-set Nc1a13200 [stack 0]
-push $N2ba23900
+set N5be53d0 [stack 0]
  MergeExpression {
   inputs 2
-  temp_name0 L
-  temp_expr0 w.0*Ar+w.1*Ag+w.2*Ab
-  temp_name1 ex
-  temp_expr1 clamp((L-e0)/(e1-e0))
-  expr0 A
-  expr3 a+ex-a*ex
-  name Luminance3
+  expr0 max(0,r-Ar)
+  expr1 max(0,g-Ag)
+  expr2 max(0,b-Ab)
+  name From
+  xpos -40
+  ypos 207
+ }
+ Dot {
+  name Dot2
+  xpos -6
+  ypos 234
+ }
+set N5de5b30 [stack 0]
+push $N5be53d0
+ Merge2 {
+  inputs 2
+  operation divide
+  bbox B
+  name Merge10
   xpos -150
-  ypos 254
-  disable {{!lma x2 0}}
-  addUserKnob {20 Param}
-  addUserKnob {78 w n 3}
-  w {0.26 {1-(this.0+this.2)} 0.07}
-  addUserKnob {7 e0 R 0 4}
-  e0 {{bp}}
-  addUserKnob {7 e1 R 0 4}
-  e1 {{wp}}
+  ypos 231
+ }
+ Expression {
+  temp_name0 c0
+  temp_expr0 k==0?r:k==1?g:b
+  temp_name1 c1
+  temp_expr1 k==0?g:k==1?r:r
+  temp_name2 c2
+  temp_expr2 k==0?b:k==1?b:g
+  channel0 rgba
+  expr0 clamp(c0*(1-s0)+(max(r,g,b)==c1?c1:c2)*s0)
+  name screen_level
+  xpos -150
+  ypos 255
+  addUserKnob {20 Params}
+  addUserKnob {3 k l chan}
+  k {{st}}
+  addUserKnob {7 w0 l bias}
+  w0 {{parent.despill.w0}}
+  addUserKnob {7 s0 l amount R 0 2}
+ }
+push $N1ed5b130
+ Expression {
+  temp_name3 n
+  temp_expr3 min(-1e-6,bp-wp)
+  expr3 max(0,(bp-a)/n)
+  name Blackpoint
+  xpos -260
+  ypos 232
+  disable true
+  addUserKnob {20 Params}
+  addUserKnob {7 bp}
+  bp {{sr}}
+  addUserKnob {7 wp R 0 2}
+  wp 1
+ }
+ MergeExpression {
+  inputs 2
+  channel0 rgba
+  expr0 Aa+Ba-Aa*Ba
+  name Screen
+  xpos -260
+  ypos 256
+  disable {{!nge}}
  }
  Clamp {
   channels rgba
   name Clamp1
-  xpos -150
-  ypos 303
+  xpos -260
+  ypos 302
  }
-push $Nc1a13200
+push $N5de5b30
  Copy {
   inputs 2
   from0 rgba.alpha
@@ -225,9 +266,15 @@ push $Nc1a13200
   xpos -40
   ypos 374
  }
+ Premult {
+  name Premult1
+  xpos -40
+  ypos 416
+  disable {{!premult}}
+ }
  Output {
   name Output
   xpos -40
-  ypos 422
+  ypos 487
  }
 end_group

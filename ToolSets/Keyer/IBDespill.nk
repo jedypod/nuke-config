@@ -4,90 +4,45 @@ Group {
  name IBDespill
  tile_color 0x9900ff
  addUserKnob {20 IBDespill_tab l IBDespill}
- addUserKnob {83 st l screen M {red green blue}}
- st blue
- addUserKnob {6 oa l "out alpha" t "output alpha from despill calculation" -STARTLINE}
- oa 1
- addUserKnob {41 pick t "pick screen color if no cleanplate connected" T Fill1.color}
- addUserKnob {41 w l bias t "hue bias from primary hue angle" T despill1.w}
- addUserKnob {41 lm l limit t "inverse despill threshold" T despill1.lm}
- addUserKnob {26 ""}
- addUserKnob {20 despill_grp l "" +STARTLINE n -2}
- addUserKnob {20 despill_tab l target}
- addUserKnob {41 tg l target t "respill target color" T Target.tg}
- addUserKnob {20 ee_tab l "edge extend"}
- addUserKnob {6 ee l enable t "use edge extend for edge despill color" +STARTLINE}
- addUserKnob {7 ees l size t "edge extend size" R 0 100}
- ees 10
- addUserKnob {20 endGroup n -3}
+ addUserKnob {41 k l screen t "color of chroma screen" -STARTLINE T despill1.k}
+ addUserKnob {41 sc l pick t "pick average screen color if screen cleanplate is not connected" T ScreenColor.color}
+ addUserKnob {41 wt l bias t "adjust color bias of despill" T despill1.wt}
+ addUserKnob {41 lm l limit t "limit amount of despill" T despill1.lm}
+ addUserKnob {41 tg l "screen target" T Target.tg}
+ addUserKnob {6 premult t "premult output by calculated alpha. should only be enabled if screen color > 0, or if set target screen color is false" +STARTLINE}
 }
  Input {
   inputs 0
-  name Input
-  xpos -40
-  ypos 62
- }
- Dot {
-  name Dot1
-  xpos -6
-  ypos 138
- }
-set N34257900 [stack 0]
- Dot {
-  name Dot2
-  xpos -116
-  ypos 138
- }
-set N34257200 [stack 0]
- Expression {
-  temp_name0 c0
-  temp_expr0 k==0?r:k==1?g:b
-  temp_name1 c1
-  temp_expr1 k==0?g:k==1?r:r
-  temp_name2 c2
-  temp_expr2 k==0?b:k==1?b:g
-  channel0 rgba
-  expr0 c0-(c1*w+c2*(1-w))*lm
-  name despill1
-  xpos -150
-  ypos 230
-  addUserKnob {20 Params}
-  addUserKnob {3 k l ch}
-  k {{st}}
-  addUserKnob {7 w l bias}
-  w 0.5
-  addUserKnob {7 lm l limit R 0 1.5}
-  lm 1
- }
-set N34256b00 [stack 0]
- Input {
-  inputs 0
   name Inputc
-  xpos -480
-  ypos 62
+  xpos -370
+  ypos -130
   number 1
  }
-push $N34257200
+ Input {
+  inputs 0
+  name Input
+  xpos -150
+  ypos -130
+ }
+ Dot {
+  name Dot3
+  xpos -116
+  ypos -78
+ }
+set N922e31a0 [stack 0]
  Fill {
   output rgb
-  color 0
-  name Fill1
+  name ScreenColor
   xpos -260
-  ypos 134
+  ypos -82
  }
  Switch {
   inputs 2
   which {{"\[exists parent.input1]"}}
   name Switch
-  xpos -480
-  ypos 134
+  xpos -370
+  ypos -82
  }
- Dot {
-  name Dot5
-  xpos -446
-  ypos 234
- }
-set N34254800 [stack 0]
  Expression {
   temp_name0 c0
   temp_expr0 k==0?r:k==1?g:b
@@ -95,155 +50,125 @@ set N34254800 [stack 0]
   temp_expr1 k==0?g:k==1?r:r
   temp_name2 c2
   temp_expr2 k==0?b:k==1?b:g
-  channel0 rgba
-  expr0 c0-(c1*w+c2*(1-w))*lm
+  temp_name3 ds
+  temp_expr3 (c1*wt+c2*(1-wt))*lm
+  channel0 {rgba.red -rgba.green -rgba.blue none}
+  expr0 k==0?min(c0,ds):r
+  expr1 k==1?min(c0,ds):g
+  expr2 k==2?min(c0,ds):b
+  expr3 c0-ds
   name despill2
   xpos -370
-  ypos 230
+  ypos -58
   addUserKnob {20 Params}
   addUserKnob {3 k l ch}
   k {{parent.despill1.k}}
-  addUserKnob {7 w l weight}
-  w {{parent.despill1.w}}
+  addUserKnob {7 wt l bias}
+  wt {{parent.despill1.wt}}
   addUserKnob {7 lm l limit}
   lm {{parent.despill1.lm}}
  }
-set N34254100 [stack 0]
  Dot {
-  name Dot11
+  name Dot4
   xpos -336
-  ypos 522
+  ypos -30
  }
-set N34223900 [stack 0]
-push $N34254800
+set Nc8412a10 [stack 0]
+push $N922e31a0
+ Expression {
+  temp_name0 c0
+  temp_expr0 k==0?r:k==1?g:b
+  temp_name1 c1
+  temp_expr1 k==0?g:k==1?r:r
+  temp_name2 c2
+  temp_expr2 k==0?b:k==1?b:g
+  temp_name3 ds
+  temp_expr3 (c1*wt+c2*(1-wt))*lm
+  expr0 k==0?min(c0,ds):r
+  expr1 k==1?min(c0,ds):g
+  expr2 k==2?min(c0,ds):b
+  expr3 c0-ds
+  name despill1
+  xpos -150
+  ypos -58
+  addUserKnob {20 Params}
+  addUserKnob {83 k l "" +STARTLINE M {red green blue}}
+  k blue
+  addUserKnob {7 wt l bias}
+  wt 0.5
+  addUserKnob {7 lm l limit R 0.5 2}
+  lm 1
+ }
  Dot {
-  name Dot6
-  xpos -446
-  ypos 354
+  name Dot5
+  xpos -116
+  ypos -30
  }
-push $N34256b00
-push $N34254100
+set N638f70b0 [stack 0]
  MergeExpression {
   inputs 2
   temp_name3 n
-  temp_expr3 Br==0?0:Ar/Br
-  channel0 rgb
+  temp_expr3 Aa==0?0:max(0,Ba/Aa)
+  channel0 {rgba.red rgba.green rgba.blue none}
   expr0 n
-  expr3 max(0,1-n)
-  name MergeDivide
+  expr3 1-n
+  name MergeExpression1
   xpos -260
-  ypos 278
+  ypos -34
  }
- MergeExpression {
-  inputs 2
-  expr0 max(0,Ar*r)
-  expr1 max(0,Ag*g)
-  expr2 max(0,Ab*b)
-  expr3 clamp(a)
-  name MergeMultiply
-  xpos -260
-  ypos 350
- }
-push $N34257900
- MergeExpression {
-  inputs 2
-  expr0 r-Ar
-  expr1 g-Ag
-  expr2 b-Ab
-  expr3 Aa
-  name MergeFrom
-  xpos -40
-  ypos 350
- }
- Dot {
-  name Dot9
-  xpos -6
-  ypos 426
- }
-set N34221600 [stack 0]
- Premult {
-  name Premult1
-  xpos -260
-  ypos 422
- }
- Blur {
-  channels rgba
-  size {{ees}}
-  name Blur1
-  xpos -260
-  ypos 446
- }
- Unpremult {
-  name Unpremult1
-  xpos -260
-  ypos 470
- }
- MergeExpression {
-  inputs 2
-  expr0 Ar==0?0:Br/Ar
-  expr1 Ag==0?0:Bg/Ag
-  expr2 Ab==0?0:Bb/Ab
-  name MergeDivideReverse1
-  xpos -260
-  ypos 518
- }
-push $N34223900
+set N85740c50 [stack 0]
+push $N85740c50
+push $Nc8412a10
  Expression {
-  expr0 r==0?0:tg.r/r
-  expr1 g==0?0:tg.g/g
-  expr2 b==0?0:tg.b/b
+  expr0 tg-r
+  expr1 tg-g
+  expr2 tg-b
   name Target
   xpos -370
-  ypos 590
+  ypos 15
   addUserKnob {20 Params}
-  addUserKnob {18 tg l target R 0 4}
-  tg 0.1
+  addUserKnob {18 tg l "screen target" R 0 2}
+  tg 0
   addUserKnob {6 tg_panelDropped l "panel dropped state" -STARTLINE +HIDDEN}
  }
- Switch {
+ Merge2 {
   inputs 2
-  which {{ee}}
-  name SwitchEdgeExtend
+  operation multiply
+  bbox B
+  name Merge7
   xpos -260
-  ypos 591
+  ypos 14
  }
+push $N638f70b0
  MergeExpression {
   inputs 2
-  expr0 max(0,Ar*Br)
-  expr1 max(0,Ag*Bg)
-  expr2 max(0,Ab*Bb)
-  name MergeMultiply1
+  expr0 max(0,r+Ar)
+  expr1 max(0,g+Ag)
+  expr2 max(0,b+Ab)
+  expr3 1
+  name Plus
   xpos -150
-  ypos 590
+  ypos 15
  }
- Dot {
-  name Dot4
-  xpos -116
-  ypos 666
- }
-push $N34257900
-push $N34221600
  Copy {
   inputs 2
   from0 rgba.alpha
   to0 rgba.alpha
-  name Copy1
-  xpos -40
-  ypos 585
-  disable {{oa}}
+  name Copy2
+  xpos -150
+  ypos 56
+  disable {{parent.Premult1.disable}}
  }
- Merge2 {
-  inputs 2
-  operation plus
-  bbox B
-  output rgb
-  name Merge4
-  xpos -40
-  ypos 662
+ Premult {
+  name Premult1
+  selected true
+  xpos -150
+  ypos 110
+  disable {{!premult}}
  }
  Output {
   name Output
-  xpos -40
-  ypos 758
+  xpos -150
+  ypos 158
  }
 end_group

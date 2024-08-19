@@ -2,18 +2,17 @@ set cut_paste_input [stack 0]
 push $cut_paste_input
 Group {
  name IBColor
+ help "A threshold keyer for generating clean chroma screens"
  tile_color 0x9900ff
  addUserKnob {20 Params}
- addUserKnob {83 st l screen M {green blue}}
- st blue
- addUserKnob {6 oa l "out alpha" t "output alpha channel" -STARTLINE}
- addUserKnob {7 w l bias t "hue bias from primary hue angle"}
- w 0.5
- addUserKnob {7 chstr l "chroma strength" R 0 1.5}
- chstr 1
- addUserKnob {7 shstr l "shadow strength" R -0.2 0.2}
+ addUserKnob {83 sc l screen M {red green blue}}
+ sc blue
+ addUserKnob {41 w0 l bias T despill.w0}
+ addUserKnob {41 chs l "chroma strength" T despill.chs}
+ addUserKnob {41 shs l "shadow strength" T despill.shs}
  addUserKnob {26 ""}
- addUserKnob {7 erode R 0 20}
+ addUserKnob {7 erode R 0 60}
+ erode 0
 }
  Input {
   inputs 0
@@ -21,33 +20,39 @@ Group {
   xpos -150
   ypos -82
  }
-set N145a4800 [stack 0]
- Grade {
-  multiply {1 {st==0?chstr:1} {st==1?chstr:1} 1}
-  add {{shstr}}
-  black_clamp false
-  name Grade1
+ Dot {
+  name Dot1
+  xpos -116
+  ypos -30
+ }
+set Ne60eba00 [stack 0]
+ Expression {
+  temp_name0 c0
+  temp_expr0 k==0?r:k==1?g:b
+  temp_name1 c1
+  temp_expr1 k==0?g:k==1?r:r
+  temp_name2 c2
+  temp_expr2 k==0?b:k==1?b:g
+  temp_name3 L
+  temp_expr3 c0-(c1*w0+c2*(1-w0)+shs/2)*2/chs
+  expr3 L<0?1:0
+  name despill
   xpos -260
   ypos -34
- }
-set N145a4100 [stack 0]
-push $N145a4100
-push $N145a4100
- IBK {
-  inputs 3
-  screen_type {{st}}
-  red_weight {{(1-w)*2}}
-  blue_green_weight {{w*2}}
-  ss false
-  name IBK1
-  xpos -260
-  ypos 14
+  addUserKnob {20 Params}
+  addUserKnob {3 k l chan}
+  k {{parent.sc}}
+  addUserKnob {7 w0 l bias}
+  w0 0.5
+  addUserKnob {7 chs l "chroma strength" R 0 1.5}
+  chs 1
+  addUserKnob {7 shs l "shadow strength" R -0.2 0.2}
  }
  Erode {
   size {{-erode}}
   name Erode1
   xpos -260
-  ypos 56
+  ypos 8
  }
  Shuffle {
   red alpha
@@ -55,16 +60,14 @@ push $N145a4100
   blue alpha
   name Shuffle1
   xpos -260
-  ypos 111
+  ypos 62
  }
-set N14543900 [stack 0]
-push $N14543900
-push $N145a4800
+push $Ne60eba00
  Fill {
   output alpha
-  name Fill1
+  name Fill
   xpos -150
-  ypos 57
+  ypos 7
  }
  Merge2 {
   inputs 2
@@ -72,18 +75,11 @@ push $N145a4800
   bbox B
   name Merge1
   xpos -150
-  ypos 111
- }
- Switch {
-  inputs 2
-  which {{oa}}
-  name Switch1
-  xpos -150
-  ypos 159
+  ypos 62
  }
  Output {
   name Output
   xpos -150
-  ypos 230
+  ypos 158
  }
 end_group
