@@ -4,42 +4,73 @@ Group {
  name Filler
  tile_color 0x3e3e3eff
  note_font_color 0xc3c3c3ff
- selected true
- xpos -8641
- ypos -3418
  addUserKnob {20 Params}
+ addUserKnob {7 preErode l pre-erode R 0 10}
  addUserKnob {41 size l pre-blur T EdgeBlur1.size}
+ addUserKnob {41 blurSize l "blur size" T Blur_MASTER.size}
+ addUserKnob {41 filter l "blur filter" T Blur_MASTER.filter}
+ addUserKnob {41 intFilter l "interpolation filter" T Interpolate_MASTER.filter}
+ addUserKnob {6 keepAlpha l "keep alpha" t "do not replace input alpha channel" +STARTLINE}
+ addUserKnob {6 premult -STARTLINE}
 }
  Input {
   inputs 0
   name Input
   xpos -1250
-  ypos 542
+  ypos 374
  }
- EdgeBlur {
-  channels rgba
-  size 2.1
-  name EdgeBlur1
-  xpos -1250
-  ypos 585
+ Dot {
+  name Dot4
+  xpos -1216
+  ypos 402
+ }
+set N7ce20930 [stack 0]
+ Dot {
+  name Dot3
+  xpos -1106
+  ypos 402
  }
  Dot {
   name Dot1
-  xpos -1216
-  ypos 642
+  xpos -1106
+  ypos 1362
  }
-set N8b127200 [stack 0]
- Matrix {
+push $N7ce20930
+ Unpremult {
+  name Unpremult1
+  xpos -1250
+  ypos 440
+ }
+ Erode {
+  size {{preErode}}
+  name Erode1
+  xpos -1250
+  ypos 464
+ }
+ Premult {
+  name Premult1
+  xpos -1250
+  ypos 500
+ }
+ EdgeBlur {
   channels rgba
-  matrix {
-      {1 1 1}
-      {1 1 1}
-      {1 1 1}
-    }
-  normalize true
-  name Matrix1
+  size 2
+  name EdgeBlur1
+  xpos -1250
+  ypos 541
+ }
+ Dot {
+  name Dot2
+  xpos -1216
+  ypos 618
+ }
+set N4bf58260 [stack 0]
+ Blur {
+  channels rgba
+  size 1
+  name Blur_MASTER
   xpos -1470
-  ypos 638
+  ypos 615
  }
  Reformat {
   type scale
@@ -47,9 +78,9 @@ set N8b127200 [stack 0]
   resize fit
   center false
   filter impulse
-  name HalfScale1
+  name HalfScale11
   xpos -1470
-  ypos 662
+  ypos 638
   disable {{input.height<2}}
  }
  Expression {
@@ -61,32 +92,61 @@ set N8b127200 [stack 0]
   expr1 a1*g/a0
   expr2 a1*b/a0
   expr3 a1
-  name Unpremult1
+  name Unpremult11
   xpos -1470
-  ypos 686
+  ypos 662
  }
-set N8b125d00 [stack 0]
- Matrix {
+set Nca21dbc0 [stack 0]
+ Blur {
   channels rgba
-  matrix {
-      {1 1 1}
-      {1 1 1}
-      {1 1 1}
-    }
-  normalize true
-  name Matrix2
+  size {{parent.Blur_MASTER.size}}
+  filter {{parent.Blur_MASTER.filter}}
+  name Blur3
+  xpos -1470
+  ypos 687
+ }
+ Reformat {
+  type scale
+  scale 0.49
+  resize fit
+  center false
+  filter impulse
+  name HalfScale12
+  xpos -1470
+  ypos 710
+  disable {{input.height<2}}
+ }
+ Expression {
+  temp_name0 a0
+  temp_expr0 a<=0?1:a
+  temp_name1 a1
+  temp_expr1 a/max(1e-4,a0)
+  expr0 a1*r/a0
+  expr1 a1*g/a0
+  expr2 a1*b/a0
+  expr3 a1
+  name Unpremult12
   xpos -1470
   ypos 734
  }
+set N871647d0 [stack 0]
+ Blur {
+  channels rgba
+  size {{parent.Blur_MASTER.size}}
+  filter {{parent.Blur_MASTER.filter}}
+  name Blur4
+  xpos -1470
+  ypos 759
+ }
  Reformat {
   type scale
   scale 0.49
   resize fit
   center false
   filter impulse
-  name HalfScale2
+  name HalfScale13
   xpos -1470
-  ypos 758
+  ypos 782
   disable {{input.height<2}}
  }
  Expression {
@@ -98,22 +158,18 @@ set N8b125d00 [stack 0]
   expr1 a1*g/a0
   expr2 a1*b/a0
   expr3 a1
-  name Unpremult2
+  name Unpremult13
   xpos -1470
-  ypos 782
+  ypos 806
  }
-set N8b124800 [stack 0]
- Matrix {
+set Nff1e4d10 [stack 0]
+ Blur {
   channels rgba
-  matrix {
-      {1 1 1}
-      {1 1 1}
-      {1 1 1}
-    }
-  normalize true
-  name Matrix3
+  size {{parent.Blur_MASTER.size}}
+  filter {{parent.Blur_MASTER.filter}}
+  name Blur5
   xpos -1470
-  ypos 830
+  ypos 831
  }
  Reformat {
   type scale
@@ -121,7 +177,7 @@ set N8b124800 [stack 0]
   resize fit
   center false
   filter impulse
-  name HalfScale3
+  name HalfScale14
   xpos -1470
   ypos 854
   disable {{input.height<2}}
@@ -135,22 +191,18 @@ set N8b124800 [stack 0]
   expr1 a1*g/a0
   expr2 a1*b/a0
   expr3 a1
-  name Unpremult3
+  name Unpremult14
   xpos -1470
   ypos 878
  }
-set N8b0fb200 [stack 0]
- Matrix {
+set Nffee4130 [stack 0]
+ Blur {
   channels rgba
-  matrix {
-      {1 1 1}
-      {1 1 1}
-      {1 1 1}
-    }
-  normalize true
-  name Matrix4
+  size {{parent.Blur_MASTER.size}}
+  filter {{parent.Blur_MASTER.filter}}
+  name Blur6
   xpos -1470
-  ypos 926
+  ypos 903
  }
  Reformat {
   type scale
@@ -158,9 +210,9 @@ set N8b0fb200 [stack 0]
   resize fit
   center false
   filter impulse
-  name HalfScale4
+  name HalfScale15
   xpos -1470
-  ypos 950
+  ypos 926
   disable {{input.height<2}}
  }
  Expression {
@@ -172,32 +224,61 @@ set N8b0fb200 [stack 0]
   expr1 a1*g/a0
   expr2 a1*b/a0
   expr3 a1
-  name Unpremult4
+  name Unpremult15
   xpos -1470
-  ypos 974
+  ypos 950
  }
-set N8b0f9d00 [stack 0]
- Matrix {
+set N8e4b20 [stack 0]
+ Blur {
   channels rgba
-  matrix {
-      {1 1 1}
-      {1 1 1}
-      {1 1 1}
-    }
-  normalize true
-  name Matrix5
+  size {{parent.Blur_MASTER.size}}
+  filter {{parent.Blur_MASTER.filter}}
+  name Blur7
+  xpos -1470
+  ypos 975
+ }
+ Reformat {
+  type scale
+  scale 0.49
+  resize fit
+  center false
+  filter impulse
+  name HalfScale16
+  xpos -1470
+  ypos 998
+  disable {{input.height<2}}
+ }
+ Expression {
+  temp_name0 a0
+  temp_expr0 a<=0?1:a
+  temp_name1 a1
+  temp_expr1 a/max(1e-4,a0)
+  expr0 a1*r/a0
+  expr1 a1*g/a0
+  expr2 a1*b/a0
+  expr3 a1
+  name Unpremult16
   xpos -1470
   ypos 1022
  }
+set N1ae60f0 [stack 0]
+ Blur {
+  channels rgba
+  size {{parent.Blur_MASTER.size}}
+  filter {{parent.Blur_MASTER.filter}}
+  name Blur8
+  xpos -1470
+  ypos 1047
+ }
  Reformat {
   type scale
   scale 0.49
   resize fit
   center false
   filter impulse
-  name HalfScale5
+  name HalfScale17
   xpos -1470
-  ypos 1046
+  ypos 1070
   disable {{input.height<2}}
  }
  Expression {
@@ -209,22 +290,18 @@ set N8b0f9d00 [stack 0]
   expr1 a1*g/a0
   expr2 a1*b/a0
   expr3 a1
-  name Unpremult5
+  name Unpremult17
   xpos -1470
-  ypos 1070
+  ypos 1094
  }
-set N8b0f8800 [stack 0]
- Matrix {
+set Nfebe5a20 [stack 0]
+ Blur {
   channels rgba
-  matrix {
-      {1 1 1}
-      {1 1 1}
-      {1 1 1}
-    }
-  normalize true
-  name Matrix6
+  size {{parent.Blur_MASTER.size}}
+  filter {{parent.Blur_MASTER.filter}}
+  name Blur9
   xpos -1470
-  ypos 1118
+  ypos 1119
  }
  Reformat {
   type scale
@@ -232,7 +309,7 @@ set N8b0f8800 [stack 0]
   resize fit
   center false
   filter impulse
-  name HalfScale6
+  name HalfScale18
   xpos -1470
   ypos 1142
   disable {{input.height<2}}
@@ -246,22 +323,18 @@ set N8b0f8800 [stack 0]
   expr1 a1*g/a0
   expr2 a1*b/a0
   expr3 a1
-  name Unpremult6
+  name Unpremult18
   xpos -1470
   ypos 1166
  }
-set N8b0b3200 [stack 0]
- Matrix {
+set N50b5b070 [stack 0]
+ Blur {
   channels rgba
-  matrix {
-      {1 1 1}
-      {1 1 1}
-      {1 1 1}
-    }
-  normalize true
-  name Matrix7
+  size {{parent.Blur_MASTER.size}}
+  filter {{parent.Blur_MASTER.filter}}
+  name Blur10
   xpos -1470
-  ypos 1214
+  ypos 1191
  }
  Reformat {
   type scale
@@ -269,9 +342,9 @@ set N8b0b3200 [stack 0]
   resize fit
   center false
   filter impulse
-  name HalfScale7
+  name HalfScale19
   xpos -1470
-  ypos 1238
+  ypos 1214
   disable {{input.height<2}}
  }
  Expression {
@@ -283,134 +356,56 @@ set N8b0b3200 [stack 0]
   expr1 a1*g/a0
   expr2 a1*b/a0
   expr3 a1
-  name Unpremult7
+  name Unpremult19
   xpos -1470
-  ypos 1262
+  ypos 1238
  }
-set N8b0b1d00 [stack 0]
- Matrix {
+set N9b80b250 [stack 0]
+ Blur {
   channels rgba
-  matrix {
-      {1 1 1}
-      {1 1 1}
-      {1 1 1}
-    }
-  normalize true
-  name Matrix8
+  size {{parent.Blur_MASTER.size}}
+  filter {{parent.Blur_MASTER.filter}}
+  name Blur11
+  xpos -1470
+  ypos 1263
+ }
+ Reformat {
+  type scale
+  scale 0.49
+  resize fit
+  center false
+  filter impulse
+  name HalfScale20
+  xpos -1470
+  ypos 1286
+  disable {{input.height<2}}
+ }
+ Expression {
+  temp_name0 a0
+  temp_expr0 a<=0?1:a
+  temp_name1 a1
+  temp_expr1 a/max(1e-4,a0)
+  expr0 a1*r/a0
+  expr1 a1*g/a0
+  expr2 a1*b/a0
+  expr3 a1
+  name Unpremult20
   xpos -1470
   ypos 1310
  }
  Reformat {
-  type scale
-  scale 0.49
-  resize fit
-  center false
-  filter impulse
-  name HalfScale8
-  xpos -1470
-  ypos 1334
-  disable {{input.height<2}}
- }
- Expression {
-  temp_name0 a0
-  temp_expr0 a<=0?1:a
-  temp_name1 a1
-  temp_expr1 a/max(1e-4,a0)
-  expr0 a1*r/a0
-  expr1 a1*g/a0
-  expr2 a1*b/a0
-  expr3 a1
-  name Unpremult8
-  xpos -1470
-  ypos 1358
- }
-set N8b0b0800 [stack 0]
- Matrix {
-  channels rgba
-  matrix {
-      {1 1 1}
-      {1 1 1}
-      {1 1 1}
-    }
-  normalize true
-  name Matrix9
-  xpos -1470
-  ypos 1406
- }
- Reformat {
-  type scale
-  scale 0.49
-  resize fit
-  center false
-  filter impulse
-  name HalfScale9
-  xpos -1470
-  ypos 1430
-  disable {{input.height<2}}
- }
- Expression {
-  temp_name0 a0
-  temp_expr0 a<=0?1:a
-  temp_name1 a1
-  temp_expr1 a/max(1e-4,a0)
-  expr0 a1*r/a0
-  expr1 a1*g/a0
-  expr2 a1*b/a0
-  expr3 a1
-  name Unpremult9
-  xpos -1470
-  ypos 1454
- }
-set N8b067200 [stack 0]
- Matrix {
-  channels rgba
-  matrix {
-      {1 1 1}
-      {1 1 1}
-      {1 1 1}
-    }
-  normalize true
-  name Matrix10
-  xpos -1470
-  ypos 1502
- }
- Reformat {
-  type scale
-  scale 0.49
-  resize fit
-  center false
-  filter impulse
-  name HalfScale10
-  xpos -1470
-  ypos 1526
-  disable {{input.height<2}}
- }
- Expression {
-  temp_name0 a0
-  temp_expr0 a<=0?1:a
-  temp_name1 a1
-  temp_expr1 a/max(1e-4,a0)
-  expr0 a1*r/a0
-  expr1 a1*g/a0
-  expr2 a1*b/a0
-  expr3 a1
-  name Unpremult10
-  xpos -1470
-  ypos 1550
- }
- Reformat {
   type "to box"
   box_width {{parent.width}}
   box_height {{parent.height}}
   box_fixed true
   box_pixel_aspect {{parent.pixel_aspect}}
   scale 0.5
-  filter notch
-  name Interpolate2
+  filter {{parent.Interpolate_MASTER.filter}}
+  name Interpolate19
   xpos -1360
-  ypos 1550
+  ypos 1310
  }
-push $N8b067200
+push $N9b80b250
  Reformat {
   type "to box"
   box_width {{parent.width}}
@@ -418,12 +413,12 @@ push $N8b067200
   box_fixed true
   box_pixel_aspect {{parent.pixel_aspect}}
   scale 0.5
-  filter notch
-  name Interpolate3
+  filter {{parent.Interpolate_MASTER.filter}}
+  name Interpolate18
   xpos -1360
-  ypos 1454
+  ypos 1238
  }
-push $N8b0b0800
+push $N50b5b070
  Reformat {
   type "to box"
   box_width {{parent.width}}
@@ -431,38 +426,12 @@ push $N8b0b0800
   box_fixed true
   box_pixel_aspect {{parent.pixel_aspect}}
   scale 0.5
-  filter notch
-  name Interpolate4
-  xpos -1360
-  ypos 1358
- }
-push $N8b0b1d00
- Reformat {
-  type "to box"
-  box_width {{parent.width}}
-  box_height {{parent.height}}
-  box_fixed true
-  box_pixel_aspect {{parent.pixel_aspect}}
-  scale 0.5
-  filter notch
-  name Interpolate5
-  xpos -1360
-  ypos 1262
- }
-push $N8b0b3200
- Reformat {
-  type "to box"
-  box_width {{parent.width}}
-  box_height {{parent.height}}
-  box_fixed true
-  box_pixel_aspect {{parent.pixel_aspect}}
-  scale 0.5
-  filter notch
-  name Interpolate6
+  filter {{parent.Interpolate_MASTER.filter}}
+  name Interpolate17
   xpos -1360
   ypos 1166
  }
-push $N8b0f8800
+push $Nfebe5a20
  Reformat {
   type "to box"
   box_width {{parent.width}}
@@ -470,12 +439,12 @@ push $N8b0f8800
   box_fixed true
   box_pixel_aspect {{parent.pixel_aspect}}
   scale 0.5
-  filter notch
-  name Interpolate7
+  filter {{parent.Interpolate_MASTER.filter}}
+  name Interpolate16
   xpos -1360
-  ypos 1070
+  ypos 1094
  }
-push $N8b0f9d00
+push $N1ae60f0
  Reformat {
   type "to box"
   box_width {{parent.width}}
@@ -483,12 +452,12 @@ push $N8b0f9d00
   box_fixed true
   box_pixel_aspect {{parent.pixel_aspect}}
   scale 0.5
-  filter notch
-  name Interpolate8
+  filter {{parent.Interpolate_MASTER.filter}}
+  name Interpolate15
   xpos -1360
-  ypos 974
+  ypos 1022
  }
-push $N8b0fb200
+push $N8e4b20
  Reformat {
   type "to box"
   box_width {{parent.width}}
@@ -496,12 +465,51 @@ push $N8b0fb200
   box_fixed true
   box_pixel_aspect {{parent.pixel_aspect}}
   scale 0.5
-  filter notch
-  name Interpolate9
+  filter {{parent.Interpolate_MASTER.filter}}
+  name Interpolate14
+  xpos -1360
+  ypos 950
+ }
+push $Nffee4130
+ Reformat {
+  type "to box"
+  box_width {{parent.width}}
+  box_height {{parent.height}}
+  box_fixed true
+  box_pixel_aspect {{parent.pixel_aspect}}
+  scale 0.5
+  filter {{parent.Interpolate_MASTER.filter}}
+  name Interpolate13
   xpos -1360
   ypos 878
  }
-push $N8b124800
+push $Nff1e4d10
+ Reformat {
+  type "to box"
+  box_width {{parent.width}}
+  box_height {{parent.height}}
+  box_fixed true
+  box_pixel_aspect {{parent.pixel_aspect}}
+  scale 0.5
+  filter {{parent.Interpolate_MASTER.filter}}
+  name Interpolate11
+  xpos -1360
+  ypos 806
+ }
+push $N871647d0
+ Reformat {
+  type "to box"
+  box_width {{parent.width}}
+  box_height {{parent.height}}
+  box_fixed true
+  box_pixel_aspect {{parent.pixel_aspect}}
+  scale 0.5
+  filter {{parent.Interpolate_MASTER.filter}}
+  name Interpolate12
+  xpos -1360
+  ypos 734
+ }
+push $Nca21dbc0
  Reformat {
   type "to box"
   box_width {{parent.width}}
@@ -510,47 +518,44 @@ push $N8b124800
   box_pixel_aspect {{parent.pixel_aspect}}
   scale 0.5
   filter notch
-  name Interpolate10
+  name Interpolate_MASTER
   xpos -1360
-  ypos 782
+  ypos 662
  }
-push $N8b125d00
- Reformat {
-  type "to box"
-  box_width {{parent.width}}
-  box_height {{parent.height}}
-  box_fixed true
-  box_pixel_aspect {{parent.pixel_aspect}}
-  scale 0.5
-  filter notch
-  name Interpolate1
-  xpos -1360
-  ypos 686
- }
-push $N8b127200
+push $N4bf58260
  Merge2 {
   inputs 2
   operation under
   bbox B
-  name Merge1
+  name Merge11
   xpos -1250
-  ypos 686
+  ypos 662
   disable {{input1.input.input.disable}}
  }
  Merge2 {
   inputs 2
   operation under
   bbox B
-  name Merge10
+  name Merge12
   xpos -1250
-  ypos 782
+  ypos 734
+  disable {{input1.input.input.disable}}
+  dope_sheet true
+ }
+ Merge2 {
+  inputs 2
+  operation under
+  bbox B
+  name Merge13
+  xpos -1250
+  ypos 806
   disable {{input1.input.input.disable}}
  }
  Merge2 {
   inputs 2
   operation under
   bbox B
-  name Merge9
+  name Merge14
   xpos -1250
   ypos 878
   disable {{input1.input.input.disable}}
@@ -559,25 +564,34 @@ push $N8b127200
   inputs 2
   operation under
   bbox B
-  name Merge8
+  name Merge15
   xpos -1250
-  ypos 974
+  ypos 950
   disable {{input1.input.input.disable}}
  }
  Merge2 {
   inputs 2
   operation under
   bbox B
-  name Merge7
+  name Merge16
   xpos -1250
-  ypos 1070
+  ypos 1022
   disable {{input1.input.input.disable}}
  }
  Merge2 {
   inputs 2
   operation under
   bbox B
-  name Merge6
+  name Merge17
+  xpos -1250
+  ypos 1094
+  disable {{input1.input.input.disable}}
+ }
+ Merge2 {
+  inputs 2
+  operation under
+  bbox B
+  name Merge18
   xpos -1250
   ypos 1166
   disable {{input1.input.input.disable}}
@@ -586,41 +600,38 @@ push $N8b127200
   inputs 2
   operation under
   bbox B
-  name Merge5
+  name Merge19
   xpos -1250
-  ypos 1262
+  ypos 1238
   disable {{input1.input.input.disable}}
  }
  Merge2 {
   inputs 2
   operation under
   bbox B
-  name Merge4
+  name Merge20
   xpos -1250
-  ypos 1358
+  ypos 1310
   disable {{input1.input.input.disable}}
  }
- Merge2 {
+ Copy {
   inputs 2
-  operation under
-  bbox B
-  name Merge3
+  from0 rgba.alpha
+  to0 rgba.alpha
+  name Copy1
   xpos -1250
-  ypos 1454
-  disable {{input1.input.input.disable}}
+  ypos 1353
+  disable {{!keepAlpha}}
  }
- Merge2 {
-  inputs 2
-  operation under
-  bbox B
-  name Merge2
+ Premult {
+  name Premult2
   xpos -1250
-  ypos 1550
-  disable {{input1.input.input.disable}}
+  ypos 1407
+  disable {{!premult}}
  }
  Output {
   name Output
   xpos -1250
-  ypos 1622
+  ypos 1478
  }
 end_group
