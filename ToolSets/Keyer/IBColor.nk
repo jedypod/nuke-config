@@ -46,7 +46,7 @@ set Ne60eba00 [stack 0]
   w0 0.5
   addUserKnob {7 chs l "chroma strength" R 0 1.5}
   chs 1
-  addUserKnob {7 shs l "shadow strength" R -0.2 0.2}
+  addUserKnob {7 shs l "shadow strength" R 0 0.2}
  }
  Erode {
   size {{-erode}}
