@@ -120,9 +120,9 @@ set N85740c50 [stack 0]
 push $N85740c50
 push $Nc8412a10
  Expression {
-  expr0 tg-r
-  expr1 tg-g
-  expr2 tg-b
+  expr0 tg.r-r
+  expr1 tg.g-g
+  expr2 tg.b-b
   name Target
   xpos -370
   ypos 15
