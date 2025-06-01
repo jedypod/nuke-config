@@ -4,9 +4,10 @@ import nuke
 
 if nuke.NUKE_VERSION_MAJOR < 11:
     from PySide import QtCore, QtGui, QtGui as QtWidgets
-else:
+elif nuke.NUKE_VERSION_MAJOR < 16:
     from PySide2 import QtWidgets, QtGui, QtCore
-
+else:
+    from PySide6 import QtWidgets, QtGui, QtCore
 
 from .QtUtils import CodeTextEdit
 
@@ -67,23 +68,40 @@ class LabelPanel(QtWidgets.QDialog):
     def keyPressEvent(self, event):
         # Handle keyboard events.
         key = event.key()
-        ctrl = bool(event.modifiers() & QtCore.Qt.ControlModifier)
-        alt = bool(event.modifiers() & QtCore.Qt.AltModifier)
-        if key == QtCore.Qt.Key_Escape:
-            self.close()
-        
-        if (key == QtCore.Qt.Key_Return or key == QtCore.Qt.Key_Enter) and ctrl:
-            self.set_label()
-            self.close()
+        # Use correct namespace for modifiers and keys
+        if nuke.NUKE_VERSION_MAJOR >= 16:
+            ctrl = bool(event.modifiers() & QtCore.Qt.ControlModifier)
+            alt = bool(event.modifiers() & QtCore.Qt.AltModifier)
+            if key == QtCore.Qt.Key_Escape:
+                self.close()
+            
+            if (key == QtCore.Qt.Key_Return or key == QtCore.Qt.Key_Enter) and ctrl:
+                self.set_label()
+                self.close()
 
-        if ctrl and key == QtCore.Qt.Key_S:
-            self.set_label()
-            self.close()
+            if ctrl and key == QtCore.Qt.Key_S:
+                self.set_label()
+                self.close()
+        else:
+            ctrl = bool(event.modifiers() & Qt.ControlModifier)
+            alt = bool(event.modifiers() & Qt.AltModifier)
+            if key == Qt.Key_Escape:
+                self.close()
+            
+            if (key == Qt.Key_Return or key == Qt.Key_Enter) and ctrl:
+                self.set_label()
+                self.close()
+
+            if ctrl and key == Qt.Key_S:
+                self.set_label()
+                self.close()
 
 
     def eventFilter(self, object, event):
         if event.type() in [QtCore.QEvent.WindowDeactivate, QtCore.QEvent.FocusOut]:
             self.close()
+            return True  # Event handled
+        return False  # Event not handled
 
 
 def label(nodes=None):

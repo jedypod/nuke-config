@@ -7,8 +7,10 @@ import colorsys
 
 if nuke.NUKE_VERSION_MAJOR < 11:
     from PySide import QtCore, QtGui, QtGui as QtWidgets
-else:
+elif nuke.NUKE_VERSION_MAJOR < 16:
     from PySide2 import QtWidgets, QtGui, QtCore
+else:
+    from PySide6 import QtWidgets, QtGui, QtCore
 
 from .QtUtils import CodeTextEdit
 
@@ -327,7 +329,7 @@ class BackdropPanel(QtWidgets.QDialog):
         self.slider_val.setValue(curhsv[2]*100)
         self.note_font_size_slider.setValue(self.bd['note_font_size'].getValue())
         if self.appearance_exists:
-            self.appearance_checkbox.setChecked(self.bd['appearance'].getValue())
+            self.appearance_checkbox.setChecked(int(self.bd['appearance'].getValue()))
         # set text color
         rgb = hex2rgb(self.bd_defaults['text_color'])
         hsv = rgb2hsv(rgb)
