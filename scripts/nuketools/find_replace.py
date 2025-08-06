@@ -4,9 +4,11 @@ import re
 
 if nuke.NUKE_VERSION_MAJOR < 11:
     from PySide import QtCore, QtGui, QtGui as QtWidgets
-else:
+elif nuke.NUKE_VERSION_MAJOR < 16:
     from PySide2 import QtWidgets, QtGui, QtCore
-
+else:
+    from PySide6 import QtWidgets, QtGui, QtCore
+    
 
 nuke.menu('Nuke').addCommand('Edit/Node/Filename/Find Replace', 'find_replace.show()', 'ctrl+/')
 

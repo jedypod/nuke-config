@@ -6,9 +6,12 @@ import re
 if nuke.NUKE_VERSION_MAJOR < 11:
     from PySide import QtCore, QtGui, QtGui as QtWidgets
     from PySide.QtCore import Qt
-else:
+elif nuke.NUKE_VERSION_MAJOR < 16:
     from PySide2 import QtWidgets, QtGui, QtCore
     from PySide2.QtCore import Qt
+else:
+    from PySide6 import QtWidgets, QtGui, QtCore
+    from PySide6.QtCore import Qt
 
 
 
@@ -74,7 +77,11 @@ class CodeTextEdit(QtWidgets.QPlainTextEdit):
             maxNum /= 10
             digits += 1
 
-        space = 7 + self.fontMetrics().width('9') * digits
+        # Use horizontalAdvance() for PySide6 (Nuke 16+), width() for older versions
+        if nuke.NUKE_VERSION_MAJOR >= 16:
+            space = 7 + self.fontMetrics().horizontalAdvance('9') * digits
+        else:
+            space = 7 + self.fontMetrics().width('9') * digits
         return space
 
     def updateLineNumberAreaWidth(self):
@@ -144,9 +151,15 @@ class CodeTextEdit(QtWidgets.QPlainTextEdit):
         Custom actions for specific keystrokes
         '''
         key = event.key()
-        ctrl = bool(event.modifiers() & Qt.ControlModifier)
-        alt = bool(event.modifiers() & Qt.AltModifier)
-        shift = bool(event.modifiers() & Qt.ShiftModifier)
+        # Use correct namespace for modifiers in PySide6
+        if nuke.NUKE_VERSION_MAJOR >= 16:
+            ctrl = bool(event.modifiers() & QtCore.Qt.ControlModifier)
+            alt = bool(event.modifiers() & QtCore.Qt.AltModifier)
+            shift = bool(event.modifiers() & QtCore.Qt.ShiftModifier)
+        else:
+            ctrl = bool(event.modifiers() & Qt.ControlModifier)
+            alt = bool(event.modifiers() & Qt.AltModifier)
+            shift = bool(event.modifiers() & Qt.ShiftModifier)
         pre_scroll = self.verticalScrollBar().value()
         #modifiers = QtWidgets.QApplication.keyboardModifiers()
         #ctrl = (modifiers == Qt.ControlModifier)
@@ -198,31 +211,31 @@ class CodeTextEdit(QtWidgets.QPlainTextEdit):
                 selection = cursor.selection().toPlainText()
             else:
                 selection = ""
-            if key == Qt.Key_ParenLeft and (len(selection)>0 or re.match(r"[\s)}\];]+", text_after_cursor) or not len(text_after_cursor)): # (
+            if key == QtCore.Qt.Key_ParenLeft and (len(selection)>0 or re.match(r"[\s)}\];]+", text_after_cursor) or not len(text_after_cursor)): # (
                 cursor.insertText("("+selection+")")
                 cursor.setPosition(apos+1, QtGui.QTextCursor.MoveAnchor)
                 cursor.setPosition(cpos+1, QtGui.QTextCursor.KeepAnchor)
                 self.setTextCursor(cursor)
-            elif key == Qt.Key_ParenRight and text_after_cursor.startswith(")"): # )
+            elif key == QtCore.Qt.Key_ParenRight and text_after_cursor.startswith(")"): # )
                 cursor.movePosition(QtGui.QTextCursor.NextCharacter)
                 self.setTextCursor(cursor)
-            elif key == Qt.Key_BracketLeft and (len(selection)>0 or re.match(r"[\s)}\];]+", text_after_cursor) or not len(text_after_cursor)): #[
+            elif key == QtCore.Qt.Key_BracketLeft and (len(selection)>0 or re.match(r"[\s)}\];]+", text_after_cursor) or not len(text_after_cursor)): #[
                 cursor.insertText("["+selection+"]")
                 cursor.setPosition(apos+1, QtGui.QTextCursor.MoveAnchor)
                 cursor.setPosition(cpos+1, QtGui.QTextCursor.KeepAnchor)
                 self.setTextCursor(cursor)
-            elif key in [Qt.Key_BracketRight,43] and text_after_cursor.startswith("]"): # ]
+            elif key in [QtCore.Qt.Key_BracketRight,43] and text_after_cursor.startswith("]"): # ]
                 cursor.movePosition(QtGui.QTextCursor.NextCharacter)
                 self.setTextCursor(cursor)
-            elif key == Qt.Key_BraceLeft and (len(selection)>0 or re.match(r"[\s)}\];]+", text_after_cursor) or not len(text_after_cursor)): #{
+            elif key == QtCore.Qt.Key_BraceLeft and (len(selection)>0 or re.match(r"[\s)}\];]+", text_after_cursor) or not len(text_after_cursor)): #{
                 cursor.insertText("{"+selection+"}")
                 cursor.setPosition(apos+1, QtGui.QTextCursor.MoveAnchor)
                 cursor.setPosition(cpos+1, QtGui.QTextCursor.KeepAnchor)
                 self.setTextCursor(cursor)
-            elif key in [199,Qt.Key_BraceRight] and text_after_cursor.startswith("}"): # }
+            elif key in [199,QtCore.Qt.Key_BraceRight] and text_after_cursor.startswith("}"): # }
                 cursor.movePosition(QtGui.QTextCursor.NextCharacter)
                 self.setTextCursor(cursor)
-            elif key == 34: # "
+            elif key == QtCore.Qt.Key_QuoteDbl: # "
                 if len(selection)>0:
                     cursor.insertText('"'+selection+'"')
                     cursor.setPosition(apos+1, QtGui.QTextCursor.MoveAnchor)
@@ -238,7 +251,7 @@ class CodeTextEdit(QtWidgets.QPlainTextEdit):
                     cursor.setPosition(apos+1, QtGui.QTextCursor.MoveAnchor)
                     cursor.setPosition(cpos+1, QtGui.QTextCursor.KeepAnchor)
                 self.setTextCursor(cursor)
-            elif key == 39: # '
+            elif key == QtCore.Qt.Key_Apostrophe: # '
                 if len(selection)>0:
                     cursor.insertText("'"+selection+"'")
                     cursor.setPosition(apos+1, QtGui.QTextCursor.MoveAnchor)
@@ -254,7 +267,7 @@ class CodeTextEdit(QtWidgets.QPlainTextEdit):
                     cursor.setPosition(apos+1, QtGui.QTextCursor.MoveAnchor)
                     cursor.setPosition(cpos+1, QtGui.QTextCursor.KeepAnchor)
                 self.setTextCursor(cursor)
-            elif key == 35 and len(selection): # # (yes, a hash)
+            elif key == QtCore.Qt.Key_NumberSign and len(selection): # # (yes, a hash)
                 # If there's a selection, insert a hash at the start of each line.. how the fuck?
                 if selection != "":
                     selection_split = selection.split("\n")
@@ -271,7 +284,7 @@ class CodeTextEdit(QtWidgets.QPlainTextEdit):
                         cursor.setPosition(cpos+len(selection_commented)-len(selection), QtGui.QTextCursor.KeepAnchor)
                     self.setTextCursor(cursor)
 
-            elif key == 68 and ctrl and shift: #Ctrl+Shift+D, to duplicate text or line/s
+            elif key == QtCore.Qt.Key_D and ctrl and shift: #Ctrl+Shift+D, to duplicate text or line/s
 
                 if not len(selection):
                     self.setPlainText(text_before_lines + text_lines+"\n"+text_lines+"\n" + text_after_lines)
@@ -422,7 +435,8 @@ class CodeTextEdit(QtWidgets.QPlainTextEdit):
             else:
                 break
 
-        indentLevel /= self.tabSpaces
+        # Use integer division to avoid float multiplication issues
+        indentLevel = indentLevel // self.tabSpaces
 
         #find out whether textInFront's last character was a ':'
         #if that's the case add another indent.

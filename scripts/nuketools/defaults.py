@@ -69,7 +69,7 @@ node_defaults = {
         'crop': '0', 
     },
     'DeepCrop': {'bbox': '0 0 width height', },
-    'Dot': {'note_font': 'Helvetica Bold', 'note_font_size': '24', 'note_font_color': '0xff'},
+    'Dot': {'note_font': 'Helvetica Bold', 'tile_color': '0x666666ff', 'note_font_size': '24', 'note_font_color': '0xff'},
     'EdgeBlur': {'controlchannel': 'alpha', },
     'EXPTool': {'mode': 'Stops', },
     'Grade': {'black_clamp': '0', },
@@ -245,10 +245,13 @@ nuke.knobDefault('Root.proxy_format', 'SD_540p')
 # User overrides will stay in place
 # https://support.foundry.com/hc/en-us/articles/360006950439-Q100538-How-to-set-default-values-for-knobs-and-preferences-stored-in-uistate-ini
 
-try:
-    from PySide2.QtCore import QSettings, QRect, QSize
-except ImportError:
+if nuke.NUKE_VERSION_MAJOR < 11:
     from PySide.QtCore import QSettings, QRect, QSize
+elif nuke.NUKE_VERSION_MAJOR < 16:
+    from PySide2.QtCore import QSettings, QRect, QSize
+else:
+    from PySide6.QtCore import QSettings, QRect, QSize
+
 
 settings = QSettings(os.path.expanduser('~/.nuke/uistate.ini'), QSettings.IniFormat)
 
