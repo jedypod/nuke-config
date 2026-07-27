@@ -194,10 +194,8 @@ ypos 210
 }
 push $N8c06b200
 Expression {
-temp_name0 view_index
-temp_expr0 "parent.parent.stereo == 1 ? \[lsearch \[value root.views] \[view]] / 2 : 0"
-expr0 "random((r + view_index) * 1000000, 0) * (maxx - minx) + minx"
-expr1 "random((g + view_index) * 1000000, 0) * (maxy - miny) + miny"
+expr0 "random(r * 1000000, 0) * (maxx - minx) + minx"
+expr1 "random(g * 1000000, 0) * (maxy - miny) + miny"
 channel2 none
 channel3 none
 name Expression3
